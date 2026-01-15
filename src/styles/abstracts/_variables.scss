@@ -1,0 +1,81 @@
+@use "abstracts/animations" as *;
+
+$animation-fade: fade 3s;
+
+$font-title-default: 3.5rem;
+
+$font-size-xsmall: 1.4rem;
+$font-size-small: 2rem;
+$font-size-default: 2.5rem;
+$font-size-big: 3rem;
+$font-size-xbig: 4rem;
+
+$font-weight-normal: 400;
+$font-weight-bold: 500;
+
+$font-family-default: "JetBrains Mono", monospace;
+
+$font-weight-normal: 400;
+$font-weight-bold: 700;
+
+$spacing-xsmall: 0.5rem;
+$spacing-small: 1rem;
+$spacing-medium: 2rem;
+$spacing-big: 3rem;
+$spacing-xbig: 4rem;
+
+$color-ubuntu-bg: #2c001e;
+$color-ubuntu-surface: #300a24;
+$color-ubuntu-border: #5e2750;
+
+$color-ubuntu-text: #eeeeec;
+$color-ubuntu-muted: #c0bfbc;
+
+$color-ubuntu-orange: #e95420;
+$color-ubuntu-orange-hover: #ff6f3d;
+
+$color-ubuntu-green: #8ae234;
+$color-ubuntu-red: #ef2929;
+$color-ubuntu-blue: #729fcf;
+
+$color-accent: $color-ubuntu-orange;
+$color-accent-hover: $color-ubuntu-orange-hover;
+$color-success: $color-ubuntu-green;
+$color-danger: $color-ubuntu-red;
+$color-info: $color-ubuntu-blue;
+
+$border-default: $color-ubuntu-border 2px solid;
+$border-radius-default: 8px;
+
+$color-border: $color-ubuntu-border;
+
+$color-background-dark: $color-ubuntu-bg;
+$color-background-light: #f6f5f4;
+
+$color-text-dark: $color-ubuntu-text;
+$color-text-light: #71665f;
+
+$color-title-dark: $color-ubuntu-text;
+$color-title-light: #6986ba;
+
+$color-subtitle-dark: $color-accent;
+$color-subtitle-light: #4f9a9c;
+
+$color-external-link-dark: $color-accent;
+$color-external-link-light: #ad86e1;
+
+$color-section-background-dark: $color-ubuntu-surface;
+$color-section-background-light: #f8f4f0;
+
+$line-height-default: 1.4;
+
+$box-shadow-default: 0 12px 28px rgba(0, 0, 0, 0.35);
+
+// :root {
+//   --font-size-base: 1rem;
+//   --font-size-sm: 0.875rem;
+//   --font-size-lg: 1.5rem;
+//   --font-size-xlg: 2rem;
+//   --font-size-xxlg: 4rem;
+//   --font-size-giganteporra: 6rem;
+// }

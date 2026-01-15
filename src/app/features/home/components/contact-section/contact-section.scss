@@ -1,0 +1,54 @@
+@use "abstracts/variables" as *;
+
+.contact-section {
+  &__warning {
+    text-align: center;
+    font-size: $font-size-small;
+
+    margin-bottom: $spacing-big;
+
+    color: $color-text-dark;
+
+    @media screen and (max-width: 600px) {
+      font-size: 1.8rem;
+    }
+  }
+
+  &__paragraph {
+    font-size: $font-size-default;
+
+    color: $color-text-dark;
+
+    margin-bottom: $spacing-medium;
+
+    @media screen and (max-width: 600px) {
+      font-size: $font-size-small;
+    }
+  }
+
+  &__links {
+    font-size: $font-size-default;
+    margin: 0;
+    margin-left: $spacing-xbig;
+    overflow-wrap: break-word;
+    word-break: break-word;
+
+    color: $color-external-link-dark;
+
+    @media screen and (max-width: 600px) {
+      font-size: $font-size-small;
+      margin-left: $spacing-xbig;
+    }
+  }
+
+  &__link {
+    & a {
+      color: $color-external-link-dark;
+      text-decoration: none;
+
+      &:hover {
+        text-decoration: underline wavy;
+      }
+    }
+  }
+}

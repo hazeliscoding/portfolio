@@ -1,0 +1,67 @@
+<!-- TODO -->
+<!-- Menu hamburguer style like neotree -->
+<header class="header">
+  <div class="header__top">
+    <a (click)="navigate('/')" class="logo">
+      <span class="logo--left">hazel</span>
+      <span class="logo--middle">::</span>
+      <span class="logo--right">granados</span>
+    </a>
+
+    <button class="hamburger-button" (click)="toggleMenu()" aria-label="Menu">
+      <span class="hamburger-line"></span>
+      <span class="hamburger-line"></span>
+      <span class="hamburger-line"></span>
+    </button>
+  </div>
+
+  <div
+    class="menu-overlay"
+    [class.menu-overlay--open]="isMenuOpen"
+    (click)="toggleMenu()"
+  >
+    <nav class="mobile-nav" (click)="$event.stopPropagation()">
+      <div class="nav-links">
+        <a
+          class="mobile-nav__link"
+          [ngClass]="{ 'mobile-nav__link--active': isActive('/') }"
+          (click)="navigate('/'); toggleMenu()"
+          >home</a
+        >
+        <a
+          class="mobile-nav__link"
+          [ngClass]="{ 'mobile-nav__link--active': isActive('/about') }"
+          (click)="navigate('/about'); toggleMenu()"
+          >about</a
+        >
+        <a
+          class="mobile-nav__link"
+          [ngClass]="{ 'mobile-nav__link--active': isActive('/portfolio') }"
+          (click)="navigate('/portfolio'); toggleMenu()"
+          >portfolio</a
+        >
+      </div>
+    </nav>
+  </div>
+
+  <nav class="header__nav desktop-nav">
+    <a
+      class="header__link"
+      [ngClass]="{ 'header__link--active': isActive('/') }"
+      (click)="navigate('/')"
+      >home</a
+    >
+    <a
+      class="header__link"
+      [ngClass]="{ 'header__link--active': isActive('/about') }"
+      (click)="navigate('/about')"
+      >about</a
+    >
+    <a
+      class="header__link"
+      [ngClass]="{ 'header__link--active': isActive('/portfolio') }"
+      (click)="navigate('/portfolio')"
+      >portfolio</a
+    >
+  </nav>
+</header>

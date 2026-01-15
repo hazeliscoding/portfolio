@@ -1,0 +1,29 @@
+@use "abstracts/variables" as *;
+
+.fade {
+  animation: $animation-fade;
+}
+
+.services-section {
+  font-size: $font-size-default;
+  margin-bottom: $spacing-xbig;
+
+  @media screen and (max-width: 600px) {
+    font-size: $font-size-small;
+  }
+
+  &__subtitle {
+    color: $color-subtitle-dark;
+    font-weight: $font-weight-normal;
+  }
+
+  &__list {
+    margin-left: 5rem;
+    margin-bottom: $spacing-big;
+    color: $color-text-dark;
+
+    @media screen and (max-width: 600px) {
+      margin-left: $spacing-big;
+    }
+  }
+}

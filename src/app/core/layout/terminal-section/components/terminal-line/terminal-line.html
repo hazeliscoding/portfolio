@@ -1,0 +1,11 @@
+<div class="terminal-line" [class.typing-animation]="!short()">
+  @if (!short()) {
+    <span class="user-host">{{ username }}@{{ hostname }}</span>
+    <span class="separator">:</span>
+    <span class="path">{{ path }}</span>
+  }
+
+  <span class="prompt">{{ prompt }} </span>
+
+  <span class="command" [class.command--error]="error()">{{ command() }}</span>
+</div>

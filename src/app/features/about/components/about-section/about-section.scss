@@ -1,0 +1,82 @@
+@use "abstracts/variables" as *;
+
+.about-section {
+  margin-bottom: $spacing-xbig;
+
+  &__container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: $spacing-xbig;
+    margin: 0 auto;
+
+    @media screen and (max-width: 895px) {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+  }
+
+  &__text {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-medium;
+    position: relative;
+
+    color: $color-text-dark;
+  }
+
+  &__additional-info {
+    font-weight: $font-weight-bold;
+    width: fit-content;
+
+    color: $color-subtitle-dark;
+    padding: 0 $spacing-medium;
+  }
+
+  &__paragraph {
+    line-height: 1.4;
+    font-size: 2.2rem;
+
+    @media screen and (max-width: 1369px) {
+      font-size: $font-size-small;
+    }
+  }
+
+  &__additional-info {
+    font-size: $font-size-default;
+    text-align: center;
+    margin: 0 auto;
+    margin-top: auto;
+
+    @media screen and (max-width: 1369px) {
+      font-size: $font-size-default;
+    }
+
+    @media screen and (max-width: 1145px) {
+      font-size: $font-size-small;
+    }
+  }
+
+  &__image-container {
+    border-radius: $border-radius-default;
+    border: $border-default;
+    flex-shrink: 0;
+    width: 100%;
+    height: 100%;
+    max-height: 70rem;
+    margin: auto 0;
+    overflow: hidden;
+
+    @media screen and (max-width: 895px) {
+      max-width: 50rem;
+    }
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top center;
+    }
+  }
+}

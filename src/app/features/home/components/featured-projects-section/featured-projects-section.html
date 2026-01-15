@@ -1,0 +1,19 @@
+<!-- TODO -->
+<!-- SNAP SCROLL -->
+<div class="featured-projects-section fade">
+  <app-terminal-section
+    customTitle="Featured Projects"
+    customCommand="glow f_projects.md"
+    [shortTerminalLine]="true"
+  >
+    <div class="featured-projects-section__warning">
+      *Swipe to the right to see the projects*
+    </div>
+
+    <div class="featured-projects-section__container">
+      @for (project of projectsData; track project.id) {
+        <project-card [project]="project"></project-card>
+      }
+    </div>
+  </app-terminal-section>
+</div>

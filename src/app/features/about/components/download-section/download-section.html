@@ -1,0 +1,19 @@
+<div class="download-section">
+  <app-terminal-section customTitle="Download Resume" customCommand="glow resume.md" [shortTerminalLine]="true">
+    <div class="download-section__container">
+      <div class="download-section__element">
+        <h4 class="download-section__title">Resume DOCX</h4>
+        <button class="download-section__button" (click)="downloadResume('docx')">
+          <span class="download-section__button-text">Download ↓</span>
+        </button>
+      </div>
+
+      <div class="download-section__element">
+        <h4 class="download-section__title">Resume PDF</h4>
+        <button class="download-section__button" (click)="downloadResume('pdf')">
+          <span class="download-section__button-text">Download ↓</span>
+        </button>
+      </div>
+    </div>
+  </app-terminal-section>
+</div>

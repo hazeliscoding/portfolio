@@ -1,0 +1,26 @@
+<div class="about-section">
+  <app-terminal-section
+    customTitle="About"
+    customCommand="glow me.md"
+    [shortTerminalLine]="true"
+    [isFirstTitle]="true"
+  >
+    <div class="about-section__container">
+      <div class="about-section__text">
+        <app-title title="Hello, World!" />
+
+        @for (p of paragraphs; track $index) {
+          <p class="about-section__paragraph">{{ p }}</p>
+        }
+
+        <div class="about-section__additional-info">
+          <p>{{ location }}</p>
+        </div>
+      </div>
+
+      <div class="about-section__image-container">
+        <img src="images/placeholder.svg" alt="Hazel Granados" />
+      </div>
+    </div>
+  </app-terminal-section>
+</div>

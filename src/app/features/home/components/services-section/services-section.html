@@ -1,0 +1,19 @@
+<div class="services-section fade">
+  <app-terminal-section
+    customTitle="Services"
+    customCommand="glow services.md"
+    [shortTerminalLine]="true"
+  >
+    <app-title title="Services" />
+
+    <ul class="services-section__list">
+      @for (service of services; track service) {
+        <li class="services-section__item">{{ service }}</li>
+      }
+    </ul>
+
+    <app-button route="/portfolio">
+      Portfolio
+    </app-button>
+  </app-terminal-section>
+</div>

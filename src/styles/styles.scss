@@ -1,0 +1,63 @@
+@use "abstracts/variables" as *;
+
+:root {
+  --scrollbar-thumb: #{$color-border};
+  --scrollbar-thumb-hover: #{$color-accent-hover};
+  --focus-ring: rgba(233, 84, 32, 0.45);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+
+  &::selection {
+    color: #1a1a1a;
+    background: $color-accent;
+    text-shadow: none;
+  }
+
+  &::-moz-selection {
+    color: #1a1a1a;
+    background: $color-accent;
+    text-shadow: none;
+  }
+}
+
+html {
+  font-size: 10px;
+
+  font-family: $font-family-default;
+  font-weight: $font-weight-normal;
+}
+
+body,
+html {
+  height: 100%;
+}
+
+body {
+  background-color: $color-background-dark;
+}
+
+.fade {
+  animation: fade 3s;
+}
+
+@keyframes fade {
+  0% {
+    opacity: 0;
+  }
+
+  50% {
+    opacity: 0;
+  }
+
+  75% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}

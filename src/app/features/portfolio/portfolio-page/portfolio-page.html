@@ -1,0 +1,15 @@
+<!-- TODO -->
+<!-- Projects count -->
+<div class="portfolio-page">
+  <app-terminal-section
+    customTitle="Portfolio"
+    customCommand="glow portfolio.md"
+    [shortTerminalLine]="true"
+  >
+    <div class="projects-container">
+      @for (project of projectsData; track project.id) {
+        <project-card [project]="project"></project-card>
+      }
+    </div>
+  </app-terminal-section>
+</div>

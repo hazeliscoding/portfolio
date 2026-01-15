@@ -1,0 +1,15 @@
+<div class="interests-section">
+  <app-terminal-section
+    customTitle="Interests"
+    customCommand="glow interests.md"
+    [shortTerminalLine]="true"
+  >
+    <app-title title="Interests" />
+
+    <ul class="interests-container">
+      @for (interest of interests; track $index) {
+        <li>{{ interest }}</li>
+      }
+    </ul>
+  </app-terminal-section>
+</div>

@@ -1,0 +1,73 @@
+@use "abstracts/variables" as *;
+
+.terminal-line {
+  display: flex;
+  gap: $spacing-medium;
+  overflow: hidden;
+  white-space: nowrap;
+  width: fit-content;
+  margin-bottom: $spacing-big;
+
+  color: $color-text-dark;
+
+  font-size: $font-size-big;
+
+  @media screen and (max-width: 600px) {
+    font-size: $font-size-default;
+    margin-bottom: $spacing-medium;
+    gap: $spacing-small;
+  }
+
+  @media screen and (max-width: 390px) {
+    font-size: $font-size-small;
+  }
+}
+
+.user-host {
+  color: $color-success;
+}
+
+.separator {
+  color: $color-text-dark;
+}
+
+.path {
+  color: $color-info;
+}
+
+.prompt {
+  color: $color-text-dark;
+}
+
+.command {
+  color: $color-success;
+
+  &--error {
+    color: $color-danger;
+  }
+}
+
+.typing-animation {
+  animation:
+    typing 2s steps(25),
+    blink 0.5s step-end infinite alternate;
+
+  // cursor
+  border-right: 10px solid $color-text-dark;
+}
+
+@keyframes typing {
+  0% {
+    width: 0;
+  }
+
+  100% {
+    width: 22ch;
+  }
+}
+
+@keyframes blink {
+  50% {
+    border-color: transparent;
+  }
+}

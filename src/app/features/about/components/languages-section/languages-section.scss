@@ -1,0 +1,24 @@
+@use "abstracts/variables" as *;
+
+.languages-section {
+  margin-bottom: $spacing-xbig;
+}
+
+.languages-container {
+  font-size: $font-size-default;
+
+  margin-left: 5rem;
+
+  color: $color-text-dark;
+
+  & li {
+    overflow-wrap: break-word;
+    word-break: break-word;
+  }
+
+  @media screen and (max-width: 600px) {
+    font-size: $font-size-small;
+
+    margin-left: $spacing-big;
+  }
+}

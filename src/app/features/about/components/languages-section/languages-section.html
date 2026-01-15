@@ -1,0 +1,15 @@
+<div class="languages-section">
+  <app-terminal-section
+    customTitle="Languages"
+    customCommand="glow languages.md"
+    [shortTerminalLine]="true"
+  >
+    <app-title title="Languages" />
+
+    <ul class="languages-container">
+      @for (language of languages; track $index) {
+        <li>{{ language }}</li>
+      }
+    </ul>
+  </app-terminal-section>
+</div>

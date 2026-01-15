@@ -1,0 +1,16 @@
+<div class="terminal-section-container">
+  @if (isFirstTitle()) {
+    <h1 class="terminal-section__title">{{ customTitle() }}</h1>
+  } @else {
+    <h2 class="terminal-section__title">{{ customTitle() }}</h2>
+  }
+
+  <section class="terminal-section">
+    <app-terminal-line
+      [short]="shortTerminalLine()"
+      [command]="customCommand()"
+      [error]="errorCommand()"
+    />
+    <ng-content></ng-content>
+  </section>
+</div>

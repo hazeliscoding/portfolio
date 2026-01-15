@@ -1,0 +1,53 @@
+@use "abstracts/variables" as *;
+
+.terminal-section {
+  font-weight: 400;
+  box-shadow: $box-shadow-default;
+  border-radius: $border-radius-default;
+  border: $border-default;
+  padding: 5.2rem $spacing-big $spacing-big;
+  background-color: $color-section-background-dark;
+  position: relative;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3.2rem;
+    border-bottom: 1px solid $color-border;
+    border-top-left-radius: $border-radius-default;
+    border-top-right-radius: $border-radius-default;
+    background:
+      radial-gradient(circle at 1.8rem 1.6rem, $color-danger 0 0.55rem, transparent 0.6rem),
+      radial-gradient(circle at 3.6rem 1.6rem, #fce94f 0 0.55rem, transparent 0.6rem),
+      radial-gradient(circle at 5.4rem 1.6rem, $color-success 0 0.55rem, transparent 0.6rem),
+      linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(0, 0, 0, 0.08));
+  }
+
+  &-container {
+    margin: 0 auto;
+    max-width: 150rem;
+    width: 100%;
+  }
+
+  &__title {
+    align-self: flex-start;
+    font-size: $font-title-default;
+    font-weight: $font-weight-bold;
+
+    display: block;
+    width: 100%;
+    max-width: 150rem;
+    margin: 0 auto;
+    margin-bottom: $spacing-medium;
+
+    color: $color-title-dark;
+
+    &::before {
+      content: "# ";
+      color: $color-accent;
+    }
+  }
+}

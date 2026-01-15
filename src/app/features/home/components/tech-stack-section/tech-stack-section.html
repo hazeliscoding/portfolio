@@ -1,0 +1,35 @@
+<div class="tech-stack-section fade">
+  <app-terminal-section
+    customTitle="Tech Stack"
+    customCommand="cat stack.txt"
+    [shortTerminalLine]="true"
+  >
+    <app-title title="Tech Stack" />
+
+    <div class="tech-stack-section__content">
+      <ul class="tech-stack-section__list">
+        <li class="tech-stack-section__item">
+          C#<wbr /> / .NET 8<wbr /> / ASP.NET Core (Web APIs + Worker Services)
+        </li>
+        <li class="tech-stack-section__item">Angular (SPA frontends)</li>
+        <li class="tech-stack-section__item">EF Core + PostgreSQL (Npgsql, migrations)</li>
+        <li class="tech-stack-section__item">
+          CQRS/MediatR (request/handler pipeline, transactional behaviors)
+        </li>
+        <li class="tech-stack-section__item">AWS messaging (SQS/SNS pub/sub)</li>
+        <li class="tech-stack-section__item">Terraform (Infrastructure as Code)</li>
+        <li class="tech-stack-section__item">AWS Parameter Store (Config/Secrets)</li>
+        <li class="tech-stack-section__item">Docker (Containerization)</li>
+        <li class="tech-stack-section__item">xUnit, Shouldly, FakeItEasy, TestContainers (Testing)</li>
+      </ul>
+
+      <picture class="tech-stack-section__image-container">
+        <img
+          class="tech-stack-section__image"
+          src="images/placeholder.svg"
+          alt="Technology stack"
+        />
+      </picture>
+    </div>
+  </app-terminal-section>
+</div>

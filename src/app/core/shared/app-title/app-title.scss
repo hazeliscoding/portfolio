@@ -1,0 +1,11 @@
+@use "abstracts/variables" as *;
+
+.app-title {
+  font-size: $font-size-big;
+  background-color: #5f5fff;
+  color: #ffff87;
+  padding: 0 $spacing-medium;
+  width: fit-content;
+
+  margin-bottom: $spacing-medium;
+}

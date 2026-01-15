@@ -1,0 +1,105 @@
+@use "abstracts/variables" as *;
+
+.project-detail-page {
+  padding: 2rem 8rem;
+
+  @media screen and (max-width: 750px) {
+    padding: 0 1rem;
+    margin-top: $spacing-medium;
+  }
+
+  @media screen and (max-width: 600px) {
+    margin-top: $spacing-medium;
+    padding: 0 0.5rem;
+  }
+
+  &__info {
+    display: flex;
+    justify-content: space-between;
+    max-width: 120rem;
+    margin: 0 auto;
+
+    @media screen and (max-width: 1220px) {
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+    }
+  }
+
+  &__description {
+    padding: $spacing-medium;
+    text-align: center;
+
+    & h2 {
+      font-size: 4rem;
+      font-weight: 500;
+      margin-bottom: 2rem;
+      color: white;
+
+      @media screen and (max-width: 1368px) {
+        font-size: 3.5rem;
+      }
+
+      @media screen and (max-width: 720px) {
+        font-size: 2.5rem;
+      }
+    }
+
+    & p {
+      font-size: 2rem;
+      margin-bottom: 2rem;
+      color: $color-text-dark;
+
+      @media screen and (max-width: 1368px) {
+        font-size: 1.8rem;
+        max-width: 50rem;
+      }
+    }
+  }
+
+  &__thumbnail {
+    object-fit: contain;
+    max-width: 70rem;
+    border: $border-default;
+    border-radius: $border-radius-default;
+
+    @media screen and (max-width: 1368px) {
+      max-width: 60rem;
+    }
+
+    @media screen and (max-width: 800px) {
+      max-width: 50rem;
+    }
+
+    @media screen and (max-width: 550px) {
+      max-width: 40rem;
+    }
+
+    @media screen and (max-width: 450px) {
+      max-width: 30rem;
+    }
+  }
+
+  &__links {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: $spacing-small;
+
+    & a {
+      color: $color-external-link-dark;
+      font-size: $font-size-default;
+      overflow-wrap: break-word;
+      word-break: break-word;
+      width: fit-content;
+
+      @media screen and (max-width: 720px) {
+        font-size: $font-size-small;
+      }
+
+      &:hover {
+        text-decoration: underline wavy;
+      }
+    }
+  }
+}

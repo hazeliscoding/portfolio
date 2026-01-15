@@ -1,0 +1,66 @@
+@use "abstracts/variables" as *;
+
+.education-section {
+  margin-bottom: $spacing-xbig;
+
+  &__warning {
+    text-align: center;
+    font-size: $font-size-small;
+
+    margin-bottom: $spacing-big;
+
+    color: $color-text-dark;
+
+    @media screen and (max-width: 600px) {
+      font-size: 1.8rem;
+    }
+  }
+}
+
+.education-container {
+  overflow-y: auto;
+  max-height: 12rem;
+
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-medium;
+
+  @media screen and (max-width: 600px) {
+    gap: $spacing-small;
+  }
+
+  @media screen and (max-width: 496px) {
+    max-height: 13.2rem;
+  }
+
+  &__title {
+    font-size: $font-size-default;
+    font-weight: $font-weight-normal;
+
+    color: $color-subtitle-dark;
+
+    @media screen and (max-width: 600px) {
+      font-size: 2.2rem;
+    }
+  }
+
+  &__info {
+    color: $color-text-dark;
+  }
+
+  &__item {
+    font-size: $font-size-small;
+
+    @media screen and (max-width: 600px) {
+      font-size: 1.8rem;
+    }
+  }
+
+  &__split {
+    font-size: $font-size-default;
+    text-align: center;
+    max-width: 45rem;
+
+    color: $color-text-dark;
+  }
+}

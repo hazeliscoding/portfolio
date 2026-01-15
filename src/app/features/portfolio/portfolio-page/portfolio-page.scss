@@ -1,0 +1,38 @@
+@use "abstracts/variables" as *;
+
+.portfolio-page {
+  padding: 2rem 8rem;
+
+  @media screen and (max-width: 750px) {
+    padding: 0 1rem;
+    margin-top: $spacing-medium;
+  }
+
+  @media screen and (max-width: 600px) {
+    margin-top: $spacing-medium;
+    padding: 0 0.5rem;
+  }
+}
+
+.projects-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  padding: 0 8rem;
+  gap: 2rem;
+
+  @media screen and (max-width: 1500px) {
+    padding: 0 6rem;
+  }
+
+  @media screen and (max-width: 1250px) {
+    grid-template-columns: 1fr 1fr;
+    padding: 0 8rem;
+  }
+
+  @media screen and (max-width: 1000px) {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0;
+  }
+}

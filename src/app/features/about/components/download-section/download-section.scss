@@ -1,0 +1,81 @@
+@use "abstracts/variables" as *;
+
+.download-section {
+  margin-bottom: $spacing-xbig;
+
+  &__warning {
+    text-align: center;
+    font-size: $font-size-small;
+
+    color: $color-text-dark;
+    margin-bottom: $spacing-small;
+
+    &--2 {
+      margin-bottom: $spacing-big;
+    }
+
+    @media screen and (max-width: 600px) {
+      font-size: 1.8rem;
+    }
+  }
+
+  &__container {
+    display: flex;
+    gap: $spacing-medium;
+    overflow-x: auto;
+
+    &::-webkit-scrollbar {
+      height: 0.5rem;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background-color: var(--scrollbar-thumb);
+      border-radius: 1rem;
+    }
+  }
+
+  &__title {
+    font-size: $font-size-default;
+    margin-bottom: 1.5rem;
+
+    color: $color-text-dark;
+  }
+
+  &__element {
+    display: flex;
+    flex-direction: column;
+    padding: 1.5rem;
+    border-radius: $border-radius-default;
+    border: $border-default;
+  }
+
+  &__button {
+    border: none;
+    border-radius: $border-radius-default;
+
+    font-size: $font-size-default;
+
+    cursor: pointer;
+
+    width: 22rem;
+    background-color: $color-section-background-dark;
+    color: $color-subtitle-dark;
+
+    padding: 1rem 2rem;
+
+    &-text {
+      text-decoration: none;
+      border-bottom: 1px solid transparent;
+      transition: 0.2s ease;
+
+      &:hover {
+        border-bottom: 1px solid $color-subtitle-dark;
+      }
+    }
+
+    @media screen and (max-width: 600px) {
+      font-size: $font-size-small;
+      width: 19rem;
+    }
+  }
+}

@@ -1,0 +1,16 @@
+<div class="error-page">
+  <app-terminal-section
+    customTitle="Error"
+    [shortTerminalLine]="true"
+    [customCommand]="currentPath"
+    [errorCommand]="true"
+  >
+    <div class="not-found">
+      <h2 class="not-found__title">404 - Command not Found</h2>
+
+      <p class="not-found__output">
+        bash: {{ currentPath }}: command not found
+      </p>
+    </div>
+  </app-terminal-section>
+</div>

@@ -1,0 +1,61 @@
+@use "abstracts/variables" as *;
+
+.fade {
+  animation: $animation-fade;
+}
+
+.presentation-section {
+  margin-bottom: $spacing-xbig;
+}
+
+.role,
+.name,
+.pronouns,
+.paragraph,
+.social-links {
+  font-size: $font-size-default;
+
+  @media screen and (max-width: 600px) {
+    font-size: $font-size-small;
+  }
+}
+
+.name {
+  color: $color-text-dark;
+}
+
+.role {
+  color: $color-subtitle-dark;
+}
+
+.pronouns {
+  color: $color-subtitle-dark;
+}
+
+.paragraph {
+  color: $color-text-dark;
+  margin-top: $spacing-medium;
+}
+
+.social-links {
+  margin-left: 5rem;
+  margin-top: $spacing-medium;
+  margin-bottom: $spacing-big;
+
+  &__link {
+    color: $color-external-link-dark;
+
+    & a {
+      text-decoration: none;
+      color: $color-external-link-dark;
+
+      &:hover {
+        text-decoration: underline wavy;
+      }
+    }
+  }
+
+  @media screen and (max-width: 600px) {
+    margin-left: $spacing-big;
+  }
+}
