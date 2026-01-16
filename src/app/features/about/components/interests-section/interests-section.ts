@@ -10,9 +10,9 @@ import { AppTitle } from '../../../../core/shared/app-title/app-title';
 })
 export class InterestsSection {
   interests = [
-    'Web development',
-    'UI/UX',
-    'APIs',
-    'Developer tooling',
+    'Full-stack (.NET + Angular)',
+    'Cloud & serverless (AWS/Azure)',
+    'Microservices & event-driven systems',
+    'Performance, testing & CI/CD',
   ];
 }

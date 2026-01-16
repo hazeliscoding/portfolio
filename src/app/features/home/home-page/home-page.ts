@@ -32,7 +32,7 @@ export class HomePage {
     this.meta.updateTag({
       name: 'description',
       content:
-        "Hello, I'm Hazel Granados (she/they) — software developer/architect. I build full-stack apps with care and scalability. Freelancer open to cool and challenging projects.",
+        "Hello, I'm Hazel Granados (she/they) — software developer/architect. I build full-stack apps with care and scalability.",
     });
   }
 }
