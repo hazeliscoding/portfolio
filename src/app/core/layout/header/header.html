@@ -40,6 +40,12 @@
           (click)="navigate('/portfolio'); toggleMenu()"
           >portfolio</a
         >
+        <a
+          class="mobile-nav__link"
+          [ngClass]="{ 'mobile-nav__link--active': isActive('/blog') }"
+          (click)="navigate('/blog'); toggleMenu()"
+          >blog</a
+        >
       </div>
     </nav>
   </div>
@@ -62,6 +68,12 @@
       [ngClass]="{ 'header__link--active': isActive('/portfolio') }"
       (click)="navigate('/portfolio')"
       >portfolio</a
+    >
+    <a
+      class="header__link"
+      [ngClass]="{ 'header__link--active': isActive('/blog') }"
+      (click)="navigate('/blog')"
+      >blog</a
     >
   </nav>
 </header>

@@ -7,6 +7,18 @@ export const routes: Routes = [
       import('./features/home/home-page/home-page').then((m) => m.HomePage),
   },
   {
+    path: 'blog',
+    loadComponent: () =>
+      import('./features/blog/blog-page/blog-page').then((m) => m.BlogPage),
+  },
+  {
+    path: 'blog/:slug',
+    loadComponent: () =>
+      import('./features/blog/blog-post-page/blog-post-page').then(
+        (m) => m.BlogPostPage,
+      ),
+  },
+  {
     path: 'about',
     loadComponent: () =>
       import('./features/about/about-page/about-page').then((m) => m.AboutPage),

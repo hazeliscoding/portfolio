@@ -1,0 +1,90 @@
+@use "abstracts/variables" as *;
+
+.blog-page {
+  padding: 2rem 8rem;
+  max-width: 150rem;
+  margin: 0 auto;
+  font-size: $font-size-small;
+
+  @media screen and (max-width: 750px) {
+    padding: 0 1rem;
+    margin-top: $spacing-medium;
+  }
+
+  @media screen and (max-width: 600px) {
+    margin-top: $spacing-medium;
+    padding: 0 0.5rem;
+  }
+
+  &__intro {
+    margin: 0.75rem 0 1.5rem;
+    color: $color-ubuntu-muted;
+    line-height: $line-height-default;
+  }
+
+  &__posts {
+    display: grid;
+    gap: $spacing-medium;
+    margin-bottom: $spacing-big;
+  }
+
+  &__empty {
+    color: $color-ubuntu-muted;
+    margin: 1rem 0 2rem;
+  }
+}
+
+.blog-post-card {
+  display: block;
+  border: $border-default;
+  border-radius: $border-radius-default;
+  padding: $spacing-medium;
+  text-decoration: none;
+  color: $color-text-dark;
+  background-color: $color-section-background-dark;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: $box-shadow-default;
+  }
+
+  &__top {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: $spacing-medium;
+  }
+
+  &__title {
+    margin: 0;
+    font-size: $font-size-default;
+    font-weight: $font-weight-bold;
+  }
+
+  &__date {
+    margin: 0;
+    color: $color-ubuntu-muted;
+    white-space: nowrap;
+  }
+
+  &__description {
+    margin: $spacing-small 0 0;
+    color: $color-ubuntu-muted;
+    line-height: $line-height-default;
+  }
+
+  &__tags {
+    margin-top: $spacing-small;
+    display: flex;
+    flex-wrap: wrap;
+    gap: $spacing-small;
+  }
+
+  &__tag {
+    font-size: $font-size-xsmall;
+    color: $color-subtitle-dark;
+  }
+}

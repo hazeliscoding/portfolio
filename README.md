@@ -56,14 +56,34 @@ Images are served from the `public/` folder (copied as build assets). For exampl
 
 ---
 
+## 📝 Blog
+
+Blog posts are written as Markdown files under `public/blog/`.
+
+- Create a new post: `public/blog/my-new-post.md` (use kebab-case)
+- Required frontmatter:
+	- `title`
+	- `date` (YYYY-MM-DD)
+- Optional frontmatter:
+	- `description`
+	- `tags: [tag1, tag2]`
+
+The blog index used by the app is generated into `src/app/data/blog-posts.generated.ts`.
+This generation runs automatically on `npm run start` and `npm run build`.
+
+---
+
 ## 🧭 Routes
 
 - `/` → Home
+- `/blog` → Blog index
+- `/blog/:slug` → Blog post
 - `/about` → About
 - `/portfolio` → Portfolio index
 - `/portfolio/:id` → Project detail
 
 Top-level routes are prerendered; `portfolio/:id` is currently client-rendered.
+Blog routes are prerendered, including known `/blog/:slug` paths.
 
 ---
 

@@ -1,0 +1,36 @@
+<div class="blog-page">
+  <app-title title="Blog" />
+
+  <p class="blog-page__intro">
+    Short notes about building, learning, and shipping software.
+  </p>
+
+  <div class="blog-page__posts" *ngIf="posts.length; else empty">
+    <a
+      class="blog-post-card"
+      *ngFor="let post of posts"
+      [routerLink]="['/blog', post.slug]"
+    >
+      <div class="blog-post-card__top">
+        <h4 class="blog-post-card__title">{{ post.title }}</h4>
+        <p class="blog-post-card__date">{{ post.dateObj | date: 'mediumDate' }}</p>
+      </div>
+
+      <p class="blog-post-card__description" *ngIf="post.description">
+        {{ post.description }}
+      </p>
+
+      <div class="blog-post-card__tags" *ngIf="post.tags.length">
+        <span class="blog-post-card__tag" *ngFor="let tag of post.tags"
+          >#{{ tag }}</span
+        >
+      </div>
+    </a>
+  </div>
+
+  <ng-template #empty>
+    <p class="blog-page__empty">No posts yet.</p>
+  </ng-template>
+
+  <app-footer />
+</div>

@@ -1,0 +1,167 @@
+@use "abstracts/variables" as *;
+
+.blog-post-page {
+  padding: 2rem 8rem;
+  max-width: 150rem;
+  margin: 0 auto;
+  font-size: $font-size-small;
+
+  @media screen and (max-width: 750px) {
+    padding: 0 1rem;
+    margin-top: $spacing-medium;
+  }
+
+  @media screen and (max-width: 600px) {
+    margin-top: $spacing-medium;
+    padding: 0 0.5rem;
+  }
+
+  &__back {
+    display: inline-block;
+    margin-bottom: $spacing-medium;
+    text-decoration: none;
+    color: $color-subtitle-dark;
+
+    &:hover {
+      color: $color-accent-hover;
+    }
+  }
+
+  &__header {
+    margin-bottom: $spacing-medium;
+    border: $border-default;
+    border-radius: $border-radius-default;
+    background-color: $color-section-background-dark;
+    padding: $spacing-medium;
+    box-shadow: $box-shadow-default;
+  }
+
+  &__title {
+    margin: 0 0 $spacing-small;
+    font-size: $font-size-big;
+    font-weight: $font-weight-bold;
+    color: $color-title-dark;
+  }
+
+  &__meta {
+    margin: 0;
+    color: $color-ubuntu-muted;
+    display: flex;
+    flex-wrap: wrap;
+    gap: $spacing-small;
+    align-items: center;
+  }
+
+  &__tag {
+    color: $color-subtitle-dark;
+  }
+
+  &__content {
+    border: $border-default;
+    border-radius: $border-radius-default;
+    background-color: $color-section-background-dark;
+    padding: $spacing-big;
+    box-shadow: $box-shadow-default;
+    line-height: 1.7;
+    color: $color-text-dark;
+  }
+}
+
+// Markdown content is injected via [innerHTML], so it won't receive Angular's
+// emulated style scoping attributes. ::ng-deep ensures the typography rules apply.
+:host ::ng-deep .blog-post-page__content {
+  h1 {
+    font-size: $font-size-big;
+    margin: 0 0 $spacing-medium;
+  }
+
+  h2 {
+    font-size: $font-size-default;
+    margin: $spacing-big 0 $spacing-small;
+    color: $color-title-dark;
+
+    &::before {
+      content: "# ";
+      color: $color-accent;
+    }
+  }
+
+  h3 {
+    font-size: $font-size-small;
+    margin: $spacing-medium 0 $spacing-small;
+    color: $color-title-dark;
+  }
+
+  p {
+    margin: 0 0 $spacing-medium;
+    color: $color-ubuntu-text;
+  }
+
+  :is(ul, ol) {
+    margin: 0 0 $spacing-medium;
+    padding-left: 4.4rem;
+    list-style-position: outside;
+    color: $color-ubuntu-text;
+  }
+
+  li {
+    margin-bottom: 0.4rem;
+    padding-left: 0.6rem;
+  }
+
+  li::marker {
+    color: $color-accent;
+    font-size: 1em;
+  }
+
+  blockquote {
+    margin: 0 0 $spacing-medium;
+    padding: $spacing-small $spacing-medium;
+    border-left: 4px solid $color-accent;
+    background: rgba(255, 255, 255, 0.04);
+    color: $color-ubuntu-muted;
+  }
+
+  img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    margin: 0 0 $spacing-medium;
+    border-radius: $border-radius-default;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+  }
+
+  hr {
+    border: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+    margin: $spacing-big 0;
+  }
+
+  a {
+    color: $color-external-link-dark;
+    text-decoration: underline;
+
+    &:hover {
+      color: $color-accent-hover;
+    }
+  }
+
+  :is(pre, code) {
+    border-radius: $border-radius-default;
+  }
+
+  pre {
+    padding: $spacing-medium;
+    overflow: auto;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    margin: 0 0 $spacing-medium;
+    font-size: 1.6rem;
+  }
+
+  code {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    padding: 0.1rem 0.35rem;
+  }
+}

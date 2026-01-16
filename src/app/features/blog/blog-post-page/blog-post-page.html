@@ -1,0 +1,27 @@
+<div class="blog-post-page" *ngIf="post as p; else notFound">
+  <a class="blog-post-page__back" [routerLink]="['/blog']">← Back to blog</a>
+
+  <header class="blog-post-page__header">
+    <h1 class="blog-post-page__title">{{ p.title }}</h1>
+    <p class="blog-post-page__meta">
+      {{ p.dateObj | date: 'longDate' }}
+      <span *ngIf="p.tags.length"> · </span>
+      <span class="blog-post-page__tag" *ngFor="let tag of p.tags">#{{
+        tag
+      }}</span>
+    </p>
+  </header>
+
+  <article class="blog-post-page__content" [innerHTML]="p.html"></article>
+
+  <app-footer />
+</div>
+
+<ng-template #notFound>
+  <div class="blog-post-page">
+    <a class="blog-post-page__back" [routerLink]="['/blog']">← Back to blog</a>
+    <h1 class="blog-post-page__title">Post not found</h1>
+    <p class="blog-post-page__meta">That slug doesn’t match any post.</p>
+    <app-footer />
+  </div>
+</ng-template>

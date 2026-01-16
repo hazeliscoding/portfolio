@@ -23,7 +23,11 @@ export class Header {
   isMenuOpen = false;
 
   isActive(route: string) {
-    return this.currentPath === route;
+    if (route === '/') {
+      return this.currentPath === '/';
+    }
+
+    return this.currentPath === route || this.currentPath.startsWith(`${route}/`);
   }
 
   navigate(route: string) {
