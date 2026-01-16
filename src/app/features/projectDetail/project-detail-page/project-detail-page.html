@@ -33,6 +33,15 @@
           </a>
 
           <a
+            *ngIf="project.links.nuget"
+            [href]="project.links.nuget"
+            target="_blank"
+            class="project-link"
+          >
+            NuGet
+          </a>
+
+          <a
             *ngIf="project.links.demo"
             [href]="project.links.demo"
             target="_blank"

@@ -7,6 +7,7 @@ export interface Project {
   links: {
     github?: string;
     demo?: string;
+    nuget?: string;
   };
   tags?: string[];
   featured?: boolean;
@@ -15,66 +16,44 @@ export interface Project {
 
 export const projectsData: Project[] = [
   {
-    id: 'project-1',
-    title: 'Project One',
-    description: 'A placeholder project description. Replace this with your real work when ready.',
-    image: 'images/placeholder.svg',
-    links: {},
-    tags: ['Web', 'Frontend'],
-    featured: true,
-    command: 'glow project-1.md',
-  },
-  {
-    id: 'project-2',
-    title: 'Project Two',
-    description: 'Another placeholder project with a short summary of goals and impact.',
-    image: 'images/placeholder.svg',
-    links: {},
-    tags: ['API', 'Backend'],
-    featured: true,
-    command: 'glow project-2.md',
-  },
-  {
-    id: 'project-3',
-    title: 'Project Three',
-    description: 'Placeholder project showcasing tooling, automation, or a fun experiment.',
-    image: 'images/placeholder.svg',
-    links: {},
-    tags: ['Tooling'],
-    featured: false,
-    command: 'glow project-3.md',
-  },
-  {
-    id: 'project-4',
-    title: 'Project Four',
+    id: 'hazel-tree',
+    title: 'HazelTree',
     description:
-      'Placeholder project focused on performance, reliability, and observability. Replace with a real case study when ready.',
-    image: 'images/placeholder.svg',
-    links: {},
-    tags: ['Backend', 'Observability'],
+      'A cute, lightweight Linktree-style profile page built with Angular. Config-driven via a single JSON file with light/dark theme, sparkle cursor, and copy-to-clipboard links + toast.',
+    image: 'images/projects/hazel-tree.png',
+    links: {
+      github: 'https://github.com/hazeliscoding/hazel-tree',
+      demo: 'https://hazeliscoding.github.io/hazel-tree/',
+    },
+    tags: ['Angular', 'TypeScript', 'UI', 'GitHub Pages'],
     featured: true,
-    command: 'glow project-4.md',
+    command: 'glow hazel-tree.md',
   },
   {
-    id: 'project-5',
-    title: 'Project Five',
+    id: 'quickbase-net',
+    title: 'QuickbaseNet',
     description:
-      'Placeholder project highlighting UI polish and component architecture. Swap in screenshots and real outcomes later.',
-    image: 'images/placeholder.svg',
-    links: {},
-    tags: ['Frontend', 'UI/UX'],
+      'A .NET QuickBase API wrapper with a fluent Command/Query builder and a client for streamlined CRUD + complex queries. Built to be practical in real apps while exploring fluent API design.',
+    image: 'images/projects/quickbase-net.png',
+    links: {
+      github: 'https://github.com/hazeliscoding/quickbase-net',
+      nuget: 'https://www.nuget.org/packages/QuickbaseNet/',
+    },
+    tags: ['C#', '.NET', 'NuGet', 'SDK', 'API'],
     featured: true,
-    command: 'glow project-5.md',
+    command: 'glow quickbase-net.md',
   },
   {
-    id: 'project-6',
-    title: 'Project Six',
+    id: 'terminal-roguelike',
+    title: 'TermRogue (Win32)',
     description:
-      'Placeholder project centered on infrastructure and automation (CI/CD, IaC, deployments). Update with real details when available.',
-    image: 'images/placeholder.svg',
-    links: {},
-    tags: ['DevOps', 'Infrastructure'],
+      'A tiny terminal-based roguelike written in modern C++20 using the Win32 Console API. Built as a structured “relearn C++” project with a roadmap for map generation, turn system, FOV, combat, and more—with an eye toward future cross-platform support.',
+    image: 'images/projects/terminal-roguelike.png',
+    links: {
+      github: 'https://github.com/hazeliscoding/terminal-roguelike',
+    },
+    tags: ['C++20', 'Win32', 'Game Dev', 'Roguelike', 'CMake'],
     featured: true,
-    command: 'glow project-6.md',
+    command: 'glow terminal-roguelike.md',
   },
 ];
