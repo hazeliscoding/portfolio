@@ -8,7 +8,12 @@
       <span class="logo--right">granados</span>
     </a>
 
-    <button class="hamburger-button" (click)="toggleMenu()" aria-label="Menu">
+    <button
+      class="hamburger-button"
+      [class.hamburger-button--open]="isMenuOpen"
+      (click)="toggleMenu()"
+      aria-label="Toggle navigation menu"
+    >
       <span class="hamburger-line"></span>
       <span class="hamburger-line"></span>
       <span class="hamburger-line"></span>

@@ -8,4 +8,8 @@
   width: fit-content;
 
   margin-bottom: $spacing-medium;
+
+  @media screen and (max-width: 600px) {
+    font-size: $font-size-default;
+  }
 }

@@ -1,15 +1,10 @@
 @use "abstracts/variables" as *;
 
 .about-page {
-  padding: 2rem 8rem;
+  padding: 2rem clamp(1rem, 4vw, 8rem);
 
-  @media screen and (max-width: 750px) {
-    padding: 0 1rem;
+  @media screen and (max-width: 768px) {
+    padding-top: 0;
     margin-top: $spacing-medium;
-  }
-
-  @media screen and (max-width: 600px) {
-    margin-top: $spacing-medium;
-    padding: 0 0.5rem;
   }
 }

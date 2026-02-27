@@ -1,35 +1,25 @@
 @use "abstracts/variables" as *;
 
 .portfolio-page {
-  padding: 2rem 8rem;
+  padding: 2rem clamp(1rem, 4vw, 8rem);
 
-  @media screen and (max-width: 750px) {
-    padding: 0 1rem;
+  @media screen and (max-width: 768px) {
+    padding-top: 0;
     margin-top: $spacing-medium;
-  }
-
-  @media screen and (max-width: 600px) {
-    margin-top: $spacing-medium;
-    padding: 0 0.5rem;
   }
 }
 
 .projects-container {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
-  padding: 0 8rem;
+  padding: 0 clamp(0rem, 4vw, 8rem);
   gap: 2rem;
-
-  @media screen and (max-width: 1500px) {
-    padding: 0 6rem;
-  }
 
   @media screen and (max-width: 1250px) {
     grid-template-columns: 1fr 1fr;
-    padding: 0 8rem;
   }
 
-  @media screen and (max-width: 1000px) {
+  @media screen and (max-width: 768px) {
     display: flex;
     flex-direction: column;
     align-items: center;

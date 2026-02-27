@@ -25,12 +25,13 @@
   flex-direction: column;
   gap: $spacing-medium;
 
-  @media screen and (max-width: 600px) {
-    gap: $spacing-small;
+  @media screen and (max-width: 768px) {
+    max-height: none;
+    overflow-y: visible;
   }
 
-  @media screen and (max-width: 496px) {
-    max-height: 13.2rem;
+  @media screen and (max-width: 600px) {
+    gap: $spacing-small;
   }
 
   &__title {

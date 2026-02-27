@@ -22,15 +22,19 @@
   &__container {
     display: flex;
     gap: $spacing-medium;
-    overflow-x: auto;
+    flex-wrap: wrap;
 
-    &::-webkit-scrollbar {
-      height: 0.5rem;
-    }
+    @media screen and (min-width: 769px) {
+      overflow-x: auto;
 
-    &::-webkit-scrollbar-thumb {
-      background-color: var(--scrollbar-thumb);
-      border-radius: 1rem;
+      &::-webkit-scrollbar {
+        height: 0.5rem;
+      }
+
+      &::-webkit-scrollbar-thumb {
+        background-color: var(--scrollbar-thumb);
+        border-radius: 1rem;
+      }
     }
   }
 
@@ -47,6 +51,8 @@
     padding: 1.5rem;
     border-radius: $border-radius-default;
     border: $border-default;
+    flex: 1;
+    min-width: min(20rem, 100%);
   }
 
   &__button {
@@ -57,7 +63,7 @@
 
     cursor: pointer;
 
-    width: 22rem;
+    width: min(22rem, 100%);
     background-color: $color-section-background-dark;
     color: $color-subtitle-dark;
 
@@ -75,7 +81,6 @@
 
     @media screen and (max-width: 600px) {
       font-size: $font-size-small;
-      width: 19rem;
     }
   }
 }

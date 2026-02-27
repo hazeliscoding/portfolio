@@ -48,6 +48,8 @@
     & a {
       text-decoration: none;
       color: $color-external-link-dark;
+      padding: 0.6rem 0;
+      display: inline-block;
 
       &:hover {
         text-decoration: underline wavy;

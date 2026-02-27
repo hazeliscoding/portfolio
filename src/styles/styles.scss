@@ -25,7 +25,7 @@
 }
 
 html {
-  font-size: 10px;
+  font-size: clamp(8px, 2.5vw, 10px);
 
   font-family: $font-family-default;
   font-weight: $font-weight-normal;
@@ -60,5 +60,15 @@ body {
 
   100% {
     opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }

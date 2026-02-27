@@ -23,6 +23,8 @@
     padding-bottom: $spacing-medium;
 
     overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
 
     &::-webkit-scrollbar {
       height: 0.5rem;
@@ -31,6 +33,14 @@
     &::-webkit-scrollbar-thumb {
       background-color: var(--scrollbar-thumb);
       border-radius: 1rem;
+    }
+
+    & > * {
+      scroll-snap-align: start;
+    }
+
+    @media screen and (max-width: 768px) {
+      gap: 1.5rem;
     }
   }
 }

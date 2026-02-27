@@ -52,6 +52,8 @@
     typing 2s steps(25),
     blink 0.5s step-end infinite alternate;
 
+  max-width: 100%;
+
   // cursor
   border-right: 10px solid $color-text-dark;
 }

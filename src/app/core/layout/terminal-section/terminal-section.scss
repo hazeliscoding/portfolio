@@ -9,6 +9,10 @@
   background-color: $color-section-background-dark;
   position: relative;
 
+  @media screen and (max-width: $bp-tablet) {
+    padding: 4rem 1.5rem 1.5rem;
+  }
+
   &::before {
     content: "";
     position: absolute;
@@ -20,9 +24,21 @@
     border-top-left-radius: $border-radius-default;
     border-top-right-radius: $border-radius-default;
     background:
-      radial-gradient(circle at 1.8rem 1.6rem, $color-danger 0 0.55rem, transparent 0.6rem),
-      radial-gradient(circle at 3.6rem 1.6rem, #fce94f 0 0.55rem, transparent 0.6rem),
-      radial-gradient(circle at 5.4rem 1.6rem, $color-success 0 0.55rem, transparent 0.6rem),
+      radial-gradient(
+        circle at 1.8rem 1.6rem,
+        $color-danger 0 0.55rem,
+        transparent 0.6rem
+      ),
+      radial-gradient(
+        circle at 3.6rem 1.6rem,
+        #fce94f 0 0.55rem,
+        transparent 0.6rem
+      ),
+      radial-gradient(
+        circle at 5.4rem 1.6rem,
+        $color-success 0 0.55rem,
+        transparent 0.6rem
+      ),
       linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(0, 0, 0, 0.08));
   }
 
@@ -44,6 +60,14 @@
     margin-bottom: $spacing-medium;
 
     color: $color-title-dark;
+
+    @media screen and (max-width: $bp-tablet) {
+      font-size: $font-size-big;
+    }
+
+    @media screen and (max-width: $bp-mobile-lg) {
+      font-size: $font-size-default;
+    }
 
     &::before {
       content: "# ";
