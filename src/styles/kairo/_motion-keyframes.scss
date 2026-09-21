@@ -90,12 +90,18 @@
   }
 }
 
+// 26ch, not the mockup's 520px, and 26 deliberately matches the `steps(26, end)`
+// the consumer applies — one character per step. Measured with 520px: the path
+// text is 150px wide, so the reveal finished 147ms into a 450ms animation and
+// the remaining 300ms grew an invisible box. The declared duration was three
+// times the visible one, which also meant it could not be tuned by changing
+// `--dur-cinematic`, and the pacing drifted with label length.
 @keyframes type-a {
   from {
     max-width: 0;
   }
   to {
-    max-width: 520px;
+    max-width: 26ch;
   }
 }
 
@@ -104,7 +110,7 @@
     max-width: 0;
   }
   to {
-    max-width: 520px;
+    max-width: 26ch;
   }
 }
 
