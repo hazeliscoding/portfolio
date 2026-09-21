@@ -1,0 +1,30 @@
+<table class="data-table" [attr.data-density]="density()">
+  <thead>
+    <tr>
+      @for (col of columns(); track col.key) {
+        <th scope="col" [style.width]="col.width">{{ col.label }}</th>
+      }
+    </tr>
+  </thead>
+  <tbody>
+    @for (row of rows(); track row.id) {
+      <tr
+        class="data-table__row"
+        [class.data-table__row--selected]="row.id === selectedId()"
+        [attr.aria-selected]="row.id === selectedId()"
+        tabindex="0"
+        (click)="select.emit(row.id)"
+        (keydown.enter)="select.emit(row.id)"
+        (keydown.space)="select.emit(row.id)"
+      >
+        @for (col of columns(); track col.key) {
+          <td>{{ row.cells[col.key] }}</td>
+        }
+      </tr>
+    }
+  </tbody>
+</table>
+
+@if (endLabel()) {
+  <p class="data-table__end">{{ endLabel() }}</p>
+}
