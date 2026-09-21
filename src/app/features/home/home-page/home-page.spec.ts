@@ -46,6 +46,14 @@ describe('HomePage', () => {
     expect(mail?.getAttribute('href')).toBe('mailto:hazel.granados@protonmail.com');
   });
 
+  it('renders the LinkedIn and GitHub links', () => {
+    const el = fixture.nativeElement as HTMLElement;
+    const linkedin = el.querySelector('a[href="https://www.linkedin.com/in/hazelgranados/"]');
+    const github = el.querySelector('a[href="https://github.com/hazeliscoding"]');
+    expect(linkedin).toBeTruthy();
+    expect(github).toBeTruthy();
+  });
+
   it('contains no emoji', () => {
     const text = (fixture.nativeElement as HTMLElement).textContent ?? '';
     expect(/\p{Extended_Pictographic}/u.test(text)).toBe(false);

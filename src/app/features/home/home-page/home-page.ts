@@ -21,7 +21,7 @@ const LAST_UPDATE = '2026-09-20';
 })
 export class HomePage {
   lastUpdate = LAST_UPDATE;
-  projects = projectsData;
+  projects = projectsData.filter((p) => p.featured);
   posts = blogPosts;
   oss = ossStats;
 
@@ -48,6 +48,14 @@ export class HomePage {
     { label: 'Observability & monitoring setup' },
     { label: 'Automated testing & CI/CD pipelines' },
   ];
+
+  get total(): string {
+    return String(this.projects.length).padStart(2, '0');
+  }
+
+  indexOf(i: number): string {
+    return String(i + 1).padStart(2, '0');
+  }
 
   constructor(
     private title: Title,
