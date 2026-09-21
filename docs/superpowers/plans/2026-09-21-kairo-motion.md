@@ -1659,7 +1659,19 @@ Any animation with no reduced-motion rule is a defect. Fix it and say so.
 
 The cause is specificity, not the media query: **a media query adds no specificity**, so `.app__env` (0,1,0) inside `@media` loses to `.app[data-sfx="b"] .app__env` (0,2,1) outside it. The `display: none` on the wipe wrapper wins only because nothing else sets `display` on that element.
 
-The *behaviour* is currently correct anyway — `--dur-cinematic` and `--dur-window` collapse to `0ms` under reduced motion, so these one-shot animations complete instantly. But the stated mechanism does not work, and the dead rules are a trap: the moment anyone adds a **looping** animation to one of these selectors, the reduced-motion rule will silently fail to disable it and the zeroed-duration fallback will produce a degenerate infinite animation rather than a stopped one.
+The *behaviour* is currently correct anyway — but **not for the reason the tokens suggest, and not by a mechanism that will survive**. The measured duration was `1e-05s`, which is `0.01ms`, not the `0ms` the tokens set. It comes from a legacy GlitterNet rule still loaded alongside KAIRO (`src/styles/styles.scss`, the `@media (prefers-reduced-motion: reduce)` block at the end):
+
+```scss
+*, *::before, *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+}
+```
+
+That `!important` blanket is what is actually neutralising motion today, and **the redesign plan's Task 18 deletes it** along with the rest of GlitterNet. After that deletion the zeroed `--dur-*` tokens still make these one-shot animations instant, so they survive — but `animation-iteration-count: 1 !important` disappears, and it is the only thing currently stopping an uncovered **looping** animation from running forever under reduced motion.
+
+So fix this before Task 18, not after, and do not treat "it looks fine in the browser" as evidence while the blanket is still loaded. The dead rules are a trap on their own terms too: the moment anyone adds a looping animation to one of these selectors, the reduced-motion rule will silently fail to disable it.
 
 Fix every such rule so it actually wins. Either match the selector that set the animation:
 

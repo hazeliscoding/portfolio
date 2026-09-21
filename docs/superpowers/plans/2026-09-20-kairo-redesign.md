@@ -5393,6 +5393,27 @@ git commit -m "feat: regenerate social image and favicons for KAIRO"
 - Consumes: everything built in Tasks 1–17.
 - Produces: the finished site.
 
+### Before you delete `styles.scss`, know what else goes with it
+
+Its last rule is a blanket reduced-motion net:
+
+```scss
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+```
+
+Measured during the motion plan: this `!important` blanket — not the KAIRO `--dur-*` tokens — is what actually neutralises animation under reduced motion today. Computed durations read `1e-05s` (0.01ms), which is this rule's value, not the tokens' `0ms`.
+
+Two consequences for this task:
+
+1. **`animation-iteration-count: 1 !important` is currently the only thing stopping an uncovered looping animation from running forever under reduced motion.** The motion plan's M6 removes the dependency by making every per-component `animation: none` rule actually win. **Confirm M6 landed before deleting this**, and if it did not, do not delete `styles.scss` until it has.
+2. **After deletion, re-measure reduced motion rather than assuming it still holds.** With reduced motion emulated, `getComputedStyle(el).animationName` must read `none` for every animated element on every route — in particular the viewport scanline, the chapter caret and the detail REC lamp, which are the loops. A rule that was passing only because of the blanket will start failing silently, and silently is the operative word: nothing errors, the motion just comes back for the users who asked for less of it.
+
 - [ ] **Step 1: Confirm nothing references GlitterNet**
 
 ```bash

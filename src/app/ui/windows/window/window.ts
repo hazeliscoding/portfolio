@@ -29,5 +29,12 @@ export class Window {
   status = input('');
   active = input(false);
   padded = input(true);
+  /**
+   * Entrance stagger, as a CSS time with its unit — `'120ms'`, not `'120'`.
+   * A unitless value is invalid CSS, so the browser drops it silently and the
+   * panel arrives with the rest, which looks identical to forgetting the input.
+   * Empty (the default) removes the inline style rather than setting an empty
+   * one.
+   */
   delay = input('');
 }
