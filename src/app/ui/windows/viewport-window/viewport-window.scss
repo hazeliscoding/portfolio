@@ -19,6 +19,23 @@
   }
 }
 
+.viewport__scan {
+  position: absolute;
+  inset-inline: 0;
+  height: 2px;
+  background: var(--signal-info);
+  opacity: 0.35;
+  pointer-events: none;
+  animation: k-scan 3.2s var(--ease-linear) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .viewport__scan {
+    animation: none;
+    display: none;
+  }
+}
+
 .viewport__nosignal {
   font: var(--type-mono-s);
   letter-spacing: var(--tracking-wider);

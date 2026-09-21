@@ -1,4 +1,5 @@
-import { Component, input } from '@angular/core';
+import { Component, inject, input } from '@angular/core';
+import { MotionService } from '../../motion/motion.service';
 
 export type WindowVariant =
   | 'data'
@@ -19,6 +20,8 @@ export type WindowVariant =
   styleUrl: './window.scss',
 })
 export class Window {
+  motion = inject(MotionService);
+
   variant = input<WindowVariant>('data');
   title = input('');
   index = input('');
@@ -26,4 +29,5 @@ export class Window {
   status = input('');
   active = input(false);
   padded = input(true);
+  delay = input('');
 }

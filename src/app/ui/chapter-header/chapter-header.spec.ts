@@ -38,4 +38,9 @@ describe('ChapterHeader', () => {
     const el = fixture.nativeElement as HTMLElement;
     expect(el.querySelectorAll('h1').length).toBe(1);
   });
+
+  it('exposes the motion sequence for the title reveal', () => {
+    const el = fixture.nativeElement as HTMLElement;
+    expect(el.querySelector('.chapter__title')?.getAttribute('data-sfx')).toBe('a');
+  });
 });

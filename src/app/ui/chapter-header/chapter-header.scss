@@ -10,6 +10,21 @@
   font: var(--type-display-l);
   letter-spacing: var(--tracking-display);
   color: var(--text-primary);
+
+  &[data-sfx="a"] {
+    animation: ttl-a var(--dur-window) var(--ease-mech) both;
+  }
+
+  &[data-sfx="b"] {
+    animation: ttl-b var(--dur-window) var(--ease-mech) both;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chapter__title[data-sfx="a"],
+  .chapter__title[data-sfx="b"] {
+    animation: none;
+  }
 }
 
 .chapter__index {

@@ -7,7 +7,14 @@
 
 <div class="home">
   <div class="home__col">
-    <app-window variant="inspector" index="00" title="Operator" context="PROFILE" [active]="true">
+    <app-window
+      variant="inspector"
+      index="00"
+      title="Operator"
+      context="PROFILE"
+      [active]="true"
+      delay="40ms"
+    >
       <div class="home__operator">
         <app-viewport-window ratio="1 / 1" label="CAM 00" alt="" />
         <div>
@@ -22,7 +29,7 @@
       </div>
     </app-window>
 
-    <app-window index="01" title="Stack" context="RUNTIME">
+    <app-window index="01" title="Stack" context="RUNTIME" delay="80ms">
       <ul class="home__list">
         @for (s of stack; track s.idx) {
           <li class="home__list-row">
@@ -33,7 +40,7 @@
       </ul>
     </app-window>
 
-    <app-window index="02" title="Services" context="OFFERED">
+    <app-window index="02" title="Services" context="OFFERED" delay="120ms">
       <div class="home__tags">
         @for (t of services; track t.label) {
           <app-badge>{{ t.label }}</app-badge>
@@ -48,6 +55,7 @@
       title="Open Source"
       context="CONTRIBUTIONS"
       [status]="oss.totalMergedPrs + ' MERGED'"
+      delay="160ms"
     >
       <ul class="home__list">
         @for (r of oss.projects; track r.repo) {
@@ -59,7 +67,13 @@
       </ul>
     </app-window>
 
-    <app-window index="04" title="Archive" context="FEATURED" [status]="'RECORD 01 OF ' + total">
+    <app-window
+      index="04"
+      title="Archive"
+      context="FEATURED"
+      [status]="'RECORD 01 OF ' + total"
+      delay="200ms"
+    >
       @for (p of projects; track p.id; let i = $index) {
         <a class="home__record" [routerLink]="['/portfolio', p.id]">
           <span class="home__idx">{{ indexOf(i) }}</span>
@@ -70,7 +84,13 @@
       }
     </app-window>
 
-    <app-window index="05" title="Log" context="RECENT" [status]="posts.length + ' ENTRIES'">
+    <app-window
+      index="05"
+      title="Log"
+      context="RECENT"
+      [status]="posts.length + ' ENTRIES'"
+      delay="240ms"
+    >
       @for (b of posts; track b.slug) {
         <a class="home__log-row" [routerLink]="['/blog', b.slug]">
           <span class="home__meta">{{ b.date }}</span>
@@ -79,7 +99,7 @@
       }
     </app-window>
 
-    <app-window id="contact" index="06" title="Contact" context="DIRECT">
+    <app-window id="contact" index="06" title="Contact" context="DIRECT" delay="300ms">
       <p class="home__body">For questions or collaboration, reach out:</p>
       <a href="mailto:hazel.granados&#64;protonmail.com">hazel.granados&#64;protonmail.com</a>
       <div class="home__controls">

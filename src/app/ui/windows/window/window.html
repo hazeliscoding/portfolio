@@ -3,6 +3,8 @@
   [attr.data-variant]="variant()"
   [class.window--active]="active()"
   [attr.aria-label]="title()"
+  [attr.data-sfx]="motion.sfx()"
+  [style.animation-delay]="delay() || null"
 >
   <div class="window__head">
     @if (index()) {

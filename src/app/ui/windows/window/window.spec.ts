@@ -6,7 +6,7 @@ import { Window } from './window';
   standalone: true,
   imports: [Window],
   template: `
-    <app-window index="03" title="Archive" context="RECORDS" variant="inspector">
+    <app-window index="03" title="Archive" context="RECORDS" variant="inspector" delay="120ms">
       <p class="body-probe">contents</p>
     </app-window>
   `,
@@ -55,5 +55,17 @@ describe('Window', () => {
   it('applies the variant as a data attribute', () => {
     const el = fixture.nativeElement as HTMLElement;
     expect(el.querySelector('section')?.getAttribute('data-variant')).toBe('inspector');
+  });
+
+  it('exposes the motion sequence so its entrance can re-trigger', () => {
+    const el = fixture.nativeElement as HTMLElement;
+    expect(el.querySelector('section')?.getAttribute('data-sfx')).toBe('a');
+  });
+
+  it('applies a stagger delay when given one', () => {
+    // Host sets delay="120ms"
+    const el = fixture.nativeElement as HTMLElement;
+    const section = el.querySelector('section') as HTMLElement;
+    expect(section.style.animationDelay).toBe('120ms');
   });
 });

@@ -27,6 +27,21 @@
     width: var(--bw-indicator);
     background: var(--signal-active);
   }
+
+  &[data-sfx="a"] {
+    animation: win-a var(--dur-window) var(--ease-mech) both;
+  }
+
+  &[data-sfx="b"] {
+    animation: win-b var(--dur-window) var(--ease-mech) both;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .window[data-sfx="a"],
+  .window[data-sfx="b"] {
+    animation: none;
+  }
 }
 
 .window__head {

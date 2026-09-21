@@ -44,4 +44,16 @@ describe('ViewportWindow', () => {
     expect(bg).not.toBe('rgba(0, 0, 0, 0)');
     expect(bg).not.toBe('transparent');
   });
+
+  it('renders a scanline only when an image is present', () => {
+    fixture.componentRef.setInput('src', '');
+    fixture.detectChanges();
+    expect((fixture.nativeElement as HTMLElement).querySelector('.viewport__scan')).toBeNull();
+
+    fixture.componentRef.setInput('src', 'images/projects/pr-sweep/board.png');
+    fixture.detectChanges();
+    const scan = (fixture.nativeElement as HTMLElement).querySelector('.viewport__scan');
+    expect(scan).toBeTruthy();
+    expect(scan?.getAttribute('aria-hidden')).toBe('true');
+  });
 });
