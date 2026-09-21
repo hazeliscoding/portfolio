@@ -1,110 +1,49 @@
-# 🌸 Portfolio
+# hazel.exe 🌸
 
-A personal portfolio site built with Angular.
+My personal portfolio and blog, styled as a fictional late-90s Japanese broadcast terminal.
 
-Includes dedicated pages for **Home**, **About**, and **Portfolio**, plus a **Project Detail** route for case-study style views.
+**Live:** [www.hazeliscoding.dev](https://www.hazeliscoding.dev)
 
-> 💻 Platform: **Web** (Angular 21)
->
-> ✨ Rendering: **SSR + prerender** (static output) for top-level pages
-
----
-
-## 🛠 Tech Stack
-
-- Angular 21 (standalone components + router)
-- Angular SSR (`@angular/ssr`) + prerender/static output
-- TypeScript
-- RxJS
-- SCSS (global styles under `src/styles/`)
-- Karma + Jasmine (via `ng test`)
-
----
-
-## 🚀 Running Locally
-
-From a terminal in the project root:
+## Quick start
 
 ```bash
-# 1. Install deps
 npm install
-
-# 2. Start dev server
-npm run start
+npm start     # http://localhost:4200
 ```
 
-Open `http://localhost:4200/`.
+## Stack
 
-If you want to bind to all interfaces (useful for LAN/devcontainers):
+Angular 21 (standalone + signals) · SSR and prerendering via `@angular/ssr` · SCSS · Karma/Jasmine
+
+## Where things live
+
+| What | Where |
+| --- | --- |
+| Projects | `src/app/data/projects.data.ts` |
+| Blog posts | `public/blog/*.md` |
+| Images | `public/images/` |
+| Design tokens | `src/styles/kairo/tokens/` |
+| UI components | `src/app/ui/` |
+
+A post needs `title` and `date` frontmatter; `description` and `tags` are optional. Posts are
+compiled into `src/app/data/blog-posts.generated.ts` on every `start` and `build` — that file is
+generated output, so edit the Markdown, not the TypeScript.
+
+Open-source stats are generated the same way into `oss-stats.generated.ts`, but refresh weekly via
+GitHub Actions rather than at build time, so a rate-limited GitHub can't fail a deploy.
+
+## Scripts
 
 ```bash
-npm run dev
+npm start         # dev server (npm run dev binds all interfaces)
+npm run build     # prerenders 6 routes into dist/
+npm test          # unit tests
+npm run check:og  # verify the social card is the right size
 ```
 
----
+## Routes
 
-## 🧩 Content + Projects
+`/` · `/about` · `/portfolio` · `/portfolio/:id` · `/blog` · `/blog/:slug`
 
-Project cards and detail lookups are currently driven by a simple in-repo data source:
-
-- Edit projects in [src/app/data/projects.data.ts](src/app/data/projects.data.ts)
-- Access is wrapped by [src/app/services/projects-data.service.ts](src/app/services/projects-data.service.ts)
-
-Images are served from the `public/` folder (copied as build assets). For example:
-
-- Project images: `public/images/projects/`
-
----
-
-## 📝 Blog
-
-Blog posts are written as Markdown files under `public/blog/`.
-
-- Create a new post: `public/blog/my-new-post.md` (use kebab-case)
-- Required frontmatter:
-	- `title`
-	- `date` (YYYY-MM-DD)
-- Optional frontmatter:
-	- `description`
-	- `tags: [tag1, tag2]`
-
-The blog index used by the app is generated into `src/app/data/blog-posts.generated.ts`.
-This generation runs automatically on `npm run start` and `npm run build`.
-
----
-
-## 🧭 Routes
-
-- `/` → Home
-- `/blog` → Blog index
-- `/blog/:slug` → Blog post
-- `/about` → About
-- `/portfolio` → Portfolio index
-- `/portfolio/:id` → Project detail
-
-Top-level routes are prerendered; `portfolio/:id` is currently client-rendered.
-Blog routes are prerendered, including known `/blog/:slug` paths.
-
----
-
-## 🏗 Building
-
-```bash
-npm run build
-```
-
-Build output goes to `dist/`.
-
-To serve the SSR build locally after building:
-
-```bash
-npm run serve:ssr:portfolio
-```
-
----
-
-## 🧪 Tests
-
-```bash
-npm run test
-```
+Every route prerenders, including each known project and post. Anything else falls back to a
+client-rendered, `noindex` 404. ⌘K opens the command palette; `1`–`4` switch mode.
