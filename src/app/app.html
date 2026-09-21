@@ -1,5 +1,41 @@
-<div class="app-container">
-  <main class="main">
-    <router-outlet />
-  </main>
+<div class="app">
+  <app-system-bar position="top">
+    <span barLeft class="app__wordmark">hazel<span class="app__ext">.exe</span></span>
+    <span barCenter>
+      <app-readout label="NET" value="ONLINE" state="ok" />
+      <app-readout label="LOC" value="TEXAS // USA" />
+    </span>
+    <span barRight>
+      <app-readout label="STATUS" value="OPEN TO WORK" state="ok" />
+      <span class="app__clock">{{ clock() }}</span>
+    </span>
+  </app-system-bar>
+
+  <div class="app__body">
+    <app-mode-nav
+      class="app__rail"
+      [modes]="modes"
+      [activeId]="activeMode()"
+      (select)="onModeSelect($event)"
+    />
+
+    <main class="main">
+      <router-outlet />
+    </main>
+  </div>
+
+  <app-system-bar position="bottom">
+    <span barLeft class="app__hints">
+      <span>&#8984;K COMMAND</span>
+      <span>/ SEARCH</span>
+      <span>ESC BACK</span>
+    </span>
+  </app-system-bar>
+
+  <app-command-palette
+    [open]="paletteOpen()"
+    [commands]="commands"
+    (run)="onCommandRun($event)"
+    (close)="paletteOpen.set(false)"
+  />
 </div>
