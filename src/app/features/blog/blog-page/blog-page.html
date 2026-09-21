@@ -1,11 +1,33 @@
-<app-chapter-header code="LOG" index="04" context="ENTRIES" />
+<app-chapter-header code="LOG" index="04" [meta]="meta" />
 
-<app-window index="01" title="Log" context="ENTRIES" [status]="report">
-  <app-data-table
-    [columns]="columns"
-    [rows]="rows"
-    [selectedId]="selectedId"
-    endLabel="— END OF LOG —"
-    (select)="open($event)"
-  />
+<p class="log__intro" [attr.data-sfx]="motion.sfx()">
+  Short notes about building, learning, and shipping software.
+</p>
+
+<app-window
+  variant="dialogue"
+  index="01"
+  title="Entries"
+  context="NEWEST FIRST"
+  [active]="true"
+  [padded]="false"
+  footer="↵ OPEN ENTRY · ESC BACK"
+  delay="60ms"
+>
+  @for (entry of entries; track entry.slug) {
+    <a class="log__row" [routerLink]="['/blog', entry.slug]">
+      <span class="log__stamp">{{ entry.date }}<br />{{ entry.number }}</span>
+
+      <span class="log__entry">
+        <span class="log__title">{{ entry.title }}</span>
+        <span class="log__desc">{{ entry.description }}</span>
+      </span>
+
+      <span class="log__tags">
+        @for (tag of entry.tags; track tag) {
+          <app-badge tone="info">{{ tag }}</app-badge>
+        }
+      </span>
+    </a>
+  }
 </app-window>

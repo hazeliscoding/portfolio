@@ -1,49 +1,106 @@
+// The dossier is two stacks of panels: the operator column carries the bio and
+// the interests list, the inspector column the three short readouts. 1.4fr /
+// 1fr, not 1fr/1fr — the bio row is a 120px frame plus prose, and an even split
+// starves it while leaving the two-row inspectors half empty.
 .about {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
   gap: var(--sp-3);
-  align-items: start;
-  max-width: 1000px;
 }
 
-.about__window:first-child {
-  grid-column: 1 / -1;
+// `align-content: start` so a short column does not stretch its panels to the
+// height of the tall one.
+.about__col {
+  display: grid;
+  gap: var(--sp-3);
+  align-content: start;
+}
+
+.about__bio {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  gap: var(--sp-4);
+  align-items: start;
+}
+
+// Width stated on the frame itself, not left to the track: when the row stacks
+// on a phone the single column is full width, and a 3/4 viewport stretched to
+// 330px would be 440px tall.
+.about__portrait {
+  width: 120px;
+}
+
+// 520px is the design's measure. `min-width: 0` is what keeps the prose column
+// from pushing the grid wider than the window: without it the track's automatic
+// minimum is the KeyValue's min-content width, and the panel overflows on a
+// phone instead of wrapping.
+.about__prose {
+  display: grid;
+  gap: var(--sp-3);
+  max-width: 520px;
+  min-width: 0;
 }
 
 .about__para {
-  margin: 0 0 var(--sp-4);
+  margin: 0;
   font: var(--type-body);
   color: var(--text-secondary);
-  max-width: 68ch;
-
-  &:last-child {
-    margin-bottom: 0;
-  }
 }
 
-.about__location {
-  display: block;
-  margin-block-start: var(--sp-4);
-  padding-block-start: var(--sp-3);
-  border-top: var(--bw-hairline) solid var(--border-faint);
+// A list, semantically — the design draws it with divs, but four interests are
+// four items and a screen reader should be told how many are coming. The reset
+// makes the markup change cost nothing visually.
+.about__interests {
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
-.about__tags {
+// 9px/12px rows, off the 4px scale on purpose: this is window chrome drawn to
+// the hairline like the Window header's own 7px/10px, not layout. The rule
+// under the last row is in the design too — it closes the list against the
+// panel's bottom edge, which is why the window is unpadded.
+.about__interest {
+  display: flex;
+  gap: var(--sp-3);
+  align-items: baseline;
+  padding: 9px var(--sp-3);
+  border-bottom: var(--bw-hairline) solid var(--border-faint);
+  font: var(--type-body-s);
+  color: var(--text-secondary);
+}
+
+.about__idx {
+  font: var(--type-mono-s);
+  color: var(--text-faint);
+}
+
+.about__note {
+  margin: 0 0 var(--sp-3);
+  font: var(--type-body-s);
+  color: var(--text-secondary);
+}
+
+.about__exports {
   display: flex;
   flex-wrap: wrap;
   gap: var(--sp-2);
 }
 
-.about__link {
-  display: block;
-  min-height: var(--target-min);
-  line-height: var(--target-min);
-  font: var(--type-mono-s);
-  letter-spacing: var(--tracking-wide);
+// The design switches at `innerWidth >= 960`, so 959 down is the single stack.
+@media (max-width: 959px) {
+  .about {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 
-@media (max-width: 840px) {
-  .about {
+// Below 480px the prose column is too narrow for the two-up LOCATION/PRONOUNS
+// readout — measured, its min-content is ~240px against ~196px available at
+// 390px — so the portrait moves above the text and gives it the full panel
+// width. The design has no phone form for this row; this is the divergence that
+// keeps it from overflowing the window.
+@media (max-width: 480px) {
+  .about__bio {
     grid-template-columns: minmax(0, 1fr);
   }
 }

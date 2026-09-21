@@ -1,18 +1,38 @@
 .key-value {
   margin: 0;
   display: grid;
-  gap: var(--sp-2) var(--sp-4);
+  gap: 6px 14px;
   font: var(--type-mono-s);
-  letter-spacing: var(--tracking-wide);
   align-items: baseline;
 }
 
 .key-value__key {
   color: var(--text-faint);
+  letter-spacing: var(--tracking-wide);
   text-transform: uppercase;
+  // The key column is `auto`, so a key that wraps would drag the whole grid
+  // column wider on the next render and shift every value on the panel.
+  white-space: nowrap;
 }
 
+// The dotted rule is what makes this read as an inspector readout rather than
+// a paragraph of pairs: it carries the eye from the key across to the value
+// and marks where the field ends.
 .key-value__value {
   margin: 0;
   color: var(--text-primary);
+  border-bottom: var(--bw-hairline) dotted var(--border-faint);
+  padding-bottom: 2px;
+
+  &[data-state="ok"] {
+    color: var(--signal-success);
+  }
+
+  &[data-state="warn"] {
+    color: var(--signal-warning);
+  }
+
+  &[data-state="danger"] {
+    color: var(--text-active);
+  }
 }

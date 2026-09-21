@@ -1,4 +1,127 @@
+// No max-width. The log is a full-width instrument: its row grid reserves a
+// fixed 110px stamp gutter and a fixed 240px tag gutter and lets only the
+// entry column flex, so clamping the page would shrink the one track that is
+// meant to absorb the width.
 :host {
   display: block;
-  max-width: 900px;
+}
+
+// -6px top, off the spacing scale and deliberately negative: the chapter
+// header already ends with 16px of margin, and the design pulls the standfirst
+// back up so it reads as part of the heading block rather than as the first
+// paragraph of the page. 14px below it is the design's literal too.
+.log__intro {
+  margin: -6px 0 14px;
+  font: var(--type-body);
+  color: var(--text-secondary);
+
+  // The design animates the standfirst and the panel together, inside one
+  // wrapper at 60ms. `app-window` animates itself off `data-sfx`, so the
+  // wrapper is not rebuilt here — the paragraph carries the same cue and the
+  // same delay, and the two still arrive as one gesture.
+  &[data-sfx="a"] {
+    animation: win-a var(--dur-window) var(--ease-mech) both;
+    animation-delay: 60ms;
+  }
+
+  &[data-sfx="b"] {
+    animation: win-b var(--dur-window) var(--ease-mech) both;
+    animation-delay: 60ms;
+  }
+}
+
+// Matched on `.log__intro[data-sfx=...]` (0,2,0), not the bare class (0,1,0):
+// a media query adds no specificity, so a bare-class reset would lose to the
+// rules above. Same trap documented at src/app/app.scss:183.
+@media (prefers-reduced-motion: reduce) {
+  .log__intro[data-sfx="a"],
+  .log__intro[data-sfx="b"] {
+    animation: none;
+  }
+}
+
+.log__row {
+  display: grid;
+  grid-template-columns: 110px minmax(0, 1fr) 240px;
+  gap: var(--sp-4);
+  align-items: start;
+  // 14/12/14/9, off the 4px scale: window rows are drawn to the chrome. The
+  // 9px start padding is 12px less the 3px indicator border, so the text does
+  // not shift sideways when that border lights up on hover.
+  padding: 14px 12px 14px 9px;
+  border-bottom: var(--bw-hairline) solid var(--border-faint);
+  border-inline-start: var(--bw-indicator) solid transparent;
+  // The row is a link, so the global `a` colour would turn the whole entry
+  // cyan. Each cell states its own colour; the title takes the body's.
+  color: inherit;
+  cursor: pointer;
+  // The design writes `transition: all`. These three are the only properties
+  // its hover state changes, and naming them keeps the rule honest about what
+  // moves — the same correction made to the home page's log rows.
+  transition:
+    border-color var(--dur-micro) var(--ease-mech),
+    background-color var(--dur-micro) var(--ease-mech),
+    transform var(--dur-micro) var(--ease-mech);
+
+  // Keyboard focus gets the pointer's treatment as well. The focus ring itself
+  // comes from the global `:focus-visible` rule and is not overridden here.
+  &:hover,
+  &:focus-visible {
+    border-inline-start-color: var(--signal-active);
+    background: var(--surface-active-tint);
+    transform: translateX(2px);
+  }
+}
+
+.log__stamp {
+  font: var(--type-mono-s);
+  color: var(--text-faint);
+  // 3px: drops the 11px mono stamp onto the 20px display title's first
+  // baseline. Not a scale value, because it is an optical correction between
+  // two type sizes, not a space.
+  padding-block-start: 3px;
+}
+
+.log__entry {
+  // Without this the long description sets the column's minimum width and
+  // pushes the tag gutter off the row.
+  min-width: 0;
+  display: grid;
+  gap: var(--sp-1);
+}
+
+.log__title {
+  font: var(--type-title);
+  letter-spacing: var(--tracking-display);
+}
+
+.log__desc {
+  font: var(--type-body-s);
+  color: var(--text-muted);
+}
+
+.log__tags {
+  display: flex;
+  flex-wrap: wrap;
+  // 6px, between --sp-1 and --sp-2: badges are 18px tall, and 4px reads as one
+  // clump while 8px breaks the row into separate objects.
+  gap: 6px;
+  padding-block-start: 2px;
+}
+
+// 960px is the design's own threshold — it swaps the row grid at
+// `innerWidth >= 960`. The .98 covers fractional viewport widths from zoom.
+@media (max-width: 959.98px) {
+  .log__row {
+    grid-template-columns: 90px minmax(0, 1fr);
+  }
+
+  // DIVERGENCE from the design source. With two columns the tags are the third
+  // grid item, so auto-placement drops them into the next row's FIRST cell —
+  // the 90px stamp gutter — where every badge wraps onto its own line. Pinning
+  // them to the entry column keeps them under the title they belong to, which
+  // is plainly what the two-column layout intends.
+  .log__tags {
+    grid-column: 2;
+  }
 }

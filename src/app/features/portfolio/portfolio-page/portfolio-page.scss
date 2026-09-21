@@ -1,68 +1,145 @@
+// The filter bar enters as one panel, like the windows below it, and re-runs
+// on every navigation off `data-sfx`.
 .archive__filters {
   display: flex;
   align-items: center;
-  gap: var(--sp-4);
-  padding: var(--sp-2) 0 var(--sp-3);
-  border-bottom: var(--bw-hairline) solid var(--border-default);
-  margin-block-end: var(--sp-4);
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+  // 14px: off the 4px scale, and the design's own value. The bar sits closer
+  // to the grid than a --sp-4 gap would put it, which is what keeps it reading
+  // as chrome attached to the archive rather than as a row of its own.
+  margin-block-end: 14px;
+
+  &[data-sfx="a"] {
+    animation: win-a var(--dur-window) var(--ease-mech) both;
+  }
+
+  &[data-sfx="b"] {
+    animation: win-b var(--dur-window) var(--ease-mech) both;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  // Matched at the same specificity as the rules above (0,2,0) — a media query
+  // adds none, so a bare `.archive__filters` would lose. Same trap documented
+  // in src/app/app.scss.
+  .archive__filters[data-sfx="a"],
+  .archive__filters[data-sfx="b"] {
+    animation: none;
+  }
+}
+
+.archive__filters-label {
   font: var(--type-mono-s);
-  letter-spacing: var(--tracking-wide);
   color: var(--text-faint);
+  // 6px, off-scale: the label belongs to the pills that follow it, so it sits
+  // closer than the 8px that separates one pill from the next.
+  margin-inline-end: 6px;
 }
 
-.archive__filter-label {
-  color: var(--signal-active);
+.archive__filter {
+  // 10px horizontal is off the 4px scale; the design draws the pill to the
+  // same 8/10 rhythm as the window chrome rather than to the layout grid.
+  padding: var(--sp-2) 10px;
+  background: var(--surface-window);
+  border: var(--bw-hairline) solid var(--border-default);
+  border-radius: var(--radius-0);
+  font: 500 11px/1 var(--font-mono);
+  // 0.04em: half the --tracking-wide step. Not a token — at 11px mono the
+  // bracketed label needs less tracking than a bare label does.
+  letter-spacing: 0.04em;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all var(--dur-micro) var(--ease-mech);
+
+  // The design applies its hover to every pill, selected included: the border
+  // steps from the active red to strong ash while the tint stays. Kept as
+  // drawn — the tint, not the border, is what marks the selection.
+  &:hover {
+    color: var(--text-primary);
+    border-color: var(--border-strong);
+  }
+
+  &--on {
+    border-color: var(--signal-active);
+    background: var(--surface-active-tint);
+    color: var(--text-primary);
+  }
 }
 
-.archive__filter--active {
-  color: var(--text-primary);
-}
-
-.archive__pager {
+.archive__count {
   margin-inline-start: auto;
-  color: var(--text-muted);
+  font: var(--type-mono-s);
+  color: var(--text-faint);
 }
 
 .archive__grid {
   display: grid;
-  // Fixed track width so one record does not stretch to fill the row.
-  grid-template-columns: repeat(2, minmax(0, 480px));
+  grid-template-columns: 1fr;
   gap: var(--sp-3);
-  align-items: start;
 }
 
-.archive__link {
+// 960px, not one of the --bp-* tokens: the design switches the archive to two
+// columns at its own `wide` breakpoint, which is 80px above --bp-tablet.
+@media (min-width: 960px) {
+  .archive__grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+// The record is a link around the whole window, so the anchor has to disappear
+// into the layout: grid rather than block so the window stretches to the row's
+// height, exactly as it does when it is the grid item itself.
+.archive__card {
   display: grid;
-  gap: var(--sp-3);
+  min-width: 0;
   color: inherit;
+
+  // The global `a:hover` recolours to --text-primary, which would fight the
+  // window's own hover state. Hover is expressed by [active], not by colour.
+  &:hover {
+    color: inherit;
+  }
+}
+
+.archive__window {
+  display: grid;
+  min-width: 0;
+}
+
+.archive__shot {
+  display: block;
+}
+
+// The doubled frame this used to strip with ::ng-deep is now ViewportWindow's
+// own `frame="sides"` input — see the template. The bottom border stays either
+// way: it is the rule between the capture and the text below it.
+
+.archive__body {
+  display: grid;
+  // 10px, off-scale: tighter than the 12px padding around it, so the
+  // description and its tags read as one block inside the padded box.
+  gap: 10px;
+  padding: var(--sp-3);
 }
 
 .archive__desc {
   margin: 0;
   font: var(--type-body-s);
   color: var(--text-secondary);
-}
-
-.archive__meta {
-  display: flex;
-  align-items: center;
-  gap: var(--sp-3);
-  font: var(--type-mono-s);
-}
-
-.archive__stack {
-  margin-inline-start: auto;
-  color: var(--text-faint);
+  // Two lines, hard. Every card in a row is the same height, and a description
+  // that runs long would otherwise set that height for all of them.
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
 }
 
 .archive__tags {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--sp-2);
-}
-
-@media (max-width: 840px) {
-  .archive__grid {
-    grid-template-columns: minmax(0, 1fr);
-  }
+  // 6px, off-scale: badges are 11px mono with 2px/6px padding, and --sp-2
+  // between them reads as a gap rather than as a set.
+  gap: 6px;
 }

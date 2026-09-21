@@ -1,21 +1,43 @@
+// Geometry and type from the design system's Button.jsx. The label is UI sans
+// at 11/600 with 0.14em tracking — not mono. Mono is the instrument voice
+// (readouts, indices, paths); a control that the operator presses speaks in
+// the label voice.
+// Matched on the class, not on `button`, because this control renders as an
+// <a> whenever it has somewhere to go. `text-decoration: none` and the colour
+// reset are what stop the global link rules in _base.scss from repainting it
+// cyan and underlining it the moment it becomes an anchor.
 .button {
   display: inline-flex;
   align-items: center;
   gap: var(--sp-2);
-  min-height: var(--target-min);
-  padding: 0 var(--sp-4);
-  font: var(--type-mono);
-  letter-spacing: var(--tracking-wide);
+  text-decoration: none;
+  font-family: var(--font-ui);
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  border-radius: var(--radius-1);
+  border-radius: var(--radius-0);
   cursor: pointer;
+  user-select: none;
   background: var(--surface-elevated);
   color: var(--text-secondary);
   border: var(--bw-hairline) solid var(--border-default);
+  transition:
+    background var(--dur-micro) var(--ease-mech),
+    color var(--dur-micro) var(--ease-mech),
+    border-color var(--dur-micro) var(--ease-mech);
+
+  // md. The sizes carry their own vertical padding rather than a flat
+  // min-height, so a button grows with its label instead of centring in a
+  // fixed box.
+  padding: 11px 18px;
+  min-height: 36px;
 
   &:hover:not(:disabled) {
     background: var(--surface-raised);
     color: var(--text-primary);
+    border-color: var(--border-strong);
   }
 
   &:active:not(:disabled) {
@@ -24,7 +46,17 @@
 
   &:disabled {
     opacity: var(--opacity-disabled);
-    cursor: default;
+    cursor: not-allowed;
+  }
+
+  &[data-size="sm"] {
+    padding: 7px 12px;
+    min-height: 28px;
+  }
+
+  &[data-size="lg"] {
+    padding: 14px 24px;
+    min-height: var(--target-min);
   }
 
   &[data-variant="primary"] {
@@ -35,6 +67,7 @@
     &:hover:not(:disabled) {
       background: var(--k-red-3);
       color: var(--text-inverse);
+      border-color: transparent;
     }
 
     &:active:not(:disabled) {
@@ -44,30 +77,78 @@
   }
 
   &[data-variant="danger"] {
+    background: transparent;
     color: var(--text-active);
     border-color: var(--signal-active);
+
+    &:hover:not(:disabled) {
+      background: transparent;
+      color: var(--text-active);
+      border-color: var(--signal-active);
+    }
+
+    &:active:not(:disabled) {
+      background: var(--signal-active-dim);
+    }
   }
 
-  &[data-variant="command"] {
+  // Quiet tertiary action — no box at all until hover, then an underline.
+  // KAIRO uses it for the "< All projects" / "< All entries" returns.
+  &[data-variant="text"] {
     background: transparent;
-    border-color: var(--signal-active);
-    color: var(--text-active);
-  }
-
-  &[data-variant="mode"] {
-    background: transparent;
+    color: var(--text-muted);
     border-color: transparent;
-    justify-content: flex-start;
-    width: 100%;
+
+    &:hover:not(:disabled) {
+      background: transparent;
+      color: var(--text-primary);
+      border-color: transparent;
+      text-decoration: underline;
+      text-underline-offset: 4px;
+    }
   }
 
-  &[data-size="sm"] {
-    min-height: var(--target-min);
-    padding: 0 var(--sp-3);
-    font: var(--type-mono-s);
+  // The console voice: mono, bracketed, and cyan on hover rather than red.
+  // Red is reserved for the active/destructive register.
+  &[data-variant="command"] {
+    background: var(--surface-window);
+    color: var(--text-secondary);
+    border-color: var(--border-default);
+    font-family: var(--font-mono);
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: none;
+
+    &:hover:not(:disabled) {
+      background: var(--surface-window);
+      color: var(--signal-info);
+      border-color: var(--border-default);
+    }
+
+    &:active:not(:disabled) {
+      background: var(--surface-inset);
+    }
+  }
+}
+
+// Drawn in CSS, not in the template, so the brackets sit tight against the
+// label. As template nodes they would each become a flex item of `.button`
+// and pick up its 8px gap, printing `[ OPEN ARCHIVE ]`.
+.button[data-variant="command"] .button__label {
+  &::before {
+    content: "[";
+  }
+
+  &::after {
+    content: "]";
   }
 }
 
 .button__index {
-  color: var(--signal-active);
+  font-family: var(--font-mono);
+  color: var(--text-faint);
+}
+
+.button[data-variant="primary"] .button__index {
+  color: inherit;
 }

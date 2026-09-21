@@ -45,15 +45,27 @@ describe('ViewportWindow', () => {
     expect(bg).not.toBe('transparent');
   });
 
-  it('renders a scanline only when an image is present', () => {
-    fixture.componentRef.setInput('src', '');
+  it('renders a scanline only when asked for one', () => {
+    // Off by default, and independent of whether a feed is present: KAIRO
+    // puts the sweep on the detail screen's monitored viewport alone, so an
+    // archive card with a screenshot in it must stay still.
+    fixture.componentRef.setInput('src', 'images/projects/pr-sweep/board.png');
     fixture.detectChanges();
     expect((fixture.nativeElement as HTMLElement).querySelector('.viewport__scan')).toBeNull();
 
-    fixture.componentRef.setInput('src', 'images/projects/pr-sweep/board.png');
+    fixture.componentRef.setInput('scan', true);
     fixture.detectChanges();
     const scan = (fixture.nativeElement as HTMLElement).querySelector('.viewport__scan');
     expect(scan).toBeTruthy();
     expect(scan?.getAttribute('aria-hidden')).toBe('true');
+  });
+
+  it('hatches the empty state so it reads as no signal, not as a gap', () => {
+    fixture.componentRef.setInput('src', '');
+    fixture.detectChanges();
+    const empty = (fixture.nativeElement as HTMLElement).querySelector(
+      '.viewport__nosignal',
+    ) as HTMLElement;
+    expect(getComputedStyle(empty).backgroundImage).toContain('repeating-linear-gradient');
   });
 });

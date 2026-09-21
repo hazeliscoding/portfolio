@@ -1,31 +1,81 @@
-<app-chapter-header code="PROFILE" index="02" context="DOSSIER" />
+<app-chapter-header code="PROFILE" index="02" [meta]="chapterMeta" />
 
 <div class="about">
-  <app-window class="about__window" variant="inspector" index="01" title="Bio" context="SUBJECT" [active]="true">
-    @for (para of bio; track $index) {
-      <p class="about__para">{{ para }}</p>
-    }
-    <app-key-value class="about__location" [items]="location" />
-  </app-window>
+  <div class="about__col">
+    <app-window
+      variant="dialogue"
+      index="01"
+      title="About"
+      context="OPERATOR"
+      [active]="true"
+      delay="40ms"
+    >
+      <div class="about__bio">
+        <app-viewport-window class="about__portrait" ratio="3 / 4" label="CAM 00" alt="" />
+        <div class="about__prose">
+          @for (para of bio; track $index) {
+            <p class="about__para">{{ para }}</p>
+          }
+          <app-key-value [items]="profile" [columns]="2" />
+        </div>
+      </div>
+    </app-window>
 
-  <app-window class="about__window" index="02" title="Education" context="RECORD">
-    <app-key-value [items]="education" />
-  </app-window>
+    <app-window
+      variant="data"
+      index="03"
+      title="Interests"
+      [context]="interestCount"
+      [padded]="false"
+      delay="160ms"
+    >
+      <ul class="about__interests">
+        @for (i of interests; track i.label) {
+          <li class="about__interest">
+            <span class="about__idx">{{ i.idx }}</span>{{ i.label }}
+          </li>
+        }
+      </ul>
+    </app-window>
+  </div>
 
-  <app-window class="about__window" index="03" title="Languages" context="RECORD">
-    <app-key-value [items]="languages" />
-  </app-window>
+  <div class="about__col">
+    <app-window variant="inspector" index="02" title="Education" delay="80ms">
+      <app-key-value [items]="education" />
+    </app-window>
 
-  <app-window class="about__window" index="04" title="Interests" context="RECORD">
-    <div class="about__tags">
-      @for (i of interests; track i) {
-        <app-badge>{{ i }}</app-badge>
-      }
-    </div>
-  </app-window>
+    <app-window variant="inspector" index="04" title="Languages" delay="120ms">
+      <app-key-value [items]="languages" />
+    </app-window>
 
-  <app-window class="about__window" index="05" title="Resume" context="DOWNLOAD">
-    <a class="about__link" href="resume/resume-en.pdf" download>&gt; RESUME.PDF</a>
-    <a class="about__link" href="resume/resume-en.docx" download>&gt; RESUME.DOCX</a>
-  </app-window>
+    <app-window
+      variant="command"
+      index="05"
+      title="Resume"
+      context="EXPORT"
+      [footer]="resumeFooter"
+      delay="200ms"
+    >
+      <p class="about__note">
+        Full work history, education and contact details in one page.
+      </p>
+      <!--
+        `href` makes app-button render a real <a download>, so these keep
+        middle-click, "open in new tab" and the prerendered page before
+        hydration — and they are announced as links, which is what they are.
+      -->
+      <div class="about__exports">
+        <app-button variant="primary" size="md" [href]="resumePdf" download="resume-en.pdf"
+          >Download resume &gt;</app-button
+        >
+        <app-button
+          variant="secondary"
+          size="md"
+          [href]="resumeDocx"
+          download="resume-en.docx"
+          >Download .docx</app-button
+        >
+      </div>
+    </app-window>
+  </div>
 </div>

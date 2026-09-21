@@ -1,9 +1,4 @@
-<app-chapter-header
-  code="HOME"
-  index="01"
-  context="OPERATOR PROFILE"
-  [status]="'LAST UPDATE ' + lastUpdate"
-/>
+<app-chapter-header code="HOME" index="01" [meta]="'LAST UPDATE ' + lastUpdate" />
 
 <div class="home">
   <div class="home__col">
@@ -16,108 +11,123 @@
       delay="40ms"
     >
       <div class="home__operator">
-        <app-viewport-window ratio="1 / 1" label="CAM 00" alt="" />
-        <div>
-          <p class="home__name">Hazel Granados</p>
-          <p class="home__role">SOFTWARE DEVELOPER</p>
-          <p class="home__pronouns">SHE/THEY</p>
-          <div class="home__controls">
-            <a class="home__link" href="#contact">Contact &gt;</a>
-            <a class="home__link" href="resume/resume-en.pdf">Resume</a>
-          </div>
+        <!--
+          No `alt`: there is no portrait asset, so the viewport draws its
+          NO SIGNAL state and falls back to announcing exactly that. Naming it
+          "portrait" would describe a picture that is not on the page.
+        -->
+        <app-viewport-window ratio="1 / 1" label="CAM 00" />
+        <div class="home__identity">
+          <span class="home__name">Hazel Granados</span>
+          <span class="home__role">SOFTWARE DEVELOPER · SHE/THEY</span>
+          <p class="home__bio">
+            Full-stack developer focused on clean, well-structured solutions.
+          </p>
         </div>
+      </div>
+
+      <app-key-value class="home__kv" [items]="contactKv" />
+
+      <div class="home__actions">
+        <app-button variant="primary" size="md" [href]="mailto">Contact &gt;</app-button>
+        <app-button variant="secondary" size="md" routerLink="/about">Dossier</app-button>
       </div>
     </app-window>
 
-    <app-window index="01" title="Stack" context="RUNTIME" delay="80ms">
-      <ul class="home__list">
-        @for (s of stack; track s.idx) {
-          <li class="home__list-row">
-            <span class="home__idx">{{ s.idx }}</span>
-            <span>{{ s.label }}</span>
+    <app-window
+      index="02"
+      title="Services"
+      [context]="serviceContext"
+      [padded]="false"
+      delay="160ms"
+    >
+      <ul class="home__services">
+        @for (s of services; track s.label) {
+          <li class="home__service">
+            <span class="home__service-idx">{{ s.idx }}</span>{{ s.label }}
           </li>
         }
       </ul>
     </app-window>
 
-    <app-window index="02" title="Services" context="OFFERED" delay="120ms">
-      <div class="home__tags">
-        @for (t of services; track t.label) {
-          <app-badge>{{ t.label }}</app-badge>
+    <app-window
+      index="03"
+      title="Open source"
+      context="PUBLIC PRS"
+      [footer]="ossUpdated"
+      delay="240ms"
+    >
+      <app-key-value [items]="ossKv" [columns]="3" />
+      <ul class="home__oss">
+        @for (r of ossRows; track r.url) {
+          <li class="home__oss-row">
+            <a
+              class="home__oss-name"
+              [href]="r.url"
+              [title]="r.full"
+              target="_blank"
+              rel="noopener"
+              >{{ r.name }}</a
+            >
+            <span class="home__oss-meta">{{ r.meta }}</span>
+          </li>
         }
-      </div>
+      </ul>
     </app-window>
   </div>
 
   <div class="home__col">
-    <app-window
-      index="03"
-      title="Open Source"
-      context="CONTRIBUTIONS"
-      [status]="oss.totalMergedPrs + ' MERGED'"
-      delay="160ms"
-    >
-      <ul class="home__list">
-        @for (r of oss.projects; track r.repo) {
-          <li class="home__list-row">
-            <a [href]="r.url" target="_blank" rel="noopener">{{ r.repo }}</a>
-            <span class="home__meta">{{ r.stars }} STARS // {{ r.mergedPrs }} PRS</span>
-          </li>
+    <app-window index="01" title="Stack" [context]="stackContext" delay="80ms">
+      <div class="home__stack">
+        @for (t of stack; track t.label) {
+          <app-badge [tone]="t.tone">{{ t.label }}</app-badge>
         }
-      </ul>
+      </div>
     </app-window>
 
     <app-window
+      variant="command"
       index="04"
-      title="Archive"
-      context="FEATURED"
-      [status]="'RECORD 01 OF ' + total"
-      delay="200ms"
+      title="Featured projects"
+      [context]="recordContext"
+      [active]="true"
+      [padded]="false"
+      footer="&#8629; OPEN RECORD · 3 OPEN ARCHIVE"
+      delay="120ms"
     >
-      @for (p of projects; track p.id; let i = $index) {
+      @for (p of projects; track p.id) {
         <a class="home__record" [routerLink]="['/portfolio', p.id]">
-          <span class="home__idx">{{ indexOf(i) }}</span>
-          <span class="home__record-title">{{ p.title }}</span>
-          <span class="home__meta">{{ p.stack }} // {{ p.year }}</span>
-          <app-status-light state="ok" label="ACTIVE" />
+          <span class="home__record-idx">{{ p.idx }}</span>
+          <span class="home__record-main">
+            <span class="home__record-head">
+              <span class="home__record-title">{{ p.title }}</span>
+              <span class="home__record-meta">{{ p.meta }}</span>
+            </span>
+            <span class="home__record-summary">{{ p.summary }}</span>
+          </span>
+          <span class="home__record-caret" aria-hidden="true">&gt;</span>
         </a>
       }
     </app-window>
 
     <app-window
+      variant="dialogue"
       index="05"
       title="Log"
-      context="RECENT"
-      [status]="logStatus"
-      delay="240ms"
+      context="LATEST"
+      [padded]="false"
+      delay="200ms"
     >
       @for (b of posts; track b.slug) {
         <a class="home__log-row" [routerLink]="['/blog', b.slug]">
-          <span class="home__meta">{{ b.date }}</span>
-          <span class="home__record-title">{{ b.title }}</span>
+          <span class="home__log-date">{{ b.date }}</span>
+          <span class="home__log-main">
+            <span class="home__log-title">{{ b.title }}</span>
+            <span class="home__log-tags">{{ b.tagline }}</span>
+          </span>
+          <span class="home__log-caret" aria-hidden="true">&gt;</span>
         </a>
       }
-    </app-window>
-
-    <app-window id="contact" index="06" title="Contact" context="DIRECT" delay="300ms">
-      <p class="home__body">For questions or collaboration, reach out:</p>
-      <a href="mailto:hazel.granados&#64;protonmail.com">hazel.granados&#64;protonmail.com</a>
-      <div class="home__controls">
-        <a
-          class="home__link"
-          href="https://www.linkedin.com/in/hazelgranados/"
-          target="_blank"
-          rel="noopener"
-          >LinkedIn</a
-        >
-        <a
-          class="home__link"
-          href="https://github.com/hazeliscoding"
-          target="_blank"
-          rel="noopener"
-          >GitHub</a
-        >
-      </div>
     </app-window>
   </div>
 </div>

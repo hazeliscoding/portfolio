@@ -1,20 +1,30 @@
 <header class="chapter">
-  <h1 class="chapter__title" [attr.data-sfx]="motion.sfx()">
-    <span class="chapter__code">{{ code() }}</span
-    ><span class="chapter__index">_{{ index() }}</span>
-  </h1>
+  @if (backLabel()) {
+    <a class="chapter__back" [routerLink]="backRoute()">&lt; {{ backLabel() }}</a>
+  }
 
-  <span class="chapter__caret" aria-hidden="true"></span>
-
-  @if (context()) {
-    <p class="chapter__context">
-      <span class="chapter__owner">HAZEL.EXE</span>
-      <span class="chapter__sep">//</span>
-      <span class="chapter__label">{{ context() }}</span>
+  <!--
+    Same box, same type, different element. The chapter is the page's heading
+    on every screen whose content has no title of its own; on a blog entry the
+    post's own <h1> is the heading and this is a location label, so it steps
+    down to a <p> rather than shipping a second <h1>. KAIRO draws it as a plain
+    span throughout — the <h1> is ours, because a page needs a heading.
+  -->
+  @if (heading()) {
+    <h1 class="chapter__title" [attr.data-sfx]="motion.sfx()">
+      <span class="chapter__code">{{ code() }}</span
+      >@if (index()) {<span class="chapter__index">_{{ index() }}</span>}
+    </h1>
+  } @else {
+    <p class="chapter__title" [attr.data-sfx]="motion.sfx()">
+      <span class="chapter__code">{{ code() }}</span
+      >@if (index()) {<span class="chapter__index">_{{ index() }}</span>}
     </p>
   }
 
-  @if (status()) {
-    <p class="chapter__status">{{ status() }}</p>
+  <span class="chapter__caret" aria-hidden="true"></span>
+
+  @if (meta()) {
+    <p class="chapter__meta" [attr.data-sfx]="motion.sfx()">{{ meta() }}</p>
   }
 </header>

@@ -90,27 +90,39 @@
   }
 }
 
-// 26ch, not the mockup's 520px, and 26 deliberately matches the `steps(26, end)`
-// the consumer applies — one character per step. Measured with 520px: the path
-// text is 150px wide, so the reveal finished 147ms into a 450ms animation and
-// the remaining 300ms grew an invisible box. The declared duration was three
-// times the visible one, which also meant it could not be tuned by changing
-// `--dur-cinematic`, and the pacing drifted with label length.
+// Reveals by clip, not by width, and that choice is load-bearing.
+//
+// The mockup animates `max-width: 0 → 520px`. Any width-based end value has to
+// predict how wide the text will be, and every attempt here was wrong for some
+// label: a flat 520px finished the visible reveal 147ms into a 450ms animation
+// and spent the rest growing an invisible box; a fitted `26ch` was right only
+// for the labels that existed when it was written and permanently clipped
+// `HAZEL.EXE // OPERATOR PROFILE` once the path got longer; and computing the
+// value from the character count still undershot, because `ch` does not
+// include the 0.06em tracking the path carries — measured at 205px of reveal
+// against 210px of text.
+//
+// `clip-path` is exact by construction: the inset is a percentage of the
+// element's own painted box, so the reveal is always precisely as wide as the
+// text and no arithmetic can drift. `ttl-a`/`ttl-b` above already do this for
+// the chapter title; the path is the same gesture. `steps(N, end)` on the
+// consumer is what still makes it read as characters printing rather than a
+// wipe.
 @keyframes type-a {
   from {
-    max-width: 0;
+    clip-path: inset(0 100% 0 0);
   }
   to {
-    max-width: 26ch;
+    clip-path: inset(0 0 0 0);
   }
 }
 
 @keyframes type-b {
   from {
-    max-width: 0;
+    clip-path: inset(0 100% 0 0);
   }
   to {
-    max-width: 26ch;
+    clip-path: inset(0 0 0 0);
   }
 }
 

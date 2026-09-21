@@ -12,10 +12,18 @@ import { NavigationEnd, NavigationStart, Router, RouterLink, RouterOutlet } from
 import { SystemBar } from './ui/windows/system-bar/system-bar';
 import { ModeNav } from './ui/windows/mode-nav/mode-nav';
 import { Readout } from './ui/core/readout/readout';
+import { StatusLight } from './ui/core/status-light/status-light';
 import { CommandPalette } from './ui/overlays/command-palette/command-palette';
 import { Boot } from './ui/boot/boot';
 import { MotionService } from './ui/motion/motion.service';
-import { COMMANDS, MODES, envWordFor } from './core/navigation';
+import {
+  COMMANDS,
+  MODES,
+  envWordFor,
+  isLostRoute,
+  logMessageFor,
+  pathLabelFor,
+} from './core/navigation';
 import { OPERATOR_STATUS } from './core/site';
 
 const CLOCK_PLACEHOLDER = '--:--:--';
@@ -23,7 +31,16 @@ const CLOCK_PLACEHOLDER = '--:--:--';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, RouterLink, SystemBar, ModeNav, Readout, CommandPalette, Boot],
+  imports: [
+    RouterOutlet,
+    RouterLink,
+    SystemBar,
+    ModeNav,
+    Readout,
+    StatusLight,
+    CommandPalette,
+    Boot,
+  ],
   templateUrl: './app.html',
   styleUrl: './app.scss',
 })
@@ -52,16 +69,20 @@ export class App {
 
   envWord = computed(() => envWordFor(this.currentUrl()));
 
-  pathLabel = computed(() => {
-    const active = this.modes.find((m) => m.id === this.activeMode());
-    // 'NULL', not 'HOME': activeMode() can now return '' for an unmatched
-    // URL, and the path readout claiming HOME on a 404 would be the same
-    // lie the rail was just fixed for. 'NULL' matches envWordFor's own
-    // fallback for this exact class of URL, so the two instruments agree.
-    return active ? active.label : 'NULL';
-  });
+  pathLabel = computed(() => pathLabelFor(this.currentUrl()));
 
-  private readonly entries = signal<string[]>([]);
+  /**
+   * The bottom-bar lamp reports the route's health, and it has to agree with
+   * the environmental word behind the page. Both derive from `isLostRoute`,
+   * so a record id that does not exist lights the lamp red on
+   * `/portfolio/unknown` — not only on a route the router failed to match.
+   */
+  lightState = computed(() => (isLostRoute(this.currentUrl()) ? 'danger' : 'ok'));
+  lightLabel = computed(() =>
+    isLostRoute(this.currentUrl()) ? 'ROUTE ERROR' : 'OPERATIONAL',
+  );
+
+  private readonly entries = signal<string[]>(['SESSION OPENED — NODE TX-01']);
   lastLog = computed(() => this.entries()[0] ?? '');
 
   // Derived from the URL, not random: prerender and hydration must agree.
@@ -89,7 +110,7 @@ export class App {
       this.currentUrl.set(this.router.url);
       if (event instanceof NavigationEnd) {
         this.handleScrollFor(event);
-        this.note('NAV ' + event.urlAfterRedirects);
+        this.note(logMessageFor(event.urlAfterRedirects));
       }
     });
 
@@ -179,21 +200,56 @@ export class App {
     return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   }
 
+  /**
+   * The bottom bar advertises `1–4 MODE · ⌘K COMMAND · ESC BACK`, so all three
+   * have to work. They are handled in that order of precedence, and every
+   * branch below the palette check is skipped while the palette is open —
+   * typing `3` into the command input must not also navigate.
+   */
   @HostListener('document:keydown', ['$event'])
   onKeydown(event: KeyboardEvent): void {
-    if ((event.metaKey || event.ctrlKey) && event.key === 'k') {
+    if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
       event.preventDefault();
-      this.paletteOpen.set(true);
+      this.paletteOpen.update((open) => !open);
       return;
     }
-    if (event.key === '/' && !this.isTypingTarget(event.target)) {
+    if (this.paletteOpen()) return;
+    if (event.altKey || event.ctrlKey || event.metaKey) return;
+    if (this.isTypingTarget(event.target)) return;
+
+    if (event.key === '/') {
       event.preventDefault();
       this.paletteOpen.set(true);
       return;
     }
     if (event.key === 'Escape') {
-      this.paletteOpen.set(false);
+      this.back();
+      return;
     }
+    const mode = this.modes.find((m) => m.index === '0' + event.key);
+    if (mode) {
+      event.preventDefault();
+      this.router.navigateByUrl(mode.route);
+    }
+  }
+
+  /**
+   * One level out, not history.back(). Landing on a record from a shared link
+   * and pressing Escape should reach the archive, which `history.back()` would
+   * not — there is nothing behind that entry.
+   */
+  private back(): void {
+    const path = this.router.url.split('?')[0].split('#')[0];
+    if (path === '/') return;
+    if (path.startsWith('/portfolio/')) {
+      this.router.navigateByUrl('/portfolio');
+      return;
+    }
+    if (path.startsWith('/blog/')) {
+      this.router.navigateByUrl('/blog');
+      return;
+    }
+    this.router.navigateByUrl('/');
   }
 
   onModeSelect(id: string): void {
@@ -204,7 +260,10 @@ export class App {
   onCommandRun(id: string): void {
     const command = this.commands.find((c) => c.id === id);
     this.paletteOpen.set(false);
-    this.note('EXEC ' + id);
+    // No log line here. Every command navigates, and the NavigationEnd
+    // handler already narrates the arrival — noting the command as well put
+    // two entries in the bar for one action, the first of which was replaced
+    // before it could be read.
     if (command) this.router.navigateByUrl(command.route);
   }
 
@@ -219,8 +278,10 @@ export class App {
 
   private note(message: string): void {
     // Stamped from the shared clock signal rather than a fresh Date, so the
-    // two instruments in the bar can never disagree about the time.
+    // two instruments in the bar can never disagree about the time. The stamp
+    // trails the message: the event is what the operator is reading, and a
+    // leading timestamp pushes every line's first word out of alignment.
     const stamp = this.clock();
-    this.entries.update((all) => [`${stamp} ${message}`, ...all].slice(0, 5));
+    this.entries.update((all) => [`${message} · ${stamp}`, ...all].slice(0, 5));
   }
 }

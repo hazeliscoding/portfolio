@@ -1,45 +1,68 @@
-<app-chapter-header
-  code="ARCHIVE"
-  index="03"
-  context="PROJECT RECORDS"
-/>
+<app-chapter-header code="ARCHIVE" index="03" [meta]="records()" />
 
-<div class="archive__filters">
-  <span class="archive__filter-label">[FILTER]</span>
-  <span class="archive__filter archive__filter--active">ALL</span>
-  <span class="archive__pager">RECORD 01 OF {{ total }}</span>
+<div
+  class="archive__filters"
+  role="group"
+  aria-labelledby="archive-filter-label"
+  [attr.data-sfx]="motion.sfx()"
+>
+  <span class="archive__filters-label" id="archive-filter-label">FILTER</span>
+
+  @for (f of filters; track f) {
+    <button
+      type="button"
+      class="archive__filter"
+      [class.archive__filter--on]="filter() === f"
+      [attr.aria-pressed]="filter() === f"
+      (click)="pick(f)"
+    >[{{ f }}]</button>
+  }
+
+  <!-- Live because the filter bar is the only place the result of pressing a
+       pill is stated; the chapter header repeats it silently. -->
+  <span class="archive__count" aria-live="polite">{{ records() }}</span>
 </div>
 
 <div class="archive__grid">
-  @for (p of projects; track p.id; let i = $index) {
-    <app-window
-      class="archive__record"
-      variant="media"
-      [index]="indexOf(i)"
-      [title]="p.title"
-      context="RECORD"
+  @for (c of cards(); track c.id) {
+    <a
+      class="archive__card"
+      [routerLink]="['/portfolio', c.id]"
+      (mouseenter)="hover(c.id)"
+      (mouseleave)="hover(null)"
+      (focus)="hover(c.id)"
+      (blur)="hover(null)"
     >
-      <a class="archive__link" [routerLink]="['/portfolio', p.id]">
+      <app-window
+        class="archive__window"
+        variant="media"
+        [index]="c.index"
+        [title]="c.title"
+        [context]="c.year"
+        [active]="activeFor(c.id)"
+        [padded]="false"
+        [footer]="c.footer"
+        [delay]="c.delay"
+      >
         <app-viewport-window
-          ratio="16 / 10"
-          [src]="p.image"
-          [alt]="p.title + ' screenshot'"
-          [label]="'REC ' + indexOf(i)"
+          class="archive__shot"
+          frame="sides"
+          ratio="16 / 9"
+          [src]="c.image"
+          [alt]="c.alt"
+          [label]="c.cam"
         />
 
-        <p class="archive__desc">{{ p.description }}</p>
+        <div class="archive__body">
+          <p class="archive__desc">{{ c.description }}</p>
 
-        <div class="archive__meta">
-          <app-status-light state="ok" [label]="p.status ?? ''" />
-          <span class="archive__stack">{{ p.stack }} // {{ p.year }}</span>
+          <div class="archive__tags">
+            @for (t of c.tags; track t) {
+              <app-badge>{{ t }}</app-badge>
+            }
+          </div>
         </div>
-
-        <div class="archive__tags">
-          @for (t of p.tags ?? []; track t) {
-            <app-badge>{{ t }}</app-badge>
-          }
-        </div>
-      </a>
-    </app-window>
+      </app-window>
+    </a>
   }
 </div>
