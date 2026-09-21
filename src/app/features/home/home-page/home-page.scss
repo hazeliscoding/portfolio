@@ -1,1 +1,116 @@
-// Layout comes from the global GlitterNet classes (gn-shell, gn-cols, gn-stack).
+.home {
+  display: grid;
+  grid-template-columns: 400px minmax(0, 1fr);
+  gap: var(--sp-3);
+  align-items: start;
+}
+
+.home__col {
+  display: grid;
+  gap: var(--sp-3);
+  align-content: start;
+}
+
+.home__operator {
+  display: grid;
+  grid-template-columns: 104px 1fr;
+  gap: var(--sp-4);
+  align-items: start;
+}
+
+.home__name {
+  margin: 0;
+  font: var(--type-title);
+  color: var(--text-primary);
+}
+
+.home__role,
+.home__pronouns {
+  margin: var(--sp-1) 0 0;
+  font: var(--type-mono-s);
+  letter-spacing: var(--tracking-wider);
+  color: var(--text-muted);
+}
+
+.home__controls {
+  display: flex;
+  gap: var(--sp-4);
+  margin-block-start: var(--sp-3);
+}
+
+.home__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.home__list-row {
+  display: flex;
+  align-items: baseline;
+  gap: var(--sp-3);
+  padding: var(--sp-2) 0;
+  border-bottom: var(--bw-hairline) solid var(--border-faint);
+  font: var(--type-mono-s);
+
+  &:last-child {
+    border-bottom: 0;
+  }
+}
+
+.home__idx {
+  color: var(--signal-active);
+}
+
+.home__meta {
+  margin-inline-start: auto;
+  color: var(--text-faint);
+}
+
+.home__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+}
+
+.home__record {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  min-height: var(--target-min);
+  padding: var(--sp-2) 0;
+  border-inline-start: var(--bw-indicator) solid transparent;
+  border-bottom: var(--bw-hairline) solid var(--border-faint);
+  font: var(--type-mono-s);
+  color: var(--text-secondary);
+
+  &:hover {
+    border-inline-start-color: var(--signal-active);
+    color: var(--text-primary);
+    padding-inline-start: var(--sp-2);
+  }
+
+  &:last-child {
+    border-bottom: 0;
+  }
+}
+
+.home__record-title {
+  color: var(--text-primary);
+  font: var(--type-body-s);
+}
+
+.home__body {
+  margin: 0 0 var(--sp-2);
+  color: var(--text-secondary);
+}
+
+.home__link {
+  font: var(--type-mono-s);
+  letter-spacing: var(--tracking-wide);
+}
+
+@media (max-width: 840px) {
+  .home {
+    grid-template-columns: 1fr;
+  }
+}

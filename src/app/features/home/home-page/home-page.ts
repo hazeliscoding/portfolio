@@ -1,33 +1,53 @@
 import { Component } from '@angular/core';
-import { PresentationSection } from '../components/presentation-section/presentation-section';
-import { ServicesSection } from '../components/services-section/services-section';
-import { TechStackSection } from '../components/tech-stack-section/tech-stack-section';
-import { ContactSection } from '../components/contact-section/contact-section';
-import { OssSection } from '../components/oss-section/oss-section';
-import { FeaturedProjectsSection } from '../components/featured-projects-section/featured-projects-section';
-import { Footer } from '../../../core/layout/footer/footer';
+import { RouterLink } from '@angular/router';
 import { Meta, Title } from '@angular/platform-browser';
+import { ChapterHeader } from '../../../ui/chapter-header/chapter-header';
+import { Window } from '../../../ui/windows/window/window';
+import { ViewportWindow } from '../../../ui/windows/viewport-window/viewport-window';
+import { StatusLight } from '../../../ui/core/status-light/status-light';
+import { Badge } from '../../../ui/core/badge/badge';
+import { projectsData } from '../../../data/projects.data';
+import { blogPosts } from '../../../data/blog-posts.generated';
+import { ossStats } from '../../../data/oss-stats.generated';
+
+const LAST_UPDATE = '2026-09-20';
 
 @Component({
   selector: 'home-page',
   standalone: true,
-  imports: [
-    PresentationSection,
-    ServicesSection,
-    TechStackSection,
-    OssSection,
-    ContactSection,
-    FeaturedProjectsSection,
-    Footer,
-  ],
+  imports: [RouterLink, ChapterHeader, Window, ViewportWindow, StatusLight, Badge],
   templateUrl: './home-page.html',
   styleUrl: './home-page.scss',
 })
 export class HomePage {
-  lastUpdate = new Date().toLocaleDateString('en-US', {
-    month: 'short',
-    year: 'numeric',
-  });
+  lastUpdate = LAST_UPDATE;
+  projects = projectsData;
+  posts = blogPosts;
+  oss = ossStats;
+
+  stack = [
+    { idx: '01', label: 'C# / .NET 8' },
+    { idx: '02', label: 'ASP.NET Core' },
+    { idx: '03', label: 'Angular' },
+    { idx: '04', label: 'EF Core + PostgreSQL' },
+    { idx: '05', label: 'CQRS / MediatR' },
+    { idx: '06', label: 'AWS SQS/SNS' },
+    { idx: '07', label: 'Terraform' },
+    { idx: '08', label: 'AWS Parameter Store' },
+    { idx: '09', label: 'Docker' },
+    { idx: '10', label: 'xUnit + Testcontainers' },
+  ];
+
+  services = [
+    { label: 'Full-stack web application development' },
+    { label: 'Backend/API engineering' },
+    { label: 'Background processing & scheduled jobs' },
+    { label: 'Event-driven integrations' },
+    { label: 'Database design & optimization' },
+    { label: 'Cloud deployment & DevOps automation' },
+    { label: 'Observability & monitoring setup' },
+    { label: 'Automated testing & CI/CD pipelines' },
+  ];
 
   constructor(
     private title: Title,
@@ -35,11 +55,10 @@ export class HomePage {
   ) {}
 
   ngOnInit(): void {
-    this.title.setTitle('Hazel Granados - Home Page');
+    this.title.setTitle('Hazel Granados — Software Developer');
     this.meta.updateTag({
       name: 'description',
-      content:
-        "Hello, I'm Hazel Granados (she/they) — software developer/architect. I build full-stack apps with care and scalability.",
+      content: 'Software developer. Full-stack applications built with care.',
     });
   }
 }

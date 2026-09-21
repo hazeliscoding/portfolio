@@ -11,7 +11,11 @@ const construction = () =>
   );
 
 export const routes: Routes = [
-  { path: '', loadComponent: construction },
+  {
+    path: '',
+    loadComponent: () =>
+      import('./features/home/home-page/home-page').then((m) => m.HomePage),
+  },
   { path: 'blog', loadComponent: construction },
   { path: 'blog/:slug', loadComponent: construction },
   { path: 'about', loadComponent: construction },

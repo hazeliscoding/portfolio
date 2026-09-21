@@ -1,33 +1,88 @@
-<div class="home-page gn-shell">
-  <header class="gn-masthead fade">
-    <div class="gn-wordmark">hazel.exe<span class="gn-spark"> ✧</span></div>
-    <div class="gn-tagline">
-      software developer — full-stack apps built with care and scalability
-    </div>
-  </header>
+<app-chapter-header
+  code="HOME"
+  index="01"
+  context="OPERATOR PROFILE"
+  [status]="'LAST UPDATE ' + lastUpdate"
+  environmental="HAZEL"
+/>
 
-  <div class="gn-counter">
-    member profile · <b>open to collaboration</b> · last update
-    {{ lastUpdate }}
+<div class="home">
+  <div class="home__col">
+    <app-window variant="inspector" index="00" title="Operator" context="PROFILE" [active]="true">
+      <div class="home__operator">
+        <app-viewport-window ratio="1 / 1" label="CAM 00" alt="" />
+        <div>
+          <p class="home__name">Hazel Granados</p>
+          <p class="home__role">SOFTWARE DEVELOPER</p>
+          <p class="home__pronouns">SHE/THEY</p>
+          <div class="home__controls">
+            <a class="home__link" href="#contact">Contact &gt;</a>
+            <a class="home__link" href="resume/resume-en.pdf">Resume</a>
+          </div>
+        </div>
+      </div>
+    </app-window>
+
+    <app-window index="01" title="Stack" context="RUNTIME">
+      <ul class="home__list">
+        @for (s of stack; track s.idx) {
+          <li class="home__list-row">
+            <span class="home__idx">{{ s.idx }}</span>
+            <span>{{ s.label }}</span>
+          </li>
+        }
+      </ul>
+    </app-window>
+
+    <app-window index="02" title="Services" context="OFFERED">
+      <div class="home__tags">
+        @for (t of services; track t.label) {
+          <app-badge>{{ t.label }}</app-badge>
+        }
+      </div>
+    </app-window>
   </div>
 
-  <div class="gn-cols gn-cols--left">
-    <aside class="gn-stack">
-      <presentation-section />
+  <div class="home__col">
+    <app-window
+      index="03"
+      title="Open Source"
+      context="CONTRIBUTIONS"
+      [status]="oss.totalMergedPrs + ' MERGED'"
+    >
+      <ul class="home__list">
+        @for (r of oss.projects; track r.repo) {
+          <li class="home__list-row">
+            <a [href]="r.url" target="_blank" rel="noopener">{{ r.repo }}</a>
+            <span class="home__meta">{{ r.stars }} STARS // {{ r.mergedPrs }} PRS</span>
+          </li>
+        }
+      </ul>
+    </app-window>
 
-      <tech-stack-section />
+    <app-window index="04" title="Archive" context="FEATURED" [status]="'RECORD 01 OF 0' + projects.length">
+      @for (p of projects; track p.id) {
+        <a class="home__record" [routerLink]="['/portfolio', p.id]">
+          <span class="home__idx">01</span>
+          <span class="home__record-title">{{ p.title }}</span>
+          <span class="home__meta">{{ p.stack }} // {{ p.year }}</span>
+          <app-status-light state="ok" label="ACTIVE" />
+        </a>
+      }
+    </app-window>
 
-      <oss-section />
+    <app-window index="05" title="Log" context="RECENT" [status]="posts.length + ' ENTRIES'">
+      @for (b of posts; track b.slug) {
+        <a class="home__log-row" [routerLink]="['/blog', b.slug]">
+          <span class="home__meta">{{ b.date }}</span>
+          <span class="home__record-title">{{ b.title }}</span>
+        </a>
+      }
+    </app-window>
 
-      <contact-section />
-    </aside>
-
-    <main class="gn-stack">
-      <services-section />
-
-      <featured-projects-section />
-    </main>
+    <app-window id="contact" index="06" title="Contact" context="DIRECT">
+      <p class="home__body">For questions or collaboration, reach out:</p>
+      <a href="mailto:hazel.granados&#64;protonmail.com">hazel.granados&#64;protonmail.com</a>
+    </app-window>
   </div>
 </div>
-
-<app-footer />
