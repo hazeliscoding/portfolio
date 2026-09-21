@@ -7,6 +7,14 @@
 
 .detail__main {
   display: grid;
+  // `minmax(0, 1fr)`, matching `.detail` above, because a grid item's default
+  // `min-width: auto` is a min-CONTENT floor, not zero. The thumbnail strip is
+  // four `flex: 0 0 120px` cells, so its min-content is ~504px; without this
+  // the track grew to 530px inside a 348px box at 390px wide and `.main`'s
+  // `overflow-x: hidden` clipped 156px of the Viewport and Readme windows with
+  // no scrollbar to reveal them. Measured: hiding the strip, or setting
+  // `min-width: 0` on these items, both collapsed the track back to 348px.
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--sp-3);
 }
 
