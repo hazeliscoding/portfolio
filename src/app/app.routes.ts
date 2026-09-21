@@ -28,7 +28,11 @@ export const routes: Routes = [
         (m) => m.BlogPostPage,
       ),
   },
-  { path: 'about', loadComponent: construction },
+  {
+    path: 'about',
+    loadComponent: () =>
+      import('./features/about/about-page/about-page').then((m) => m.AboutPage),
+  },
   {
     path: 'portfolio',
     loadComponent: () =>

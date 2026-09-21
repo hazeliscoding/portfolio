@@ -1,11 +1,30 @@
-<div class="about-page">
-  <about-section />
+<app-chapter-header code="PROFILE" index="02" context="DOSSIER" environmental="PROFILE" />
 
-  <education-section />
+<div class="about">
+  <app-window class="about__window" variant="inspector" index="01" title="Bio" context="SUBJECT" [active]="true">
+    @for (para of bio; track $index) {
+      <p class="about__para">{{ para }}</p>
+    }
+  </app-window>
 
-  <interests-section />
+  <app-window class="about__window" index="02" title="Education" context="RECORD">
+    <app-key-value [items]="education" />
+  </app-window>
 
-  <languages-section />
+  <app-window class="about__window" index="03" title="Languages" context="RECORD">
+    <app-key-value [items]="languages" />
+  </app-window>
 
-  <download-section />
+  <app-window class="about__window" index="04" title="Interests" context="RECORD">
+    <div class="about__tags">
+      @for (i of interests; track i) {
+        <app-badge>{{ i }}</app-badge>
+      }
+    </div>
+  </app-window>
+
+  <app-window class="about__window" index="05" title="Resume" context="DOWNLOAD">
+    <a class="about__link" href="resume/resume-en.pdf" download>&gt; RESUME.PDF</a>
+    <a class="about__link" href="resume/resume-en.docx" download>&gt; RESUME.DOCX</a>
+  </app-window>
 </div>
