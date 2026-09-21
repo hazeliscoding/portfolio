@@ -12,59 +12,11 @@
   color: var(--text-primary);
 }
 
+// Layout only. Markdown typography lives in src/styles/kairo/_prose.scss —
+// content created by [innerHTML] never receives this component's
+// _ngcontent-* attribute, so a nested selector here can never match it.
 .post__body {
   max-width: 68ch;
-  font: var(--type-body);
-  color: var(--text-secondary);
-
-  h2,
-  h3 {
-    font: var(--type-title);
-    color: var(--text-primary);
-    margin-block: var(--sp-8) var(--sp-3);
-  }
-
-  p {
-    margin: 0 0 var(--sp-4);
-  }
-
-  ul,
-  ol {
-    margin: 0 0 var(--sp-4);
-    padding-inline-start: var(--sp-5);
-  }
-
-  code {
-    font: var(--type-mono-s);
-    background: var(--surface-inset);
-    border: var(--bw-hairline) solid var(--border-faint);
-    padding: 0 var(--sp-1);
-  }
-
-  pre {
-    background: var(--surface-inset);
-    border: var(--bw-hairline) solid var(--border-default);
-    padding: var(--sp-3);
-    overflow-x: auto;
-
-    code {
-      border: 0;
-      padding: 0;
-      background: transparent;
-    }
-  }
-
-  img {
-    max-width: 100%;
-    border: var(--bw-hairline) solid var(--border-default);
-  }
-
-  blockquote {
-    margin: 0 0 var(--sp-4);
-    padding-inline-start: var(--sp-3);
-    border-inline-start: var(--bw-indicator) solid var(--signal-active);
-    color: var(--text-muted);
-  }
 }
 
 .post__side {
@@ -89,7 +41,7 @@
   margin: 0;
   font: var(--type-mono-s);
   letter-spacing: var(--tracking-wider);
-  color: var(--text-faint);
+  color: var(--text-muted);
 }
 
 .post__missing {

@@ -2,6 +2,19 @@
   box-sizing: border-box;
 }
 
+// Replaces the universal margin/padding reset that lived in the legacy
+// GlitterNet sheet (src/styles/styles.scss:116) until Task 18 removed it.
+// `:where()` keeps specificity at 0,0,0 so every component rule and the prose
+// sheet win on their own merits — no `!important`, no cascade surprises.
+// Author origin beats the UA sheet regardless of specificity, so 0 is enough.
+:where(h1, h2, h3, h4, h5, h6, p, ul, ol, dl, dd, figure, blockquote, pre, hr) {
+  margin: 0;
+}
+
+:where(ul, ol, dl) {
+  padding-inline-start: 0;
+}
+
 html,
 body {
   height: 100%;

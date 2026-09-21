@@ -4,6 +4,7 @@ export interface Column {
   key: string;
   label: string;
   width?: string;
+  nowrap?: boolean;
 }
 
 export interface Row {

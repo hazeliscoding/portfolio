@@ -55,6 +55,21 @@ describe('BlogPostPage', () => {
     expect(body?.innerHTML.length).toBeGreaterThan(0);
   });
 
+  it('applies KAIRO prose spacing to innerHTML markdown', () => {
+    const el = fixture.nativeElement as HTMLElement;
+    const body = el.querySelector('.post__body')!;
+    expect(body.classList.contains('prose')).toBe(true);
+
+    const p = body.querySelector('p')!;
+    expect(getComputedStyle(p).marginBottom).toBe('16px'); // --sp-4
+
+    const h2 = body.querySelector('h2')!;
+    const h2Style = getComputedStyle(h2);
+    expect(h2Style.marginTop).toBe('32px'); // --sp-8
+    expect(h2Style.fontSize).toBe('20px'); // --type-title, not UA 1.5em x 14
+    expect(h2Style.fontWeight).toBe('600');
+  });
+
   it('builds a CONTENTS inspector from the post headings', () => {
     const el = fixture.nativeElement as HTMLElement;
     const contents = el.querySelector('.post__contents');

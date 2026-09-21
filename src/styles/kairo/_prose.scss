@@ -1,0 +1,338 @@
+// KAIRO prose — typography for markdown rendered through [innerHTML].
+//
+// This lives in the global layer on purpose. BlogPostPage uses Angular's
+// default emulated view encapsulation, which rewrites `.post__body p` to
+// `.post__body[_ngcontent-x] p[_ngcontent-x]`. Nodes created by [innerHTML]
+// never receive that attribute, so a component-scoped descendant selector can
+// never match them. A global rule can. Do not move these rules back into a
+// component stylesheet.
+//
+// Keyed on `.prose` rather than `.post__body` so any future markdown surface
+// opts in by adding one class. Today there is exactly one [innerHTML] site in
+// the application: src/app/features/blog/blog-post-page/blog-post-page.html:8.
+//
+// Coverage is deliberately wider than current content. `marked` 15.0.12 runs
+// with GFM defaults (blog.service.ts:74 passes no options), so the emittable
+// set is: h1-h6, p, ul, ol, li, input[type=checkbox], blockquote, pre, code,
+// a, img, hr, strong, em, del, br, table/thead/tbody/tr/th/td, plus arbitrary
+// raw HTML passed through verbatim.
+
+.prose {
+  font: var(--type-body);
+  color: var(--text-secondary);
+  // Long URLs and unbroken identifiers must not escape the measure into
+  // `.main`, which is `overflow-x: hidden` (app.scss:166).
+  overflow-wrap: break-word;
+  text-wrap: pretty;
+
+  // --- Block rhythm -------------------------------------------------------
+  // Every block sets its own margin. The container contributes none, so the
+  // outer edges belong to the container (the padded Window body) and not to
+  // the content. Adjacent margins collapse, so a 16px paragraph bottom
+  // meeting a 32px heading top yields 32px, never 48px.
+
+  > :first-child {
+    margin-block-start: 0;
+  }
+
+  > :last-child {
+    margin-block-end: 0;
+  }
+
+  // --- Headings -----------------------------------------------------------
+  // h1 should not normally appear: BlogService.stripLeadingTitleHeading
+  // removes a leading `# ` that matches the frontmatter title, and authors
+  // should start at `##`. The rule exists so an accident degrades into a
+  // document-level heading rather than 21px unstyled body text.
+  h1 {
+    font: var(--type-display-m);
+    letter-spacing: var(--tracking-display);
+    color: var(--text-primary);
+    margin-block: var(--sp-10) var(--sp-4);
+  }
+
+  h2 {
+    font: var(--type-title);
+    color: var(--text-primary);
+    margin-block: var(--sp-8) var(--sp-3);
+  }
+
+  // DERIVED. KAIRO has no display token between 20px and 14px, so h3 steps
+  // down by face and weight rather than by an off-system size: semibold body
+  // face at primary, against 400-weight secondary body copy.
+  h3 {
+    font: var(--type-body);
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-block: var(--sp-6) var(--sp-2);
+  }
+
+  // DERIVED. h4-h6 are flattened to one label-tier treatment rather than
+  // inventing three more sizes below the smallest real token. Prose this deep
+  // is a structural smell; flattening makes that visible instead of hiding it.
+  h4,
+  h5,
+  h6 {
+    font: var(--type-label);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wide);
+    color: var(--text-muted);
+    margin-block: var(--sp-5) var(--sp-2);
+  }
+
+  // --- Paragraphs ---------------------------------------------------------
+  p {
+    margin: 0 0 var(--sp-4);
+  }
+
+  // --- Lists --------------------------------------------------------------
+  // Disc/decimal markers are kept. `list-style: none` with a generated-content
+  // marker strips list semantics from the accessibility tree in WebKit, and
+  // the usual remedy (role="list") is unavailable because this markup comes
+  // from `marked` via [innerHTML] with no template to annotate.
+  ul,
+  ol {
+    margin: 0 0 var(--sp-4);
+    padding-inline-start: var(--sp-5);
+  }
+
+  li {
+    // Matches `.post__toc li` (blog-post-page.scss:83), the site's existing
+    // list rhythm.
+    margin-block-end: var(--sp-2);
+
+    &:last-child {
+      margin-block-end: 0;
+    }
+
+    &::marker {
+      color: var(--text-muted);
+    }
+  }
+
+  // Nested lists tuck under their parent item instead of inheriting the
+  // top-level list's 16px trailing gap.
+  li > ul,
+  li > ol {
+    margin-block: var(--sp-2) 0;
+  }
+
+  // Loose lists: `marked` wraps each item's content in <p> when any item is
+  // blank-line separated.
+  li > p {
+    margin: 0 0 var(--sp-2);
+
+    &:last-child {
+      margin-block-end: 0;
+    }
+  }
+
+  // GFM task lists: `- [ ]` / `- [x]`.
+  li:has(> input[type="checkbox"]) {
+    list-style: none;
+  }
+
+  input[type="checkbox"] {
+    accent-color: var(--signal-active);
+    margin-inline-end: var(--sp-2);
+  }
+
+  // --- Links --------------------------------------------------------------
+  // The global `a` rule in _base.scss:23-30 DOES reach [innerHTML] content —
+  // it is unencapsulated — and sets `text-decoration: none`. In UI chrome that
+  // is correct. In a paragraph of --text-secondary body copy it leaves hue as
+  // the only signal: #4fd2e0 on #aeb6bd is 1.14:1, far below the 3:1 that WCAG
+  // technique G183 requires for colour-only link differentiation. Prose
+  // restores the underline as a second, non-colour channel. Chrome links
+  // elsewhere are untouched.
+  a {
+    color: var(--text-link);
+    text-decoration: underline;
+    text-decoration-thickness: var(--bw-hairline);
+    text-underline-offset: 2px;
+
+    // DERIVED. KAIRO has no visited token. --signal-info-dim is 6.52:1 on
+    // --surface-window, clears AA, and reads as the same hue one step back.
+    // Drop this block if a read/unread signal is not wanted.
+    &:visited {
+      color: var(--signal-info-dim);
+    }
+
+    &:hover {
+      color: var(--text-primary);
+    }
+  }
+
+  // --- Code ---------------------------------------------------------------
+  code {
+    font: var(--type-mono-s);
+    background: var(--surface-inset);
+    border: var(--bw-hairline) solid var(--border-faint);
+    border-radius: var(--radius-1);
+    padding: 0 var(--sp-1);
+  }
+
+  // Inline code inside a heading must not collapse to 11px/400 via the `font`
+  // shorthand — it steps down in family only, keeping the heading's metrics.
+  h1 code,
+  h2 code,
+  h3 code,
+  h4 code,
+  h5 code,
+  h6 code {
+    font: inherit;
+    font-family: var(--font-mono);
+  }
+
+  pre {
+    margin: 0 0 var(--sp-4);
+    font: var(--type-mono);
+    background: var(--surface-inset);
+    border: var(--bw-hairline) solid var(--border-default);
+    border-radius: var(--radius-0);
+    padding: var(--sp-3);
+    // `.main` is overflow-x: hidden, so a wide block must scroll inside itself
+    // or it is unreachable.
+    overflow-x: auto;
+    tab-size: 2;
+
+    code {
+      font: inherit;
+      border: 0;
+      border-radius: 0;
+      padding: 0;
+      background: transparent;
+    }
+  }
+
+  // --- Quotes -------------------------------------------------------------
+  blockquote {
+    margin: 0 0 var(--sp-4);
+    padding-inline-start: var(--sp-3);
+    border-inline-start: var(--bw-indicator) solid var(--signal-active);
+    color: var(--text-muted);
+
+    > :last-child {
+      margin-block-end: 0;
+    }
+  }
+
+  // --- Rules --------------------------------------------------------------
+  // `---` / `***` / `___`. The UA default is an inset 3D bevel, which violates
+  // the hairline rule; this is the same 1px divider the design uses elsewhere.
+  hr {
+    margin-block: var(--sp-6);
+    border: 0;
+    block-size: var(--bw-hairline);
+    background: var(--border-default);
+  }
+
+  // --- Media --------------------------------------------------------------
+  // A standalone markdown image is always paragraph-wrapped by `marked`, so it
+  // inherits the paragraph's trailing margin; `figure` covers raw-HTML cases.
+  img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    border: var(--bw-hairline) solid var(--border-default);
+  }
+
+  figure {
+    margin: 0 0 var(--sp-4);
+  }
+
+  figcaption {
+    margin-block-start: var(--sp-2);
+    font: var(--type-mono-s);
+    letter-spacing: var(--tracking-wide);
+    color: var(--text-muted);
+  }
+
+  // --- Tables (GFM pipe tables) -------------------------------------------
+  // DERIVED from the DataTable idiom, not reusing its class. `th` uses
+  // --text-muted (6.00:1), not --text-faint (3.16:1), which fails AA at this
+  // size. See section 4 for the same correction inside DataTable itself.
+  table {
+    width: 100%;
+    margin: 0 0 var(--sp-4);
+    border-collapse: collapse;
+    font: var(--type-mono-s);
+    letter-spacing: var(--tracking-wide);
+  }
+
+  th {
+    text-align: start;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wider);
+    font-weight: 500;
+    color: var(--text-muted);
+    border-bottom: var(--bw-hairline) solid var(--border-default);
+    padding: var(--sp-2) var(--sp-3);
+  }
+
+  td {
+    color: var(--text-secondary);
+    border-bottom: var(--bw-hairline) solid var(--border-faint);
+    padding: var(--sp-2) var(--sp-3);
+  }
+
+  // --- Definition lists (raw HTML only) -----------------------------------
+  dl {
+    margin: 0 0 var(--sp-4);
+  }
+
+  dt {
+    color: var(--text-primary);
+    font-weight: 600;
+  }
+
+  dd {
+    margin: 0 0 var(--sp-2);
+    padding-inline-start: var(--sp-4);
+  }
+
+  // --- Inline ------------------------------------------------------------
+  strong,
+  b {
+    // 600 is the heaviest weight loaded for IBM Plex Sans (index.html:50).
+    // Left implicit, a UA `bolder` resolves to the same face anyway; stating
+    // it makes that dependency visible if the font request ever changes.
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  del,
+  s {
+    color: var(--text-muted);
+    text-decoration-thickness: var(--bw-hairline);
+  }
+
+  mark {
+    background: var(--surface-active-tint);
+    color: var(--text-primary);
+    padding: 0 var(--sp-1);
+  }
+
+  kbd {
+    font: var(--type-mono-s);
+    background: var(--surface-raised);
+    color: var(--text-primary);
+    border: var(--bw-hairline) solid var(--border-strong);
+    border-radius: var(--radius-1);
+    padding: 0 var(--sp-1);
+  }
+
+  abbr[title] {
+    text-decoration: underline dotted;
+    text-underline-offset: 2px;
+  }
+
+  small {
+    font: var(--type-body-s);
+  }
+
+  // DELIBERATELY LEFT AT UA DEFAULT: em/i (see the italic-face note in
+  // section 6), br, sub, sup, and any raw HTML written directly into a .md
+  // file. Nothing in the markdown pipeline styles those and no KAIRO token
+  // describes them.
+}

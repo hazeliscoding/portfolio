@@ -15,9 +15,9 @@ import { blogPosts } from '../../../data/blog-posts.generated';
 })
 export class BlogPage {
   columns: Column[] = [
-    { key: 'date', label: 'DATE', width: '120px' },
+    { key: 'date', label: 'DATE', width: '120px', nowrap: true },
     { key: 'entry', label: 'ENTRY' },
-    { key: 'tags', label: 'TAGS', width: '220px' },
+    { key: 'tags', label: 'TAGS', width: '280px' },
   ];
 
   posts = [...blogPosts].sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0));
