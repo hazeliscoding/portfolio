@@ -5,20 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>hazel.exe — Hazel Granados</title>
     <base href="/" />
-    <script>
-      // Resolve the theme before first paint: saved choice wins; otherwise
-      // the system setting becomes the saved default.
-      try {
-        var t = localStorage.getItem('theme');
-        if (t !== 'light' && t !== 'dark') {
-          t = window.matchMedia('(prefers-color-scheme: light)').matches
-            ? 'light'
-            : 'dark';
-          localStorage.setItem('theme', t);
-        }
-        document.documentElement.setAttribute('data-theme', t);
-      } catch (e) {}
-    </script>
     <meta
       name="description"
       content="software developer, full-stack, Hazel Granados, web developer"
@@ -41,16 +27,7 @@
       property="og:image:alt"
       content="Retro member-profile card: hazel.exe ✧ — Hazel Granados, software developer"
     />
-    <meta
-      name="theme-color"
-      media="(prefers-color-scheme: dark)"
-      content="#000000"
-    />
-    <meta
-      name="theme-color"
-      media="(prefers-color-scheme: light)"
-      content="#ffffff"
-    />
+    <meta name="theme-color" content="#0b0e12" />
 
     <meta name="twitter:card" content="summary_large_image" />
     <meta
@@ -69,7 +46,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
     <link
-      href="https://fonts.googleapis.com/css2?family=VT323&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap"
       rel="stylesheet"
     />
 

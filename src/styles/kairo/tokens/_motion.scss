@@ -1,0 +1,19 @@
+:root {
+  --dur-micro: 100ms;
+  --dur-control: 180ms;
+  --dur-window: 280ms;
+  --dur-cinematic: 450ms;
+  /* prettier-ignore */
+  --ease-mech: cubic-bezier(0.3,0,0.1,1);
+  --ease-cut: steps(2, end);
+  --ease-linear: linear;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dur-micro: 0ms;
+    --dur-control: 0ms;
+    --dur-window: 0ms;
+    --dur-cinematic: 0ms;
+  }
+}

@@ -1,0 +1,18 @@
+:root {
+  --font-display: "Saira Condensed", system-ui, sans-serif;
+  --font-ui: "IBM Plex Sans", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+  --type-display-xl: 600 96px/0.95 var(--font-display);
+  --type-display-l: 600 56px/1 var(--font-display);
+  --type-display-m: 600 32px/1.05 var(--font-display);
+  --type-title: 600 20px/1.2 var(--font-display);
+  --type-body: 400 14px/1.55 var(--font-ui);
+  --type-body-s: 400 13px/1.5 var(--font-ui);
+  --type-label: 500 11px/1.2 var(--font-ui);
+  --type-mono: 400 12px/1.5 var(--font-mono);
+  --type-mono-s: 400 11px/1.45 var(--font-mono);
+  --tracking-wide: 0.08em;
+  --tracking-wider: 0.16em;
+  --tracking-display: 0.02em;
+  --tracking-normal: 0;
+}
