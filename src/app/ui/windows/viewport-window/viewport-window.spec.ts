@@ -33,4 +33,15 @@ describe('ViewportWindow', () => {
     fixture.detectChanges();
     expect((fixture.nativeElement as HTMLElement).textContent).toContain('CAM 00');
   });
+
+  it('backs the label so it stays legible over light images', () => {
+    fixture.componentRef.setInput('label', 'CAM 00');
+    fixture.detectChanges();
+    const label = (fixture.nativeElement as HTMLElement).querySelector(
+      '.viewport__label',
+    ) as HTMLElement;
+    const bg = getComputedStyle(label).backgroundColor;
+    expect(bg).not.toBe('rgba(0, 0, 0, 0)');
+    expect(bg).not.toBe('transparent');
+  });
 });
