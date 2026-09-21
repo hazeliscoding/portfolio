@@ -73,8 +73,8 @@ npx ng test --watch=false --browsers=ChromeHeadless --include='**/window.spec.ts
 **Files:**
 - Create: `src/styles/kairo/tokens/_colors.scss`, `_type.scss`, `_space.scss`, `_motion.scss`
 - Create: `src/styles/kairo/_base.scss`
-- Create: `src/styles/kairo/_index.scss`
-- Modify: `src/styles/styles.scss` (add KAIRO import at top; `gn-*` stays until Task 18)
+- Create: `src/styles/kairo/kairo.scss` (entry point loaded by angular.json)
+- Modify: `angular.json` (add KAIRO as a second styles entry, build + test targets)
 - Modify: `src/index.html` (swap the VT323 font link for KAIRO's three families; drop the pre-paint theme script)
 - Test: `src/styles/kairo/tokens.spec.ts`
 
@@ -186,7 +186,7 @@ Expected: FAIL — `--surface-canvas` resolves to empty string.
   --border-active: var(--k-red-2);
   --border-info: var(--k-cyan-1);
 
-  --focus-ring: 0 0 0 1px var(--surface-canvas), 0 0 0 3px var(--k-cyan-2);
+  --focus-ring: 0 0 0 1px var(--surface-canvas),0 0 0 3px var(--k-cyan-2);
 }
 ```
 
@@ -260,7 +260,7 @@ Note: KAIRO's originals list `'IBM Plex Sans JP'` in each stack. It is dropped h
   --dur-control: 180ms;
   --dur-window: 280ms;
   --dur-cinematic: 450ms;
-  --ease-mech: cubic-bezier(0.3, 0, 0.1, 1);
+  --ease-mech: cubic-bezier(0.3,0,0.1,1);
   --ease-cut: steps(2, end);
   --ease-linear: linear;
 }
@@ -314,7 +314,8 @@ a {
 }
 ```
 
-`src/styles/kairo/_index.scss`:
+`src/styles/kairo/kairo.scss` — note: no leading underscore. This is a real
+entry point, not a partial, because `angular.json` loads it directly:
 
 ```scss
 @use "tokens/colors";
@@ -324,15 +325,27 @@ a {
 @use "base";
 ```
 
-- [ ] **Step 4: Wire it into the build**
+- [ ] **Step 4: Wire it into the build — load order matters**
 
-At the very top of `src/styles/styles.scss`, before the existing `@use "abstracts/variables" as *;`:
+**Do not modify `src/styles/styles.scss`.** GlitterNet sets
+`body { background-color: ... }` at `styles.scss:146`, and it must not win over
+KAIRO's base during the migration or every screenshot check in Tasks 9–15 would
+be comparing KAIRO pages rendered on a GlitterNet background. Sass requires
+`@use` at the top of a file, so the import cannot simply be appended there.
 
-```scss
-@use "kairo/index" as *;
+Instead, in `angular.json`, add KAIRO as a **second** entry after `styles.scss`
+— in **both** the `build` and the `test` targets:
+
+```json
+"styles": ["src/styles/styles.scss", "src/styles/kairo/kairo.scss"]
 ```
 
-`angular.json` already lists `src/styles/styles.scss` and sets `stylePreprocessorOptions.includePaths: ["src/styles"]`. No change needed there.
+Later entries win, so KAIRO's base overrides the GlitterNet rules that remain
+until Task 18. `stylePreprocessorOptions.includePaths: ["src/styles"]` is
+already set and needs no change.
+
+This is temporary: Task 18 removes the `styles.scss` entry, leaving a single
+`main.scss`.
 
 - [ ] **Step 5: Swap the fonts and drop the theme script in `src/index.html`**
 
@@ -374,7 +387,7 @@ Expected: `Prerendered 7 static routes.` and `Application bundle generation comp
 - [ ] **Step 8: Commit**
 
 ```bash
-git add src/styles/kairo src/styles/styles.scss src/index.html
+git add src/styles/kairo angular.json src/index.html
 git commit -m "feat(ui): add KAIRO design tokens and base styles"
 ```
 
@@ -1193,6 +1206,13 @@ export class StatusLight {
 .status-light__dot {
   color: var(--text-primary);
   line-height: 1;
+}
+
+// Status words are always uppercase under KAIRO's voice rules, so this lives
+// in the component. A parent stylesheet cannot reach it — emulated
+// encapsulation scopes it to this component's own styles.
+.status-light__label {
+  text-transform: uppercase;
 }
 
 .status-light[data-state="ok"] .status-light__dot {
@@ -3191,7 +3211,7 @@ Confirm the `stack` and `services` values against the current `tech-stack-sectio
 
     <app-window index="05" title="Log" context="RECENT" [status]="posts.length + ' ENTRIES'">
       @for (b of posts; track b.slug) {
-        <a class="home__record" [routerLink]="['/blog', b.slug]">
+        <a class="home__log-row" [routerLink]="['/blog', b.slug]">
           <span class="home__meta">{{ b.date }}</span>
           <span class="home__record-title">{{ b.title }}</span>
         </a>
@@ -3543,7 +3563,7 @@ export class PortfolioPage {
         <p class="archive__desc">{{ p.description }}</p>
 
         <div class="archive__meta">
-          <app-status-light state="ok" [label]="(p.status ?? '') | uppercase" />
+          <app-status-light state="ok" [label]="p.status ?? ''" />
           <span class="archive__stack">{{ p.stack }} // {{ p.year }}</span>
         </div>
 
@@ -3558,13 +3578,9 @@ export class PortfolioPage {
 </div>
 ```
 
-The `uppercase` pipe needs `UpperCasePipe` imported from `@angular/common` — add it to the component's `imports` array alongside `RouterLink`. Alternatively drop the pipe and uppercase in CSS via `text-transform`; prefer the CSS route to keep the imports lean:
-
-```html
-          <app-status-light state="ok" [label]="p.status ?? ''" />
-```
-
-and let `.status-light__label { text-transform: uppercase; }` handle it. Use this second form.
+`StatusLight` already uppercases its own label (Task 4). Do **not** add a
+`.status-light__label` rule to `portfolio-page.scss` — that class lives inside
+StatusLight's emulated encapsulation and a parent stylesheet cannot reach it.
 
 `portfolio-page.scss`:
 
@@ -3630,10 +3646,6 @@ and let `.status-light__label { text-transform: uppercase; }` handle it. Use thi
   display: flex;
   flex-wrap: wrap;
   gap: var(--sp-2);
-}
-
-.status-light__label {
-  text-transform: uppercase;
 }
 
 @media (max-width: 840px) {
@@ -4374,7 +4386,7 @@ describe('BlogPostPage', () => {
     const el = fixture.nativeElement as HTMLElement;
     const contents = el.querySelector('.post__contents');
     expect(contents).toBeTruthy();
-    expect(contents?.textContent).toContain("What I'm optimizing for");
+    expect(contents?.textContent).toContain('optimizing for');
   });
 
   it('renders a RECORD inspector with the date and tags', () => {
@@ -4431,7 +4443,7 @@ interface Heading {
   styleUrl: './blog-post-page.scss',
 })
 export class BlogPostPage {
-  post = signal<BlogPost | undefined>(undefined);
+  post = signal<BlogPost | null>(null);
   headings = signal<Heading[]>([]);
 
   constructor(
@@ -4444,7 +4456,7 @@ export class BlogPostPage {
   ngOnInit(): void {
     this.route.paramMap.subscribe((params) => {
       const slug = params.get('slug') ?? '';
-      const found = this.blog.getBySlug(slug);
+      const found = this.blog.getPostBySlug(slug);
       this.post.set(found);
       this.headings.set(found ? this.extractHeadings(found.html) : []);
 
@@ -4490,7 +4502,7 @@ export class BlogPostPage {
 }
 ```
 
-If `BlogService` exposes something other than `getBySlug`, use that name here and nowhere invent a new one.
+Verified against the real service: the method is `getPostBySlug` and it returns `BlogPost | null`, never `undefined`.
 
 `blog-post-page.html`:
 
@@ -5341,7 +5353,7 @@ git rm -r src/app/core/shared
 `src/styles/main.scss`:
 
 ```scss
-@use "kairo/index" as *;
+@use "kairo/kairo" as *;
 ```
 
 - [ ] **Step 4: Repoint the build**
@@ -5349,7 +5361,7 @@ git rm -r src/app/core/shared
 In `angular.json`, in both the `build` and `test` targets, change:
 
 ```json
-"styles": ["src/styles/styles.scss"]
+"styles": ["src/styles/styles.scss", "src/styles/kairo/kairo.scss"]
 ```
 
 to:
