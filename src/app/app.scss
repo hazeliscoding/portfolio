@@ -79,8 +79,11 @@
   flex: 1;
   min-width: 0;
   // The content region scrolls; the chrome around it does not. `overflow-x`
-  // must stay hidden — it is the load-bearing clamp against the 260px
-  // environmental word overflowing horizontally.
+  // was the clamp against the oversized environmental word, which now lives at
+  // page level as a fixed element and contributes nothing to scroll width.
+  // Measured at 390px and 1280px with the clamp lifted: nothing in `.main`
+  // overflows today. It stays as defence against content that has no width of
+  // its own to yield — a wide code block or table in a post.
   overflow-y: auto;
   overflow-x: hidden;
   scrollbar-width: thin;
