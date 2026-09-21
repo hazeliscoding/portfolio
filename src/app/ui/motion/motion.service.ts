@@ -10,8 +10,21 @@ import { NavigationEnd, Router } from '@angular/router';
  * `data-sfx` attribute the stylesheet selects on. Flipping the attribute
  * swaps the animation name, which restarts the animation.
  *
- * Starts at 'a' and only changes on navigation, so prerendered output is
- * deterministic and hydration cannot mismatch.
+ * Starts at 'a' and only changes on navigation, so the value is deterministic
+ * and hydration cannot mismatch.
+ *
+ * It does NOT follow that prerendered HTML carries 'a'. Angular's initial
+ * navigation fires a `NavigationEnd` during the server render, so every
+ * prerendered page ships `data-sfx="b"`. The client then repeats the same
+ * sequence — constructed at 'a', flipped to 'b' by its own initial navigation
+ * — which means the attribute briefly reads 'a' during bootstrap. Measured:
+ * 'b' in the served HTML, 'a' at 96ms, 'b' again at 111ms.
+ *
+ * That 15ms divergence restarts every entrance animation once on first load.
+ * It is invisible today because the boot overlay covers the first 2700ms, and
+ * under reduced motion there is no overlay but also no animation. Worth
+ * knowing before anyone removes or short-circuits the overlay: the
+ * double-trigger would become visible, not appear.
  */
 @Injectable({ providedIn: 'root' })
 export class MotionService {
