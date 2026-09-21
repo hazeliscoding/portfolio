@@ -16,7 +16,11 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./features/home/home-page/home-page').then((m) => m.HomePage),
   },
-  { path: 'blog', loadComponent: construction },
+  {
+    path: 'blog',
+    loadComponent: () =>
+      import('./features/blog/blog-page/blog-page').then((m) => m.BlogPage),
+  },
   { path: 'blog/:slug', loadComponent: construction },
   { path: 'about', loadComponent: construction },
   {
