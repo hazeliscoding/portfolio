@@ -1648,6 +1648,44 @@ For each hit, confirm a `prefers-reduced-motion` rule covers it. Build a table i
 
 Any animation with no reduced-motion rule is a defect. Fix it and say so.
 
+**A rule that exists is not a rule that applies.** Grep alone cannot tell you whether a reduced-motion rule ever wins, and here it mostly does not. Measured in a browser after M4, with `prefers-reduced-motion: reduce` emulated:
+
+| Selector | Reduced-motion rule | Computed `animation-name` | Computed duration |
+|---|---|---|---|
+| `.app__env` | `.app__env { animation: none }` | `env-b` — **rule lost** | `1e-05s` |
+| `.app__path` | `.app__path { animation: none }` | `type-b` — **rule lost** | `1e-05s` |
+| `.app__sync` | `.app__sync { animation: none }` | `flicker-b` — **rule lost** | `1e-05s` |
+| `.app__wipe` | `.app__wipe { display: none }` | n/a | applies correctly |
+
+The cause is specificity, not the media query: **a media query adds no specificity**, so `.app__env` (0,1,0) inside `@media` loses to `.app[data-sfx="b"] .app__env` (0,2,1) outside it. The `display: none` on the wipe wrapper wins only because nothing else sets `display` on that element.
+
+The *behaviour* is currently correct anyway — `--dur-cinematic` and `--dur-window` collapse to `0ms` under reduced motion, so these one-shot animations complete instantly. But the stated mechanism does not work, and the dead rules are a trap: the moment anyone adds a **looping** animation to one of these selectors, the reduced-motion rule will silently fail to disable it and the zeroed-duration fallback will produce a degenerate infinite animation rather than a stopped one.
+
+Fix every such rule so it actually wins. Either match the selector that set the animation:
+
+```scss
+@media (prefers-reduced-motion: reduce) {
+  .app[data-sfx="a"] .app__env,
+  .app[data-sfx="b"] .app__env {
+    animation: none;
+  }
+}
+```
+
+or, preferably, disable them in one place with a selector that cannot lose:
+
+```scss
+@media (prefers-reduced-motion: reduce) {
+  .app[data-sfx] .app__env,
+  .app[data-sfx] .app__path,
+  .app[data-sfx] .app__sync {
+    animation: none;
+  }
+}
+```
+
+Then **re-measure rather than re-read**: with reduced motion emulated, `getComputedStyle(el).animationName` must be `none` for every one of them. A rule you can see in the stylesheet is not evidence.
+
 - [ ] **Step 2: Verify decorative elements are hidden from assistive tech**
 
 ```bash
