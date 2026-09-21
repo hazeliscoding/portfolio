@@ -98,13 +98,6 @@
               view source
             </a>
             <a
-              *ngIf="project.writeup"
-              [routerLink]="['/blog', project.writeup]"
-              class="gn-btn gn-btn--secondary gn-btn--block"
-            >
-              read the writeup
-            </a>
-            <a
               *ngIf="project.links.demo"
               [href]="project.links.demo"
               target="_blank"
