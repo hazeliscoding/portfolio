@@ -3,7 +3,9 @@
   align-items: center;
   gap: var(--sp-6);
   padding: 0 var(--sp-4);
-  min-height: 34px;
+  // 32px — KAIRO's own SystemBar specifies minHeight 32; the mockup's 34px
+  // was a one-off and is off the 4px grid.
+  min-height: var(--sp-8);
   background: var(--surface-window);
   font: var(--type-mono-s);
   letter-spacing: var(--tracking-wide);
