@@ -1874,7 +1874,7 @@ git commit -m "fix(motion): snap primary controls, stop rows reflowing on hover"
 
 ## Task M9: Make the shell's affordances honest
 
-Three shell defects that share one cause — an element that looks like it does something and does not.
+Four shell defects that share one cause — an element that reports something it does not actually know.
 
 **Files:**
 - Modify: `src/app/app.ts`, `app.html`, `app.scss`, `app.spec.ts`
@@ -1885,7 +1885,42 @@ Three shell defects that share one cause — an element that looks like it does 
 
 **Second, the wordmark is not a link.** `hazel.exe` renders as a bare `<span>`. In the mockup it carries `cursor: pointer` and `onClick={goHome}` — the wordmark is the home affordance, which is the one navigation convention every visitor already knows. Ours dropped it. This matters most on mobile, where the mode rail is `display: none` and the only route home is the command palette.
 
-**Third**, four instrumented edges where the only changing value is a clock is a bezel with nothing behind it. A log line is the machine narrating itself — it is what makes an interface feel like it *remembers* what you did rather than merely re-rendering.
+**Third, the mode rail lies on a 404.** `activeMode` falls back to `'home'` for any URL it cannot match, so a request for a record that does not exist highlights `01 HOME` — the instrument reporting a location you are not at. Found while verifying M3 in a browser.
+
+**Fourth**, four instrumented edges where the only changing value is a clock is a bezel with nothing behind it. A log line is the machine narrating itself — it is what makes an interface feel like it *remembers* what you did rather than merely re-rendering.
+
+### The mode rail, specifically
+
+In `app.ts`, `activeMode` currently ends `return match?.id ?? 'home';`. That fallback is wrong for two different reasons at once — it is right for `/`, which genuinely is HOME, and wrong for `/nonsense`, which is nowhere. Distinguish them:
+
+```typescript
+  activeMode = computed(() => {
+    const url = this.currentUrl();
+    const path = url.split('?')[0].split('#')[0];
+    if (path === '/') return 'home';
+    const match = this.modes
+      .filter((m) => m.route !== '/' && path.startsWith(m.route))
+      .sort((a, b) => b.route.length - a.route.length)[0];
+    // No fallback: an unmatched URL is not a mode, and the rail should show
+    // nothing rather than claim a location.
+    return match?.id ?? '';
+  });
+```
+
+The query/hash stripping changes no current behaviour — every existing route still matches by prefix with or without it. It is there so this function and `envWordFor` answer the same question the same way; two route matchers in one shell that disagree about what a URL is would be a bug waiting for a route with a query string.
+
+Add a spec:
+
+```typescript
+  it('highlights no mode when the route matches none', async () => {
+    const fixture = TestBed.createComponent(App);
+    fixture.detectChanges();
+    const router = TestBed.inject(Router);
+    await router.navigateByUrl('/definitely-not-a-route');
+    fixture.detectChanges();
+    expect(fixture.componentInstance.activeMode()).toBe('');
+  });
+```
 
 ### The wordmark, specifically
 
