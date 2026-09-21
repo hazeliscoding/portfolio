@@ -112,4 +112,43 @@ describe('App', () => {
     expect(style.overflowY).toBe('auto');
     expect(style.overflowX).toBe('hidden');
   });
+
+  it('scrolls in-page anchors within the content region rather than navigating', () => {
+    const fixture = TestBed.createComponent(App);
+    fixture.detectChanges();
+    const host = fixture.nativeElement as HTMLElement;
+
+    const target = document.createElement('div');
+    target.id = 'anchor-probe';
+    host.querySelector('.main')?.appendChild(target);
+
+    const anchor = document.createElement('a');
+    anchor.setAttribute('href', '#anchor-probe');
+    host.querySelector('.main')?.appendChild(anchor);
+
+    const event = new MouseEvent('click', { bubbles: true, cancelable: true });
+    anchor.dispatchEvent(event);
+
+    expect(event.defaultPrevented).toBe(true);
+  });
+
+  it('ignores anchors that are not in-page', () => {
+    const fixture = TestBed.createComponent(App);
+    fixture.detectChanges();
+    const host = fixture.nativeElement as HTMLElement;
+    const anchor = document.createElement('a');
+    // Not `href="/portfolio"`: TestBed attaches the fixture to the live
+    // document, so a real, un-prevented `<a>` click actually navigates the
+    // Karma runner itself away (confirmed while capturing RED — it 404s and
+    // disconnects the browser mid-suite). `javascript:void(0)` exercises the
+    // exact same code path in the handler (a present href that does not
+    // start with `#`) without moving the document.
+    anchor.setAttribute('href', 'javascript:void(0)');
+    host.querySelector('.main')?.appendChild(anchor);
+
+    const event = new MouseEvent('click', { bubbles: true, cancelable: true });
+    anchor.dispatchEvent(event);
+
+    expect(event.defaultPrevented).toBe(false);
+  });
 });

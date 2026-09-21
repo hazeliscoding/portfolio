@@ -74,6 +74,12 @@
   scrollbar-width: thin;
   padding: var(--sp-5) var(--sp-6) var(--sp-8);
   position: relative;
+
+  // Keeps an anchored-to target clear of the top edge of the scroll region
+  // instead of sitting flush against it.
+  :target {
+    scroll-margin-block-start: var(--sp-5);
+  }
 }
 
 @media (max-width: 840px) {

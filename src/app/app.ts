@@ -90,6 +90,38 @@ export class App {
     this.poppedState = false;
   }
 
+  /**
+   * In-page anchors need handling explicitly for two reasons. The shell is
+   * pinned, so native anchor scrolling has no scrollable document to act on.
+   * And `<base href="/">` makes a fragment-only URL resolve against the base
+   * rather than the document, so an un-prevented `#foo` navigates to `/#foo`.
+   * Calling preventDefault solves both.
+   */
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    const anchor = (event.target as HTMLElement | null)?.closest?.('a');
+    if (!anchor) return;
+
+    const href = anchor.getAttribute('href');
+    if (!href || !href.startsWith('#') || href === '#') return;
+
+    const target = document.getElementById(href.slice(1));
+    if (!target) return;
+
+    event.preventDefault();
+    target.scrollIntoView({
+      block: 'start',
+      behavior: this.prefersReducedMotion() ? 'auto' : 'smooth',
+    });
+  }
+
+  // Browser-only; safe to call from an event handler (never during render).
+  // Defaults to respecting motion (i.e. smooth) if matchMedia is unavailable.
+  private prefersReducedMotion(): boolean {
+    if (typeof window === 'undefined' || !window.matchMedia) return false;
+    return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  }
+
   @HostListener('document:keydown', ['$event'])
   onKeydown(event: KeyboardEvent): void {
     if ((event.metaKey || event.ctrlKey) && event.key === 'k') {
