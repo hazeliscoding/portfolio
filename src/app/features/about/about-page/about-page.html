@@ -5,6 +5,7 @@
     @for (para of bio; track $index) {
       <p class="about__para">{{ para }}</p>
     }
+    <app-key-value class="about__location" [items]="location" />
   </app-window>
 
   <app-window class="about__window" index="02" title="Education" context="RECORD">

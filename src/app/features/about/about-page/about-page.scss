@@ -21,6 +21,13 @@
   }
 }
 
+.about__location {
+  display: block;
+  margin-block-start: var(--sp-4);
+  padding-block-start: var(--sp-3);
+  border-top: var(--bw-hairline) solid var(--border-faint);
+}
+
 .about__tags {
   display: flex;
   flex-wrap: wrap;

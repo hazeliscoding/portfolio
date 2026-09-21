@@ -44,4 +44,14 @@ describe('AboutPage', () => {
     const text = (fixture.nativeElement as HTMLElement).textContent ?? '';
     expect(/\p{Extended_Pictographic}/u.test(text)).toBe(false);
   });
+
+  it('records location as a labelled row, not bio prose', () => {
+    const el = fixture.nativeElement as HTMLElement;
+    const paras = [...el.querySelectorAll('.about__para')].map((p) => p.textContent?.trim());
+    expect(paras).not.toContain('Texas, USA');
+    const dt = [...el.querySelectorAll('.about__location dt')].map((d) => d.textContent?.trim());
+    const dd = [...el.querySelectorAll('.about__location dd')].map((d) => d.textContent?.trim());
+    expect(dt).toContain('Location');
+    expect(dd).toContain('Texas, USA');
+  });
 });
