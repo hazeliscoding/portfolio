@@ -1,151 +1,86 @@
-@use "abstracts/variables" as *;
-
-.project-detail-page {
-  &__paragraph {
-    font-size: $font-size-default;
-    margin-bottom: $spacing-medium;
-
-    &:last-child {
-      margin-bottom: 0;
-    }
-  }
-
-  &__actions {
-    display: grid;
-    gap: 0.6rem;
-    margin-top: $spacing-medium;
-  }
+.detail {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: var(--sp-3);
+  align-items: start;
 }
 
-// Slideshow: instant swaps, no fades — GlitterNet motion rules.
-.slideshow {
-  &__stage {
-    aspect-ratio: 16 / 9;
-    background: $color-surface-sunken;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-
-    img {
-      max-width: 100%;
-      max-height: 100%;
-      display: block;
-      cursor: zoom-in;
-    }
-  }
-
-  &__controls {
-    display: flex;
-    align-items: center;
-    gap: $spacing-medium;
-    padding: 0.6rem 1.2rem;
-    border-top: 1px solid $color-border;
-  }
-
-  // Web 1.0 outset bevel; press flips it inset.
-  &__btn {
-    font-family: $font-family-default;
-    font-size: $font-size-small;
-    font-weight: $font-weight-bold;
-    color: $brown-7;
-    background: $color-surface-sunken;
-    border: 2px solid;
-    border-color: $bevel-lite $bevel-dark $bevel-dark $bevel-lite;
-    border-radius: 0;
-    padding: 0.2rem 1rem;
-    cursor: pointer;
-
-    &:active {
-      border-color: $bevel-dark $bevel-lite $bevel-lite $bevel-dark;
-      transform: translate(1px, 1px);
-    }
-  }
-
-  &__caption {
-    flex: 1;
-    font-size: $font-size-small;
-    color: $color-text-muted;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
+.detail__main {
+  display: grid;
+  gap: var(--sp-3);
 }
 
-// Closer-look modal: brown scrim, panel with hard modal shadow, instant open.
-.lightbox {
-  position: fixed;
-  inset: 0;
-  z-index: 2000;
-  background: rgba(0, 0, 0, 0.75);
+.detail__strip {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: $spacing-big;
-  cursor: zoom-out;
+  gap: var(--sp-2);
+  margin-block-start: var(--sp-3);
+  overflow-x: auto;
+}
 
-  &__panel {
-    cursor: default;
-    max-width: min(120rem, 94vw);
-    max-height: 92vh;
-    display: flex;
-    flex-direction: column;
-    box-shadow: $shadow-modal;
+.detail__thumb {
+  flex: 0 0 120px;
+  display: grid;
+  gap: var(--sp-1);
+  padding: 0;
+  background: transparent;
+  border: var(--bw-hairline) solid var(--border-default);
+  cursor: pointer;
+  text-align: start;
+
+  img {
+    width: 100%;
+    display: block;
+    aspect-ratio: 16 / 10;
+    object-fit: cover;
   }
 
-  &__title {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+  &--active {
+    border-color: var(--signal-active);
   }
+}
 
-  &__close {
-    margin-left: auto;
-    font-family: $font-family-default;
-    font-size: $font-size-default;
-    font-weight: $font-weight-bold;
-    line-height: 1;
-    color: $color-on-accent;
-    background: none;
-    border: none;
-    padding: 0 0.2rem;
-    cursor: pointer;
+.detail__caption {
+  padding: 0 var(--sp-1) var(--sp-1);
+  font: var(--type-mono-s);
+  color: var(--text-faint);
+}
 
-    &:hover {
-      color: #7a0000;
-    }
+.detail__para {
+  margin: 0 0 var(--sp-4);
+  font: var(--type-body);
+  color: var(--text-secondary);
+  max-width: 68ch;
+
+  &:last-child {
+    margin-bottom: 0;
   }
+}
 
-  &__stage {
-    min-height: 0;
-    background: $color-surface-sunken;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
+.detail__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+  margin-block-start: var(--sp-4);
+}
 
-    img {
-      max-width: 100%;
-      max-height: calc(92vh - 8rem);
-      display: block;
-      cursor: zoom-in;
-    }
+.detail__link {
+  display: block;
+  min-height: var(--target-min);
+  line-height: var(--target-min);
+  font: var(--type-mono-s);
+  letter-spacing: var(--tracking-wide);
+  border-top: var(--bw-hairline) solid var(--border-faint);
+  margin-block-start: var(--sp-3);
+}
 
-    // Zoomed: image at natural resolution, scroll to pan.
-    &--zoomed {
-      overflow: auto;
-      align-items: flex-start;
-      justify-content: flex-start;
+.detail__missing {
+  font: var(--type-mono);
+  letter-spacing: var(--tracking-wider);
+  color: var(--text-active);
+}
 
-      img {
-        max-width: none;
-        max-height: none;
-        cursor: zoom-out;
-      }
-    }
-  }
-
-  .slideshow__controls {
-    border-top: 2px solid $color-border-strong;
+@media (max-width: 840px) {
+  .detail {
+    grid-template-columns: minmax(0, 1fr);
   }
 }

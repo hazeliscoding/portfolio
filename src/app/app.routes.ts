@@ -26,6 +26,12 @@ export const routes: Routes = [
         (m) => m.PortfolioPage,
       ),
   },
-  { path: 'portfolio/:id', loadComponent: construction },
+  {
+    path: 'portfolio/:id',
+    loadComponent: () =>
+      import(
+        './features/projectDetail/project-detail-page/project-detail-page'
+      ).then((m) => m.ProjectDetailPage),
+  },
   { path: '**', loadComponent: construction },
 ];
