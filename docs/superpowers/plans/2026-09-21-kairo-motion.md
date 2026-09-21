@@ -520,14 +520,39 @@ git commit -m "feat(motion): add keyframe library and MotionService"
 
 ## Task M2: Boot overlay
 
+The single highest-fidelity moment in the design — it is the first thing every
+visitor sees, and it sets the premise that this site is an instrument. The
+values below are taken from the mockup rather than approximated; where they
+differ from the mockup, the difference is deliberate and noted.
+
 **Files:**
 - Create: `src/app/ui/boot/boot.ts`, `boot.html`, `boot.scss`, `boot.spec.ts`
 
 **Interfaces:**
-- Consumes: KAIRO tokens; `boot-in` and `boot-bar` keyframes from M1.
-- Produces: `Boot`, selector `app-boot`. No inputs. Output `dismissed` (void). Renders nothing when `prefers-reduced-motion: reduce` matches.
+- Consumes: KAIRO tokens; `boot-in`, `boot-bar` and `k-blink` keyframes from M1; `projectsData` from `src/app/data/projects.data.ts`; `blogPosts` from `src/app/data/blog-posts.generated.ts`.
+- Produces: `Boot`, selector `app-boot`. Required input `clock: string`. Output `dismissed` (void).
 
-Not yet mounted — M4 wires it into the shell.
+Not yet mounted — M4 wires it into the shell and only in the browser.
+
+**Three things this task gets right that a looser reading would get wrong:**
+
+1. **`clock` is an input, not a second timer.** The shell already ticks once a
+   second. Boot displays that value. A component that owns its own interval for
+   a 2.6-second overlay is machinery with no payer.
+2. **The record counts are computed, not typed.** The mockup says
+   "4 RECORDS · 3 LOG ENTRIES" because that is what the mockup's fake data
+   holds. Hardcoding a number here would be a lie the day content changes.
+3. **Any key dismisses.** The footer promises "PRESS ANY KEY" and the interface
+   must keep that promise. Restricting it to Escape and Enter would advertise a
+   binding that does not exist — the exact defect class already found twice in
+   this project.
+
+**Ruling — `ui/` importing from `data/`.** No other component under
+`src/app/ui/` imports site content; they are all prop-driven primitives. Boot is
+not a primitive. It is a one-off overlay whose entire purpose is to introduce
+*this* site, and the alternative — passing counts down through the shell — would
+spread the same coupling to `App`, which otherwise has no reason to know how
+many projects exist. Couple the overlay, not the shell.
 
 - [ ] **Step 1: Write the failing test**
 
@@ -539,64 +564,86 @@ import { Boot } from './boot';
 
 describe('Boot', () => {
   let fixture: ComponentFixture<Boot>;
+  let el: HTMLElement;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({ imports: [Boot] }).compileComponents();
     fixture = TestBed.createComponent(Boot);
+    fixture.componentRef.setInput('clock', '12:34:56');
     fixture.detectChanges();
+    el = fixture.nativeElement as HTMLElement;
   });
 
   it('renders the overlay', () => {
-    expect((fixture.nativeElement as HTMLElement).querySelector('.boot')).toBeTruthy();
+    expect(el.querySelector('.boot')).toBeTruthy();
   });
 
   it('announces itself as a status region rather than a dialog', () => {
-    const el = (fixture.nativeElement as HTMLElement).querySelector('.boot');
-    expect(el?.getAttribute('role')).toBe('status');
+    expect(el.querySelector('.boot')?.getAttribute('role')).toBe('status');
   });
 
-  it('is focusable so a keyboard user is not stranded', () => {
-    const el = (fixture.nativeElement as HTMLElement).querySelector(
-      '.boot',
-    ) as HTMLElement;
-    expect(el.tabIndex).toBe(-1);
+  it('is focusable so a keyboard user is not stranded behind it', () => {
+    expect((el.querySelector('.boot') as HTMLElement).tabIndex).toBe(-1);
   });
 
   it('emits dismissed on click', () => {
     let fired = false;
     fixture.componentInstance.dismissed.subscribe(() => (fired = true));
-    (fixture.nativeElement as HTMLElement)
-      .querySelector('.boot')
-      ?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    el.querySelector('.boot')?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
     expect(fired).toBe(true);
   });
 
-  it('emits dismissed on Escape', () => {
-    let fired = false;
-    fixture.componentInstance.dismissed.subscribe(() => (fired = true));
-    (fixture.nativeElement as HTMLElement)
-      .querySelector('.boot')
-      ?.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
-    expect(fired).toBe(true);
+  it('emits dismissed on ANY key, not just Escape', () => {
+    const keys = ['Escape', 'Enter', 'a', ' ', 'ArrowLeft'];
+    let fired = 0;
+    fixture.componentInstance.dismissed.subscribe(() => (fired += 1));
+    for (const key of keys) {
+      document.dispatchEvent(new KeyboardEvent('keydown', { key, bubbles: true }));
+    }
+    expect(fired).toBe(keys.length);
   });
 
-  it('emits dismissed on Enter', () => {
-    let fired = false;
-    fixture.componentInstance.dismissed.subscribe(() => (fired = true));
-    (fixture.nativeElement as HTMLElement)
-      .querySelector('.boot')
-      ?.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
-    expect(fired).toBe(true);
+  it('takes focus on mount so focus is not left behind the overlay', async () => {
+    await fixture.whenStable();
+    expect(document.activeElement).toBe(el.querySelector('.boot'));
   });
 
-  it('marks the decorative environmental word aria-hidden', () => {
-    const env = (fixture.nativeElement as HTMLElement).querySelector('.boot__env');
-    expect(env?.getAttribute('aria-hidden')).toBe('true');
+  it('shows the real record counts rather than a hardcoded number', () => {
+    const log = el.querySelector('.boot__log')?.textContent ?? '';
+    expect(log).toMatch(/\d+ RECORDS? · \d+ LOG (ENTRY|ENTRIES) RETRIEVED/);
+  });
+
+  it('renders the progress bar as a track plus a fill', () => {
+    expect(el.querySelector('.boot__bar')).toBeTruthy();
+    expect(el.querySelector('.boot__bar .boot__bar-fill')).toBeTruthy();
+  });
+
+  it('renders a live prompt with a blinking cursor', () => {
+    expect(el.querySelector('.boot__cursor')).toBeTruthy();
+  });
+
+  it('shows the clock it was given', () => {
+    expect(el.querySelector('.boot__clock')?.textContent).toContain('12:34:56');
+  });
+
+  it('carries the exact skip affordance copy', () => {
+    expect(el.querySelector('.boot__foot')?.textContent).toContain(
+      'CLICK OR PRESS ANY KEY TO SKIP',
+    );
+  });
+
+  it('hides the decorative log and environmental word from assistive tech', () => {
+    expect(el.querySelector('.boot__log')?.getAttribute('aria-hidden')).toBe('true');
+    expect(el.querySelector('.boot__env')?.getAttribute('aria-hidden')).toBe('true');
+  });
+
+  it('leaves the title and the skip hint exposed, so the announcement is useful', () => {
+    expect(el.querySelector('.boot__title')?.getAttribute('aria-hidden')).toBeNull();
+    expect(el.querySelector('.boot__foot')?.getAttribute('aria-hidden')).toBeNull();
   });
 
   it('contains no emoji', () => {
-    const text = (fixture.nativeElement as HTMLElement).textContent ?? '';
-    expect(/\p{Extended_Pictographic}/u.test(text)).toBe(false);
+    expect(/\p{Extended_Pictographic}/u.test(el.textContent ?? '')).toBe(false);
   });
 });
 ```
@@ -611,14 +658,83 @@ Expected: FAIL — cannot resolve `./boot`.
 `src/app/ui/boot/boot.ts`:
 
 ```typescript
-import { Component, HostListener, output } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  HostListener,
+  afterNextRender,
+  input,
+  output,
+  viewChild,
+} from '@angular/core';
+import { blogPosts } from '../../data/blog-posts.generated';
+import { projectsData } from '../../data/projects.data';
 
-const BOOT_LINES = [
-  'KAIRO/OS — INITIALISING',
-  'MOUNT /hazel.exe … OK',
-  'LOAD OPERATOR PROFILE … OK',
-  'NET LINK … ESTABLISHED',
-  'READY',
+interface BootLine {
+  prefix: string;
+  text: string;
+  /** Colour of the status prefix column. */
+  tone: 'active' | 'faint' | 'success';
+  /** Statements read primary; detail reads secondary. */
+  emphasis: 'primary' | 'secondary';
+  /** Milliseconds after mount at which this line appears. */
+  delay: number;
+}
+
+function count(n: number, one: string, many: string): string {
+  return `${n} ${n === 1 ? one : many}`;
+}
+
+// The delay ladder is not uniform. It is fast at the head, slows through the
+// middle, then lands — the rhythm is what makes it read as a machine working
+// rather than a list animating. Taken from the mockup verbatim.
+const BOOT_LINES: BootLine[] = [
+  {
+    prefix: '>',
+    text: 'HAZEL.EXE // BOOT SEQUENCE 4.02',
+    tone: 'active',
+    emphasis: 'primary',
+    delay: 0,
+  },
+  {
+    prefix: '..',
+    text: 'LOADING MODULES : HOME ABOUT PROJECTS BLOG',
+    tone: 'faint',
+    emphasis: 'secondary',
+    delay: 350,
+  },
+  {
+    prefix: 'OK',
+    text: 'CONNECTION ESTABLISHED — NODE TX-01',
+    tone: 'success',
+    emphasis: 'secondary',
+    delay: 750,
+  },
+  {
+    prefix: 'OK',
+    text: `${count(projectsData.length, 'RECORD', 'RECORDS')} · ${count(
+      blogPosts.length,
+      'LOG ENTRY',
+      'LOG ENTRIES',
+    )} RETRIEVED`,
+    tone: 'success',
+    emphasis: 'secondary',
+    delay: 1150,
+  },
+  {
+    prefix: '..',
+    text: 'OPERATOR : HAZEL GRANADOS · STATUS : OPEN TO WORK',
+    tone: 'faint',
+    emphasis: 'secondary',
+    delay: 1600,
+  },
+  {
+    prefix: '>',
+    text: 'ENTERING SYSTEM',
+    tone: 'active',
+    emphasis: 'primary',
+    delay: 2100,
+  },
 ];
 
 @Component({
@@ -629,12 +745,19 @@ const BOOT_LINES = [
   styleUrl: './boot.scss',
 })
 export class Boot {
-  lines = BOOT_LINES;
+  /** Supplied by the shell, which already ticks once a second. */
+  clock = input.required<string>();
   dismissed = output<void>();
 
-  /** Stagger each log line by its index. Matches the mockup's ladder. */
-  delayFor(index: number): string {
-    return `${index * 160}ms`;
+  lines = BOOT_LINES;
+
+  private readonly root = viewChild.required<ElementRef<HTMLElement>>('root');
+
+  constructor() {
+    // Take focus so a keyboard or screen-reader user is not left interacting
+    // with content the overlay covers. afterNextRender never runs on the
+    // server, which is the guarantee we want — this component is browser-only.
+    afterNextRender(() => this.root().nativeElement.focus());
   }
 
   @HostListener('click')
@@ -642,12 +765,11 @@ export class Boot {
     this.dismissed.emit();
   }
 
-  @HostListener('keydown', ['$event'])
-  onKeydown(event: KeyboardEvent): void {
-    if (event.key === 'Escape' || event.key === 'Enter') {
-      event.preventDefault();
-      this.dismissed.emit();
-    }
+  // Bound to the document, not the host: the footer promises ANY key, and that
+  // has to hold whether or not focus happens to be inside the overlay.
+  @HostListener('document:keydown')
+  onKeydown(): void {
+    this.dismissed.emit();
   }
 }
 ```
@@ -655,28 +777,37 @@ export class Boot {
 `src/app/ui/boot/boot.html`:
 
 ```html
-<div class="boot" role="status" tabindex="-1" aria-label="System boot sequence">
+<div class="boot" #root role="status" tabindex="-1">
   <span class="boot__env" aria-hidden="true">HAZEL</span>
 
   <div class="boot__window">
     <div class="boot__head">
-      <span class="boot__index">00</span>
+      <span class="boot__index" aria-hidden="true">00</span>
       <span class="boot__title">Boot sequence</span>
-      <span class="boot__sep">// hazel.exe</span>
+      <span class="boot__sep" aria-hidden="true">// hazel.exe</span>
+      <span class="boot__clock" aria-hidden="true">{{ clock() }}</span>
     </div>
 
-    <div class="boot__body">
-      @for (line of lines; track line; let i = $index) {
-        <p class="boot__line" [style.animation-delay]="delayFor(i)">
-          <span class="boot__caret" aria-hidden="true">&gt;</span>{{ line }}
+    <div class="boot__log" aria-hidden="true">
+      @for (line of lines; track line.text) {
+        <p class="boot__line" [style.animation-delay.ms]="line.delay">
+          <span class="boot__prefix" [attr.data-tone]="line.tone">{{ line.prefix }}</span>
+          <span class="boot__text" [attr.data-emphasis]="line.emphasis">{{ line.text }}</span>
         </p>
       }
+      <p class="boot__line boot__line--live">
+        <span class="boot__prefix" data-tone="active">&gt;</span>
+        <span class="boot__cursor"></span>
+      </p>
     </div>
 
-    <div class="boot__bar" aria-hidden="true"></div>
-  </div>
+    <div class="boot__bar" aria-hidden="true"><span class="boot__bar-fill"></span></div>
 
-  <p class="boot__hint">PRESS ANY KEY OR CLICK TO SKIP</p>
+    <div class="boot__foot">
+      <span>CLICK OR PRESS ANY KEY TO SKIP</span>
+      <span class="boot__node" aria-hidden="true">NODE TX-01</span>
+    </div>
+  </div>
 </div>
 ```
 
@@ -737,11 +868,16 @@ export class Boot {
   color: var(--text-primary);
 }
 
-.boot__body {
+// One auto margin, not two — with a margin on both ends flexbox splits the
+// free space between them and neither lands where it was aimed.
+.boot__clock {
+  margin-inline-start: auto;
+}
+
+.boot__log {
   padding: var(--sp-4) var(--sp-3);
   display: grid;
   gap: var(--sp-2);
-  min-height: 150px;
   font: var(--type-mono);
   color: var(--text-secondary);
 }
@@ -753,32 +889,78 @@ export class Boot {
   animation: boot-in var(--dur-control) var(--ease-mech) both;
 }
 
-.boot__caret {
+// The prompt is present from the first frame; only the log streams in.
+.boot__line--live {
+  animation: none;
+  align-items: center;
+}
+
+.boot__prefix[data-tone="active"] {
   color: var(--signal-active);
 }
 
+.boot__prefix[data-tone="faint"] {
+  color: var(--text-faint);
+}
+
+.boot__prefix[data-tone="success"] {
+  color: var(--signal-success);
+}
+
+.boot__text[data-emphasis="primary"] {
+  color: var(--text-primary);
+}
+
+.boot__cursor {
+  display: inline-block;
+  // Sized to the mono cell rather than the 4px spacing grid: a text cursor's
+  // dimensions come from the font's metrics, not the layout scale.
+  width: 9px;
+  height: 15px;
+  background: var(--text-primary);
+  animation: k-blink var(--dur-blink) steps(1) infinite;
+}
+
+// A track the fill travels along, not a bare bar — without the track there is
+// nothing to read the progress against.
 .boot__bar {
   height: var(--bw-indicator);
+  background: var(--surface-raised);
+  overflow: hidden;
+}
+
+.boot__bar-fill {
+  display: block;
+  height: 100%;
   background: var(--signal-active);
   transform-origin: left center;
+  // Paired with M4's 2700ms dismissal: the bar completes, then the overlay
+  // leaves. Changing one without the other either truncates the bar or leaves
+  // a finished bar sitting on screen. Both numbers are deliberate.
   animation: boot-bar 2600ms linear both;
 }
 
-.boot__hint {
-  position: absolute;
-  inset-block-end: var(--sp-6);
-  margin: 0;
+.boot__foot {
+  display: flex;
+  gap: var(--sp-4);
+  padding: var(--sp-2) var(--sp-3);
+  border-top: var(--bw-hairline) solid var(--border-faint);
   font: var(--type-mono-s);
   letter-spacing: var(--tracking-wider);
   color: var(--text-faint);
 }
 
-// Reduced motion: the overlay is not rendered at all (see the shell), but if
-// it ever were, nothing here may animate.
+.boot__node {
+  margin-inline-start: auto;
+}
+
+// The shell does not mount this component at all under reduced motion. The
+// guard is here anyway so the component cannot animate in any context.
 @media (prefers-reduced-motion: reduce) {
   .boot__env,
   .boot__line,
-  .boot__bar {
+  .boot__cursor,
+  .boot__bar-fill {
     animation: none;
   }
 }
@@ -787,7 +969,13 @@ export class Boot {
 - [ ] **Step 4: Run test to verify it passes**
 
 Run: `npx ng test --watch=false --browsers=ChromeHeadless --include='**/boot.spec.ts'`
-Expected: PASS, 8 specs.
+Expected: PASS, 14 specs.
+
+If the focus assertion is the only failure, `afterNextRender` is not firing
+under this Karma setup. **Keep the focus call and adjust the test** — try
+`TestBed.tick()` before asserting, or attach the fixture to the document body.
+Do not delete the assertion, and if nothing works, report it rather than
+dropping it.
 
 - [ ] **Step 5: Commit**
 
@@ -1007,7 +1195,7 @@ In `app.ts`: import `Boot`, `MotionService`, and `inject`. Add to `imports`. The
     matchMedia('(prefers-reduced-motion: reduce)').matches;
 ```
 
-Inside the existing `afterNextRender` block, alongside the clock:
+Inside the existing `afterNextRender` block, **after the existing `this.tick()` call** — Boot displays the shell's clock, so the clock must hold a real time before the overlay mounts, or it shows the placeholder for a frame:
 
 ```typescript
       // Browser-only, deliberately. Prerendered HTML must not contain the
@@ -1015,44 +1203,66 @@ Inside the existing `afterNextRender` block, alongside the clock:
       // behind a permanent full-screen panel.
       if (!this.prefersReducedMotion()) {
         this.booting.set(true);
-        setTimeout(() => this.booting.set(false), 2600);
+        // 2700, not 2600: M2's progress bar runs for 2600ms, and the overlay
+        // leaves 100ms after it completes. A finished bar that lingers reads
+        // as a hang; a bar cut short reads as a glitch. The two numbers are
+        // paired — change neither alone.
+        setTimeout(() => this.booting.set(false), 2700);
       }
 ```
 
-In `app.html`, add `[attr.data-sfx]="motion.sfx()"` to the root `.app` div, add the wipe bar as the first child of `<main class="main">`:
+In `app.html`, add the motion sequence attribute to the **root** `.app` div — every `data-sfx` selector in every stylesheet keys off this one binding, so without it nothing re-triggers:
 
 ```html
-      <span class="app__wipe" aria-hidden="true"></span>
+<div class="app" [attr.data-sfx]="motion.sfx()">
 ```
 
-and mount the boot overlay as the last child of `.app`:
+and mount the boot overlay as the **last** child of `.app`:
 
 ```html
   @if (booting()) {
-    <app-boot (dismissed)="booting.set(false)" />
+    <app-boot [clock]="clock()" (dismissed)="booting.set(false)" />
   }
+```
+
+
+In `app.html`, add the wipe as the first child of `<main class="main">`, as a **sticky zero-height wrapper** containing the bar:
+
+```html
+      <span class="app__wipe" aria-hidden="true"><span class="app__wipe-bar"></span></span>
 ```
 
 In `app.scss`:
 
 ```scss
+// The wrapper is sticky and zero-height so it stays put while `.main` scrolls
+// beneath it. An absolutely-positioned bar would scroll away with the content
+// mid-sweep, and on a long page would only ever cover the first screenful.
+// The bar deliberately sweeps the CONTENT region only — not the top and bottom
+// bars — so the instrument frame stays visible throughout the transition.
 .app__wipe {
-  position: absolute;
+  position: sticky;
   inset-block-start: 0;
-  inset-inline-start: 0;
-  width: 100%;
-  height: 100%;
-  background: var(--surface-elevated);
-  border-inline-end: var(--bw-indicator) solid var(--signal-active);
+  display: block;
+  height: 0;
+  margin: calc(var(--sp-5) * -1) calc(var(--sp-6) * -1) var(--sp-5);
+  z-index: 3;
   pointer-events: none;
-  z-index: 2;
+  overflow: hidden;
 }
 
-.app[data-sfx="a"] .app__wipe {
+.app__wipe-bar {
+  display: block;
+  height: 100dvh;
+  background: var(--surface-elevated);
+  border-inline-end: var(--bw-indicator) solid var(--signal-active);
+}
+
+.app[data-sfx="a"] .app__wipe-bar {
   animation: wipe-a var(--dur-cinematic) var(--ease-mech) both;
 }
 
-.app[data-sfx="b"] .app__wipe {
+.app[data-sfx="b"] .app__wipe-bar {
   animation: wipe-b var(--dur-cinematic) var(--ease-mech) both;
 }
 
@@ -1075,7 +1285,8 @@ In `app.scss`:
 }
 ```
 
-The wipe bar is `display: none` rather than merely un-animated under reduced motion — a static full-viewport panel would cover the page.
+The wrapper is `display: none` rather than merely un-animated under reduced motion — a static bar would otherwise sit across the content.
+
 
 - [ ] **Step 4: Run tests to verify they pass**
 
