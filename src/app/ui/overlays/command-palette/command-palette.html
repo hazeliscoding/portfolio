@@ -1,7 +1,6 @@
 @if (open()) {
   <div class="palette-scrim" (click)="close.emit()">
     <div
-      #paletteDialog
       class="palette"
       role="dialog"
       aria-modal="true"
@@ -13,29 +12,45 @@
         <span class="palette__caret" aria-hidden="true">&gt;</span>
         <input
           #paletteInput
+          id="palette-input"
           class="palette__input"
           type="text"
+          role="combobox"
           autocomplete="off"
+          aria-label="Command"
+          aria-controls="palette-list"
+          aria-expanded="true"
+          [attr.aria-activedescendant]="
+            selectedIndex() >= 0 ? optionId(selectedIndex()) : null
+          "
           [attr.placeholder]="placeholder()"
           [value]="query()"
           (input)="onInput($event)"
         />
+        <span class="palette__esc" aria-hidden="true">ESC</span>
       </div>
 
-      <ul class="palette__list">
-        @for (cmd of filtered(); track cmd.id) {
-          <li>
-            <button type="button" class="palette__item" (click)="run.emit(cmd.id)">
-              <span class="palette__label">{{ cmd.label }}</span>
-              @if (cmd.mode) {
-                <span class="palette__mode">{{ cmd.mode }}</span>
-              }
-            </button>
+      <ul id="palette-list" class="palette__list" role="listbox" aria-label="Commands">
+        @for (cmd of filtered(); track cmd.id; let i = $index) {
+          <li
+            class="palette__item"
+            role="option"
+            [id]="optionId(i)"
+            [attr.aria-selected]="i === selectedIndex()"
+            [class.palette__item--selected]="i === selectedIndex()"
+            (click)="run.emit(cmd.id)"
+            (mouseenter)="activeIndex.set(i)"
+          >
+            <span class="palette__mode">{{ cmd.mode }}</span>
+            <span class="palette__label">{{ cmd.label }}</span>
+            @if (cmd.hint) {
+              <span class="palette__hint">{{ cmd.hint }}</span>
+            }
           </li>
+        } @empty {
+          <li class="palette__empty">NO MATCHING COMMAND</li>
         }
       </ul>
-
-      <p class="palette__count">{{ countLabel() }}</p>
     </div>
   </div>
 }

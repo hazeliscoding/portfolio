@@ -1,0 +1,48 @@
+<!--
+  The fault gets the same chapter header as every other screen — it is a place
+  in the system, not an exception to it. ERROR_404 with a return one level up,
+  and ROUTE ERROR as the instrument reading on the right.
+-->
+<app-chapter-header
+  code="ERROR"
+  index="404"
+  meta="ROUTE ERROR"
+  [backLabel]="backLabel()"
+  [backRoute]="backRoute()"
+/>
+
+<div class="fault">
+  <div class="fault__panel">
+    <app-window
+      variant="alert"
+      index="ERR"
+      title="Record not found"
+      context="404"
+      [active]="true"
+      footer="THIS EVENT HAS BEEN LOGGED"
+      delay="80ms"
+    >
+      <div class="fault__body">
+        <span class="fault__report">NO RECORD AT THIS ADDRESS</span>
+
+        <app-key-value [items]="report()" />
+
+        <!--
+          Real links, not scripted buttons. Both are navigation, and on the one
+          page a visitor reaches by following something broken, the recovery
+          routes should be the things a browser already knows how to open.
+        -->
+        <div class="fault__controls">
+          <app-button variant="primary" size="md" routerLink="/">Home &gt;</app-button>
+          <!--
+            The label is passed unbracketed: the `command` variant draws its own
+            `[ ]` in CSS. Writing "[Open archive]" here would print [[…]].
+          -->
+          <app-button variant="command" size="md" routerLink="/portfolio"
+            >Open archive</app-button
+          >
+        </div>
+      </div>
+    </app-window>
+  </div>
+</div>

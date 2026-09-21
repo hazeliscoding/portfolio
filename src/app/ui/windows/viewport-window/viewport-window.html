@@ -1,4 +1,4 @@
-<figure class="viewport" [style.aspect-ratio]="ratio()">
+<figure class="viewport" [attr.data-frame]="frame()" [style.aspect-ratio]="ratio()">
   @if (src()) {
     <img
       class="viewport__img"
@@ -6,9 +6,13 @@
       [src]="src()"
       [alt]="alt()"
     />
-    <span class="viewport__scan" aria-hidden="true"></span>
   } @else {
-    <span class="viewport__nosignal">NO SIGNAL</span>
+    <span class="viewport__nosignal" role="img" [attr.aria-label]="alt() || 'no signal'"
+      >NO SIGNAL</span
+    >
+  }
+  @if (scan()) {
+    <span class="viewport__scan" aria-hidden="true"></span>
   }
   @if (label()) {
     <figcaption class="viewport__label">{{ label() }}</figcaption>

@@ -1,49 +1,47 @@
-import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, inject } from '@angular/core';
+import { RouterLink } from '@angular/router';
 
 import { ChapterHeader } from '../../../ui/chapter-header/chapter-header';
 import { Window } from '../../../ui/windows/window/window';
-import { Column, DataTable, Row } from '../../../ui/data/data-table/data-table';
+import { Badge } from '../../../ui/core/badge/badge';
+import { MotionService } from '../../../ui/motion/motion.service';
 import { blogPosts } from '../../../data/blog-posts.generated';
+import { entryNumber } from '../../../core/navigation';
 import { count } from '../../../core/count';
 import { PageMeta } from '../../../core/page-meta';
 
 @Component({
   selector: 'blog-page',
   standalone: true,
-  imports: [ChapterHeader, Window, DataTable],
+  imports: [RouterLink, ChapterHeader, Window, Badge],
   templateUrl: './blog-page.html',
   styleUrl: './blog-page.scss',
 })
 export class BlogPage {
-  columns: Column[] = [
-    { key: 'date', label: 'DATE', width: '120px', nowrap: true },
-    { key: 'entry', label: 'ENTRY' },
-    { key: 'tags', label: 'TAGS', width: '280px' },
-  ];
+  /** The standfirst fades in with the panel, so the page needs the cue too. */
+  readonly motion = inject(MotionService);
 
-  posts = [...blogPosts].sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0));
-
-  rows: Row[] = this.posts.map((p) => ({
-    id: p.slug,
-    cells: {
-      date: p.date,
-      entry: p.title,
-      tags: p.tags.join(' // '),
-    },
+  /**
+   * `blogPosts` as generated — newest first, sorted once in
+   * `scripts/generate-blog.mjs`. Read in that order and NOT re-sorted here:
+   * `entryNumber` counts positions from the end of this exact array, so a
+   * second sort with a different tie-break would renumber the entries.
+   */
+  readonly entries = blogPosts.map((post, index) => ({
+    ...post,
+    // Oldest entry is 0001; the newest carries the highest number.
+    number: entryNumber(index),
   }));
 
-  selectedId = this.rows[0]?.id ?? '';
+  /**
+   * The design reads `3 ENTRIES · RSS`. The count is real; the RSS half is
+   * dropped, because this site serves no feed — there is no feed route, no
+   * generated feed.xml in `public/`, and no `<link rel="alternate">` in
+   * `index.html`. Advertising one would send readers to a 404.
+   */
+  readonly meta = count(this.entries.length, 'ENTRY', 'ENTRIES');
 
-  get report(): string {
-    const n = this.rows.length;
-    return `${count(n, 'RECORD', 'RECORDS')} RETRIEVED`;
-  }
-
-  constructor(
-    private pageMeta: PageMeta,
-    private router: Router,
-  ) {}
+  constructor(private pageMeta: PageMeta) {}
 
   ngOnInit(): void {
     this.pageMeta.set({
@@ -51,9 +49,5 @@ export class BlogPage {
       description: 'Notes on building software, by Hazel Granados.',
       path: '/blog',
     });
-  }
-
-  open(slug: string): void {
-    this.router.navigate(['/blog', slug]);
   }
 }

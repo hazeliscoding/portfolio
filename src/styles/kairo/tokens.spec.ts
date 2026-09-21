@@ -23,4 +23,13 @@ describe('KAIRO tokens', () => {
   it('defines the mechanical easing curve', () => {
     expect(read('--ease-mech')).toBe('cubic-bezier(0.3,0,0.1,1)');
   });
+
+  it('keeps a Japanese face in every stack', () => {
+    // KAIRO's identity is a JP terminal, and all three of its faces fall
+    // through to IBM Plex Sans JP before the generic. Dropping it from one
+    // stack switches typeface mid-sentence on the first CJK character.
+    for (const stack of ['--font-display', '--font-ui', '--font-mono']) {
+      expect(read(stack)).toContain('IBM Plex Sans JP');
+    }
+  });
 });

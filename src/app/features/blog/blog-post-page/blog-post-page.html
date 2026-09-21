@@ -1,40 +1,69 @@
 @if (post(); as p) {
-  <app-chapter-header code="LOG" index="04" [context]="p.title" [status]="p.date" />
+  <!--
+    `[heading]="false"` — the entry's own <h1> below is the page heading; this
+    is the location label. Both at h1 would put two of them on one page.
+  -->
+  <app-chapter-header
+    code="ENTRY"
+    [index]="entry()"
+    [meta]="wordsMeta()"
+    [heading]="false"
+    backLabel="LOG_04"
+    backRoute="/blog"
+  />
 
   <div class="post">
-    <article class="post__main">
-      <app-window index="01" title="Entry" [context]="p.slug">
-        <h2 class="post__title">{{ p.title }}</h2>
-        <div class="post__body prose" [innerHTML]="bodyHtml()"></div>
-      </app-window>
-
-      <a class="post__back" routerLink="/blog">&lt; BACK TO LOG</a>
+    <!--
+      A bare <article>, not a Window. The entry is the one thing on this site
+      that is read rather than inspected, so it is set on the canvas with no
+      chrome around it; the instruments stay in the aside.
+    -->
+    <article class="post__article" [attr.data-sfx]="motion.sfx()">
+      <p class="post__eyebrow">{{ eyebrow() }}</p>
+      <h1 class="post__title">{{ p.title }}</h1>
+      <p class="post__description">{{ p.description }}</p>
+      <div class="post__rule" aria-hidden="true"></div>
+      <div class="post__body prose" [innerHTML]="bodyHtml()"></div>
     </article>
 
     <aside class="post__side">
-      <app-window class="post__contents" variant="inspector" index="02" title="Contents" context="INDEX">
-        @if (headings().length) {
-          <ol class="post__toc">
-            @for (h of headings(); track h.id) {
-              <li><a [href]="'#' + h.id">{{ h.text }}</a></li>
-            }
-          </ol>
-        } @else {
-          <p class="post__empty">NO SECTIONS</p>
+      <app-window
+        class="post__contents"
+        variant="inspector"
+        index="01"
+        title="Contents"
+        [padded]="false"
+        delay="180ms"
+      >
+        @for (h of headings(); track h.id) {
+          <!--
+            A real anchor, where the design draws a div with a click handler:
+            the shell's fragment handler (App.onDocumentClick) works off
+            href="#id", and a link is focusable, announced as a link and
+            openable in a new tab without any of that being rebuilt here.
+          -->
+          <a class="post__toc-row" [href]="'#' + h.id">
+            <span class="post__toc-idx">{{ h.idx }}</span>
+            <span class="post__toc-text">{{ h.text }}</span>
+          </a>
+        } @empty {
+          <p class="post__toc-empty">NO SECTIONS</p>
         }
       </app-window>
 
-      <app-window class="post__record" variant="inspector" index="03" title="Record" context="METADATA">
+      <app-window class="post__record" variant="data" index="02" title="Record" delay="180ms">
         <app-key-value [items]="record()" />
-        <div class="post__tags">
-          @for (t of p.tags; track t) {
-            <app-badge>{{ t }}</app-badge>
-          }
+        <div class="post__return">
+          <app-button variant="text" size="sm" routerLink="/blog">&lt; All entries</app-button>
         </div>
       </app-window>
     </aside>
   </div>
 } @else {
-  <app-chapter-header code="LOG" index="04" context="NO RECORD" />
-  <p class="post__missing">NO RECORD AT THIS ADDRESS</p>
+  <!--
+    Literally the same panel as the 404 screen, not a local copy of it: a slug
+    with no entry is the same fault. The return goes to the log rather than
+    home — one level up from here, and where Escape goes too.
+  -->
+  <app-record-fault [path]="requestedPath()" backLabel="LOG_04" backRoute="/blog" />
 }

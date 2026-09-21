@@ -1,12 +1,56 @@
-<button
-  type="button"
-  class="button"
-  [attr.data-variant]="variant()"
-  [attr.data-size]="size()"
-  [disabled]="disabled()"
->
+<!--
+  One control, rendered as whatever it actually is.
+
+  KAIRO's Button.jsx is always a <button>, and porting that literally meant
+  every navigating control on the site — "Dossier", "Download resume",
+  "Open archive", "< All projects" — was a <button> that could not be
+  middle-clicked, opened in a new tab, copied as a link, or announced as one.
+  The About page worked around it by hand-copying ~40 lines of this
+  component's CSS onto real anchors, which is the same control drawn twice.
+
+  The visual is identical either way, which is the part the design specifies.
+
+  `content` is instantiated by exactly one branch, so the single <ng-content>
+  inside it is projected once. Two literal <ng-content> tags in two branches
+  would not work: projection is resolved statically, so the second slot gets
+  nothing and that branch renders an empty control.
+-->
+@if (routerLink(); as link) {
+  <a
+    class="button"
+    [attr.data-variant]="variant()"
+    [attr.data-size]="size()"
+    [routerLink]="link"
+  >
+    <ng-container [ngTemplateOutlet]="content" />
+  </a>
+} @else if (href(); as url) {
+  <a
+    class="button"
+    [attr.data-variant]="variant()"
+    [attr.data-size]="size()"
+    [href]="url"
+    [attr.download]="download() || null"
+    [attr.target]="external() ? '_blank' : null"
+    [attr.rel]="external() ? 'noopener noreferrer' : null"
+  >
+    <ng-container [ngTemplateOutlet]="content" />
+  </a>
+} @else {
+  <button
+    type="button"
+    class="button"
+    [attr.data-variant]="variant()"
+    [attr.data-size]="size()"
+    [disabled]="disabled()"
+  >
+    <ng-container [ngTemplateOutlet]="content" />
+  </button>
+}
+
+<ng-template #content>
   @if (index()) {
     <span class="button__index">{{ index() }}</span>
   }
-  <ng-content />
-</button>
+  <span class="button__label"><ng-content /></span>
+</ng-template>

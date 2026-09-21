@@ -4,8 +4,18 @@
   background: var(--surface-inset);
   border: var(--bw-hairline) solid var(--border-default);
   overflow: hidden;
-  display: grid;
-  place-items: center;
+
+  // Nested straight inside a Window body, the viewport's own frame lands a
+  // pixel inside the panel's and reads as a rendering fault. `sides` keeps the
+  // bottom rule, which is what separates a capture from the caption under it.
+  &[data-frame="none"] {
+    border: 0;
+  }
+
+  &[data-frame="sides"] {
+    border-block-start: 0;
+    border-inline: 0;
+  }
 }
 
 .viewport__img {
@@ -36,22 +46,32 @@
   }
 }
 
+// The empty state is a 45° hairline hatch, not a flat fill — it is what makes
+// a viewport with no feed read as "no signal" rather than as a layout hole.
+// 8px of inset then a 1px line of window surface, per KAIRO's ViewportWindow.
 .viewport__nosignal {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font: var(--type-mono-s);
-  letter-spacing: var(--tracking-wider);
   color: var(--text-faint);
+  background: repeating-linear-gradient(
+    45deg,
+    var(--surface-inset) 0 8px,
+    var(--surface-window) 8px 9px
+  );
 }
 
 .viewport__label {
   position: absolute;
-  inset-block-end: var(--sp-1);
-  inset-inline-start: var(--sp-2);
+  inset-block-end: 0;
+  inset-inline-start: 0;
   // The label sits over arbitrary images, so it needs an opaque backing — no
   // single text colour is legible against both light and dark captures.
-  padding: 0 var(--sp-1);
-  background: rgba(7, 9, 11, 0.78);
-  border: var(--bw-hairline) solid var(--border-default);
+  padding: 3px 6px;
+  background: rgba(7, 9, 11, 0.82);
   font: var(--type-mono-s);
-  letter-spacing: var(--tracking-wide);
-  color: var(--text-primary);
+  color: var(--k-paper);
 }

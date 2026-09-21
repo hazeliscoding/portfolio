@@ -59,11 +59,38 @@ describe('App', () => {
     expect(mark?.getAttribute('href')).toBe('/');
   });
 
-  it('does not advertise a keybinding it does not implement', () => {
+  it('implements every keybinding the bottom bar advertises', async () => {
     const fixture = TestBed.createComponent(App);
     fixture.detectChanges();
     const hints = (fixture.nativeElement as HTMLElement).querySelector('.app__hints');
-    expect(hints?.textContent).not.toContain('ESC BACK');
+    expect(hints?.textContent).toContain('1–4 MODE');
+    expect(hints?.textContent).toContain('ESC BACK');
+
+    const router = TestBed.inject(Router);
+
+    // 1–4 MODE
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: '3', bubbles: true }));
+    await fixture.whenStable();
+    expect(router.url).toBe('/portfolio');
+
+    // ESC BACK — one level out, not history.back()
+    await router.navigateByUrl('/portfolio/anything');
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+    await fixture.whenStable();
+    expect(router.url).toBe('/portfolio');
+  });
+
+  it('does not navigate on 1–4 while the palette has the keyboard', async () => {
+    const fixture = TestBed.createComponent(App);
+    fixture.detectChanges();
+    const router = TestBed.inject(Router);
+    await router.navigateByUrl('/');
+
+    fixture.componentInstance.paletteOpen.set(true);
+    fixture.detectChanges();
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: '3', bubbles: true }));
+    await fixture.whenStable();
+    expect(router.url).toBe('/');
   });
 
   it('narrates navigation in the bottom bar', async () => {
@@ -80,7 +107,29 @@ describe('App', () => {
     fixture.detectChanges();
     const after = log?.textContent ?? '';
     expect(after).not.toBe(before);
-    expect(after).toContain('NAV /blog');
+    // The system narrates in its own vocabulary and names the location code,
+    // not the URL — the address bar already shows the URL.
+    expect(after).toContain('MODE SWITCH → LOG_04');
+  });
+
+  it('reports a route error on the lamp as well as in the log', async () => {
+    const fixture = TestBed.createComponent(App);
+    fixture.detectChanges();
+    const router = TestBed.inject(Router);
+
+    await router.navigateByUrl('/blog');
+    fixture.detectChanges();
+    expect(fixture.componentInstance.lightState()).toBe('ok');
+
+    // A record id with no record is a 404 even though the router matched the
+    // route pattern. The lamp has to agree with the page.
+    await router.navigateByUrl('/portfolio/not-a-real-record');
+    fixture.detectChanges();
+    expect(fixture.componentInstance.lightState()).toBe('danger');
+    expect(fixture.componentInstance.lightLabel()).toBe('ROUTE ERROR');
+    expect(
+      (fixture.nativeElement as HTMLElement).querySelector('.app__log')?.textContent,
+    ).toContain('ROUTE ERROR');
   });
 
   it('keeps the log out of the accessibility tree, so it never interrupts', () => {
@@ -131,10 +180,12 @@ describe('App', () => {
     const center = (fixture.nativeElement as HTMLElement).querySelector(
       '.system-bar__center',
     ) as HTMLElement;
-    // 4, not 2: M4 adds a SYNC readout and a typing path readout to this same
-    // centre slot (Step 5b), alongside the pre-existing NET and LOC readouts.
-    expect(center.children.length).toBe(4);
+    // 3: NET, SYNC, and the typing path. The LOC readout is gone — KAIRO's
+    // top bar carries NET / SYNC / path on the left and nothing else, and
+    // the location is already stated on the home and about screens.
+    expect(center.children.length).toBe(3);
     expect(center.children[0].tagName.toLowerCase()).toBe('app-readout');
+    expect(center.textContent).not.toContain('LOC');
   });
 
   it('offers a touch-reachable way to open the palette', () => {
@@ -144,7 +195,22 @@ describe('App', () => {
     const btn = el.querySelector('.app__command') as HTMLButtonElement;
     expect(btn).toBeTruthy();
     expect(btn.tagName.toLowerCase()).toBe('button');
+    // Clears the AAA touch target even though it only paints below 840px.
+    expect(parseInt(getComputedStyle(btn).minHeight, 10)).toBeGreaterThanOrEqual(44);
     btn.click();
+    fixture.detectChanges();
+    expect(el.querySelector('.palette')).toBeTruthy();
+  });
+
+  it('offers a pointer-reachable way to open the palette', () => {
+    // Above 840px the COMMAND button is display:none and the [⌘K] control in
+    // the top bar is the only thing a mouse can click to reach the palette.
+    const fixture = TestBed.createComponent(App);
+    fixture.detectChanges();
+    const el = fixture.nativeElement as HTMLElement;
+    const key = el.querySelector('.app__palette-key') as HTMLButtonElement;
+    expect(key?.tagName.toLowerCase()).toBe('button');
+    key.click();
     fixture.detectChanges();
     expect(el.querySelector('.palette')).toBeTruthy();
   });
@@ -152,10 +218,10 @@ describe('App', () => {
   it('vertically centres the bottom bar items', () => {
     const fixture = TestBed.createComponent(App);
     fixture.detectChanges();
-    const hints = (fixture.nativeElement as HTMLElement).querySelector(
-      '.app__hints',
+    const bar = (fixture.nativeElement as HTMLElement).querySelector(
+      '[data-position="bottom"]',
     ) as HTMLElement;
-    expect(getComputedStyle(hints).alignItems).toBe('center');
+    expect(getComputedStyle(bar).alignItems).toBe('center');
   });
 
   it('pins the shell to the viewport rather than growing with content', () => {

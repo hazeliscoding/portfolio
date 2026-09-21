@@ -1,74 +1,155 @@
+// KAIRO BLOG POST. Geometry from the design's POST screen: a reading column
+// and a 280px instrument rail, splitting at 960px (the design's `wide` flag is
+// `innerWidth >= 960`, and a media query cannot read a token, so the number is
+// written out).
 .post {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 280px;
-  gap: var(--sp-3);
-  align-items: start;
+  gap: var(--sp-6);
 }
 
+// 720px is the measure the design sets for the entry itself — narrower than
+// the column it sits in, so the text stops before the rail on a wide screen.
+// The 18px rhythm between the header block and the body is off the 4px scale
+// in the design and kept literal.
+.post__article {
+  max-width: 720px;
+  min-width: 0;
+  display: grid;
+  gap: 18px;
+  align-content: start;
+
+  // The article is the one panel on this screen that is not an app-window, so
+  // it carries its own entrance rather than receiving it from the `delay`
+  // input. 60ms: it lands first, the rail follows at 180ms.
+  &[data-sfx="a"] {
+    animation: win-a var(--dur-window) var(--ease-mech) both;
+    animation-delay: 60ms;
+  }
+
+  &[data-sfx="b"] {
+    animation: win-b var(--dur-window) var(--ease-mech) both;
+    animation-delay: 60ms;
+  }
+}
+
+// Matched on `[data-sfx]`, not the bare class: the animation is set by
+// `.post__article[data-sfx="a/b"]` (0,2,0) and a bare `.post__article`
+// (0,1,0) would lose to it regardless of the media query. Same trap
+// documented in src/app/app.scss for `.app__env`.
+@media (prefers-reduced-motion: reduce) {
+  .post__article[data-sfx="a"],
+  .post__article[data-sfx="b"] {
+    animation: none;
+  }
+}
+
+// 0.1em. Between --tracking-wide (0.08em) and --tracking-wider (0.16em), so
+// no token describes it; the design sets it literally here.
+.post__eyebrow {
+  font: var(--type-mono-s);
+  letter-spacing: 0.1em;
+  color: var(--text-active);
+}
+
+// One step down from the chapter title above it, and clamped for the same
+// reason: it has to survive a 360px phone and a 1440px desktop. 0.01em has no
+// token — --tracking-display is 0.02em, which the design uses on the chapter
+// title but deliberately not here.
 .post__title {
-  margin: 0 0 var(--sp-4);
   font: var(--type-display-m);
-  letter-spacing: var(--tracking-display);
+  font-size: clamp(28px, 3.5vw, 40px);
+  letter-spacing: 0.01em;
   color: var(--text-primary);
 }
 
-// Layout only. Markdown typography lives in src/styles/kairo/_prose.scss —
-// content created by [innerHTML] never receives this component's
-// _ngcontent-* attribute, so a nested selector here can never match it.
+.post__description {
+  font: var(--type-body);
+  color: var(--text-muted);
+}
+
+.post__rule {
+  height: var(--bw-hairline);
+  background: var(--border-default);
+}
+
+// Layout only, and barely that. The markdown typography lives in
+// src/styles/kairo/_prose.scss, which already sets the design's 15px/1.65
+// reading measure — content created by [innerHTML] never receives this
+// component's _ngcontent-* attribute, so a nested selector here could never
+// match it. `min-width: 0` lets a wide code block or table scroll inside
+// itself instead of widening the grid column.
 .post__body {
-  max-width: 68ch;
+  min-width: 0;
 }
 
 .post__side {
   display: grid;
   gap: var(--sp-3);
-  position: sticky;
-  top: var(--sp-4);
+  align-content: start;
 }
 
-.post__toc {
-  margin: 0;
-  padding-inline-start: var(--sp-4);
-  font: var(--type-mono-s);
+// 9px on the leading edge, not 12px: the 3px indicator border makes up the
+// difference, so the text sits on the same optical line whether or not the
+// row is hovered. 10px gap is off the 4px scale in the design.
+.post__toc-row {
+  display: flex;
+  gap: 10px;
+  padding: 8px 12px 8px 9px;
+  border-bottom: var(--bw-hairline) solid var(--border-faint);
+  border-inline-start: var(--bw-indicator) solid transparent;
+  font: var(--type-body-s);
+  color: var(--text-muted);
+  cursor: pointer;
+  // No easing: the design omits one on this row, so it runs on the UA default
+  // rather than --ease-mech.
+  transition: all var(--dur-micro);
 
-  li {
-    margin-block-end: var(--sp-2);
+  &:hover,
+  &:focus-visible {
+    border-inline-start-color: var(--signal-active);
+    color: var(--text-primary);
   }
 }
 
-.post__empty,
-.post__missing {
-  margin: 0;
+.post__toc-idx {
+  font: var(--type-mono-s);
+  color: var(--text-faint);
+}
+
+// A heading long enough to have no break opportunity must wrap rather than
+// push the 280px rail wider.
+.post__toc-text {
+  min-width: 0;
+  overflow-wrap: break-word;
+}
+
+// Not in the design, which always has headings to list. A post that is all
+// prose still has to say something here rather than render an empty panel.
+.post__toc-empty {
+  padding: 8px 12px 8px 9px;
   font: var(--type-mono-s);
   letter-spacing: var(--tracking-wider);
-  color: var(--text-muted);
+  color: var(--text-faint);
 }
 
-.post__missing {
-  color: var(--text-active);
+// 14px, off the 4px scale, is the design's gap between a KeyValue readout and
+// the control under it.
+.post__return {
+  margin-block-start: 14px;
 }
 
-.post__tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--sp-2);
-  margin-block-start: var(--sp-4);
-}
 
-.post__back {
-  display: inline-block;
-  min-height: var(--target-min);
-  line-height: var(--target-min);
-  font: var(--type-mono-s);
-  letter-spacing: var(--tracking-wide);
-}
 
-@media (max-width: 840px) {
+
+
+
+@media (max-width: 959px) {
   .post {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .post__side {
-    position: static;
+    grid-template-columns: 1fr;
   }
 }
+
+// The not-found branch renders app-record-fault, which brings its own
+// styles. Nothing here drew it after that change, so the rules that used
+// to are gone rather than left behind as a second, unused copy.

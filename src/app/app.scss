@@ -30,23 +30,45 @@
   font-variant-numeric: tabular-nums;
 }
 
+// The keyboard hints and the COMMAND button are the same affordance in two
+// registers: on a pointer device the shortcut is the affordance, so the bar
+// only names it; on touch there is no keyboard to name, so it becomes a real
+// 44px control. Exactly one of the two is ever on screen.
 .app__hints {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--sp-5);
   color: var(--text-faint);
+  white-space: nowrap;
 }
 
 .app__command {
-  display: inline-flex;
+  display: none;
   align-items: center;
   gap: var(--sp-2);
   min-height: var(--target-min);
-  padding: 0 var(--sp-2);
+  padding: 0 14px;
+  background: transparent;
+  border: var(--bw-hairline) solid var(--border-strong);
+  border-radius: var(--radius-0);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: var(--tracking-wide);
+  color: var(--text-primary);
+  cursor: pointer;
+}
+
+.app__command-caret {
+  color: var(--signal-active);
+}
+
+// The `[⌘K]` affordance in the top bar. A real button, not a decorated span:
+// it is the only pointer route into the palette above 840px.
+.app__palette-key {
+  padding: 0;
   background: transparent;
   border: 0;
   font: var(--type-mono-s);
-  letter-spacing: var(--tracking-wide);
+  letter-spacing: 0.06em;
   color: var(--text-secondary);
   cursor: pointer;
 
@@ -55,16 +77,39 @@
   }
 }
 
-.app__hint {
-  color: var(--text-faint);
+.app__sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }
 
 .app__log {
-  max-width: 40ch;
+  flex: 1;
+  min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   color: var(--text-faint);
+
+  &[data-sfx="a"] {
+    animation: win-a var(--dur-window) var(--ease-mech) both;
+  }
+
+  &[data-sfx="b"] {
+    animation: win-b var(--dur-window) var(--ease-mech) both;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app__log[data-sfx="a"],
+  .app__log[data-sfx="b"] {
+    animation: none;
+  }
 }
 
 .app__body {
@@ -164,15 +209,17 @@
   // its own to yield — a wide code block or table in a post.
   overflow-y: auto;
   overflow-x: hidden;
-  scrollbar-width: thin;
-  padding: var(--sp-5) var(--sp-6) var(--sp-8);
+  // 40px of bottom padding, not 32: the last panel on a screen needs to clear
+  // the bottom bar by more than the gap between panels, or it reads as having
+  // been cut off by the chrome.
+  padding: var(--sp-5) var(--sp-6) var(--sp-10);
   position: relative;
 
   // The anchor-target offset that used to live here moved to
   // src/styles/kairo/_base.scss. It could not work from this file: emulated
   // encapsulation rewrites `.main :target` to require the TARGET to carry
-  // App's _ngcontent attribute, and neither anchor target on this site does —
-  // `#contact` belongs to the home page's template and blog headings come from
+  // App's _ngcontent attribute, and no anchor target on this site does —
+  // the site's only anchor targets are blog headings, which come from
   // [innerHTML]. It also keyed off `:target`, which never matches here,
   // because the shell sets the fragment with history.replaceState and that
   // does not re-evaluate the pseudo-class. Measured dead both ways.
@@ -187,22 +234,60 @@
     padding: var(--sp-4) var(--sp-4) var(--sp-6);
   }
 
-  // Keyboard-only affordances are meaningless on touch.
-  .app__hint {
+  // Keyboard-only affordances are meaningless on touch: the named shortcuts
+  // go, and the palette gets a real control instead.
+  .app__hints {
+    display: none;
+  }
+
+  .app__command {
+    display: inline-flex;
+  }
+
+  // The availability statement is the first thing to go when the bar gets
+  // tight: the clock and the palette key are controls, this is a claim, and
+  // the About page states it at length anyway.
+  .app__status {
     display: none;
   }
 }
 
+// No `overflow: hidden` — the reveal is a clip-path on the element itself
+// (see `type-a` in _motion-keyframes.scss), so nothing needs to be masked by
+// a container, and an overflow clamp here would just be a second, unmanaged
+// way for the path to lose its tail.
 .app__path {
   display: inline-block;
-  overflow: hidden;
   white-space: nowrap;
-  letter-spacing: var(--tracking-wide);
+  letter-spacing: 0.06em;
   color: var(--text-faint);
 }
 
 .app__path-sep {
   color: var(--text-muted);
+}
+
+// The location itself is the only part of the line that is information; the
+// prefix is a constant and the separator is punctuation.
+.app__path-label {
+  // One mono character of clearance, standing in for the literal space the
+  // template cannot carry (see app.html).
+  margin-inline-start: 1ch;
+  color: var(--text-primary);
+}
+
+.app__sync {
+  display: inline-flex;
+  gap: var(--sp-2);
+  white-space: nowrap;
+}
+
+.app__sync-label {
+  color: var(--text-faint);
+}
+
+.app__sync-value {
+  color: var(--text-primary);
 }
 
 // steps(26, end) literally, NOT --ease-cut. --ease-cut is steps(2, end), which
@@ -220,11 +305,11 @@
   animation: type-b var(--dur-cinematic) steps(26, end) both;
 }
 
-.app[data-sfx="a"] .app__sync {
+.app[data-sfx="a"] .app__sync-value {
   animation: flicker-a var(--dur-window) var(--ease-cut) both;
 }
 
-.app[data-sfx="b"] .app__sync {
+.app[data-sfx="b"] .app__sync-value {
   animation: flicker-b var(--dur-window) var(--ease-cut) both;
 }
 
@@ -234,7 +319,7 @@
 // Matching `.app[data-sfx]` ties the specificity and wins on source order.
 @media (prefers-reduced-motion: reduce) {
   .app[data-sfx] .app__path,
-  .app[data-sfx] .app__sync {
+  .app[data-sfx] .app__sync-value {
     animation: none;
   }
 }

@@ -1,144 +1,293 @@
+// KAIRO's home screen: two stacks of windows, numbered 00-05, reading down the
+// left column then down the right. Geometry is taken from the design source
+// verbatim — where a value is off the 4px spacing scale (14px, 10px, 9px, 6px,
+// 2px) it is the design's own literal and is marked as such, because the
+// window chrome is drawn to the hairline rather than to the layout grid.
+:host {
+  display: block;
+}
+
 .home {
   display: grid;
-  grid-template-columns: 400px minmax(0, 1fr);
+  grid-template-columns: 1fr;
   gap: var(--sp-3);
-  align-items: start;
+  position: relative;
+}
+
+// The design switches home to two columns at a viewport of 960px — its own
+// breakpoint, not one of the --bp-* values, so the literal stays. Narrower
+// than that the two column stacks simply follow one another, which is what
+// puts Operator first on a phone.
+@media (min-width: 960px) {
+  .home {
+    grid-template-columns: minmax(300px, 400px) minmax(0, 1fr);
+  }
 }
 
 .home__col {
   display: grid;
   gap: var(--sp-3);
   align-content: start;
+  min-width: 0;
 }
+
+// ---- 00 Operator -------------------------------------------------------
 
 .home__operator {
   display: grid;
   grid-template-columns: 104px 1fr;
-  gap: var(--sp-4);
+  gap: 14px; // design literal, off the 4px scale
   align-items: start;
 }
 
+.home__identity {
+  display: grid;
+  gap: var(--sp-1);
+  min-width: 0;
+}
+
 .home__name {
-  margin: 0;
   font: var(--type-title);
+  letter-spacing: var(--tracking-display);
   color: var(--text-primary);
 }
 
-.home__role,
-.home__pronouns {
-  margin: var(--sp-1) 0 0;
+// 0.06em sits between --tracking-wide and normal. It is the design's value for
+// this line and there is no token for it.
+.home__role {
   font: var(--type-mono-s);
-  letter-spacing: var(--tracking-wider);
   color: var(--text-muted);
+  letter-spacing: 0.06em;
 }
 
-.home__controls {
+.home__bio {
+  margin: 6px 0 0; // design literal
+  font: var(--type-body-s);
+  color: var(--text-secondary);
+}
+
+// `app-key-value` sets no :host display, so its element box is inline and the
+// block-axis margin below would be dropped. Scoped to this template by view
+// encapsulation, so it changes nothing outside the home screen.
+app-key-value {
+  display: block;
+}
+
+// The readout and the controls each clear the block above them by 14px — the
+// design's spacing inside an inspector window, one notch tighter than --sp-5
+// and one looser than --sp-3.
+.home__kv {
+  margin-block-start: 14px;
+}
+
+.home__actions {
   display: flex;
-  gap: var(--sp-4);
-  margin-block-start: var(--sp-3);
+  gap: var(--sp-2);
+  margin-block-start: 14px;
 }
 
-.home__list {
+// ---- 02 Services -------------------------------------------------------
+
+.home__services {
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
-.home__list-row {
+// No transition: the design flips these on hover rather than easing them, and
+// a row of eight easing at once reads as the panel breathing.
+.home__service {
   display: flex;
-  align-items: baseline;
   gap: var(--sp-3);
-  padding: var(--sp-2) 0;
+  align-items: baseline;
+  padding: var(--sp-2) var(--sp-3);
   border-bottom: var(--bw-hairline) solid var(--border-faint);
-  font: var(--type-mono-s);
+  font: var(--type-body-s);
+  color: var(--text-secondary);
 
-  &:last-child {
-    border-bottom: 0;
+  &:hover {
+    color: var(--text-primary);
+    background: var(--surface-elevated);
   }
 }
 
-.home__idx {
-  color: var(--signal-active);
-}
-
-.home__meta {
-  margin-inline-start: auto;
+.home__service-idx {
+  font: var(--type-mono-s);
   color: var(--text-faint);
 }
 
-.home__tags {
+// ---- 03 Open source ----------------------------------------------------
+
+.home__oss {
+  display: grid;
+  gap: 6px; // design literal
+  margin: var(--sp-3) 0 0;
+  padding: 0;
+  list-style: none;
+  font: var(--type-mono-s);
+}
+
+.home__oss-row {
+  display: flex;
+  gap: 10px; // design literal
+  border-bottom: var(--bw-hairline) dotted var(--border-faint);
+  padding-block-end: var(--sp-1);
+}
+
+// Repo names come from the generated stats file and can run longer than the
+// design's sample, and this column is 300px at its narrowest. Clipping the
+// name keeps the PR/star reading on the same line instead of wrapping it under
+// a repo nobody can read either way.
+.home__oss-name {
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.home__oss-meta {
+  margin-inline-start: auto;
+  color: var(--text-faint);
+  white-space: nowrap;
+}
+
+// ---- 01 Stack ----------------------------------------------------------
+
+.home__stack {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--sp-2);
+  gap: 6px; // design literal
 }
+
+// ---- 04 Featured projects ----------------------------------------------
 
 .home__record {
-  display: flex;
-  align-items: center;
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr) 14px;
   gap: var(--sp-3);
-  min-height: var(--target-min);
-  padding: var(--sp-2) 0;
-  border-inline-start: var(--bw-indicator) solid transparent;
+  align-items: center;
+  // 9px on the leading edge, not 12: the 3px indicator below is part of the
+  // box, so the content still starts 12px in and does not step sideways when
+  // the indicator lights up.
+  padding: var(--sp-3) var(--sp-3) var(--sp-3) 9px;
   border-bottom: var(--bw-hairline) solid var(--border-faint);
-  font: var(--type-mono-s);
-  color: var(--text-secondary);
-  transition: transform var(--dur-micro) var(--ease-mech);
+  border-inline-start: var(--bw-indicator) solid transparent;
+  // Set explicitly, and again on :hover, because the global `a` / `a:hover`
+  // rules would otherwise paint the whole row link-cyan and then primary. The
+  // design holds every colour still and moves only the background.
+  color: var(--text-primary);
+  cursor: pointer;
+  transition:
+    transform var(--dur-micro) var(--ease-mech),
+    background var(--dur-micro) var(--ease-mech),
+    border-color var(--dur-micro) var(--ease-mech);
 
   &:hover {
-    border-inline-start-color: var(--signal-active);
     color: var(--text-primary);
+    background: var(--surface-elevated);
+  }
+
+  // The design's "pending" state — the beat between pressing a record and the
+  // archive opening. Angular navigates immediately, so it lives on :active.
+  &:active {
+    background: var(--surface-active-tint);
+    border-inline-start-color: var(--signal-active);
     transform: translateX(2px);
   }
 
-  &:last-child {
-    border-bottom: 0;
+  &:active .home__record-idx {
+    color: var(--text-active);
   }
 }
 
-.home__record-title {
-  color: var(--text-primary);
-  font: var(--type-body-s);
+.home__record-idx {
+  font: var(--type-mono-s);
+  color: var(--text-faint);
 }
+
+.home__record-main {
+  min-width: 0;
+  display: grid;
+  gap: 2px; // design literal
+}
+
+.home__record-head {
+  display: flex;
+  gap: var(--sp-3);
+  align-items: baseline;
+  flex-wrap: wrap;
+}
+
+// 17px, not the 20px the token carries: the record title is a heading inside a
+// row, not the panel's own title. The unitless line-height in --type-title
+// re-resolves against it.
+.home__record-title {
+  font: var(--type-title);
+  font-size: 17px;
+  letter-spacing: var(--tracking-display);
+}
+
+.home__record-meta {
+  font: var(--type-mono-s);
+  color: var(--text-faint);
+  white-space: nowrap;
+}
+
+// One line, always. The summary is the project's full description and the row
+// is a pointer to the record, not a substitute for reading it.
+.home__record-summary {
+  font: var(--type-body-s);
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.home__record-caret {
+  font: var(--type-mono);
+  color: var(--text-faint);
+}
+
+// ---- 05 Log ------------------------------------------------------------
 
 .home__log-row {
-  display: flex;
-  align-items: center;
-  gap: var(--sp-3);
-  min-height: var(--target-min);
-  padding: var(--sp-2) 0;
-  border-inline-start: var(--bw-indicator) solid transparent;
+  display: grid;
+  grid-template-columns: 90px minmax(0, 1fr) 14px;
+  gap: 14px; // design literal
+  align-items: baseline;
+  padding: 10px var(--sp-3); // 10px vertical: design literal
   border-bottom: var(--bw-hairline) solid var(--border-faint);
-  font: var(--type-mono-s);
-  color: var(--text-secondary);
-  transition: transform var(--dur-micro) var(--ease-mech);
+  color: var(--text-primary);
+  cursor: pointer;
 
   &:hover {
-    border-inline-start-color: var(--signal-active);
     color: var(--text-primary);
-    transform: translateX(2px);
-  }
-
-  &:last-child {
-    border-bottom: 0;
+    background: var(--surface-elevated);
   }
 }
 
-.home__log-row .home__meta {
-  margin-inline-start: 0;
-}
-
-.home__body {
-  margin: 0 0 var(--sp-2);
-  color: var(--text-secondary);
-}
-
-.home__link {
+.home__log-date {
   font: var(--type-mono-s);
-  letter-spacing: var(--tracking-wide);
+  color: var(--text-faint);
 }
 
-@media (max-width: 840px) {
-  .home {
-    grid-template-columns: 1fr;
-  }
+.home__log-main {
+  min-width: 0;
+}
+
+.home__log-title {
+  display: block;
+  font: var(--type-body);
+}
+
+.home__log-tags {
+  display: block;
+  font: var(--type-mono-s);
+  color: var(--text-faint);
+  letter-spacing: 0.04em; // design literal; no token sits at 0.04em
+}
+
+.home__log-caret {
+  font: var(--type-mono);
+  color: var(--text-faint);
 }

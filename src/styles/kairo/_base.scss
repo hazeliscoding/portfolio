@@ -30,8 +30,8 @@
 //
 // Global on purpose, and NOT keyed off `:target`. It cannot live in a
 // component stylesheet: emulated encapsulation would require the target to
-// belong to that component's template, and neither target on this site does —
-// `#contact` is the home page's and blog headings come from [innerHTML]. And
+// belong to that component's template, and no target on this site does —
+// the only ones left are blog headings, which come from [innerHTML]. And
 // `:target` never matches, because the shell sets the fragment with
 // history.replaceState, which does not re-evaluate that pseudo-class.
 :where([id]) {
@@ -72,5 +72,14 @@ a {
 
 ::selection {
   background: var(--signal-active);
-  color: #fff;
+  color: var(--k-paper);
+}
+
+// From the design system's tokens/base.css. Scoped to `*` there, and it has to
+// be: `scrollbar-color` does not inherit into a scroll container that sets its
+// own overflow, so putting it on `:root` alone leaves `.main` with the default
+// chrome scrollbar.
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--k-graphite-4) var(--surface-inset);
 }

@@ -1,15 +1,20 @@
 .status-light {
   display: inline-flex;
   align-items: center;
-  gap: var(--sp-2);
+  gap: 6px;
   font: var(--type-mono-s);
-  letter-spacing: var(--tracking-wide);
   color: var(--text-secondary);
 }
 
+// A 7px square, not a ● glyph. The glyph's size and vertical position come
+// from the font's metrics, so it drifted against the label and against the
+// other indicators in the same bar; a drawn box is the same 7px everywhere and
+// sits on the flex centre line.
 .status-light__dot {
-  color: var(--text-primary);
-  line-height: 1;
+  width: 7px;
+  height: 7px;
+  flex-shrink: 0;
+  background: var(--text-primary);
 }
 
 // Status words are always uppercase under KAIRO's voice rules, so this lives
@@ -20,25 +25,28 @@
 }
 
 .status-light[data-state="ok"] .status-light__dot {
-  color: var(--signal-success);
+  background: var(--signal-success);
 }
 
 .status-light[data-state="info"] .status-light__dot {
-  color: var(--signal-info);
+  background: var(--signal-info);
 }
 
 .status-light[data-state="warn"] .status-light__dot {
-  color: var(--signal-warning);
+  background: var(--signal-warning);
 }
 
 .status-light[data-state="danger"] .status-light__dot {
-  color: var(--text-active);
+  background: var(--text-active);
 }
 
 .status-light__dot--blink {
-  animation: status-blink var(--dur-blink) var(--ease-cut) infinite;
+  animation: status-blink var(--dur-blink) steps(1) infinite;
 }
 
+// Dims to 0.25 rather than to 0. A lamp that goes fully dark loses its
+// position on the bar for half of every cycle and reads as a rendering
+// glitch; a lamp that drops to a quarter reads as pulsing.
 @keyframes status-blink {
   0%,
   55% {
@@ -46,7 +54,7 @@
   }
   56%,
   100% {
-    opacity: 0;
+    opacity: 0.25;
   }
 }
 

@@ -1,82 +1,153 @@
 @if (project(); as p) {
   <app-chapter-header
-    code="ARCHIVE"
-    index="03"
-    [context]="p.title"
-    status="RECORD 01 OF 01"
+    [code]="chapterTitle()"
+    [meta]="chapterMeta()"
+    [backLabel]="archiveCode"
+    backRoute="/portfolio"
   />
 
-  <div class="detail">
-    <div class="detail__main">
-      <app-window variant="viewport" index="01" title="Viewport" [context]="p.title">
-        <div class="detail__stage">
-          <app-viewport-window
-            class="detail__viewport"
-            ratio="16 / 10"
-            [src]="activeImage()"
-            [alt]="p.title + ' screenshot'"
-            label="REC 01"
-          />
+  <p class="detail__lede" [attr.data-sfx]="motion.sfx()">{{ p.description }}</p>
 
-          <span class="detail__rec" aria-hidden="true">&#9679; REC</span>
+  <div class="detail">
+    <div class="detail__column">
+      <app-window
+        variant="viewport"
+        index="01"
+        title="Viewport"
+        [context]="shotContext()"
+        [active]="true"
+        [padded]="false"
+        [footer]="shotFooter()"
+        delay="80ms"
+      >
+        <!--
+          Pointer-only, deliberately. The same advance is on every thumbnail
+          below — those are real buttons — and on ArrowRight, so this surface
+          carries no role and no tabindex: a widget role on a div that cannot
+          take focus announces a control the keyboard cannot reach.
+        -->
+        <div class="detail__hero" (click)="nextShot()">
+          <app-viewport-window
+            frame="none"
+            ratio="16 / 10"
+            [src]="heroSrc()"
+            [alt]="heroAlt()"
+            [label]="shotLabel()"
+            [scan]="true"
+          />
+          <span class="detail__rec" aria-hidden="true">● REC</span>
         </div>
 
         <div class="detail__strip">
-          @for (img of p.images ?? []; track img.src) {
+          @for (s of shots(); track s.src; let i = $index) {
             <button
               type="button"
               class="detail__thumb"
-              [class.detail__thumb--active]="img.src === activeImage()"
-              [attr.aria-current]="img.src === activeImage() ? 'true' : null"
-              (click)="select(img.src)"
+              [class.detail__thumb--active]="i === shot()"
+              [attr.aria-current]="i === shot() ? 'true' : null"
+              [attr.aria-label]="s.name"
+              (click)="select(i)"
             >
-              <img [src]="img.src" [alt]="img.caption" />
-              <span class="detail__caption">{{ img.caption }}</span>
+              <!--
+                The image is decorative here: the button already carries the
+                caption as its accessible name, and a second copy on the <img>
+                would read the same sentence twice.
+              -->
+              <app-viewport-window
+                frame="none"
+                ratio="16 / 10"
+                [src]="s.src"
+                alt=""
+                [label]="s.idx"
+              />
             </button>
           }
         </div>
       </app-window>
 
-      <app-window index="02" title="Readme" context="DESCRIPTION">
-        @for (para of p.longDescription ?? []; track $index) {
-          <p class="detail__para">{{ para }}</p>
-        }
+      <app-window
+        variant="dialogue"
+        index="02"
+        title="Readme"
+        [context]="readmeContext()"
+        delay="200ms"
+      >
+        <div class="detail__readme">
+          @for (para of paragraphs(); track $index) {
+            <p class="detail__para">{{ para }}</p>
+          }
+        </div>
       </app-window>
-
-      <a class="detail__back" routerLink="/portfolio">&lt; BACK TO ARCHIVE</a>
     </div>
 
-    <aside class="detail__side">
-      <app-window
-        class="detail__inspector"
-        variant="inspector"
-        index="03"
-        title="Record"
-        context="METADATA"
-        [active]="true"
-      >
-        <app-key-value [items]="inspector()" />
+    <div class="detail__column">
+      <app-window variant="inspector" index="03" title="Record" context="INFO" delay="140ms">
+        <app-key-value [items]="record()" />
 
+        <div class="detail__actions">
+          @if (sourceUrl()) {
+            <app-button variant="primary" size="md" (click)="openSource()"
+              >View source &gt;</app-button
+            >
+          }
+          @if (writeupRoute(); as writeup) {
+            <app-button variant="secondary" size="md" [routerLink]="writeup"
+              >Read the writeup</app-button
+            >
+          }
+          <app-button variant="text" size="md" routerLink="/portfolio"
+            >&lt; All projects</app-button
+          >
+        </div>
+      </app-window>
+
+      <app-window variant="data" index="04" title="Tags" delay="240ms">
         <div class="detail__tags">
           @for (t of p.tags ?? []; track t) {
             <app-badge>{{ t }}</app-badge>
           }
         </div>
+      </app-window>
 
-        @if (p.links.github) {
-          <a class="detail__link" [href]="p.links.github" target="_blank" rel="noopener"
-            >&gt; SOURCE</a
-          >
-        }
-        @if (p.links.demo) {
-          <a class="detail__link" [href]="p.links.demo" target="_blank" rel="noopener"
-            >&gt; DEMO</a
-          >
+      <app-window
+        variant="command"
+        index="05"
+        title="Adjacent records"
+        [padded]="false"
+        delay="300ms"
+      >
+        @if (neighbours(); as adjacent) {
+          <div class="detail__adjacent">
+            <a class="detail__adjacent-link" [routerLink]="['/portfolio', adjacent.prev.id]"
+              >◀ {{ adjacent.prev.title.toUpperCase() }}</a
+            >
+            <a
+              class="detail__adjacent-link detail__adjacent-link--next"
+              [routerLink]="['/portfolio', adjacent.next.id]"
+              >{{ adjacent.next.title.toUpperCase() }} ▶</a
+            >
+          </div>
+        } @else {
+          <!--
+            The design wraps prev/next around a four-record archive. With one
+            record both neighbours would be this record, so the panel reports
+            the absence rather than linking a page to itself.
+          -->
+          <p class="detail__adjacent-empty">NO ADJACENT RECORDS · {{ recordPosition() }}</p>
         }
       </app-window>
-    </aside>
+    </div>
   </div>
 } @else {
-  <app-chapter-header code="ARCHIVE" index="03" context="NO RECORD" />
-  <p class="detail__missing">NO RECORD AT THIS ADDRESS</p>
+  <!--
+    Literally the same panel as the 404 screen, not a local imitation of it:
+    an id with no record is the same fault. The return goes to the archive
+    rather than home — that is one level up from here, and it is where Escape
+    goes too.
+  -->
+  <app-record-fault
+    [path]="requestedPath()"
+    backLabel="ARCHIVE_03"
+    backRoute="/portfolio"
+  />
 }

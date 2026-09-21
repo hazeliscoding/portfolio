@@ -1,7 +1,7 @@
-<div class="error">
-  <app-window variant="alert" index="00" title="Fault" context="LOOKUP" status="CODE 404">
-    <p class="error__report">NO RECORD AT THIS ADDRESS</p>
-    <p class="error__path">{{ currentPath }}</p>
-    <a class="error__back" routerLink="/">&lt; BACK TO HOME</a>
-  </app-window>
-</div>
+<!--
+  The whole screen is the shared fault panel. Three routes can produce this
+  screen — the wildcard, an unknown record id and an unknown entry slug — and
+  KAIRO draws one of it, so the markup lives in app-record-fault and the page
+  supplies only where "back" goes and the noindex meta.
+-->
+<app-record-fault [path]="currentPath" backLabel="HOME_01" backRoute="/" />

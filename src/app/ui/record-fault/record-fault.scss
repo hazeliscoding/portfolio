@@ -1,0 +1,46 @@
+// The fault panel is centred in its own half-viewport field rather than
+// flowing from the top like every other screen. Nothing else is on the page,
+// so anchoring it to the top would leave the alert stranded above a screen of
+// empty terminal.
+.fault {
+  display: grid;
+  place-items: center;
+  min-height: 50vh;
+}
+
+// 460px is the design's measure for a single-column alert: wide enough for the
+// display-size line to sit on two rows at most, narrow enough that it reads as
+// a dialogue rather than a page. `min()` collapses it to the column width on a
+// phone instead of forcing a horizontal scroll.
+.fault__panel {
+  width: min(460px, 100%);
+}
+
+// 14px is off the 4px spacing scale on purpose — it is the window-body rhythm
+// from the design (KAIRO's window internals are drawn to the hairline, like
+// the 7px/10px header strip), and --sp-3/--sp-4 read one notch tight or loose
+// against the 12px body padding.
+.fault__body {
+  display: grid;
+  gap: 14px;
+}
+
+.fault__report {
+  font: var(--type-display-m);
+  color: var(--text-active);
+}
+
+// `overflow-wrap` is inherited, so setting it on the child component's host
+// element carries it into the PATH readout's <dd> without ::ng-deep. The
+// design's demo path is a tidy /portfolio/unknown-record; a real one is
+// whatever a broken link or a typo produced, and an unbroken 200-character
+// path would otherwise push the 460px panel off the screen.
+.fault__body app-key-value {
+  overflow-wrap: anywhere;
+}
+
+.fault__controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+}

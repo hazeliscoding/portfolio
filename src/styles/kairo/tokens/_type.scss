@@ -1,7 +1,11 @@
 :root {
-  --font-display: "Saira Condensed", system-ui, sans-serif;
-  --font-ui: "IBM Plex Sans", system-ui, sans-serif;
-  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+  // "IBM Plex Sans JP" is the second fallback in all three stacks, per the
+  // design system's tokens/typography.css. It is what renders Japanese glyphs
+  // in the KAIRO identity; without it a CJK character falls through to the
+  // generic and breaks the typeface match mid-sentence.
+  --font-display: "Saira Condensed", "IBM Plex Sans JP", system-ui, sans-serif;
+  --font-ui: "IBM Plex Sans", "IBM Plex Sans JP", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", "IBM Plex Sans JP", ui-monospace, monospace;
   --type-display-xl: 600 96px/0.95 var(--font-display);
   --type-display-l: 600 56px/1 var(--font-display);
   --type-display-m: 600 32px/1.05 var(--font-display);

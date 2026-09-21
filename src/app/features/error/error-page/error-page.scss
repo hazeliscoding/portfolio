@@ -1,28 +1,4 @@
-.error {
-  display: grid;
-  place-items: center;
-  min-height: 60vh;
-}
-
-.error__report {
-  margin: 0 0 var(--sp-2);
-  font: var(--type-mono);
-  letter-spacing: var(--tracking-wider);
-  color: var(--text-active);
-}
-
-.error__path {
-  margin: 0 0 var(--sp-4);
-  font: var(--type-mono-s);
-  color: var(--text-faint);
-  overflow-wrap: anywhere;
-}
-
-.error__back {
-  display: inline-block;
-  min-height: var(--target-min);
-  line-height: var(--target-min);
-  font: var(--type-mono-s);
-  letter-spacing: var(--tracking-wide);
-}
-
+// Intentionally empty. Every rule that used to live here moved into
+// app-record-fault, which now draws the whole screen — keeping a second copy
+// scoped to this page is how the three fault screens drifted apart in the
+// first place.
