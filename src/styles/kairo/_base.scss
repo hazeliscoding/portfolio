@@ -15,6 +15,15 @@
   padding-inline-start: 0;
 }
 
+// Form controls too. The reset this replaces was `*`, so it covered them; this
+// one lists elements, and a list is only a replacement if it is complete.
+// Chromium already zeroes button margins, but Safari does not for every
+// control, and the site has real <button> elements in the shell and the
+// command palette.
+:where(button, input, select, textarea, fieldset, legend) {
+  margin: 0;
+}
+
 // Any in-page anchor target clears the top edge of the scroll region instead
 // of landing flush against it. `scrollIntoView` honours `scroll-margin`, and
 // the shell scrolls anchors itself (see App's document:click handler).
