@@ -1,14 +1,7 @@
 import { Routes } from '@angular/router';
 
-// The site is being redesigned, so every URL lands on the notice. The known
-// paths stay declared individually because the server routes prerender them
-// by name — that way links already shared out for blog posts and project
-// pages serve the notice as a static page instead of a host 404.
-// The previous route table is one `git revert` away in the history.
-const construction = () =>
-  import('./features/construction/construction-page/construction-page').then(
-    (m) => m.ConstructionPage,
-  );
+// Paths stay declared individually because the server routes prerender them by
+// name — Angular rejects a server route with no matching app route.
 
 export const routes: Routes = [
   {
