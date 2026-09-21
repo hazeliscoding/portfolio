@@ -94,4 +94,22 @@ describe('App', () => {
     ) as HTMLElement;
     expect(getComputedStyle(hints).alignItems).toBe('center');
   });
+
+  it('pins the shell to the viewport rather than growing with content', () => {
+    const fixture = TestBed.createComponent(App);
+    fixture.detectChanges();
+    const app = (fixture.nativeElement as HTMLElement).querySelector('.app') as HTMLElement;
+    const height = getComputedStyle(app).height;
+    expect(getComputedStyle(app).minHeight).not.toBe('100vh');
+    expect(height).not.toBe('auto');
+  });
+
+  it('makes the content region the scroll container, not the document', () => {
+    const fixture = TestBed.createComponent(App);
+    fixture.detectChanges();
+    const main = (fixture.nativeElement as HTMLElement).querySelector('.main') as HTMLElement;
+    const style = getComputedStyle(main);
+    expect(style.overflowY).toBe('auto');
+    expect(style.overflowX).toBe('hidden');
+  });
 });
