@@ -37,7 +37,12 @@ describe('MotionService', () => {
   });
 
   it('ignores router events that are not NavigationEnd', () => {
+    // Flip off the initial value first. Asserting 'a' straight from construction
+    // would pass even if the instanceof guard — or the whole subscription — were
+    // deleted, because 'a' is also the untouched starting state.
+    events.next(new NavigationEnd(1, '/', '/'));
+    expect(service.sfx()).toBe('b');
     events.next({ id: 9, url: '/x' });
-    expect(service.sfx()).toBe('a');
+    expect(service.sfx()).toBe('b');
   });
 });
