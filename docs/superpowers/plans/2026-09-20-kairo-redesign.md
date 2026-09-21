@@ -885,9 +885,14 @@ export class ViewportWindow {
   position: absolute;
   inset-block-end: var(--sp-1);
   inset-inline-start: var(--sp-2);
+  // The label sits over arbitrary images, so it needs an opaque backing — no
+  // single text colour is legible against both light and dark captures.
+  padding: 0 var(--sp-1);
+  background: rgba(7, 9, 11, 0.78);
+  border: var(--bw-hairline) solid var(--border-default);
   font: var(--type-mono-s);
   letter-spacing: var(--tracking-wide);
-  color: var(--text-muted);
+  color: var(--text-primary);
 }
 ```
 
