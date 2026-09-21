@@ -36,7 +36,7 @@
 }
 
 .status-light__dot--blink {
-  animation: status-blink 1s var(--ease-cut) infinite;
+  animation: status-blink var(--dur-blink) var(--ease-cut) infinite;
 }
 
 @keyframes status-blink {

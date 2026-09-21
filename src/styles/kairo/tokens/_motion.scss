@@ -3,6 +3,10 @@
   --dur-control: 180ms;
   --dur-window: 280ms;
   --dur-cinematic: 450ms;
+  // Cursor/blink cadence. Deliberately NOT part of the transition scale above,
+  // and deliberately not zeroed under prefers-reduced-motion — blinking is
+  // switched off with `animation: none`, not by collapsing its period.
+  --dur-blink: 1s;
   /* prettier-ignore */
   --ease-mech: cubic-bezier(0.3,0,0.1,1);
   --ease-cut: steps(2, end);
