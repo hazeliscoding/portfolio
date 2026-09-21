@@ -1344,12 +1344,19 @@ In `app.scss`:
   color: var(--text-muted);
 }
 
+// steps(26, end) literally, NOT --ease-cut. --ease-cut is steps(2, end), which
+// would reveal the path in two chunks — a jump, not typing. The step count is
+// what makes this read as a machine printing characters, and it is the one
+// place in the system where the easing is a sequence length rather than a
+// curve. Taken from the mockup verbatim.
+/* prettier-ignore */
 .app[data-sfx="a"] .app__path {
-  animation: type-a var(--dur-cinematic) var(--ease-cut) both;
+  animation: type-a var(--dur-cinematic) steps(26, end) both;
 }
 
+/* prettier-ignore */
 .app[data-sfx="b"] .app__path {
-  animation: type-b var(--dur-cinematic) var(--ease-cut) both;
+  animation: type-b var(--dur-cinematic) steps(26, end) both;
 }
 
 .app[data-sfx="a"] .app__sync {
@@ -1816,7 +1823,9 @@ git commit -m "fix(motion): snap primary controls, stop rows reflowing on hover"
 
 ---
 
-## Task M9: Make the bottom bar an event log, and stop advertising a binding that does nothing
+## Task M9: Make the shell's affordances honest
+
+Three shell defects that share one cause — an element that looks like it does something and does not.
 
 **Files:**
 - Modify: `src/app/app.ts`, `app.html`, `app.scss`, `app.spec.ts`
@@ -1825,7 +1834,49 @@ git commit -m "fix(motion): snap primary controls, stop rows reflowing on hover"
 
 **First, a bug already shipped.** The bottom bar advertises `ESC BACK` and Escape does not navigate back — it only closes the command palette. An advertised binding that does nothing undermines the operator fiction *more* than an absent one would. This has been live since the shell was built and every review passed it.
 
-**Second**, four instrumented edges where the only changing value is a clock is a bezel with nothing behind it. A log line is the machine narrating itself — it is what makes an interface feel like it *remembers* what you did rather than merely re-rendering.
+**Second, the wordmark is not a link.** `hazel.exe` renders as a bare `<span>`. In the mockup it carries `cursor: pointer` and `onClick={goHome}` — the wordmark is the home affordance, which is the one navigation convention every visitor already knows. Ours dropped it. This matters most on mobile, where the mode rail is `display: none` and the only route home is the command palette.
+
+**Third**, four instrumented edges where the only changing value is a clock is a bezel with nothing behind it. A log line is the machine narrating itself — it is what makes an interface feel like it *remembers* what you did rather than merely re-rendering.
+
+### The wordmark, specifically
+
+In `app.html`, replace the wordmark span with a `routerLink`:
+
+```html
+    <a barLeft class="app__wordmark" routerLink="/" aria-label="hazel.exe — home"
+      >hazel<span class="app__ext">.exe</span></a
+    >
+```
+
+`RouterLink` is already imported by `App`. In `app.scss`, add to the existing `.app__wordmark` rule:
+
+```scss
+  text-decoration: none;
+  cursor: pointer;
+```
+
+and a hover state that does not reflow — the `.exe` is already `--signal-active`, so brighten the stem rather than moving anything:
+
+```scss
+.app__wordmark:hover .app__ext,
+.app__wordmark:focus-visible .app__ext {
+  color: var(--signal-active-strong);
+}
+```
+
+The `aria-label` is deliberate: the visible text "hazel.exe" names the site but not the destination, and a link whose accessible name does not say where it goes is a WCAG 2.4.4 failure in spirit even when it passes in letter.
+
+Add a spec:
+
+```typescript
+  it('makes the wordmark a link home', () => {
+    const fixture = TestBed.createComponent(App);
+    fixture.detectChanges();
+    const mark = (fixture.nativeElement as HTMLElement).querySelector('.app__wordmark');
+    expect(mark?.tagName).toBe('A');
+    expect(mark?.getAttribute('href')).toBe('/');
+  });
+```
 
 - [ ] **Step 1: Write the failing tests**
 
