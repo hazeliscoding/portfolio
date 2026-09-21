@@ -103,6 +103,14 @@
   }
 }
 
+// The lamp belongs to the image, not to the window card. Without this
+// wrapper its nearest positioned ancestor is `.window`, which puts it in the
+// title-bar row rather than over the screenshot — and leaves it one added
+// status badge away from overlapping the header text.
+.detail__stage {
+  position: relative;
+}
+
 .detail__rec {
   position: absolute;
   inset-block-start: var(--sp-2);
@@ -110,6 +118,9 @@
   font: var(--type-mono-s);
   letter-spacing: var(--tracking-wide);
   color: var(--text-active);
+  // 1.4s, and deliberately not a token. It must not divide evenly into the
+  // chapter caret's 1.1s or the scanline's 3.2s: cadences that share a period
+  // visibly lock together and read as one mechanism rather than several.
   animation: k-blink 1.4s steps(1) infinite;
 }
 

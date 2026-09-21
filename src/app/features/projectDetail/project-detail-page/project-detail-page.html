@@ -9,15 +9,17 @@
   <div class="detail">
     <div class="detail__main">
       <app-window variant="viewport" index="01" title="Viewport" [context]="p.title">
-        <span class="detail__rec" aria-hidden="true">&#9679; REC</span>
+        <div class="detail__stage">
+          <app-viewport-window
+            class="detail__viewport"
+            ratio="16 / 10"
+            [src]="activeImage()"
+            [alt]="p.title + ' screenshot'"
+            label="REC 01"
+          />
 
-        <app-viewport-window
-          class="detail__viewport"
-          ratio="16 / 10"
-          [src]="activeImage()"
-          [alt]="p.title + ' screenshot'"
-          label="REC 01"
-        />
+          <span class="detail__rec" aria-hidden="true">&#9679; REC</span>
+        </div>
 
         <div class="detail__strip">
           @for (img of p.images ?? []; track img.src) {
