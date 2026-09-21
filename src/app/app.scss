@@ -168,11 +168,14 @@
   padding: var(--sp-5) var(--sp-6) var(--sp-8);
   position: relative;
 
-  // Keeps an anchored-to target clear of the top edge of the scroll region
-  // instead of sitting flush against it.
-  :target {
-    scroll-margin-block-start: var(--sp-5);
-  }
+  // The anchor-target offset that used to live here moved to
+  // src/styles/kairo/_base.scss. It could not work from this file: emulated
+  // encapsulation rewrites `.main :target` to require the TARGET to carry
+  // App's _ngcontent attribute, and neither anchor target on this site does —
+  // `#contact` belongs to the home page's template and blog headings come from
+  // [innerHTML]. It also keyed off `:target`, which never matches here,
+  // because the shell sets the fragment with history.replaceState and that
+  // does not re-evaluate the pseudo-class. Measured dead both ways.
 }
 
 @media (max-width: 840px) {

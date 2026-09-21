@@ -15,6 +15,20 @@
   padding-inline-start: 0;
 }
 
+// Any in-page anchor target clears the top edge of the scroll region instead
+// of landing flush against it. `scrollIntoView` honours `scroll-margin`, and
+// the shell scrolls anchors itself (see App's document:click handler).
+//
+// Global on purpose, and NOT keyed off `:target`. It cannot live in a
+// component stylesheet: emulated encapsulation would require the target to
+// belong to that component's template, and neither target on this site does —
+// `#contact` is the home page's and blog headings come from [innerHTML]. And
+// `:target` never matches, because the shell sets the fragment with
+// history.replaceState, which does not re-evaluate that pseudo-class.
+:where([id]) {
+  scroll-margin-block-start: var(--sp-5);
+}
+
 html,
 body {
   height: 100%;
