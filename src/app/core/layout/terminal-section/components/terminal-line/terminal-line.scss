@@ -65,3 +65,14 @@
     width: 22ch;
   }
 }
+
+// `.typing-animation`'s `from` state is `width: 0` on an `overflow: hidden`
+// element, which hides the prompt text just like an `opacity: 0` or
+// `clip-path` inset would — a zeroed duration would still paint that first
+// frame. `animation: none` reverts the element to `.terminal-line`'s own
+// `width: fit-content`, its natural visible state.
+@media (prefers-reduced-motion: reduce) {
+  .typing-animation {
+    animation: none;
+  }
+}

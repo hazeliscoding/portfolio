@@ -120,12 +120,20 @@
   animation: env-b var(--dur-cinematic) var(--ease-mech) both;
 }
 
+// Matched against `.app[data-sfx]`, not the bare `.app__env` class: the
+// animation is set by `.app[data-sfx="a"] .app__env` /
+// `.app[data-sfx="b"] .app__env` (specificity 0,3,0 each), and a bare
+// `.app__env { animation: none }` (0,1,0) loses to both regardless of the
+// media query — a media query adds no specificity. Measured in a browser with
+// reduced motion emulated: the bare-class version left `animationName`
+// reporting `env-a`/`env-b`. Matching `.app[data-sfx]` ties the specificity
+// (0,3,0) and wins on source order instead.
 @media (prefers-reduced-motion: reduce) {
   .app__wipe {
     display: none;
   }
 
-  .app__env {
+  .app[data-sfx] .app__env {
     animation: none;
   }
 }
@@ -202,9 +210,13 @@
   animation: flicker-b var(--dur-window) var(--ease-cut) both;
 }
 
+// Same specificity trap as `.app__env` above: `.app__path` / `.app__sync`
+// bare-class selectors (0,1,0) lose to the `.app[data-sfx="a/b"] .app__path` /
+// `.app[data-sfx="a/b"] .app__sync` rules that set the animation (0,3,0).
+// Matching `.app[data-sfx]` ties the specificity and wins on source order.
 @media (prefers-reduced-motion: reduce) {
-  .app__path,
-  .app__sync {
+  .app[data-sfx] .app__path,
+  .app[data-sfx] .app__sync {
     animation: none;
   }
 }
