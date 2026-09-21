@@ -1,8 +1,9 @@
 // Renders the KAIRO social preview card from public/og-image.svg: the
-// hazel.exe wordmark (signal red on graphite), an "OPERATOR PROFILE" mono
-// identifier line, and a NET ONLINE status readout — dark surface, hairline
-// frame, no gradients or shadows. Edit the SVG, not this script, to restyle
-// the card; this file only handles rasterisation. Run: npm run generate:og
+// hazel.exe wordmark (off-white "hazel", signal-red ".exe") on graphite, an
+// "OPERATOR PROFILE" mono identifier line, and a NET ONLINE status readout —
+// dark surface, hairline frame, no gradients or shadows. Edit the SVG, not
+// this script, to restyle the card; this file only handles rasterisation.
+// Run: npm run generate:og
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import sharp from 'sharp';

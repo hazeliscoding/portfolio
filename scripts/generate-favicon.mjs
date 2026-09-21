@@ -1,8 +1,9 @@
-// Generates the KAIRO favicon set: a single solid block-cursor glyph in
+// Generates the KAIRO favicon set: a right-pointing terminal caret in
 // signal red on graphite — no frame, no gradient — drawn as 16x16 pixel art
-// and scaled up losslessly (shape-rendering: crispEdges). It matches the
-// block-cursor idiom used across the terminal-instrument UI and stays
-// legible at 16px in a way the full wordmark cannot.
+// (five overlapping 3x3 blocks) and scaled up losslessly
+// (shape-rendering: crispEdges). It reads as terminal pixel art rather than
+// an anonymous coloured square, and stays legible at 16px in a way the full
+// wordmark cannot.
 //
 // Outputs: favicon-16x16.png, favicon-32x32.png, apple-touch-icon.png,
 // android-chrome-192x192.png, android-chrome-512x512.png, favicon.ico
@@ -14,11 +15,15 @@ import { dirname, join } from 'node:path';
 
 const publicDir = join(dirname(fileURLToPath(import.meta.url)), '..', 'public');
 
-// A single block cursor — signal red on the KAIRO canvas surface, filling
-// roughly 60% of the frame.
+// A right-pointing caret — signal red on the KAIRO canvas surface, built
+// from five overlapping 3x3 blocks so the steps join without gaps.
 const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
   <rect width="16" height="16" fill="#0b0e12" shape-rendering="crispEdges"/>
-  <rect x="3" y="2" width="10" height="12" fill="#e8382c" shape-rendering="crispEdges"/>
+  <rect x="4" y="3" width="3" height="3" fill="#e8382c" shape-rendering="crispEdges"/>
+  <rect x="6" y="5" width="3" height="3" fill="#e8382c" shape-rendering="crispEdges"/>
+  <rect x="8" y="7" width="3" height="3" fill="#e8382c" shape-rendering="crispEdges"/>
+  <rect x="6" y="9" width="3" height="3" fill="#e8382c" shape-rendering="crispEdges"/>
+  <rect x="4" y="11" width="3" height="3" fill="#e8382c" shape-rendering="crispEdges"/>
 </svg>`;
 
 const render = (size) =>
