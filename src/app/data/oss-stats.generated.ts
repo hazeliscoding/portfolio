@@ -18,16 +18,16 @@ export type OssStats = {
 };
 
 export const ossStats: OssStats = {
-  "totalMergedPrs": 3,
+  "totalMergedPrs": 5,
   "projectCount": 2,
-  "totalStars": 20999,
-  "updated": "2026-08-27",
+  "totalStars": 21463,
+  "updated": "2026-09-21",
   "projects": [
     {
       "repo": "BCUninstaller/Bulk-Crap-Uninstaller",
       "url": "https://github.com/BCUninstaller/Bulk-Crap-Uninstaller/pulls?q=is%3Apr%20author%3Ahazeliscoding%20is%3Amerged",
-      "stars": 20989,
-      "mergedPrs": 2
+      "stars": 21453,
+      "mergedPrs": 4
     },
     {
       "repo": "sjmh/pyqb",

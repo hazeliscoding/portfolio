@@ -1,0 +1,72 @@
+name: Refresh open-source stats
+
+# src/app/data/oss-stats.generated.ts is committed output, read at build time.
+# Nothing in `npm run build` regenerates it, so without this it is only as
+# fresh as the last time someone remembered to run the script by hand — it had
+# drifted by 25 days and two merged PRs before this workflow existed.
+#
+# Deliberately NOT wired into prebuild: the generator calls a third-party API
+# and throws on failure, so a rate-limited or briefly-down GitHub would take
+# the deploy with it. A scheduled job that fails leaves the last good figures
+# in place and the site up.
+
+on:
+  schedule:
+    # Mondays, 06:17 UTC. Not on the hour: scheduled jobs queue behind the
+    # spike at :00 and GitHub asks that they be spread out.
+    - cron: '17 6 * * 1'
+  workflow_dispatch:
+
+# Only what the commit step needs.
+permissions:
+  contents: write
+
+# A manual run kicked off while the weekly one is in flight would otherwise
+# race it to the same file and the same push.
+concurrency:
+  group: oss-stats
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      # No `npm ci`. The generator imports only node:fs, node:path and the
+      # global fetch, so installing the Angular toolchain here would buy
+      # nothing but a few minutes and a lockfile to keep in step.
+      - name: Regenerate the figures
+        env:
+          # Unauthenticated requests from a runner share an IP with every other
+          # job on that host and hit the 60/hour limit as a matter of course.
+          # This token is scoped to this repository, so it cannot widen what
+          # the script can see; private repos are excluded by the script's own
+          # `info.private` check regardless.
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: node scripts/generate-oss-stats.mjs
+
+      - name: Commit only if the figures moved
+        run: |
+          set -euo pipefail
+          FILE=src/app/data/oss-stats.generated.ts
+
+          # The generator holds `updated` at the date the numbers last CHANGED,
+          # so an uneventful week leaves this file byte-identical and there is
+          # genuinely nothing to do.
+          if git diff --quiet -- "$FILE"; then
+            echo "No movement — figures unchanged, nothing committed."
+            exit 0
+          fi
+
+          git diff --stat -- "$FILE"
+
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add "$FILE"
+          git commit -m 'chore(oss): refresh open-source stats'
+          git push
