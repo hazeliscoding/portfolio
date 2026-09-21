@@ -1,8 +1,12 @@
-<div class="app">
+<div class="app" [attr.data-sfx]="motion.sfx()">
   <app-system-bar position="top">
     <span barLeft class="app__wordmark">hazel<span class="app__ext">.exe</span></span>
     <app-readout barCenter label="NET" value="ONLINE" state="ok" />
     <app-readout barCenter label="LOC" value="TEXAS // USA" />
+    <app-readout barCenter label="SYNC" value="04ms" class="app__sync" />
+    <span barCenter class="app__path">
+      HAZEL.EXE <span class="app__path-sep">//</span> {{ pathLabel() }}
+    </span>
     <app-readout barRight label="STATUS" value="OPEN TO WORK" state="ok" />
     <span barRight class="app__clock">{{ clock() }}</span>
   </app-system-bar>
@@ -16,6 +20,8 @@
     />
 
     <span class="app__env" aria-hidden="true">{{ envWord() }}</span>
+
+    <span class="app__wipe" aria-hidden="true"><span class="app__wipe-bar"></span></span>
 
     <main class="main" #mainRegion>
       <router-outlet />
@@ -38,4 +44,8 @@
     (run)="onCommandRun($event)"
     (close)="paletteOpen.set(false)"
   />
+
+  @if (booting()) {
+    <app-boot [clock]="clock()" (dismissed)="booting.set(false)" />
+  }
 </div>

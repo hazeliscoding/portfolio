@@ -56,6 +56,7 @@
   flex: 1;
   display: flex;
   min-height: 0;
+  position: relative;
 }
 
 .app__rail {
@@ -73,6 +74,60 @@
   user-select: none;
   pointer-events: none;
   z-index: 0;
+}
+
+// The wrapper is absolutely positioned against `.app__body`, so it fills the
+// content region exactly: below the top bar, above the bottom bar, and — being
+// outside `.main` — it does not scroll with the content. The instrument frame
+// stays visible throughout the transition, which is the whole point of pinning
+// the shell.
+//
+// DO NOT reinstate the mockup's arrangement here. The mockup wraps the bar in
+// a `position: sticky; height: 0; overflow: hidden` element, and a zero-height
+// box with `overflow: hidden` clips its content to nothing — measured in a
+// browser: the bar is laid out at full height and paints zero pixels at every
+// sampled point, and hit-testing finds it only once the clip is removed. The
+// mockup's own wipe never renders. A 450ms animation that does not appear
+// reads as "subtle", not "broken", which is why it survived there.
+.app__wipe {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.app__wipe-bar {
+  display: block;
+  height: 100%;
+  background: var(--surface-elevated);
+  border-inline-end: var(--bw-indicator) solid var(--signal-active);
+}
+
+.app[data-sfx="a"] .app__wipe-bar {
+  animation: wipe-a var(--dur-cinematic) var(--ease-mech) both;
+}
+
+.app[data-sfx="b"] .app__wipe-bar {
+  animation: wipe-b var(--dur-cinematic) var(--ease-mech) both;
+}
+
+.app[data-sfx="a"] .app__env {
+  animation: env-a var(--dur-cinematic) var(--ease-mech) both;
+}
+
+.app[data-sfx="b"] .app__env {
+  animation: env-b var(--dur-cinematic) var(--ease-mech) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app__wipe {
+    display: none;
+  }
+
+  .app__env {
+    animation: none;
+  }
 }
 
 .main {
@@ -109,5 +164,47 @@
   // Keyboard-only affordances are meaningless on touch.
   .app__hint {
     display: none;
+  }
+}
+
+.app__path {
+  display: inline-block;
+  overflow: hidden;
+  white-space: nowrap;
+  letter-spacing: var(--tracking-wide);
+  color: var(--text-faint);
+}
+
+.app__path-sep {
+  color: var(--text-muted);
+}
+
+// steps(26, end) literally, NOT --ease-cut. --ease-cut is steps(2, end), which
+// would reveal the path in two chunks — a jump, not typing. The step count is
+// what makes this read as a machine printing characters, and it is the one
+// place in the system where the easing is a sequence length rather than a
+// curve. Taken from the mockup verbatim.
+/* prettier-ignore */
+.app[data-sfx="a"] .app__path {
+  animation: type-a var(--dur-cinematic) steps(26, end) both;
+}
+
+/* prettier-ignore */
+.app[data-sfx="b"] .app__path {
+  animation: type-b var(--dur-cinematic) steps(26, end) both;
+}
+
+.app[data-sfx="a"] .app__sync {
+  animation: flicker-a var(--dur-window) var(--ease-cut) both;
+}
+
+.app[data-sfx="b"] .app__sync {
+  animation: flicker-b var(--dur-window) var(--ease-cut) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app__path,
+  .app__sync {
+    animation: none;
   }
 }

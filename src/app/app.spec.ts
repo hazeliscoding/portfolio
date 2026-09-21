@@ -70,7 +70,9 @@ describe('App', () => {
     const center = (fixture.nativeElement as HTMLElement).querySelector(
       '.system-bar__center',
     ) as HTMLElement;
-    expect(center.children.length).toBe(2);
+    // 4, not 2: M4 adds a SYNC readout and a typing path readout to this same
+    // centre slot (Step 5b), alongside the pre-existing NET and LOC readouts.
+    expect(center.children.length).toBe(4);
     expect(center.children[0].tagName.toLowerCase()).toBe('app-readout');
   });
 
@@ -178,5 +180,61 @@ describe('App', () => {
     const env = (fixture.nativeElement as HTMLElement).querySelector('.app__env');
     expect(env).toBeTruthy();
     expect(env?.getAttribute('aria-hidden')).toBe('true');
+  });
+
+  it('starts with the boot overlay off, so the first render pass has no overlay', () => {
+    const fixture = TestBed.createComponent(App);
+    // Checked before the first `detectChanges()`, not after: Angular 21's
+    // `afterNextRender` callback runs synchronously as part of the render
+    // that `detectChanges()` triggers (only the resulting template re-render
+    // is deferred), so by the time `detectChanges()` returns, `booting()`
+    // has already flipped to `true` even though the DOM has not caught up
+    // yet. Measured directly — `fixture.componentInstance.booting()` reads
+    // `true` immediately after the first `detectChanges()` call, before any
+    // `whenStable()`. Checking pre-render is what actually proves the signal
+    // *starts* false; the DOM query below is what proves the first rendered
+    // pass has no overlay in it, which is a separate claim.
+    expect(fixture.componentInstance.booting()).toBe(false);
+    fixture.detectChanges();
+    // This is NOT proof of prerender safety on its own — it would pass
+    // against a component that never mounts the overlay at all. The real
+    // proof is Step 6's grep of the prerendered HTML, which cannot be
+    // satisfied by an absent feature.
+    expect((fixture.nativeElement as HTMLElement).querySelector('.boot')).toBeNull();
+  });
+
+  it('mounts the boot overlay once the browser has rendered', async () => {
+    const fixture = TestBed.createComponent(App);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+    // Paired with the spec above: together they prove the overlay is off for
+    // the render that prerendering captures and on afterwards. Alone, either
+    // one is satisfiable by a component that does nothing.
+    const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    expect(fixture.componentInstance.booting()).toBe(!reduced);
+  });
+
+  it('exposes the motion sequence on the shell for CSS to select on', () => {
+    const fixture = TestBed.createComponent(App);
+    fixture.detectChanges();
+    const app = (fixture.nativeElement as HTMLElement).querySelector('.app');
+    expect(app?.getAttribute('data-sfx')).toBe('a');
+  });
+
+  it('renders a wipe bar hidden from assistive tech', () => {
+    const fixture = TestBed.createComponent(App);
+    fixture.detectChanges();
+    const wipe = (fixture.nativeElement as HTMLElement).querySelector('.app__wipe');
+    expect(wipe).toBeTruthy();
+    expect(wipe?.getAttribute('aria-hidden')).toBe('true');
+  });
+
+  it('renders the instrumentation readouts the motion animates', () => {
+    const fixture = TestBed.createComponent(App);
+    fixture.detectChanges();
+    const el = fixture.nativeElement as HTMLElement;
+    expect(el.querySelector('.app__sync')).toBeTruthy();
+    expect(el.querySelector('.app__path')?.textContent).toContain('HAZEL.EXE');
   });
 });

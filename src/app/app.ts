@@ -4,6 +4,7 @@ import {
   HostListener,
   afterNextRender,
   computed,
+  inject,
   signal,
   viewChild,
 } from '@angular/core';
@@ -12,6 +13,8 @@ import { SystemBar } from './ui/windows/system-bar/system-bar';
 import { ModeNav } from './ui/windows/mode-nav/mode-nav';
 import { Readout } from './ui/core/readout/readout';
 import { CommandPalette } from './ui/overlays/command-palette/command-palette';
+import { Boot } from './ui/boot/boot';
+import { MotionService } from './ui/motion/motion.service';
 import { COMMANDS, MODES, envWordFor } from './core/navigation';
 
 const CLOCK_PLACEHOLDER = '--:--:--';
@@ -19,13 +22,16 @@ const CLOCK_PLACEHOLDER = '--:--:--';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, SystemBar, ModeNav, Readout, CommandPalette],
+  imports: [RouterOutlet, SystemBar, ModeNav, Readout, CommandPalette, Boot],
   templateUrl: './app.html',
   styleUrl: './app.scss',
 })
 export class App {
   modes = MODES;
   commands = COMMANDS;
+
+  motion = inject(MotionService);
+  booting = signal(false);
 
   paletteOpen = signal(false);
   clock = signal(CLOCK_PLACEHOLDER);
@@ -39,6 +45,11 @@ export class App {
   });
 
   envWord = computed(() => envWordFor(this.currentUrl()));
+
+  pathLabel = computed(() => {
+    const active = this.modes.find((m) => m.id === this.activeMode());
+    return active ? active.label : 'HOME';
+  });
 
   private currentUrl = signal('/');
 
@@ -69,6 +80,18 @@ export class App {
       window.addEventListener('popstate', () => {
         this.poppedState = true;
       });
+
+      // Browser-only, deliberately. Prerendered HTML must not contain the
+      // overlay: if it did and JavaScript failed, the site would be hidden
+      // behind a permanent full-screen panel.
+      if (!this.prefersReducedMotion()) {
+        this.booting.set(true);
+        // 2700, not 2600: M2's progress bar runs for 2600ms, and the overlay
+        // leaves 100ms after it completes. A finished bar that lingers reads
+        // as a hang; a bar cut short reads as a glitch. The two numbers are
+        // paired — change neither alone.
+        setTimeout(() => this.booting.set(false), 2700);
+      }
     });
   }
 
