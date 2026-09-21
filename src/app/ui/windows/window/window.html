@@ -1,0 +1,27 @@
+<section
+  class="window"
+  [attr.data-variant]="variant()"
+  [class.window--active]="active()"
+  [attr.aria-label]="title()"
+>
+  <div class="window__head">
+    @if (index()) {
+      <span class="window__index">{{ index() }}</span>
+    }
+    <span class="window__title">{{ title() }}</span>
+    @if (context()) {
+      <span class="window__sep">//</span>
+      <span class="window__context">{{ context() }}</span>
+    }
+    @if (status()) {
+      <span class="window__status">{{ status() }}</span>
+    }
+    <span class="window__controls"><ng-content select="[windowControls]" /></span>
+  </div>
+
+  <div class="window__body" [class.window__body--padded]="padded()">
+    <ng-content />
+  </div>
+
+  <ng-content select="[windowFooter]" />
+</section>
