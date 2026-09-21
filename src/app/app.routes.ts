@@ -19,7 +19,13 @@ export const routes: Routes = [
   { path: 'blog', loadComponent: construction },
   { path: 'blog/:slug', loadComponent: construction },
   { path: 'about', loadComponent: construction },
-  { path: 'portfolio', loadComponent: construction },
+  {
+    path: 'portfolio',
+    loadComponent: () =>
+      import('./features/portfolio/portfolio-page/portfolio-page').then(
+        (m) => m.PortfolioPage,
+      ),
+  },
   { path: 'portfolio/:id', loadComponent: construction },
   { path: '**', loadComponent: construction },
 ];

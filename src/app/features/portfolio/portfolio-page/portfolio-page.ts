@@ -1,33 +1,41 @@
 import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { Project } from '../../../data/projects.data';
-import { ProjectCard } from '../../../core/shared/project-card/project-card';
-import { ProjectsDataService } from '../../../services/projects-data.service';
 import { Meta, Title } from '@angular/platform-browser';
+import { ChapterHeader } from '../../../ui/chapter-header/chapter-header';
+import { Window } from '../../../ui/windows/window/window';
+import { ViewportWindow } from '../../../ui/windows/viewport-window/viewport-window';
+import { Badge } from '../../../ui/core/badge/badge';
+import { StatusLight } from '../../../ui/core/status-light/status-light';
+import { projectsData } from '../../../data/projects.data';
 
 @Component({
   selector: 'portfolio-page',
   standalone: true,
-  imports: [ProjectCard, RouterLink],
+  imports: [RouterLink, ChapterHeader, Window, ViewportWindow, Badge, StatusLight],
   templateUrl: './portfolio-page.html',
   styleUrl: './portfolio-page.scss',
 })
 export class PortfolioPage {
-  projectsData: Project[];
+  projects = projectsData;
 
-  constructor(
-    private projectsService: ProjectsDataService,
-    private title: Title,
-    private meta: Meta,
-  ) {
-    this.projectsData = this.projectsService.getAllProjects();
+  get total(): string {
+    return String(this.projects.length).padStart(2, '0');
   }
 
+  indexOf(i: number): string {
+    return String(i + 1).padStart(2, '0');
+  }
+
+  constructor(
+    private title: Title,
+    private meta: Meta,
+  ) {}
+
   ngOnInit(): void {
-    this.title.setTitle('Portfolio - Hazel Granados');
+    this.title.setTitle('Projects - Hazel Granados');
     this.meta.updateTag({
       name: 'description',
-      content: 'Explore selected projects by Hazel Granados.',
+      content: 'Project archive — selected work by Hazel Granados.',
     });
   }
 }
