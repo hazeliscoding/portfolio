@@ -25,6 +25,28 @@
   color: var(--text-faint);
 }
 
+.app__command {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  min-height: var(--target-min);
+  padding: 0 var(--sp-2);
+  background: transparent;
+  border: 0;
+  font: var(--type-mono-s);
+  letter-spacing: var(--tracking-wide);
+  color: var(--text-secondary);
+  cursor: pointer;
+
+  &:hover {
+    color: var(--text-primary);
+  }
+}
+
+.app__hint {
+  color: var(--text-faint);
+}
+
 .app__body {
   flex: 1;
   display: flex;
@@ -51,5 +73,10 @@
 
   .main {
     padding: var(--sp-4) var(--sp-4) var(--sp-6);
+  }
+
+  // Keyboard-only affordances are meaningless on touch.
+  .app__hint {
+    display: none;
   }
 }

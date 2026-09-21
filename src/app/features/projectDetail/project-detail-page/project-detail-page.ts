@@ -1,5 +1,5 @@
 import { Component, signal } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { Meta, Title } from '@angular/platform-browser';
 import { ChapterHeader } from '../../../ui/chapter-header/chapter-header';
 import { Window } from '../../../ui/windows/window/window';
@@ -12,7 +12,7 @@ import { ProjectsDataService } from '../../../services/projects-data.service';
 @Component({
   selector: 'project-detail-page',
   standalone: true,
-  imports: [ChapterHeader, Window, ViewportWindow, Badge, KeyValue],
+  imports: [RouterLink, ChapterHeader, Window, ViewportWindow, Badge, KeyValue],
   templateUrl: './project-detail-page.html',
   styleUrl: './project-detail-page.scss',
 })

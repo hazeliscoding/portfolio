@@ -22,9 +22,11 @@
 
   <app-system-bar position="bottom">
     <span barLeft class="app__hints">
-      <span>&#8984;K COMMAND</span>
-      <span>/ SEARCH</span>
-      <span>ESC BACK</span>
+      <button type="button" class="app__command" (click)="paletteOpen.set(true)">
+        <span aria-hidden="true">&#8984;K</span> COMMAND
+      </button>
+      <span class="app__hint">/ SEARCH</span>
+      <span class="app__hint">ESC BACK</span>
     </span>
   </app-system-bar>
 

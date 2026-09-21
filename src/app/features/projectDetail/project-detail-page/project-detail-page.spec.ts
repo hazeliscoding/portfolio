@@ -64,4 +64,17 @@ describe('ProjectDetailPage', () => {
     const text = (fixture.nativeElement as HTMLElement).textContent ?? '';
     expect(/\p{Extended_Pictographic}/u.test(text)).toBe(false);
   });
+
+  it('offers a way back to the archive', () => {
+    const back = (fixture.nativeElement as HTMLElement).querySelector('.detail__back');
+    expect(back?.getAttribute('href')).toBe('/portfolio');
+  });
+
+  it('marks the active thumbnail by more than colour', () => {
+    const el = fixture.nativeElement as HTMLElement;
+    const active = el.querySelector('.detail__thumb--active');
+    expect(active?.getAttribute('aria-current')).toBe('true');
+    const others = el.querySelectorAll('.detail__thumb:not(.detail__thumb--active)');
+    expect([...others].every((t) => t.getAttribute('aria-current') === null)).toBe(true);
+  });
 });

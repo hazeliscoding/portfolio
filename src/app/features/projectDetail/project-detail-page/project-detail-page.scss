@@ -45,6 +45,16 @@
   color: var(--text-faint);
 }
 
+.detail__thumb--active .detail__caption {
+  &::before {
+    content: "[ ";
+  }
+
+  &::after {
+    content: " ]";
+  }
+}
+
 .detail__para {
   margin: 0 0 var(--sp-4);
   font: var(--type-body);
@@ -71,6 +81,14 @@
   letter-spacing: var(--tracking-wide);
   border-top: var(--bw-hairline) solid var(--border-faint);
   margin-block-start: var(--sp-3);
+}
+
+.detail__back {
+  display: inline-block;
+  min-height: var(--target-min);
+  line-height: var(--target-min);
+  font: var(--type-mono-s);
+  letter-spacing: var(--tracking-wide);
 }
 
 .detail__missing {

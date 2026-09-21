@@ -73,4 +73,16 @@ describe('App', () => {
     expect(center.children.length).toBe(2);
     expect(center.children[0].tagName.toLowerCase()).toBe('app-readout');
   });
+
+  it('offers a touch-reachable way to open the palette', () => {
+    const fixture = TestBed.createComponent(App);
+    fixture.detectChanges();
+    const el = fixture.nativeElement as HTMLElement;
+    const btn = el.querySelector('.app__command') as HTMLButtonElement;
+    expect(btn).toBeTruthy();
+    expect(btn.tagName.toLowerCase()).toBe('button');
+    btn.click();
+    fixture.detectChanges();
+    expect(el.querySelector('.palette')).toBeTruthy();
+  });
 });

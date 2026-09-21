@@ -24,6 +24,7 @@
               type="button"
               class="detail__thumb"
               [class.detail__thumb--active]="img.src === activeImage()"
+              [attr.aria-current]="img.src === activeImage() ? 'true' : null"
               (click)="select(img.src)"
             >
               <img [src]="img.src" [alt]="img.caption" />
@@ -38,6 +39,8 @@
           <p class="detail__para">{{ para }}</p>
         }
       </app-window>
+
+      <a class="detail__back" routerLink="/portfolio">&lt; BACK TO ARCHIVE</a>
     </div>
 
     <aside class="detail__side">
