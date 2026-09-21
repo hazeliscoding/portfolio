@@ -1,5 +1,53 @@
-<div class="app-container">
-  <main class="main">
-    <router-outlet />
-  </main>
+<div class="app" [attr.data-sfx]="motion.sfx()">
+  <app-system-bar position="top">
+    <a barLeft class="app__wordmark" routerLink="/" aria-label="hazel.exe — home"
+      >hazel<span class="app__ext">.exe</span></a
+    >
+    <app-readout barCenter label="NET" value="ONLINE" state="ok" />
+    <app-readout barCenter label="LOC" value="TEXAS // USA" />
+    <app-readout barCenter label="SYNC" [value]="sync()" class="app__sync" />
+    <span barCenter class="app__path">
+      HAZEL.EXE <span class="app__path-sep">//</span> {{ pathLabel() }}
+    </span>
+    <app-readout barRight label="STATUS" [value]="operatorStatus" state="ok" />
+    <span barRight class="app__clock">{{ clock() }}</span>
+  </app-system-bar>
+
+  <div class="app__body">
+    <app-mode-nav
+      class="app__rail"
+      [modes]="modes"
+      [activeId]="activeMode()"
+      (select)="onModeSelect($event)"
+    />
+
+    <span class="app__env" aria-hidden="true">{{ envWord() }}</span>
+
+    <span class="app__wipe" aria-hidden="true"><span class="app__wipe-bar"></span></span>
+
+    <main class="main" #mainRegion>
+      <router-outlet />
+    </main>
+  </div>
+
+  <app-system-bar position="bottom">
+    <span barLeft class="app__hints">
+      <button type="button" class="app__command" (click)="paletteOpen.set(true)">
+        <span aria-hidden="true">&#8984;K</span> COMMAND
+      </button>
+      <span class="app__hint">/ SEARCH</span>
+    </span>
+    <span barRight class="app__log">{{ lastLog() }}</span>
+  </app-system-bar>
+
+  <app-command-palette
+    [open]="paletteOpen()"
+    [commands]="commands"
+    (run)="onCommandRun($event)"
+    (close)="paletteOpen.set(false)"
+  />
+
+  @if (booting()) {
+    <app-boot [clock]="clock()" (dismissed)="booting.set(false)" />
+  }
 </div>

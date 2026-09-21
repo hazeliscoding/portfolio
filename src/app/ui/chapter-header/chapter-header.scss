@@ -1,0 +1,90 @@
+.chapter {
+  display: flex;
+  align-items: baseline;
+  gap: var(--sp-5);
+  margin-block-end: var(--sp-5);
+}
+
+.chapter__title {
+  margin: 0;
+  font: var(--type-display-l);
+  letter-spacing: var(--tracking-display);
+  color: var(--text-primary);
+
+  &[data-sfx="a"] {
+    animation: ttl-a var(--dur-window) var(--ease-mech) both;
+  }
+
+  &[data-sfx="b"] {
+    animation: ttl-b var(--dur-window) var(--ease-mech) both;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chapter__title[data-sfx="a"],
+  .chapter__title[data-sfx="b"] {
+    animation: none;
+  }
+}
+
+.chapter__index {
+  color: var(--signal-active);
+}
+
+.chapter__caret {
+  display: inline-block;
+  width: 10px;
+  height: 22px;
+  background: var(--signal-active);
+  align-self: center;
+  // 1.1s, deliberately not a round second and deliberately not the same as
+  // the other loops. Cadences that share a period visibly lock together and
+  // read as one mechanism rather than several.
+  animation: k-blink 1.1s steps(1) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chapter__caret {
+    animation: none;
+  }
+}
+
+.chapter__context {
+  margin: 0;
+  font: var(--type-mono-s);
+  letter-spacing: var(--tracking-wide);
+  color: var(--text-faint);
+}
+
+.chapter__owner {
+  color: var(--text-faint);
+}
+
+.chapter__sep {
+  color: var(--text-muted);
+}
+
+.chapter__label {
+  color: var(--text-primary);
+}
+
+.chapter__status {
+  margin: 0 0 0 auto;
+  font: var(--type-mono-s);
+  color: var(--text-faint);
+}
+
+@media (max-width: 840px) {
+  .chapter {
+    flex-direction: column;
+    gap: var(--sp-2);
+  }
+
+  .chapter__title {
+    font: var(--type-display-m);
+  }
+
+  .chapter__status {
+    margin-inline-start: 0;
+  }
+}

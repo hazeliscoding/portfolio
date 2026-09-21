@@ -1,0 +1,76 @@
+* {
+  box-sizing: border-box;
+}
+
+// Replaces the universal margin/padding reset that lived in the legacy
+// GlitterNet sheet (src/styles/styles.scss:116) until Task 18 removed it.
+// `:where()` keeps specificity at 0,0,0 so every component rule and the prose
+// sheet win on their own merits — no `!important`, no cascade surprises.
+// Author origin beats the UA sheet regardless of specificity, so 0 is enough.
+:where(h1, h2, h3, h4, h5, h6, p, ul, ol, dl, dd, figure, blockquote, pre, hr) {
+  margin: 0;
+}
+
+:where(ul, ol, dl) {
+  padding-inline-start: 0;
+}
+
+// Form controls too. The reset this replaces was `*`, so it covered them; this
+// one lists elements, and a list is only a replacement if it is complete.
+// Chromium already zeroes button margins, but Safari does not for every
+// control, and the site has real <button> elements in the shell and the
+// command palette.
+:where(button, input, select, textarea, fieldset, legend) {
+  margin: 0;
+}
+
+// Any in-page anchor target clears the top edge of the scroll region instead
+// of landing flush against it. `scrollIntoView` honours `scroll-margin`, and
+// the shell scrolls anchors itself (see App's document:click handler).
+//
+// Global on purpose, and NOT keyed off `:target`. It cannot live in a
+// component stylesheet: emulated encapsulation would require the target to
+// belong to that component's template, and neither target on this site does —
+// `#contact` is the home page's and blog headings come from [innerHTML]. And
+// `:target` never matches, because the shell sets the fragment with
+// history.replaceState, which does not re-evaluate that pseudo-class.
+:where([id]) {
+  scroll-margin-block-start: var(--sp-5);
+}
+
+html,
+body {
+  height: 100%;
+  overflow: hidden;
+}
+
+html {
+  color-scheme: dark;
+}
+
+body {
+  margin: 0;
+  background: var(--surface-canvas);
+  color: var(--text-primary);
+  font: var(--type-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: var(--text-link);
+  text-decoration: none;
+
+  &:hover {
+    color: var(--text-primary);
+  }
+}
+
+:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+::selection {
+  background: var(--signal-active);
+  color: #fff;
+}

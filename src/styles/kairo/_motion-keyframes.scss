@@ -1,0 +1,181 @@
+// KAIRO motion keyframes.
+//
+// Entrance animations are defined TWICE — `-a` and `-b` are byte-identical.
+// That duplication is deliberate and load-bearing: a CSS animation only
+// restarts when its `animation-name` changes, so MotionService alternates a
+// `data-sfx` attribute between the two on every route change. Collapsing them
+// into one would silently stop every route transition from animating.
+
+@keyframes win-a {
+  from {
+    opacity: 0;
+    transform: translateX(-18px);
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+@keyframes win-b {
+  from {
+    opacity: 0;
+    transform: translateX(-18px);
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+@keyframes ttl-a {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+@keyframes ttl-b {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+@keyframes wipe-a {
+  0% {
+    transform: translateX(-101%);
+  }
+  100% {
+    transform: translateX(101%);
+  }
+}
+
+@keyframes wipe-b {
+  0% {
+    transform: translateX(-101%);
+  }
+  100% {
+    transform: translateX(101%);
+  }
+}
+
+@keyframes env-a {
+  from {
+    transform: translateX(80px);
+    opacity: 0;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+
+@keyframes env-b {
+  from {
+    transform: translateX(80px);
+    opacity: 0;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+
+// 26ch, not the mockup's 520px, and 26 deliberately matches the `steps(26, end)`
+// the consumer applies — one character per step. Measured with 520px: the path
+// text is 150px wide, so the reveal finished 147ms into a 450ms animation and
+// the remaining 300ms grew an invisible box. The declared duration was three
+// times the visible one, which also meant it could not be tuned by changing
+// `--dur-cinematic`, and the pacing drifted with label length.
+@keyframes type-a {
+  from {
+    max-width: 0;
+  }
+  to {
+    max-width: 26ch;
+  }
+}
+
+@keyframes type-b {
+  from {
+    max-width: 0;
+  }
+  to {
+    max-width: 26ch;
+  }
+}
+
+@keyframes boot-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes boot-bar {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes flicker-a {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  30% {
+    opacity: 0.35;
+  }
+  60% {
+    opacity: 0.9;
+  }
+}
+
+@keyframes flicker-b {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  30% {
+    opacity: 0.35;
+  }
+  60% {
+    opacity: 0.9;
+  }
+}
+
+@keyframes k-blink {
+  0%,
+  55% {
+    opacity: 1;
+  }
+  56%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes k-scan {
+  0% {
+    top: -2px;
+  }
+  100% {
+    top: 100%;
+  }
+}

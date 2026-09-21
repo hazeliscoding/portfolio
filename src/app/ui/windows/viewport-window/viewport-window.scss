@@ -1,0 +1,57 @@
+.viewport {
+  margin: 0;
+  position: relative;
+  background: var(--surface-inset);
+  border: var(--bw-hairline) solid var(--border-default);
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+}
+
+.viewport__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+
+  &--pixelated {
+    image-rendering: pixelated;
+  }
+}
+
+.viewport__scan {
+  position: absolute;
+  inset-inline: 0;
+  height: 2px;
+  background: var(--signal-info);
+  opacity: 0.35;
+  pointer-events: none;
+  animation: k-scan 3.2s var(--ease-linear) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .viewport__scan {
+    animation: none;
+    display: none;
+  }
+}
+
+.viewport__nosignal {
+  font: var(--type-mono-s);
+  letter-spacing: var(--tracking-wider);
+  color: var(--text-faint);
+}
+
+.viewport__label {
+  position: absolute;
+  inset-block-end: var(--sp-1);
+  inset-inline-start: var(--sp-2);
+  // The label sits over arbitrary images, so it needs an opaque backing — no
+  // single text colour is legible against both light and dark captures.
+  padding: 0 var(--sp-1);
+  background: rgba(7, 9, 11, 0.78);
+  border: var(--bw-hairline) solid var(--border-default);
+  font: var(--type-mono-s);
+  letter-spacing: var(--tracking-wide);
+  color: var(--text-primary);
+}

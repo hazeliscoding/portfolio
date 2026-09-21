@@ -1,0 +1,57 @@
+.status-light {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  font: var(--type-mono-s);
+  letter-spacing: var(--tracking-wide);
+  color: var(--text-secondary);
+}
+
+.status-light__dot {
+  color: var(--text-primary);
+  line-height: 1;
+}
+
+// Status words are always uppercase under KAIRO's voice rules, so this lives
+// in the component. A parent stylesheet cannot reach it — emulated
+// encapsulation scopes it to this component's own styles.
+.status-light__label {
+  text-transform: uppercase;
+}
+
+.status-light[data-state="ok"] .status-light__dot {
+  color: var(--signal-success);
+}
+
+.status-light[data-state="info"] .status-light__dot {
+  color: var(--signal-info);
+}
+
+.status-light[data-state="warn"] .status-light__dot {
+  color: var(--signal-warning);
+}
+
+.status-light[data-state="danger"] .status-light__dot {
+  color: var(--text-active);
+}
+
+.status-light__dot--blink {
+  animation: status-blink var(--dur-blink) var(--ease-cut) infinite;
+}
+
+@keyframes status-blink {
+  0%,
+  55% {
+    opacity: 1;
+  }
+  56%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .status-light__dot--blink {
+    animation: none;
+  }
+}

@@ -33,7 +33,12 @@ export const serverRoutes: ServerRoute[] = [
 
   {
     path: 'portfolio/:id',
-    renderMode: RenderMode.Client,
+    renderMode: RenderMode.Prerender,
+    fallback: PrerenderFallback.Client,
+    async getPrerenderParams() {
+      const { projectsData } = await import('./data/projects.data');
+      return projectsData.map((p) => ({ id: p.id }));
+    },
   },
 
   {

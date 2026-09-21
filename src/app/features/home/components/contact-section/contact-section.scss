@@ -1,8 +1,0 @@
-@use "abstracts/variables" as *;
-
-.contact-section {
-  &__paragraph {
-    font-size: $font-size-small;
-    margin-bottom: $spacing-small;
-  }
-}

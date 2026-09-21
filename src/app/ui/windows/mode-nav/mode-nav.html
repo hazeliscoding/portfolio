@@ -1,0 +1,15 @@
+<nav class="mode-nav" aria-label="Mode">
+  <span class="mode-nav__header">{{ header() }}</span>
+  @for (mode of modes(); track mode.id) {
+    <button
+      type="button"
+      class="mode-nav__item"
+      [class.mode-nav__item--active]="mode.id === activeId()"
+      [attr.aria-current]="mode.id === activeId() ? 'page' : null"
+      (click)="select.emit(mode.id)"
+    >
+      <span class="mode-nav__index">{{ mode.index }}</span>
+      <span class="mode-nav__label">{{ mode.label }}</span>
+    </button>
+  }
+</nav>

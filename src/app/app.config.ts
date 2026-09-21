@@ -6,7 +6,6 @@ import {
 import {
   PreloadAllModules,
   provideRouter,
-  withInMemoryScrolling,
   withPreloading,
 } from '@angular/router';
 
@@ -23,11 +22,7 @@ export const appConfig: ApplicationConfig = {
 
     provideZoneChangeDetection({ eventCoalescing: true }),
 
-    provideRouter(
-      routes,
-      withPreloading(PreloadAllModules),
-      withInMemoryScrolling({ scrollPositionRestoration: 'enabled' }),
-    ),
+    provideRouter(routes, withPreloading(PreloadAllModules)),
 
     provideClientHydration(withEventReplay()),
 

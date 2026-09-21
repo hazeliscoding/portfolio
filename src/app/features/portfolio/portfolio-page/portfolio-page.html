@@ -1,20 +1,45 @@
-<div class="portfolio-page gn-shell">
-  <header class="gn-masthead fade">
-    <div class="gn-wordmark">projects<span class="gn-spark"> ✧</span></div>
-    <div class="gn-tagline">
-      everything i've built, one page each — screenshots, write-ups, and demos
-    </div>
-  </header>
+<app-chapter-header
+  code="ARCHIVE"
+  index="03"
+  context="PROJECT RECORDS"
+/>
 
-  <div class="gn-counter">{{ projectsData.length }} on display · more in the workshop</div>
+<div class="archive__filters">
+  <span class="archive__filter-label">[FILTER]</span>
+  <span class="archive__filter archive__filter--active">ALL</span>
+  <span class="archive__pager">RECORD 01 OF {{ total }}</span>
+</div>
 
-  <div class="gn-grid">
-    @for (project of projectsData; track project.id) {
-      <project-card [project]="project"></project-card>
-    }
-  </div>
+<div class="archive__grid">
+  @for (p of projects; track p.id; let i = $index) {
+    <app-window
+      class="archive__record"
+      variant="media"
+      [index]="indexOf(i)"
+      [title]="p.title"
+      context="RECORD"
+    >
+      <a class="archive__link" [routerLink]="['/portfolio', p.id]">
+        <app-viewport-window
+          ratio="16 / 10"
+          [src]="p.image"
+          [alt]="p.title + ' screenshot'"
+          [label]="'REC ' + indexOf(i)"
+        />
 
-  <div class="gn-webring">
-    <a routerLink="/">« back to profile</a>
-  </div>
+        <p class="archive__desc">{{ p.description }}</p>
+
+        <div class="archive__meta">
+          <app-status-light state="ok" [label]="p.status ?? ''" />
+          <span class="archive__stack">{{ p.stack }} // {{ p.year }}</span>
+        </div>
+
+        <div class="archive__tags">
+          @for (t of p.tags ?? []; track t) {
+            <app-badge>{{ t }}</app-badge>
+          }
+        </div>
+      </a>
+    </app-window>
+  }
 </div>

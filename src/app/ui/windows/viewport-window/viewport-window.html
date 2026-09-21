@@ -1,0 +1,16 @@
+<figure class="viewport" [style.aspect-ratio]="ratio()">
+  @if (src()) {
+    <img
+      class="viewport__img"
+      [class.viewport__img--pixelated]="pixelated()"
+      [src]="src()"
+      [alt]="alt()"
+    />
+    <span class="viewport__scan" aria-hidden="true"></span>
+  } @else {
+    <span class="viewport__nosignal">NO SIGNAL</span>
+  }
+  @if (label()) {
+    <figcaption class="viewport__label">{{ label() }}</figcaption>
+  }
+</figure>

@@ -1,73 +1,61 @@
-import { CommonModule } from '@angular/common';
-import { Component, HostListener, inject } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
+
+import { ChapterHeader } from '../../../ui/chapter-header/chapter-header';
+import { Window } from '../../../ui/windows/window/window';
+import { ViewportWindow } from '../../../ui/windows/viewport-window/viewport-window';
+import { Badge } from '../../../ui/core/badge/badge';
+import { KeyValue, KeyValueItem } from '../../../ui/data/key-value/key-value';
+import { Project } from '../../../data/projects.data';
 import { ProjectsDataService } from '../../../services/projects-data.service';
-import { ProjectImage } from '../../../data/projects.data';
+import { PageMeta } from '../../../core/page-meta';
 
 @Component({
   selector: 'project-detail-page',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [RouterLink, ChapterHeader, Window, ViewportWindow, Badge, KeyValue],
   templateUrl: './project-detail-page.html',
   styleUrl: './project-detail-page.scss',
 })
 export class ProjectDetailPage {
-  private route = inject(ActivatedRoute);
-  private projectsService = inject(ProjectsDataService);
+  project = signal<Project | undefined>(undefined);
+  activeImage = signal('');
 
-  project = this.projectsService.getProjectById(
-    this.route.snapshot.paramMap.get('id') || '',
-  );
+  constructor(
+    private pageMeta: PageMeta,
+    private route: ActivatedRoute,
+    private projectsService: ProjectsDataService,
+  ) {}
 
-  currentSlide = 0;
-  lightboxOpen = false;
-  lightboxZoomed = false;
+  ngOnInit(): void {
+    this.route.paramMap.subscribe((params) => {
+      const id = params.get('id') ?? '';
+      const found = this.projectsService.getProjectById(id);
+      this.project.set(found);
+      this.activeImage.set(found?.image ?? '');
 
-  openLightbox() {
-    this.lightboxOpen = true;
-    this.lightboxZoomed = false;
+      if (found) {
+        this.pageMeta.set({
+          title: `${found.title} - Hazel Granados`,
+          description: found.description,
+          path: `/portfolio/${found.id}`,
+        });
+      }
+    });
   }
 
-  closeLightbox() {
-    this.lightboxOpen = false;
-    this.lightboxZoomed = false;
+  inspector(): KeyValueItem[] {
+    const p = this.project();
+    if (!p) return [];
+    return [
+      { key: 'STATUS', value: (p.status ?? '').toUpperCase() },
+      { key: 'YEAR', value: p.year ?? '' },
+      { key: 'STACK', value: p.stack ?? '' },
+      { key: 'RECORD', value: '01 OF 01' },
+    ];
   }
 
-  toggleZoom() {
-    this.lightboxZoomed = !this.lightboxZoomed;
-  }
-
-  @HostListener('window:keydown.escape')
-  onEscape() {
-    this.lightboxOpen = false;
-    this.lightboxZoomed = false;
-  }
-
-  get slides(): ProjectImage[] {
-    if (!this.project) return [];
-    return this.project.images?.length
-      ? this.project.images
-      : [{ src: this.project.image, caption: this.project.title }];
-  }
-
-  prevSlide() {
-    this.currentSlide =
-      (this.currentSlide - 1 + this.slides.length) % this.slides.length;
-    this.lightboxZoomed = false;
-  }
-
-  nextSlide() {
-    this.currentSlide = (this.currentSlide + 1) % this.slides.length;
-    this.lightboxZoomed = false;
-  }
-
-  @HostListener('window:keydown.arrowLeft')
-  onArrowLeft() {
-    if (this.slides.length > 1) this.prevSlide();
-  }
-
-  @HostListener('window:keydown.arrowRight')
-  onArrowRight() {
-    if (this.slides.length > 1) this.nextSlide();
+  select(src: string): void {
+    this.activeImage.set(src);
   }
 }

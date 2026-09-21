@@ -1,27 +1,40 @@
-<div class="blog-post-page" *ngIf="post as p; else notFound">
-  <a class="blog-post-page__back" [routerLink]="['/blog']">← Back to blog</a>
+@if (post(); as p) {
+  <app-chapter-header code="LOG" index="04" [context]="p.title" [status]="p.date" />
 
-  <header class="blog-post-page__header">
-    <h1 class="blog-post-page__title">{{ p.title }}</h1>
-    <p class="blog-post-page__meta">
-      {{ p.dateObj | date: 'longDate' }}
-      <span *ngIf="p.tags.length"> · </span>
-      <span class="blog-post-page__tag" *ngFor="let tag of p.tags">#{{
-        tag
-      }}</span>
-    </p>
-  </header>
+  <div class="post">
+    <article class="post__main">
+      <app-window index="01" title="Entry" [context]="p.slug">
+        <h2 class="post__title">{{ p.title }}</h2>
+        <div class="post__body prose" [innerHTML]="bodyHtml()"></div>
+      </app-window>
 
-  <article class="blog-post-page__content" [innerHTML]="p.html"></article>
+      <a class="post__back" routerLink="/blog">&lt; BACK TO LOG</a>
+    </article>
 
-  <app-footer />
-</div>
+    <aside class="post__side">
+      <app-window class="post__contents" variant="inspector" index="02" title="Contents" context="INDEX">
+        @if (headings().length) {
+          <ol class="post__toc">
+            @for (h of headings(); track h.id) {
+              <li><a [href]="'#' + h.id">{{ h.text }}</a></li>
+            }
+          </ol>
+        } @else {
+          <p class="post__empty">NO SECTIONS</p>
+        }
+      </app-window>
 
-<ng-template #notFound>
-  <div class="blog-post-page">
-    <a class="blog-post-page__back" [routerLink]="['/blog']">← Back to blog</a>
-    <h1 class="blog-post-page__title">Post not found</h1>
-    <p class="blog-post-page__meta">That slug doesn’t match any post.</p>
-    <app-footer />
+      <app-window class="post__record" variant="inspector" index="03" title="Record" context="METADATA">
+        <app-key-value [items]="record()" />
+        <div class="post__tags">
+          @for (t of p.tags; track t) {
+            <app-badge>{{ t }}</app-badge>
+          }
+        </div>
+      </app-window>
+    </aside>
   </div>
-</ng-template>
+} @else {
+  <app-chapter-header code="LOG" index="04" context="NO RECORD" />
+  <p class="post__missing">NO RECORD AT THIS ADDRESS</p>
+}

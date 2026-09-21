@@ -1,0 +1,34 @@
+<table class="data-table" role="grid" [attr.data-density]="density()">
+  <thead>
+    <tr>
+      @for (col of columns(); track col.key) {
+        <th
+          scope="col"
+          [style.width]="col.width"
+          [class.data-table__cell--nowrap]="col.nowrap"
+        >{{ col.label }}</th>
+      }
+    </tr>
+  </thead>
+  <tbody>
+    @for (row of rows(); track row.id) {
+      <tr
+        class="data-table__row"
+        [class.data-table__row--selected]="row.id === selectedId()"
+        [attr.aria-selected]="row.id === selectedId()"
+        tabindex="0"
+        (click)="select.emit(row.id)"
+        (keydown.enter)="$event.preventDefault(); select.emit(row.id)"
+        (keydown.space)="$event.preventDefault(); select.emit(row.id)"
+      >
+        @for (col of columns(); track col.key) {
+          <td [class.data-table__cell--nowrap]="col.nowrap">{{ row.cells[col.key] }}</td>
+        }
+      </tr>
+    }
+  </tbody>
+</table>
+
+@if (endLabel()) {
+  <p class="data-table__end">{{ endLabel() }}</p>
+}

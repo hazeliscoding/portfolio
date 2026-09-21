@@ -5,8 +5,6 @@ description: My first post on this portfolio site.
 tags: [angular, portfolio, personal]
 ---
 
-# Hello, World!
-
 I’ve wanted a place on my own domain to write short notes about what I’m learning, what I’m building, and what I’m thinking about in tech.
 
 <!-- ![Blog placeholder image](/images/blog/placeholder.svg) -->

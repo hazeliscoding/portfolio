@@ -1,0 +1,36 @@
+.badge {
+  display: inline-block;
+  font: var(--type-mono-s);
+  font-weight: 500;
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  padding: 0 var(--sp-2);
+  border: var(--bw-hairline) solid var(--border-default);
+  border-radius: var(--radius-1);
+  color: var(--text-secondary);
+
+  &[data-tone="active"] {
+    color: var(--text-active);
+    border-color: var(--signal-active);
+  }
+
+  &[data-tone="info"] {
+    color: var(--signal-info);
+    border-color: var(--signal-info-dim);
+  }
+
+  &[data-tone="success"] {
+    color: var(--signal-success);
+    border-color: var(--signal-success-dim);
+  }
+
+  &[data-tone="warning"] {
+    color: var(--signal-warning);
+    border-color: var(--signal-warning-dim);
+  }
+
+  &[data-tone="danger"] {
+    color: var(--text-active);
+    border-color: var(--signal-active);
+  }
+}

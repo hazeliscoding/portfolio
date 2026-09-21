@@ -1,20 +1,28 @@
-@use "abstracts/variables" as *;
-
-.not-found {
-  text-align: center;
-  padding: $spacing-xbig $spacing-medium;
-
-  &__title {
-    font-family: $font-family-display;
-    font-weight: $font-weight-normal;
-    font-size: $font-size-display-lg;
-  }
-
-  &__output {
-    font-family: $font-family-mono;
-    font-size: $font-size-default;
-    color: $color-text-muted;
-    margin-bottom: $spacing-big;
-    overflow-wrap: anywhere;
-  }
+.error {
+  display: grid;
+  place-items: center;
+  min-height: 60vh;
 }
+
+.error__report {
+  margin: 0 0 var(--sp-2);
+  font: var(--type-mono);
+  letter-spacing: var(--tracking-wider);
+  color: var(--text-active);
+}
+
+.error__path {
+  margin: 0 0 var(--sp-4);
+  font: var(--type-mono-s);
+  color: var(--text-faint);
+  overflow-wrap: anywhere;
+}
+
+.error__back {
+  display: inline-block;
+  min-height: var(--target-min);
+  line-height: var(--target-min);
+  font: var(--type-mono-s);
+  letter-spacing: var(--tracking-wide);
+}
+

@@ -11,7 +11,7 @@
     "test": "ng test",
     "serve:ssr:portfolio": "node dist/portfolio/server/server.mjs",
     "dev": "ng serve --host 0.0.0.0",
-    "generate:og": "node scripts/generate-og-image.mjs"
+    "check:og": "node scripts/check-og-image.mjs"
   },
   "prettier": {
     "overrides": [
@@ -35,7 +35,6 @@
     "@angular/ssr": "^21.0.0",
     "express": "^5.1.0",
     "marked": "^15.0.12",
-    "mermaid": "^11.17.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.15.0"

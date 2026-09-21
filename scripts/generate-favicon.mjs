@@ -1,6 +1,9 @@
-// Generates the GlitterNet favicon set: a pixel sparkle (peach, sticker
-// shadow, teal glint) on cream with a hard brown border — 16x16 pixel art
-// scaled up losslessly (shape-rendering: crispEdges).
+// Generates the KAIRO favicon set: a right-pointing terminal caret in
+// signal red on graphite — no frame, no gradient — drawn as 16x16 pixel art
+// (five overlapping 3x3 blocks) and scaled up losslessly
+// (shape-rendering: crispEdges). It reads as terminal pixel art rather than
+// an anonymous coloured square, and stays legible at 16px in a way the full
+// wordmark cannot.
 //
 // Outputs: favicon-16x16.png, favicon-32x32.png, apple-touch-icon.png,
 // android-chrome-192x192.png, android-chrome-512x512.png, favicon.ico
@@ -12,12 +15,15 @@ import { dirname, join } from 'node:path';
 
 const publicDir = join(dirname(fileURLToPath(import.meta.url)), '..', 'public');
 
-// A single ✧ — the wordmark's sparkle, bright green on black, white HC frame.
+// A right-pointing caret — signal red on the KAIRO canvas surface, built
+// from five overlapping 3x3 blocks so the steps join without gaps.
 const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
-  <rect width="16" height="16" fill="#ffffff" shape-rendering="crispEdges"/>
-  <rect x="1" y="1" width="14" height="14" fill="#000000" shape-rendering="crispEdges"/>
-  <path d="M8 2 C8.6 5.4 10.6 7.4 14 8 C10.6 8.6 8.6 10.6 8 14 C7.4 10.6 5.4 8.6 2 8 C5.4 7.4 7.4 5.4 8 2 Z"
-    fill="none" stroke="#00ff66" stroke-width="1.4" stroke-linejoin="round"/>
+  <rect width="16" height="16" fill="#0b0e12" shape-rendering="crispEdges"/>
+  <rect x="4" y="3" width="3" height="3" fill="#e8382c" shape-rendering="crispEdges"/>
+  <rect x="6" y="5" width="3" height="3" fill="#e8382c" shape-rendering="crispEdges"/>
+  <rect x="8" y="7" width="3" height="3" fill="#e8382c" shape-rendering="crispEdges"/>
+  <rect x="6" y="9" width="3" height="3" fill="#e8382c" shape-rendering="crispEdges"/>
+  <rect x="4" y="11" width="3" height="3" fill="#e8382c" shape-rendering="crispEdges"/>
 </svg>`;
 
 const render = (size) =>

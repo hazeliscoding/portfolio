@@ -1,213 +1,82 @@
-<div *ngIf="project" class="project-detail-page gn-shell">
-  <header class="gn-masthead fade">
-    <div class="gn-wordmark">{{ project.title }}<span class="gn-spark"> ✧</span></div>
-    <div class="gn-tagline">{{ project.description }}</div>
-  </header>
+@if (project(); as p) {
+  <app-chapter-header
+    code="ARCHIVE"
+    index="03"
+    [context]="p.title"
+    status="RECORD 01 OF 01"
+  />
 
-  <div class="gn-cols gn-cols--right">
-    <main class="gn-stack">
-      <section class="gn-panel gn-panel--pop">
-        <div class="gn-panel__head">
-          <span class="gn-panel__glyph">✎</span>screenshots
-          <span class="gn-panel__count"
-            >{{ currentSlide + 1 }} of {{ slides.length }}</span
-          >
-        </div>
-
-        <div class="slideshow__stage">
-          <img
-            [src]="slides[currentSlide].src"
-            [alt]="slides[currentSlide].caption"
-            title="click for a closer look"
-            (click)="openLightbox()"
+  <div class="detail">
+    <div class="detail__main">
+      <app-window variant="viewport" index="01" title="Viewport" [context]="p.title">
+        <div class="detail__stage">
+          <app-viewport-window
+            class="detail__viewport"
+            ratio="16 / 10"
+            [src]="activeImage()"
+            [alt]="p.title + ' screenshot'"
+            label="REC 01"
           />
+
+          <span class="detail__rec" aria-hidden="true">&#9679; REC</span>
         </div>
 
-        <div class="slideshow__controls" *ngIf="slides.length > 1">
-          <button
-            type="button"
-            class="slideshow__btn"
-            (click)="prevSlide()"
-            aria-label="Previous screenshot"
-          >
-            ◄ prev
-          </button>
-          <button
-            type="button"
-            class="slideshow__btn"
-            (click)="nextSlide()"
-            aria-label="Next screenshot"
-          >
-            next ►
-          </button>
-          <span class="slideshow__caption">{{
-            slides[currentSlide].caption
-          }}</span>
-        </div>
-      </section>
-
-      <section class="gn-panel">
-        <div class="gn-panel__head gn-panel__head--teal">
-          <span class="gn-panel__glyph">»</span>readme
-        </div>
-        <div class="gn-panel__body">
-          <p
-            class="project-detail-page__paragraph"
-            *ngFor="let paragraph of project.longDescription"
-          >
-            {{ paragraph }}
-          </p>
-        </div>
-      </section>
-    </main>
-
-    <aside class="gn-stack">
-      <section class="gn-panel">
-        <div class="gn-panel__head">
-          <span class="gn-panel__glyph">★</span>project info
-        </div>
-        <div class="gn-panel__body">
-          <table class="gn-stat-table">
-            <tbody>
-            <tr *ngIf="project.status">
-              <td>status</td>
-              <td>{{ project.status }}</td>
-            </tr>
-            <tr *ngIf="project.year">
-              <td>year</td>
-              <td>{{ project.year }}</td>
-            </tr>
-            <tr *ngIf="project.stack">
-              <td>stack</td>
-              <td>{{ project.stack }}</td>
-            </tr>
-            <tr>
-              <td>screenshots</td>
-              <td>{{ slides.length }}</td>
-            </tr>
-            </tbody>
-          </table>
-
-          <div class="project-detail-page__actions">
-            <a
-              *ngIf="project.links.github"
-              [href]="project.links.github"
-              target="_blank"
-              class="gn-btn gn-btn--block"
+        <div class="detail__strip">
+          @for (img of p.images ?? []; track img.src) {
+            <button
+              type="button"
+              class="detail__thumb"
+              [class.detail__thumb--active]="img.src === activeImage()"
+              [attr.aria-current]="img.src === activeImage() ? 'true' : null"
+              (click)="select(img.src)"
             >
-              view source
-            </a>
-            <a
-              *ngIf="project.writeup"
-              [routerLink]="['/blog', project.writeup]"
-              class="gn-btn gn-btn--secondary gn-btn--block"
-            >
-              read the writeup
-            </a>
-            <a
-              *ngIf="project.links.demo"
-              [href]="project.links.demo"
-              target="_blank"
-              class="gn-btn gn-btn--secondary gn-btn--block"
-            >
-              live demo
-            </a>
-            <a
-              *ngIf="project.links.nuget"
-              [href]="project.links.nuget"
-              target="_blank"
-              class="gn-btn gn-btn--secondary gn-btn--block"
-            >
-              NuGet
-            </a>
-          </div>
+              <img [src]="img.src" [alt]="img.caption" />
+              <span class="detail__caption">{{ img.caption }}</span>
+            </button>
+          }
         </div>
-      </section>
+      </app-window>
 
-      <section class="gn-panel" *ngIf="project.tags?.length">
-        <div class="gn-panel__head gn-panel__head--teal">
-          <span class="gn-panel__glyph">✧</span>tags
-        </div>
-        <div class="gn-panel__body">
-          <div class="gn-tags">
-            <span class="gn-tag" *ngFor="let tag of project.tags">{{
-              tag
-            }}</span>
-          </div>
-        </div>
-      </section>
+      <app-window index="02" title="Readme" context="DESCRIPTION">
+        @for (para of p.longDescription ?? []; track $index) {
+          <p class="detail__para">{{ para }}</p>
+        }
+      </app-window>
 
-      <section class="gn-panel">
-        <div class="gn-panel__body">
-          <a class="gn-btn gn-btn--ghost gn-btn--block" routerLink="/portfolio"
-            >« all projects</a
+      <a class="detail__back" routerLink="/portfolio">&lt; BACK TO ARCHIVE</a>
+    </div>
+
+    <aside class="detail__side">
+      <app-window
+        class="detail__inspector"
+        variant="inspector"
+        index="03"
+        title="Record"
+        context="METADATA"
+        [active]="true"
+      >
+        <app-key-value [items]="inspector()" />
+
+        <div class="detail__tags">
+          @for (t of p.tags ?? []; track t) {
+            <app-badge>{{ t }}</app-badge>
+          }
+        </div>
+
+        @if (p.links.github) {
+          <a class="detail__link" [href]="p.links.github" target="_blank" rel="noopener"
+            >&gt; SOURCE</a
           >
-        </div>
-      </section>
+        }
+        @if (p.links.demo) {
+          <a class="detail__link" [href]="p.links.demo" target="_blank" rel="noopener"
+            >&gt; DEMO</a
+          >
+        }
+      </app-window>
     </aside>
   </div>
-
-  <div class="gn-webring">
-    <a routerLink="/portfolio">« all projects</a>
-    <span class="gn-webring__dot">✦</span>
-    <a routerLink="/">home</a>
-  </div>
-
-  <div
-    class="lightbox"
-    *ngIf="lightboxOpen"
-    (click)="closeLightbox()"
-    role="dialog"
-    aria-modal="true"
-    [attr.aria-label]="slides[currentSlide].caption"
-  >
-    <div class="lightbox__panel gn-panel" (click)="$event.stopPropagation()">
-      <div class="gn-panel__head">
-        <span class="gn-panel__glyph">✎</span>
-        <span class="lightbox__title">{{ slides[currentSlide].caption }}</span>
-        <button
-          type="button"
-          class="lightbox__close"
-          (click)="closeLightbox()"
-          aria-label="Close"
-        >
-          ✕
-        </button>
-      </div>
-
-      <div
-        class="lightbox__stage"
-        [class.lightbox__stage--zoomed]="lightboxZoomed"
-      >
-        <img
-          [src]="slides[currentSlide].src"
-          [alt]="slides[currentSlide].caption"
-          [title]="lightboxZoomed ? 'click to fit' : 'click to zoom in'"
-          (click)="toggleZoom()"
-        />
-      </div>
-
-      <div class="slideshow__controls" *ngIf="slides.length > 1">
-        <button
-          type="button"
-          class="slideshow__btn"
-          (click)="prevSlide()"
-          aria-label="Previous screenshot"
-        >
-          ◄ prev
-        </button>
-        <button
-          type="button"
-          class="slideshow__btn"
-          (click)="nextSlide()"
-          aria-label="Next screenshot"
-        >
-          next ►
-        </button>
-        <span class="slideshow__caption"
-          >{{ currentSlide + 1 }} of {{ slides.length }}</span
-        >
-      </div>
-    </div>
-  </div>
-</div>
+} @else {
+  <app-chapter-header code="ARCHIVE" index="03" context="NO RECORD" />
+  <p class="detail__missing">NO RECORD AT THIS ADDRESS</p>
+}

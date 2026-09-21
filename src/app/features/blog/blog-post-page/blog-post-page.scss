@@ -1,200 +1,74 @@
-@use "abstracts/variables" as *;
+.post {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 280px;
+  gap: var(--sp-3);
+  align-items: start;
+}
 
-.blog-post-page {
-  padding: 2rem clamp(1rem, 4vw, 8rem);
-  max-width: 150rem;
-  margin: 0 auto;
-  font-size: $font-size-small;
+.post__title {
+  margin: 0 0 var(--sp-4);
+  font: var(--type-display-m);
+  letter-spacing: var(--tracking-display);
+  color: var(--text-primary);
+}
 
-  @media screen and (max-width: 768px) {
-    padding-top: 0;
-    margin-top: $spacing-medium;
-  }
+// Layout only. Markdown typography lives in src/styles/kairo/_prose.scss —
+// content created by [innerHTML] never receives this component's
+// _ngcontent-* attribute, so a nested selector here can never match it.
+.post__body {
+  max-width: 68ch;
+}
 
-  &__back {
-    display: inline-block;
-    margin-bottom: $spacing-medium;
-    text-decoration: none;
-    color: $color-subtitle-dark;
+.post__side {
+  display: grid;
+  gap: var(--sp-3);
+  position: sticky;
+  top: var(--sp-4);
+}
 
-    &:hover {
-      color: $color-accent-hover;
-    }
-  }
+.post__toc {
+  margin: 0;
+  padding-inline-start: var(--sp-4);
+  font: var(--type-mono-s);
 
-  &__header {
-    margin-bottom: $spacing-medium;
-    border: $border-default;
-    border-radius: $border-radius-default;
-    background-color: $color-section-background-dark;
-    padding: $spacing-medium;
-    box-shadow: $box-shadow-default;
-  }
-
-  &__title {
-    margin: 0 0 $spacing-small;
-    font-size: $font-size-big;
-    font-weight: $font-weight-bold;
-    color: $color-title-dark;
-  }
-
-  &__meta {
-    margin: 0;
-    color: $color-ubuntu-muted;
-    display: flex;
-    flex-wrap: wrap;
-    gap: $spacing-small;
-    align-items: center;
-  }
-
-  &__tag {
-    color: $color-subtitle-dark;
-  }
-
-  &__content {
-    border: $border-default;
-    border-radius: $border-radius-default;
-    background-color: $color-section-background-dark;
-    padding: $spacing-big;
-    box-shadow: $box-shadow-default;
-    line-height: 1.7;
-    color: $color-text-dark;
+  li {
+    margin-block-end: var(--sp-2);
   }
 }
 
-// Markdown content is injected via [innerHTML], so it won't receive Angular's
-// emulated style scoping attributes. ::ng-deep ensures the typography rules apply.
-:host ::ng-deep .blog-post-page__content {
-  h1 {
-    font-size: $font-size-big;
-    margin: 0 0 $spacing-medium;
+.post__empty,
+.post__missing {
+  margin: 0;
+  font: var(--type-mono-s);
+  letter-spacing: var(--tracking-wider);
+  color: var(--text-muted);
+}
+
+.post__missing {
+  color: var(--text-active);
+}
+
+.post__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+  margin-block-start: var(--sp-4);
+}
+
+.post__back {
+  display: inline-block;
+  min-height: var(--target-min);
+  line-height: var(--target-min);
+  font: var(--type-mono-s);
+  letter-spacing: var(--tracking-wide);
+}
+
+@media (max-width: 840px) {
+  .post {
+    grid-template-columns: minmax(0, 1fr);
   }
 
-  h2 {
-    font-size: $font-size-default;
-    margin: $spacing-big 0 $spacing-small;
-    color: $color-title-dark;
-
-    &::before {
-      content: "» ";
-      color: $color-accent;
-    }
-  }
-
-  h3 {
-    font-size: $font-size-small;
-    margin: $spacing-medium 0 $spacing-small;
-    color: $color-title-dark;
-  }
-
-  p {
-    margin: 0 0 $spacing-medium;
-    color: $color-ubuntu-text;
-  }
-
-  :is(ul, ol) {
-    margin: 0 0 $spacing-medium;
-    padding-left: 4.4rem;
-    list-style-position: outside;
-    color: $color-ubuntu-text;
-  }
-
-  li {
-    margin-bottom: 0.4rem;
-    padding-left: 0.6rem;
-  }
-
-  li::marker {
-    color: $color-accent;
-    font-size: 1em;
-  }
-
-  blockquote {
-    margin: 0 0 $spacing-medium;
-    padding: $spacing-small $spacing-medium;
-    border-left: 3px solid $teal-400;
-    background: $color-surface-sunken;
-    color: $color-text-muted;
-    font-family: $font-family-mono;
-  }
-
-  img {
-    display: block;
-    max-width: 100%;
-    height: auto;
-    margin: 0 0 $spacing-medium;
-    border-radius: $border-radius-default;
-    border: 1px solid $color-border;
-  }
-
-  hr {
-    border: none;
-    border-top: 1px solid $color-border;
-    margin: $spacing-big 0;
-  }
-
-  a {
-    color: $color-external-link-dark;
-    text-decoration: underline;
-
-    &:hover {
-      color: $color-accent-hover;
-    }
-  }
-
-  :is(pre, code) {
-    border-radius: $border-radius-default;
-  }
-
-  pre {
-    padding: $spacing-medium;
-    overflow: auto;
-    background: $color-surface-sunken;
-    border: 1px solid $color-border;
-    margin: 0 0 $spacing-medium;
-    font-family: $font-family-mono;
-    font-size: $font-size-small;
-  }
-
-  code {
-    background: $color-surface-sunken;
-    border: 1px solid $color-border;
-    padding: 0.1rem 0.35rem;
-    font-family: $font-family-mono;
-  }
-
-  // Rendered mermaid diagrams replace their source <pre> block.
-  .mermaid-diagram {
-    margin: 0 0 $spacing-medium;
-    padding: $spacing-medium;
-    background: $color-surface-sunken;
-    border: 1px solid $color-border;
-    border-radius: $border-radius-default;
-    overflow-x: auto;
-    text-align: center;
-
-    svg {
-      max-width: 100%;
-      height: auto;
-    }
-  }
-
-  table {
-    width: 100%;
-    margin: 0 0 $spacing-medium;
-    border-collapse: collapse;
-    font-size: $font-size-small;
-  }
-
-  :is(th, td) {
-    padding: $spacing-small $spacing-medium;
-    border: 1px solid $color-border;
-    text-align: left;
-  }
-
-  th {
-    background: $color-surface-sunken;
-    color: $color-title-dark;
-    font-weight: $font-weight-bold;
+  .post__side {
+    position: static;
   }
 }

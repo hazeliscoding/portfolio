@@ -1,9 +1,240 @@
-@use "abstracts/variables" as *;
+.app {
+  // 100dvh, not 100vh. The mockup uses 100vh and that is a bug there: on
+  // mobile the dynamic toolbar overshoots and pushes the bottom bar out of
+  // view. The current growable shell happens to avoid it; pinning with 100vh
+  // would import the bug deliberately.
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
 
-.header-container {
-  padding: 1.2rem clamp(1rem, 4vw, 8rem) 0.6rem;
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-  background-color: $color-background-dark;
+.app__wordmark {
+  font: 600 16px/1 var(--font-display);
+  letter-spacing: var(--tracking-wide);
+  color: var(--text-primary);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.app__wordmark:hover .app__ext,
+.app__wordmark:focus-visible .app__ext {
+  color: var(--signal-active-strong);
+}
+
+.app__ext {
+  color: var(--signal-active);
+}
+
+.app__clock {
+  color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+.app__hints {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-5);
+  color: var(--text-faint);
+}
+
+.app__command {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  min-height: var(--target-min);
+  padding: 0 var(--sp-2);
+  background: transparent;
+  border: 0;
+  font: var(--type-mono-s);
+  letter-spacing: var(--tracking-wide);
+  color: var(--text-secondary);
+  cursor: pointer;
+
+  &:hover {
+    color: var(--text-primary);
+  }
+}
+
+.app__hint {
+  color: var(--text-faint);
+}
+
+.app__log {
+  max-width: 40ch;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--text-faint);
+}
+
+.app__body {
+  flex: 1;
+  display: flex;
+  min-height: 0;
+  position: relative;
+}
+
+.app__rail {
+  width: 140px;
+  flex-shrink: 0;
+}
+
+.app__env {
+  position: fixed;
+  inset-inline-end: -10px;
+  inset-block-end: var(--sp-5);
+  font: 600 min(260px, 30vw)/0.85 var(--font-display);
+  letter-spacing: var(--tracking-display);
+  color: var(--surface-elevated);
+  user-select: none;
+  pointer-events: none;
+  z-index: 0;
+}
+
+// The wrapper is absolutely positioned against `.app__body`, so it fills the
+// content region exactly: below the top bar, above the bottom bar, and — being
+// outside `.main` — it does not scroll with the content. The instrument frame
+// stays visible throughout the transition, which is the whole point of pinning
+// the shell.
+//
+// DO NOT reinstate the mockup's arrangement here. The mockup wraps the bar in
+// a `position: sticky; height: 0; overflow: hidden` element, and a zero-height
+// box with `overflow: hidden` clips its content to nothing — measured in a
+// browser: the bar is laid out at full height and paints zero pixels at every
+// sampled point, and hit-testing finds it only once the clip is removed. The
+// mockup's own wipe never renders. A 450ms animation that does not appear
+// reads as "subtle", not "broken", which is why it survived there.
+.app__wipe {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.app__wipe-bar {
+  display: block;
+  height: 100%;
+  background: var(--surface-elevated);
+  border-inline-end: var(--bw-indicator) solid var(--signal-active);
+}
+
+.app[data-sfx="a"] .app__wipe-bar {
+  animation: wipe-a var(--dur-cinematic) var(--ease-mech) both;
+}
+
+.app[data-sfx="b"] .app__wipe-bar {
+  animation: wipe-b var(--dur-cinematic) var(--ease-mech) both;
+}
+
+.app[data-sfx="a"] .app__env {
+  animation: env-a var(--dur-cinematic) var(--ease-mech) both;
+}
+
+.app[data-sfx="b"] .app__env {
+  animation: env-b var(--dur-cinematic) var(--ease-mech) both;
+}
+
+// Matched against `.app[data-sfx]`, not the bare `.app__env` class: the
+// animation is set by `.app[data-sfx="a"] .app__env` /
+// `.app[data-sfx="b"] .app__env` (specificity 0,3,0 each), and a bare
+// `.app__env { animation: none }` (0,1,0) loses to both regardless of the
+// media query — a media query adds no specificity. Measured in a browser with
+// reduced motion emulated: the bare-class version left `animationName`
+// reporting `env-a`/`env-b`. Matching `.app[data-sfx]` ties the specificity
+// (0,3,0) and wins on source order instead.
+@media (prefers-reduced-motion: reduce) {
+  .app__wipe {
+    display: none;
+  }
+
+  .app[data-sfx] .app__env {
+    animation: none;
+  }
+}
+
+.main {
+  flex: 1;
+  min-width: 0;
+  // The content region scrolls; the chrome around it does not. `overflow-x`
+  // was the clamp against the oversized environmental word, which now lives at
+  // page level as a fixed element and contributes nothing to scroll width.
+  // Measured at 390px and 1280px with the clamp lifted: nothing in `.main`
+  // overflows today. It stays as defence against content that has no width of
+  // its own to yield — a wide code block or table in a post.
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  padding: var(--sp-5) var(--sp-6) var(--sp-8);
+  position: relative;
+
+  // The anchor-target offset that used to live here moved to
+  // src/styles/kairo/_base.scss. It could not work from this file: emulated
+  // encapsulation rewrites `.main :target` to require the TARGET to carry
+  // App's _ngcontent attribute, and neither anchor target on this site does —
+  // `#contact` belongs to the home page's template and blog headings come from
+  // [innerHTML]. It also keyed off `:target`, which never matches here,
+  // because the shell sets the fragment with history.replaceState and that
+  // does not re-evaluate the pseudo-class. Measured dead both ways.
+}
+
+@media (max-width: 840px) {
+  .app__rail {
+    display: none;
+  }
+
+  .main {
+    padding: var(--sp-4) var(--sp-4) var(--sp-6);
+  }
+
+  // Keyboard-only affordances are meaningless on touch.
+  .app__hint {
+    display: none;
+  }
+}
+
+.app__path {
+  display: inline-block;
+  overflow: hidden;
+  white-space: nowrap;
+  letter-spacing: var(--tracking-wide);
+  color: var(--text-faint);
+}
+
+.app__path-sep {
+  color: var(--text-muted);
+}
+
+// steps(26, end) literally, NOT --ease-cut. --ease-cut is steps(2, end), which
+// would reveal the path in two chunks — a jump, not typing. The step count is
+// what makes this read as a machine printing characters, and it is the one
+// place in the system where the easing is a sequence length rather than a
+// curve. Taken from the mockup verbatim.
+/* prettier-ignore */
+.app[data-sfx="a"] .app__path {
+  animation: type-a var(--dur-cinematic) steps(26, end) both;
+}
+
+/* prettier-ignore */
+.app[data-sfx="b"] .app__path {
+  animation: type-b var(--dur-cinematic) steps(26, end) both;
+}
+
+.app[data-sfx="a"] .app__sync {
+  animation: flicker-a var(--dur-window) var(--ease-cut) both;
+}
+
+.app[data-sfx="b"] .app__sync {
+  animation: flicker-b var(--dur-window) var(--ease-cut) both;
+}
+
+// Same specificity trap as `.app__env` above: `.app__path` / `.app__sync`
+// bare-class selectors (0,1,0) lose to the `.app[data-sfx="a/b"] .app__path` /
+// `.app[data-sfx="a/b"] .app__sync` rules that set the animation (0,3,0).
+// Matching `.app[data-sfx]` ties the specificity and wins on source order.
+@media (prefers-reduced-motion: reduce) {
+  .app[data-sfx] .app__path,
+  .app[data-sfx] .app__sync {
+    animation: none;
+  }
 }

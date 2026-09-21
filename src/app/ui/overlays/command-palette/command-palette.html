@@ -1,0 +1,41 @@
+@if (open()) {
+  <div class="palette-scrim" (click)="close.emit()">
+    <div
+      #paletteDialog
+      class="palette"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Command palette"
+      (click)="$event.stopPropagation()"
+      (keydown)="onKeydown($event)"
+    >
+      <div class="palette__prompt">
+        <span class="palette__caret" aria-hidden="true">&gt;</span>
+        <input
+          #paletteInput
+          class="palette__input"
+          type="text"
+          autocomplete="off"
+          [attr.placeholder]="placeholder()"
+          [value]="query()"
+          (input)="onInput($event)"
+        />
+      </div>
+
+      <ul class="palette__list">
+        @for (cmd of filtered(); track cmd.id) {
+          <li>
+            <button type="button" class="palette__item" (click)="run.emit(cmd.id)">
+              <span class="palette__label">{{ cmd.label }}</span>
+              @if (cmd.mode) {
+                <span class="palette__mode">{{ cmd.mode }}</span>
+              }
+            </button>
+          </li>
+        }
+      </ul>
+
+      <p class="palette__count">{{ countLabel() }}</p>
+    </div>
+  </div>
+}
