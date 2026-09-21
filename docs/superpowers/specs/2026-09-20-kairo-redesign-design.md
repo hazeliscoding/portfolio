@@ -27,9 +27,16 @@ The KAIRO design system is vendored in that project under
 
 Two facts about the mockups shape the plan:
 
-1. They are built from **434 inline styles against the KAIRO token files**.
-   There are no component classes to lift. The tokens port directly; the
-   component layer must be authored.
+1. They are built from **434 inline styles against the KAIRO token files**, and
+   KAIRO's `styles.css` is nothing but `@import` lines. There is no component
+   CSS to lift — component styling lives inside each component.
+
+   However, the mockups instantiate **real KAIRO components** via
+   `<x-import component-from-global-scope="KAIRODesignSystem_ba6527.Window">`
+   and friends. `_ds_bundle.js` defines 29 React components with concrete prop
+   signatures. The component **contracts are therefore ported, not invented** —
+   only the Angular implementation and its CSS are new work. Exact signatures
+   are recorded under "The UI layer" below.
 2. They already contain **Angular interpolation** — `{{ p.title }}`,
    `{{ s.idx }}`, `{{ b.date }}`, `{{ themeLabel }}`. Screens map onto Angular
    templates nearly directly rather than needing translation.
@@ -102,31 +109,69 @@ label makes sense, never decoratively.
 
 ### The UI layer
 
+Mirroring KAIRO's own directory layout so a component's origin is obvious:
+
 ```
 src/app/ui/
-  window/    Window · WindowHead · WindowBody
-  shell/     SystemBar · ModeRail · CommandPalette
-  core/      Readout · StatusLight · Badge · Button
-  data/      RecordTable · KeyValue
+  windows/         Window · ViewportWindow · SystemBar · ModeNav
+  core/            Readout · StatusLight · Badge · Button
+  data/            DataTable · KeyValue
+  overlays/        CommandPalette
+  chapter-header/  ChapterHeader
 ```
+
+Ten ported KAIRO components, not twenty-nine. `Window` is a single component
+driven by `variant`, not a family of sub-components.
+
+`ChapterHeader` is the eleventh and is **not** a KAIRO component — it is this
+site's own `CODE_NN` page header (oversized environmental type, chapter code,
+context line). It lives in `ui/` rather than under a feature because six of the
+seven routes render it.
 
 Standalone components, following the existing project convention
 (`.ts`/`.html`/`.scss`/`.spec.ts` per component, `templateUrl` + `styleUrl`,
 selector prefixed `app-`).
 
 **Window is the load-bearing component.** Every content block on every screen
-is a hairline window with a zero-padded index and an uppercase title. Its
-contract:
+is a hairline window with a zero-padded index and an uppercase title.
+Composition of Window covers the majority of every screen.
 
-- Inputs: `index` (string, zero-padded — `"01"`), `title` (string, rendered
-  uppercase), `code` (optional section code — `"HOME_01"`), `variant`
-  (`default` | `inset` | `alert`).
-- Content projection for the body.
-- Renders a 1px `--border-default` frame, a head row with the index, title, and
-  optional code, and a body on `--surface-window`.
+Angular inputs mirror KAIRO's React props exactly, so the mockup markup
+translates without renaming. Signatures extracted from `_ds_bundle.js`:
 
-Composition of Window covers the majority of every screen. The remaining
-components exist because the mockups use them in more than one place.
+| Component | Props |
+|---|---|
+| `Window` | `variant='data'`, `title`, `index`, `context`, `status`, `active`, `controls`, `footer`, `padded=true` + children |
+| `ViewportWindow` | `src`, `alt=''`, `ratio='4 / 3'`, `pixelated`, `label` |
+| `SystemBar` | `position='top'`, `left`, `center`, `right` |
+| `ModeNav` | `modes=[]`, `activeId`, `onSelect`, `header='MODE'` |
+| `Readout` | `label`, `value`, `state='neutral'` |
+| `StatusLight` | `state='ok'`, `label`, `blink` |
+| `Badge` | `tone='neutral'`, `filled` + children |
+| `Button` | `variant='secondary'`, `size='md'`, `index`, `disabled` + children |
+| `DataTable` | `columns=[]`, `rows=[]`, `selectedId`, `onSelect`, `density='dense'` |
+| `KeyValue` | `items=[]`, `columns=1` |
+| `CommandPalette` | `open`, `commands=[]`, `onRun`, `onClose`, `placeholder='command_'` |
+
+React callback props (`onSelect`, `onRun`, `onClose`) become Angular
+`output()`s of the same name. Everything else becomes `input()`.
+
+Enumerated values, also from the bundle — these are the complete sets:
+
+- `Window.variant`: `data` · `media` · `dialogue` · `command` · `inspector` ·
+  `system` · `alert` · `transient` · `viewport`. Each maps to an accent border
+  colour (`command` and `alert` → `--signal-active`; `dialogue` and `system` →
+  `--signal-info-dim`; the rest → `--border-strong` or `--border-default`).
+- `Readout.state` / `StatusLight.state`: `ok` → `--signal-success`, `info` →
+  `--signal-info`, `warn` → `--signal-warning`, `danger` → `--text-active`,
+  `neutral` → `--text-primary`.
+- `Badge.tone`: `neutral` · `active` · `info` · `success` · `warning` ·
+  `danger`, each a `[foreground, border]` token pair.
+
+The remaining components in KAIRO's set (forms, `Meter`, `Message`, `Dialog`,
+`Select`, `Switch`, `LogViewer`, and the rest of the 29) are **not ported** —
+this site has no forms, no dialogue UI, and no screen that streams terminal
+output. Port on demand only.
 
 ### Shell
 
