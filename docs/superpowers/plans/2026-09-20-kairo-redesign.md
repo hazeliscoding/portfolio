@@ -260,6 +260,10 @@ Note: KAIRO's originals list `'IBM Plex Sans JP'` in each stack. It is dropped h
   --dur-control: 180ms;
   --dur-window: 280ms;
   --dur-cinematic: 450ms;
+  // Cursor/blink cadence. Deliberately NOT part of the transition scale above,
+  // and deliberately not zeroed under prefers-reduced-motion — blinking is
+  // switched off with `animation: none`, not by collapsing its period.
+  --dur-blink: 1s;
   --ease-mech: cubic-bezier(0.3,0,0.1,1);
   --ease-cut: steps(2, end);
   --ease-linear: linear;
@@ -740,7 +744,6 @@ export class Window {
 }
 
 .window__controls {
-  margin-inline-start: auto;
   display: inline-flex;
   gap: var(--sp-3);
 }
@@ -750,7 +753,7 @@ export class Window {
 }
 ```
 
-Note: `window__status` and `window__controls` both claim `margin-inline-start: auto`. When both are present the status wins and controls sit beside it — that is the intended arrangement in the mockups.
+Note: only `.window__status` carries `margin-inline-start: auto`. Two auto margins on the same edge would split the free space equally and push status and controls apart; with one, status absorbs the slack and controls sit flush beside it, which is the mockups arrangement.
 
 - [ ] **Step 4: Run test to verify it passes**
 
@@ -1232,7 +1235,7 @@ export class StatusLight {
 }
 
 .status-light__dot--blink {
-  animation: status-blink 1s var(--ease-cut) infinite;
+  animation: status-blink var(--dur-blink) var(--ease-cut) infinite;
 }
 
 @keyframes status-blink {
@@ -1635,7 +1638,9 @@ export class SystemBar {
   align-items: center;
   gap: var(--sp-6);
   padding: 0 var(--sp-4);
-  min-height: 34px;
+  // 32px — KAIRO's own SystemBar specifies minHeight 32; the mockup's 34px
+  // was a one-off and is off the 4px grid.
+  min-height: var(--sp-8);
   background: var(--surface-window);
   font: var(--type-mono-s);
   letter-spacing: var(--tracking-wide);
@@ -1965,7 +1970,7 @@ export class DataTable {
 `data-table.html`:
 
 ```html
-<table class="data-table" [attr.data-density]="density()">
+<table class="data-table" role="grid" [attr.data-density]="density()">
   <thead>
     <tr>
       @for (col of columns(); track col.key) {
@@ -1981,8 +1986,8 @@ export class DataTable {
         [attr.aria-selected]="row.id === selectedId()"
         tabindex="0"
         (click)="select.emit(row.id)"
-        (keydown.enter)="select.emit(row.id)"
-        (keydown.space)="select.emit(row.id)"
+        (keydown.enter)="$event.preventDefault(); select.emit(row.id)"
+        (keydown.space)="$event.preventDefault(); select.emit(row.id)"
       >
         @for (col of columns(); track col.key) {
           <td>{{ row.cells[col.key] }}</td>
@@ -2247,7 +2252,16 @@ Expected: FAIL — cannot resolve `./command-palette`.
 `command-palette.ts`:
 
 ```typescript
-import { Component, computed, input, output, signal } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  computed,
+  effect,
+  input,
+  output,
+  signal,
+  viewChild,
+} from '@angular/core';
 
 export interface PaletteCommand {
   id: string;
@@ -2272,6 +2286,10 @@ export class CommandPalette {
 
   query = signal('');
 
+  private inputEl = viewChild<ElementRef<HTMLInputElement>>('paletteInput');
+  private dialogEl = viewChild<ElementRef<HTMLElement>>('paletteDialog');
+  private restoreFocusTo: HTMLElement | null = null;
+
   filtered = computed(() => {
     const q = this.query().toLowerCase();
     if (!q) return this.commands();
@@ -2281,13 +2299,54 @@ export class CommandPalette {
     );
   });
 
+  constructor() {
+    // Moves focus into the palette when it opens and returns it to whatever
+    // opened it on close. Angular does not focus newly-inserted elements, and
+    // without this the palette — the only navigation below 840px — opens with
+    // the user's focus stranded behind the scrim.
+    effect(() => {
+      const el = this.inputEl();
+      if (this.open()) {
+        if (!this.restoreFocusTo) {
+          this.restoreFocusTo = document.activeElement as HTMLElement | null;
+        }
+        el?.nativeElement.focus();
+      } else if (this.restoreFocusTo) {
+        this.restoreFocusTo.focus();
+        this.restoreFocusTo = null;
+      }
+    });
+  }
+
   onInput(event: Event): void {
     this.query.set((event.target as HTMLInputElement).value);
   }
 
+  /**
+   * Bound to the dialog rather than the input, so Escape fires wherever focus
+   * sits. Tab is cycled inside the dialog because `aria-modal="true"` promises
+   * assistive technology that everything outside is inert.
+   */
   onKeydown(event: KeyboardEvent): void {
     if (event.key === 'Escape') {
       this.close.emit();
+      return;
+    }
+    if (event.key !== 'Tab') return;
+
+    const focusable =
+      this.dialogEl()?.nativeElement.querySelectorAll<HTMLElement>('input, button');
+    if (!focusable?.length) return;
+
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus();
     }
   }
 }
@@ -2299,22 +2358,24 @@ export class CommandPalette {
 @if (open()) {
   <div class="palette-scrim" (click)="close.emit()">
     <div
+      #paletteDialog
       class="palette"
       role="dialog"
       aria-modal="true"
       aria-label="Command palette"
       (click)="$event.stopPropagation()"
+      (keydown)="onKeydown($event)"
     >
       <div class="palette__prompt">
         <span class="palette__caret" aria-hidden="true">&gt;</span>
         <input
+          #paletteInput
           class="palette__input"
           type="text"
           autocomplete="off"
           [attr.placeholder]="placeholder()"
           [value]="query()"
           (input)="onInput($event)"
-          (keydown)="onKeydown($event)"
         />
       </div>
 
