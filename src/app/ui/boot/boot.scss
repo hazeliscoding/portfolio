@@ -33,9 +33,9 @@
 
 .boot__head {
   display: flex;
-  gap: var(--sp-3);
+  gap: 10px;
   align-items: center;
-  padding: var(--sp-2) var(--sp-3);
+  padding: 7px 10px;
   border-bottom: var(--bw-hairline) solid var(--border-faint);
   font: var(--type-mono-s);
   color: var(--text-faint);
@@ -59,9 +59,13 @@
 }
 
 .boot__log {
-  padding: var(--sp-4) var(--sp-3);
+  padding: 14px 12px;
   display: grid;
-  gap: var(--sp-2);
+  gap: 6px;
+  // Reserves the full six lines from the first frame. Without it the panel
+  // grows by a line every 350ms and the progress bar walks down the screen
+  // while the operator is trying to read it.
+  min-height: 150px;
   font: var(--type-mono);
   color: var(--text-secondary);
 }
@@ -69,7 +73,7 @@
 .boot__line {
   margin: 0;
   display: flex;
-  gap: var(--sp-2);
+  gap: 10px;
   animation: boot-in var(--dur-control) var(--ease-mech) both;
 }
 
@@ -127,10 +131,9 @@
 .boot__foot {
   display: flex;
   gap: var(--sp-4);
-  padding: var(--sp-2) var(--sp-3);
+  padding: 6px 10px;
   border-top: var(--bw-hairline) solid var(--border-faint);
   font: var(--type-mono-s);
-  letter-spacing: var(--tracking-wider);
   color: var(--text-faint);
 }
 

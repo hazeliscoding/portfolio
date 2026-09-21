@@ -19,6 +19,13 @@
 
 .prose {
   font: var(--type-body);
+  // The reading measure, not the UI measure. KAIRO sets body copy at 14/1.55
+  // everywhere in the chrome, and sets a post's running text one step larger
+  // and looser — 15/1.65 — because it is the only text on the site anyone
+  // reads a paragraph at a time. Applied after the `font` shorthand, which
+  // would otherwise reset line-height back to 1.55.
+  font-size: 15px;
+  line-height: 1.65;
   color: var(--text-secondary);
   // Long URLs and unbroken identifiers must not escape the measure into
   // `.main`, which is `overflow-x: hidden` (app.scss:166).

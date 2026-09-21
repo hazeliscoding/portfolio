@@ -1,8 +1,10 @@
+// No extra tracking. A readout is a machine value read at a glance, and
+// KAIRO sets it at the mono face's natural spacing — the wide tracking
+// belongs to labels (window titles, the MODE header), not to readings.
 .readout {
   display: inline-flex;
   gap: var(--sp-2);
   font: var(--type-mono-s);
-  letter-spacing: var(--tracking-wide);
   white-space: nowrap;
 }
 

@@ -1,23 +1,26 @@
+// 34px top / 30px bottom and 14px of inline padding, taken from the design's
+// own shell. Deliberately off the 4px spacing scale: the bars are instrument
+// chrome drawn to fit their 11px mono contents, and rounding them onto the
+// layout grid made both read a notch too tall against the panels they frame.
 .system-bar {
   display: flex;
   align-items: center;
   flex-shrink: 0;
-  gap: var(--sp-6);
-  padding: 0 var(--sp-4);
-  // 32px — KAIRO's own SystemBar specifies minHeight 32; the mockup's 34px
-  // was a one-off and is off the 4px grid.
-  min-height: var(--sp-8);
+  gap: var(--sp-5);
+  padding: 0 14px;
   background: var(--surface-window);
   font: var(--type-mono-s);
-  letter-spacing: var(--tracking-wide);
   color: var(--text-muted);
 
   &[data-position="top"] {
+    min-height: 34px;
     border-bottom: var(--bw-hairline) solid var(--border-default);
   }
 
   &[data-position="bottom"] {
+    min-height: 30px;
     border-top: var(--bw-hairline) solid var(--border-default);
+    overflow: hidden;
   }
 }
 
@@ -25,14 +28,21 @@
 .system-bar__center {
   display: inline-flex;
   align-items: center;
-  gap: var(--sp-6);
+  gap: var(--sp-5);
 }
 
 .system-bar__right {
   margin-inline-start: auto;
   display: inline-flex;
   align-items: center;
-  gap: var(--sp-5);
+  gap: 18px;
+}
+
+// The bottom bar's left group carries the event log, which has to be able to
+// shrink and ellipsis rather than push the keyboard hints off the bar.
+.system-bar[data-position="bottom"] .system-bar__left {
+  flex: 1;
+  min-width: 0;
 }
 
 @media (max-width: 840px) {
@@ -43,5 +53,9 @@
 
   .system-bar__center {
     display: none;
+  }
+
+  .system-bar__right {
+    gap: var(--sp-3);
   }
 }

@@ -4,9 +4,9 @@
   font-weight: 500;
   letter-spacing: var(--tracking-wide);
   text-transform: uppercase;
-  padding: 0 var(--sp-2);
+  padding: 2px 6px;
   border: var(--bw-hairline) solid var(--border-default);
-  border-radius: var(--radius-1);
+  border-radius: var(--radius-0);
   color: var(--text-secondary);
 
   &[data-tone="active"] {
@@ -32,5 +32,32 @@
   &[data-tone="danger"] {
     color: var(--text-active);
     border-color: var(--signal-active);
+  }
+
+  // Filled inverts: the tone becomes the fill and the text drops to the
+  // darkest graphite so it reads against every tone in the scale. The border
+  // stays in the box model at 1px transparent, so a filled badge and an
+  // outlined one are the same size in a row of both.
+  &--filled {
+    color: var(--k-graphite-0);
+    background: var(--text-secondary);
+    border-color: transparent;
+  }
+
+  &--filled[data-tone="active"],
+  &--filled[data-tone="danger"] {
+    background: var(--text-active);
+  }
+
+  &--filled[data-tone="info"] {
+    background: var(--signal-info);
+  }
+
+  &--filled[data-tone="success"] {
+    background: var(--signal-success);
+  }
+
+  &--filled[data-tone="warning"] {
+    background: var(--signal-warning);
   }
 }
