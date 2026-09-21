@@ -5,16 +5,6 @@
   min-height: 60vh;
 }
 
-.error__env {
-  position: absolute;
-  font: 600 320px/0.85 var(--font-display);
-  letter-spacing: var(--tracking-display);
-  color: var(--surface-elevated);
-  user-select: none;
-  pointer-events: none;
-  z-index: -1;
-}
-
 .error__report {
   margin: 0 0 var(--sp-2);
   font: var(--type-mono);
@@ -37,8 +27,3 @@
   letter-spacing: var(--tracking-wide);
 }
 
-@media (max-width: 840px) {
-  .error__env {
-    font-size: 160px;
-  }
-}

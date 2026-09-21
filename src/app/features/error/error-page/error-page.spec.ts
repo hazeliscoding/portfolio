@@ -38,9 +38,11 @@ describe('ErrorPage', () => {
     expect(el.querySelector('a[href="/"]')?.textContent).toContain('BACK');
   });
 
-  it('hides the environmental type from assistive tech', () => {
+  it('leaves environmental type to the shell', () => {
+    // The shell renders one oversized background word per route (NULL here).
+    // A second one owned by the page put two of them on screen at once.
     const el = fixture.nativeElement as HTMLElement;
-    expect(el.querySelector('.error__env')?.getAttribute('aria-hidden')).toBe('true');
+    expect(el.querySelector('.error__env')).toBeNull();
   });
 
   it('contains no emoji', () => {
