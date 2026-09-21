@@ -51,6 +51,151 @@ npx ng test --watch=false --browsers=ChromeHeadless    # full suite
 
 ---
 
+## Task M0: Pin the shell
+
+**Runs FIRST — before M1.** Several later tasks are actively degraded without it: M3's fixed environmental word and M4's full-height wipe both assume a viewport that holds still.
+
+**Files:**
+- Modify: `src/app/app.scss`, `src/app/app.ts`, `src/app/app.spec.ts`
+- Modify: `src/styles/kairo/_base.scss`
+- Modify: `src/app/app.config.ts`
+- Modify: `src/app/ui/windows/system-bar/system-bar.scss`
+
+**Interfaces:**
+- Consumes: nothing.
+- Produces: a fixed-viewport application shell. `.main` becomes the scroll container.
+
+### Why this is the whole request in one change
+
+Five independent analyses of the mockup converged on one root cause. `.app { min-height: 100vh }` plus `.main { overflow: hidden }` means **the document scrolls and the instrument frame scrolls with it**. On the home page there is roughly 144px of residual scroll — enough to take the entire top bar off screen.
+
+Everything the design is reaching for — bars that never move, a rail running the full column height, a scroll gutter framed on three sides, a wipe that crosses exactly one viewport, an environmental word silkscreened on the bezel rather than stuck to the glass — is downstream of the frame holding still while content moves inside it.
+
+**This is a deliberate scope change.** The redesign spec said the site takes "the visual language, not the application". Pinning the shell crosses that line knowingly, because the owner has asked for the feel and this is what produces it.
+
+- [ ] **Step 1: Write the failing tests**
+
+Add to `src/app/app.spec.ts`:
+
+```typescript
+  it('pins the shell to the viewport rather than growing with content', () => {
+    const fixture = TestBed.createComponent(App);
+    fixture.detectChanges();
+    const app = (fixture.nativeElement as HTMLElement).querySelector('.app') as HTMLElement;
+    const height = getComputedStyle(app).height;
+    expect(getComputedStyle(app).minHeight).not.toBe('100vh');
+    expect(height).not.toBe('auto');
+  });
+
+  it('makes the content region the scroll container, not the document', () => {
+    const fixture = TestBed.createComponent(App);
+    fixture.detectChanges();
+    const main = (fixture.nativeElement as HTMLElement).querySelector('.main') as HTMLElement;
+    const style = getComputedStyle(main);
+    expect(style.overflowY).toBe('auto');
+    expect(style.overflowX).toBe('hidden');
+  });
+```
+
+- [ ] **Step 2: Run tests to verify they fail**
+
+Run: `npx ng test --watch=false --browsers=ChromeHeadless --include='**/app.spec.ts'`
+Expected: FAIL — `minHeight` is `100vh`, `overflowY` is `hidden`.
+
+- [ ] **Step 3: Pin the shell**
+
+In `src/styles/kairo/_base.scss`, add:
+
+```scss
+html,
+body {
+  height: 100%;
+  overflow: hidden;
+}
+```
+
+In `src/app/app.scss`, change `.app`:
+
+```scss
+.app {
+  // 100dvh, not 100vh. The mockup uses 100vh and that is a bug there: on
+  // mobile the dynamic toolbar overshoots and pushes the bottom bar out of
+  // view. The current growable shell happens to avoid it; pinning with 100vh
+  // would import the bug deliberately.
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+```
+
+and `.main`:
+
+```scss
+.main {
+  flex: 1;
+  min-width: 0;
+  // The content region scrolls; the chrome around it does not. `overflow-x`
+  // must stay hidden — it is the load-bearing clamp against the 260px
+  // environmental word overflowing horizontally.
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  padding: var(--sp-5) var(--sp-6) var(--sp-8);
+  position: relative;
+}
+```
+
+In `src/app/ui/windows/system-bar/system-bar.scss`, add `flex-shrink: 0;` to `.system-bar` so neither bar can be squeezed by the flex column.
+
+- [ ] **Step 4: Handle scroll position across navigation**
+
+In `app.config.ts`, remove `withInMemoryScrolling(...)` from `provideRouter` — it operates on the document scroller, which no longer scrolls.
+
+In `app.ts`, inside the existing router subscription, reset the content region on **forward** navigation only:
+
+```typescript
+  private readonly scrollOffsets = new Map<string, number>();
+
+  // Restore on Back/Forward, hard-cut to top otherwise. The mockup resets
+  // unconditionally because it has no history; this site has a Back button,
+  // and losing scroll restoration to match a demo would be a plain usability
+  // regression.
+  private handleScrollFor(event: NavigationEnd): void {
+    const main = this.mainEl()?.nativeElement;
+    if (!main) return;
+    const restored = this.scrollOffsets.get(event.urlAfterRedirects);
+    main.scrollTop = this.poppedState && restored !== undefined ? restored : 0;
+    this.poppedState = false;
+  }
+```
+
+Record offsets before leaving a route, and set `poppedState` from a `popstate` listener registered inside `afterNextRender`. Add a `mainEl = viewChild<ElementRef<HTMLElement>>('mainRegion')` and `#mainRegion` on the `<main>` element.
+
+- [ ] **Step 5: Run the tests**
+
+Run: `npx ng test --watch=false --browsers=ChromeHeadless`
+Expected: 2 pre-existing failures only.
+
+- [ ] **Step 6: Verify the build**
+
+Run: `npm run build` — `Prerendered 6 static routes.`
+
+- [ ] **Step 7: Manual checks the controller must be told about**
+
+These cannot be unit tested and must be listed in your report as **unverified by you**:
+
+- **In-page fragment links.** `home-page.html`'s `href="#contact"` and `blog-post-page.html`'s TOC anchors relied on the document scrolling. Browsers do scroll the nearest scrollable ancestor, so they probably survive — but this is the most likely silent regression and the controller will check it in a browser.
+- **`.post__side { position: sticky }`** (`blog-post-page.scss`) goes from dead to live now that it has a scrolling ancestor. State in your report that this changed; do not decide whether a sticky TOC is wanted.
+
+- [ ] **Step 8: Commit**
+
+```bash
+git add -A
+git commit -m "feat(motion): pin the shell so the instrument frame holds still"
+```
+
+---
+
 ## Task M1: Keyframe library and MotionService
 
 **Files:**
@@ -61,7 +206,7 @@ npx ng test --watch=false --browsers=ChromeHeadless    # full suite
 **Interfaces:**
 - Consumes: the existing `--dur-*` / `--ease-*` tokens.
 - Produces:
-  - Keyframes `win-a`/`win-b`, `ttl-a`/`ttl-b`, `wipe-a`/`wipe-b`, `env-a`/`env-b`, `type-a`/`type-b`, `boot-in`, `boot-bar`, `flicker`, `k-blink`, `k-scan`.
+  - Keyframes `win-a`/`win-b`, `ttl-a`/`ttl-b`, `wipe-a`/`wipe-b`, `env-a`/`env-b`, `type-a`/`type-b`, `boot-in`, `boot-bar`, `flicker-a`/`flicker-b`, `k-blink`, `k-scan`.
   - `MotionService`, `providedIn: 'root'`. Exposes `sfx: Signal<'a' | 'b'>`, initial value `'a'`, flipping on every `NavigationEnd`.
 
 - [ ] **Step 1: Write the failing test**
@@ -296,7 +441,20 @@ Expected: PASS, 4 specs.
   }
 }
 
-@keyframes flicker {
+@keyframes flicker-a {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  30% {
+    opacity: 0.35;
+  }
+  60% {
+    opacity: 0.9;
+  }
+}
+
+@keyframes flicker-b {
   0%,
   100% {
     opacity: 1;
@@ -983,9 +1141,12 @@ In `app.scss`:
   animation: type-b var(--dur-cinematic) var(--ease-cut) both;
 }
 
-.app[data-sfx="a"] .app__sync,
+.app[data-sfx="a"] .app__sync {
+  animation: flicker-a var(--dur-window) var(--ease-cut) both;
+}
+
 .app[data-sfx="b"] .app__sync {
-  animation: flicker var(--dur-window) var(--ease-cut) both;
+  animation: flicker-b var(--dur-window) var(--ease-cut) both;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1287,6 +1448,253 @@ Run: `npm run build` — `Prerendered 6 static routes.`
 ```bash
 git add -A
 git commit -m "fix(motion): complete reduced-motion and accessibility coverage"
+```
+
+---
+
+## Task M7: Give the interface a pulse
+
+**Files:**
+- Modify: `src/app/ui/chapter-header/chapter-header.html`, `.scss`, `.spec.ts`
+- Modify: `src/app/features/projectDetail/project-detail-page/project-detail-page.html`, `.scss`
+
+**Interfaces:**
+- Consumes: `k-blink` from M1.
+- Produces: nothing consumed elsewhere.
+
+### Why
+
+A repo-wide grep for `infinite` currently returns one rule, gated behind a `blink` input that no template passes. **The running application has zero moving pixels between navigations.** Worse, after executing M1–M6 as originally written it still would — `k-blink` sits in the keyframe library and no task ever applies it. That is dead code masquerading as a feature, and it is the difference between a themed page and a machine that is running.
+
+- [ ] **Step 1: Write the failing test**
+
+Add to `chapter-header.spec.ts`:
+
+```typescript
+  it('carries a blinking caret so the interface is never fully still', () => {
+    const el = fixture.nativeElement as HTMLElement;
+    const caret = el.querySelector('.chapter__caret');
+    expect(caret).toBeTruthy();
+    expect(caret?.getAttribute('aria-hidden')).toBe('true');
+  });
+```
+
+- [ ] **Step 2: Run it to verify it fails**
+
+Run: `npx ng test --watch=false --browsers=ChromeHeadless --include='**/chapter-header.spec.ts'`
+Expected: FAIL — no `.chapter__caret`.
+
+- [ ] **Step 3: Add the caret**
+
+In `chapter-header.html`, after the `.chapter__title` element:
+
+```html
+  <span class="chapter__caret" aria-hidden="true"></span>
+```
+
+In `chapter-header.scss`:
+
+```scss
+.chapter__caret {
+  display: inline-block;
+  width: 10px;
+  height: 22px;
+  background: var(--signal-active);
+  align-self: center;
+  // 1.1s, deliberately not a round second and deliberately not the same as
+  // the other loops. Cadences that share a period visibly lock together and
+  // read as one mechanism rather than several.
+  animation: k-blink 1.1s steps(1) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chapter__caret {
+    animation: none;
+  }
+}
+```
+
+- [ ] **Step 4: Add a second, non-harmonic cadence**
+
+On the project detail page's viewport window, add a recording lamp:
+
+```html
+        <span class="detail__rec" aria-hidden="true">&#9679; REC</span>
+```
+
+```scss
+.detail__rec {
+  position: absolute;
+  inset-block-start: var(--sp-2);
+  inset-inline-end: var(--sp-2);
+  font: var(--type-mono-s);
+  letter-spacing: var(--tracking-wide);
+  color: var(--text-active);
+  animation: k-blink 1.4s steps(1) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .detail__rec {
+    animation: none;
+  }
+}
+```
+
+With M5's 3.2s scanline that gives three loops on periods of 1.1s, 1.4s and 3.2s — non-harmonic, so they drift against each other rather than pulsing in time. **Three is the ceiling.** More and the screen fidgets.
+
+- [ ] **Step 5: Run tests, build, commit**
+
+```bash
+git add -A
+git commit -m "feat(motion): add non-harmonic ambient cadences"
+```
+
+---
+
+## Task M8: Correct the pointer-feedback inversion
+
+**Files:**
+- Modify: `src/app/ui/core/button/button.scss`, `src/app/ui/windows/mode-nav/mode-nav.scss`
+- Modify: `src/app/features/home/home-page/home-page.scss`
+- Modify: `src/app/features/projectDetail/project-detail-page/project-detail-page.scss`
+
+### Why
+
+Two problems, both of which the code gets backwards.
+
+Buttons and mode keys currently **ease** at `--dur-control` (180ms) where hardware should snap. And the highest-frequency motion on the entire site — a row hover — animates `padding-inline-start` by **8px with no transition at all**: a reflowing jump, four times the system's own 2px shift idiom, on the wrong property.
+
+`--dur-micro` has **zero consumers anywhere in the codebase.** A visitor cannot learn the machine's timing vocabulary until more than one tier is observable.
+
+**Note:** this breaches the plan's Global Constraint that nothing under `src/app/features/` gains animation code. That constraint is hereby amended to permit *transitions on existing hover states* in feature stylesheets. The alternative — lifting every row into a shared component — is a larger refactor than the problem warrants.
+
+- [ ] **Step 1: Make primary controls snap**
+
+Remove the `transition` declaration from `button.scss` and from `.mode-nav__item` in `mode-nav.scss`. A switch that eases reads as software; a switch that snaps reads as hardware.
+
+- [ ] **Step 2: Fix the row hover**
+
+In `home-page.scss`, for both `.home__record:hover` and `.home__log-row:hover`, replace `padding-inline-start: var(--sp-2)` with:
+
+```scss
+    transform: translateX(2px);
+```
+
+and add to the base rules:
+
+```scss
+  transition: transform var(--dur-micro) var(--ease-mech);
+```
+
+2px matches the shift used by `ModeNav`, `DataTable` and the command palette. `transform` does not reflow; `padding` does.
+
+- [ ] **Step 3: Give the thumbnails a transition**
+
+In `project-detail-page.scss`, add to `.detail__thumb`:
+
+```scss
+  transition: border-color var(--dur-micro) var(--ease-mech);
+```
+
+- [ ] **Step 4: Run tests, build, commit**
+
+```bash
+git add -A
+git commit -m "fix(motion): snap primary controls, stop rows reflowing on hover"
+```
+
+---
+
+## Task M9: Make the bottom bar an event log, and stop advertising a binding that does nothing
+
+**Files:**
+- Modify: `src/app/app.ts`, `app.html`, `app.scss`, `app.spec.ts`
+
+### Why
+
+**First, a bug already shipped.** The bottom bar advertises `ESC BACK` and Escape does not navigate back — it only closes the command palette. An advertised binding that does nothing undermines the operator fiction *more* than an absent one would. This has been live since the shell was built and every review passed it.
+
+**Second**, four instrumented edges where the only changing value is a clock is a bezel with nothing behind it. A log line is the machine narrating itself — it is what makes an interface feel like it *remembers* what you did rather than merely re-rendering.
+
+- [ ] **Step 1: Write the failing tests**
+
+```typescript
+  it('does not advertise a keybinding it does not implement', () => {
+    const fixture = TestBed.createComponent(App);
+    fixture.detectChanges();
+    const hints = (fixture.nativeElement as HTMLElement).querySelector('.app__hints');
+    expect(hints?.textContent).not.toContain('ESC BACK');
+  });
+
+  it('narrates navigation in the bottom bar', () => {
+    const fixture = TestBed.createComponent(App);
+    fixture.detectChanges();
+    const log = (fixture.nativeElement as HTMLElement).querySelector('.app__log');
+    expect(log).toBeTruthy();
+  });
+```
+
+- [ ] **Step 2: Resolve the ESC BACK lie**
+
+**Remove the hint**, rather than implementing Escape-navigates-back. Escape already has a meaning in this interface — it closes the palette — and overloading one key with two behaviours depending on hidden state is worse than dropping the claim. Delete that `<span class="app__hint">ESC BACK</span>`.
+
+- [ ] **Step 3: Add the log**
+
+In `app.ts`:
+
+```typescript
+  private readonly entries = signal<string[]>([]);
+  lastLog = computed(() => this.entries()[0] ?? '');
+
+  private note(message: string): void {
+    // Stamped from the shared clock signal rather than a fresh Date, so the
+    // two instruments in the bar can never disagree about the time.
+    const stamp = this.clock();
+    this.entries.update((all) => [`${stamp} ${message}`, ...all].slice(0, 5));
+  }
+```
+
+Call `note()` on `NavigationEnd` (`'NAV ' + url`) and on palette command execution (`'EXEC ' + id`).
+
+In `app.html`, in the bottom bar's `barRight` slot:
+
+```html
+    <span barRight class="app__log">{{ lastLog() }}</span>
+```
+
+In `app.scss`:
+
+```scss
+.app__log {
+  max-width: 40ch;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--text-faint);
+}
+```
+
+- [ ] **Step 4: Make SYNC mean something**
+
+M4 Step 5b's SYNC readout is a hardcoded `value="04ms"` that flickers but never changes — a decal that twitches. Make it a computed that varies per navigation, seeded deterministically so prerendered output stays stable:
+
+```typescript
+  // Derived from the URL, not random: prerender and hydration must agree.
+  sync = computed(() => {
+    const url = this.currentUrl();
+    let hash = 0;
+    for (let i = 0; i < url.length; i++) hash = (hash * 31 + url.charCodeAt(i)) | 0;
+    return `${String((Math.abs(hash) % 8) + 2).padStart(2, '0')}ms`;
+  });
+```
+
+Bind `[value]="sync()"`.
+
+- [ ] **Step 5: Run tests, build, commit**
+
+```bash
+git add -A
+git commit -m "feat(motion): bottom-bar event log, honest keybinding hints, live SYNC"
 ```
 
 ---
