@@ -113,6 +113,16 @@ export class App {
       block: 'start',
       behavior: this.prefersReducedMotion() ? 'auto' : 'smooth',
     });
+
+    // Restore the fragment the preventDefault suppressed. The path is written
+    // out in full deliberately — a bare '#id' would be resolved against
+    // <base href="/"> and navigate to the root, which is the bug this handler
+    // exists to prevent.
+    history.replaceState(
+      history.state,
+      '',
+      `${location.pathname}${location.search}#${href.slice(1)}`,
+    );
   }
 
   // Browser-only; safe to call from an event handler (never during render).

@@ -151,4 +151,24 @@ describe('App', () => {
 
     expect(event.defaultPrevented).toBe(false);
   });
+
+  it('restores the fragment in the URL without navigating', () => {
+    const fixture = TestBed.createComponent(App);
+    fixture.detectChanges();
+    const host = fixture.nativeElement as HTMLElement;
+    const main = host.querySelector('.main') as HTMLElement;
+
+    const target = document.createElement('div');
+    target.id = 'hash-probe';
+    main.appendChild(target);
+    const anchor = document.createElement('a');
+    anchor.setAttribute('href', '#hash-probe');
+    main.appendChild(anchor);
+
+    const pathBefore = location.pathname;
+    anchor.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
+
+    expect(location.hash).toBe('#hash-probe');
+    expect(location.pathname).toBe(pathBefore);
+  });
 });
