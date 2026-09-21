@@ -34,8 +34,12 @@ describe('SystemBar', () => {
     expect(el.querySelector('.system-bar')?.getAttribute('data-position')).toBe('bottom');
   });
 
-  it('announces itself as a status region', () => {
+  it('is not a live region, so its readouts do not interrupt a screen reader', () => {
+    // It was role="status" until the event log arrived and made the problem
+    // obvious: a live region announces its whole contents on every change, and
+    // the top bar's clock changes once a second.
     const el = fixture.nativeElement as HTMLElement;
-    expect(el.querySelector('[role="status"]')).toBeTruthy();
+    expect(el.querySelector('[role="status"]')).toBeNull();
+    expect(el.querySelector('[aria-live]')).toBeNull();
   });
 });

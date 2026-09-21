@@ -3,9 +3,10 @@ import { TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
 import { App } from './app';
 
-// Stub target for the wildcard route below. The describe block's shared
-// `provideRouter([])` has no routes at all, so it cannot stand in for the
-// real app.routes.ts's catch-all `**` -> ErrorPage route the 404 test needs.
+// Stub target for the shared wildcard route, standing in for the real
+// app.routes.ts catch-all `**` -> ErrorPage. `activeMode()` is a pure function
+// of the URL string, so which component the route renders is immaterial to
+// what these specs assert.
 @Component({ selector: 'app-test-not-found-stub', template: '', standalone: true })
 class NotFoundStub {}
 
@@ -13,7 +14,12 @@ describe('App', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [App],
-      providers: [provideRouter([])],
+      // A wildcard, not an empty table. `provideRouter([])` cannot match any
+      // URL, so any spec that navigates throws NG04002 before the component
+      // sees anything — and the real app.routes.ts has a `**` catch-all for
+      // exactly this reason. One shared stub keeps every navigating spec on
+      // the same setup.
+      providers: [provideRouter([{ path: '**', component: NotFoundStub }])],
     }).compileComponents();
   });
 
@@ -37,21 +43,6 @@ describe('App', () => {
   });
 
   it('highlights no mode when the route matches none', async () => {
-    // Deviation from the brief's verbatim spec, with evidence: run as
-    // written against the describe block's shared `provideRouter([])`, this
-    // test throws `NG04002: Cannot match any routes` — an empty route table
-    // has nothing to match '/definitely-not-a-route' against, so the router
-    // never settles on that URL for activeMode() to observe. The real app
-    // (app.routes.ts) has a wildcard `**` route to an ErrorPage for exactly
-    // this case, so this test reconfigures TestBed with an equivalent stub
-    // wildcard rather than diverging from how production actually reaches a
-    // "no mode matches" URL.
-    await TestBed.resetTestingModule()
-      .configureTestingModule({
-        imports: [App],
-        providers: [provideRouter([{ path: '**', component: NotFoundStub }])],
-      })
-      .compileComponents();
     const fixture = TestBed.createComponent(App);
     fixture.detectChanges();
     const router = TestBed.inject(Router);
@@ -75,11 +66,28 @@ describe('App', () => {
     expect(hints?.textContent).not.toContain('ESC BACK');
   });
 
-  it('narrates navigation in the bottom bar', () => {
+  it('narrates navigation in the bottom bar', async () => {
     const fixture = TestBed.createComponent(App);
     fixture.detectChanges();
     const log = (fixture.nativeElement as HTMLElement).querySelector('.app__log');
     expect(log).toBeTruthy();
+
+    // Asserting the element exists proves nothing about narration — it would
+    // pass against a log wired to nothing at all. Navigate and require the
+    // text to name where we went.
+    const before = log?.textContent ?? '';
+    await TestBed.inject(Router).navigateByUrl('/blog');
+    fixture.detectChanges();
+    const after = log?.textContent ?? '';
+    expect(after).not.toBe(before);
+    expect(after).toContain('NAV /blog');
+  });
+
+  it('keeps the log out of the accessibility tree, so it never interrupts', () => {
+    const fixture = TestBed.createComponent(App);
+    fixture.detectChanges();
+    const log = (fixture.nativeElement as HTMLElement).querySelector('.app__log');
+    expect(log?.closest('[role="status"], [aria-live]')).toBeNull();
   });
 
   it('renders the mode rail', () => {

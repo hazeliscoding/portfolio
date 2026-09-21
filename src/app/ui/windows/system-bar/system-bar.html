@@ -1,4 +1,16 @@
-<div class="system-bar" role="status" [attr.data-position]="position()">
+<!--
+  Deliberately NOT role="status". That role is a live region — implicitly
+  aria-live="polite" and aria-atomic="true" — so every change inside it makes a
+  screen reader announce the whole bar. The top bar carries a clock that ticks
+  once a second, which meant announcing "hazel.exe NET ONLINE LOC TEXAS // USA
+  … 11:31:43" every second, forever. The bottom bar's event log would have done
+  the same on every navigation.
+
+  None of this is status a user is waiting on: it is ambient instrumentation,
+  readable on demand by navigating to it. A live region is for something that
+  changes because the user did something and needs to know the outcome.
+-->
+<div class="system-bar" [attr.data-position]="position()">
   <span class="system-bar__left"><ng-content select="[barLeft]" /></span>
   <span class="system-bar__center"><ng-content select="[barCenter]" /></span>
   <span class="system-bar__right"><ng-content select="[barRight]" /></span>
