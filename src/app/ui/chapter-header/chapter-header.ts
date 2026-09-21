@@ -12,5 +12,4 @@ export class ChapterHeader {
   index = input('');
   context = input('');
   status = input('');
-  environmental = input('');
 }

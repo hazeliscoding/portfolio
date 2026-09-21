@@ -171,4 +171,12 @@ describe('App', () => {
     expect(location.hash).toBe('#hash-probe');
     expect(location.pathname).toBe(pathBefore);
   });
+
+  it('renders the environmental word at page level, hidden from assistive tech', () => {
+    const fixture = TestBed.createComponent(App);
+    fixture.detectChanges();
+    const env = (fixture.nativeElement as HTMLElement).querySelector('.app__env');
+    expect(env).toBeTruthy();
+    expect(env?.getAttribute('aria-hidden')).toBe('true');
+  });
 });

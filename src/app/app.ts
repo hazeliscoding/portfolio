@@ -12,7 +12,7 @@ import { SystemBar } from './ui/windows/system-bar/system-bar';
 import { ModeNav } from './ui/windows/mode-nav/mode-nav';
 import { Readout } from './ui/core/readout/readout';
 import { CommandPalette } from './ui/overlays/command-palette/command-palette';
-import { COMMANDS, MODES } from './core/navigation';
+import { COMMANDS, MODES, envWordFor } from './core/navigation';
 
 const CLOCK_PLACEHOLDER = '--:--:--';
 
@@ -37,6 +37,8 @@ export class App {
       .sort((a, b) => b.route.length - a.route.length)[0];
     return match?.id ?? 'home';
   });
+
+  envWord = computed(() => envWordFor(this.currentUrl()));
 
   private currentUrl = signal('/');
 

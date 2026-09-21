@@ -15,3 +15,25 @@ export const COMMANDS: PaletteCommand[] = [
   { id: 'pr-sweep', label: 'PR SWEEP', mode: 'RECORDS', route: '/portfolio/pr-sweep' },
   { id: 'log', label: 'LOG', mode: 'RECORDS', route: '/blog' },
 ];
+
+/**
+ * The oversized background word per route. Distinct from the mode labels —
+ * `/` is mode HOME but reads HAZEL, and a project detail page reads RECORD.
+ */
+export const ENV_WORDS: Record<string, string> = {
+  '/': 'HAZEL',
+  '/about': 'PROFILE',
+  '/portfolio': 'ARCHIVE',
+  '/blog': 'LOG',
+};
+
+export function envWordFor(url: string): string {
+  const path = url.split('?')[0].split('#')[0];
+  if (path === '/') return ENV_WORDS['/'];
+  if (path.startsWith('/portfolio/')) return 'RECORD';
+  if (path.startsWith('/blog/')) return 'ENTRY';
+  const match = Object.keys(ENV_WORDS)
+    .filter((key) => key !== '/' && path.startsWith(key))
+    .sort((a, b) => b.length - a.length)[0];
+  return match ? ENV_WORDS[match] : 'NULL';
+}

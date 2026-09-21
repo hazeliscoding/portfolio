@@ -4,7 +4,6 @@
     index="03"
     [context]="p.title"
     status="RECORD 01 OF 01"
-    environmental="RECORD"
   />
 
   <div class="detail">
@@ -74,6 +73,6 @@
     </aside>
   </div>
 } @else {
-  <app-chapter-header code="ARCHIVE" index="03" context="NO RECORD" environmental="NULL" />
+  <app-chapter-header code="ARCHIVE" index="03" context="NO RECORD" />
   <p class="detail__missing">NO RECORD AT THIS ADDRESS</p>
 }

@@ -63,6 +63,18 @@
   flex-shrink: 0;
 }
 
+.app__env {
+  position: fixed;
+  inset-inline-end: -10px;
+  inset-block-end: var(--sp-5);
+  font: 600 min(260px, 30vw)/0.85 var(--font-display);
+  letter-spacing: var(--tracking-display);
+  color: var(--surface-elevated);
+  user-select: none;
+  pointer-events: none;
+  z-index: 0;
+}
+
 .main {
   flex: 1;
   min-width: 0;

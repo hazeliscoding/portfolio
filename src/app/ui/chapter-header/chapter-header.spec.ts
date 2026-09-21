@@ -12,7 +12,6 @@ describe('ChapterHeader', () => {
     fixture.componentRef.setInput('code', 'HOME');
     fixture.componentRef.setInput('index', '01');
     fixture.componentRef.setInput('context', 'OPERATOR PROFILE');
-    fixture.componentRef.setInput('environmental', 'HAZEL');
     fixture.detectChanges();
   });
 
@@ -28,11 +27,11 @@ describe('ChapterHeader', () => {
     );
   });
 
-  it('hides the environmental type from assistive tech', () => {
-    const el = fixture.nativeElement as HTMLElement;
-    const env = el.querySelector('.chapter__env');
-    expect(env?.getAttribute('aria-hidden')).toBe('true');
-    expect(env?.textContent?.trim()).toBe('HAZEL');
+  it('no longer renders environmental type — the shell owns it', () => {
+    fixture.componentRef.setInput('code', 'HOME');
+    fixture.componentRef.setInput('index', '01');
+    fixture.detectChanges();
+    expect((fixture.nativeElement as HTMLElement).querySelector('.chapter__env')).toBeNull();
   });
 
   it('renders exactly one h1', () => {

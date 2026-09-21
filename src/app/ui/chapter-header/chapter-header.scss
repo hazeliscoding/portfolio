@@ -6,18 +6,6 @@
   position: relative;
 }
 
-.chapter__env {
-  position: absolute;
-  inset-inline-end: -10px;
-  inset-block-start: -20px;
-  font: 600 260px/0.85 var(--font-display);
-  letter-spacing: var(--tracking-display);
-  color: var(--surface-elevated);
-  user-select: none;
-  pointer-events: none;
-  z-index: -1;
-}
-
 .chapter__title {
   margin: 0;
   font: var(--type-display-l);
@@ -62,11 +50,6 @@
 
   .chapter__title {
     font: var(--type-display-m);
-  }
-
-  .chapter__env {
-    font-size: 120px;
-    inset-block-start: -8px;
   }
 
   .chapter__status {
