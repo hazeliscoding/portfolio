@@ -1,0 +1,31 @@
+.readout {
+  display: inline-flex;
+  gap: var(--sp-2);
+  font: var(--type-mono-s);
+  letter-spacing: var(--tracking-wide);
+  white-space: nowrap;
+}
+
+.readout__label {
+  color: var(--text-faint);
+}
+
+.readout__value {
+  color: var(--text-primary);
+}
+
+.readout[data-state="ok"] .readout__value {
+  color: var(--signal-success);
+}
+
+.readout[data-state="info"] .readout__value {
+  color: var(--signal-info);
+}
+
+.readout[data-state="warn"] .readout__value {
+  color: var(--signal-warning);
+}
+
+.readout[data-state="danger"] .readout__value {
+  color: var(--text-active);
+}
