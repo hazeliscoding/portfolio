@@ -5,6 +5,7 @@ import { ChapterHeader } from '../../../ui/chapter-header/chapter-header';
 import { Window } from '../../../ui/windows/window/window';
 import { Column, DataTable, Row } from '../../../ui/data/data-table/data-table';
 import { blogPosts } from '../../../data/blog-posts.generated';
+import { count } from '../../../core/count';
 
 @Component({
   selector: 'blog-page',
@@ -35,7 +36,7 @@ export class BlogPage {
 
   get report(): string {
     const n = this.rows.length;
-    return `${n} RECORD${n === 1 ? '' : 'S'} RETRIEVED`;
+    return `${count(n, 'RECORD', 'RECORDS')} RETRIEVED`;
   }
 
   constructor(

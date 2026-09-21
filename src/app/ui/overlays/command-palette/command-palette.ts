@@ -8,6 +8,7 @@ import {
   signal,
   viewChild,
 } from '@angular/core';
+import { count } from '../../../core/count';
 
 export interface PaletteCommand {
   id: string;
@@ -44,6 +45,9 @@ export class CommandPalette {
         c.label.toLowerCase().includes(q) || (c.mode ?? '').toLowerCase().includes(q),
     );
   });
+
+  // "RECORD(S)" reads like a form letter, not an instrument.
+  countLabel = computed(() => `${count(this.filtered().length, 'RECORD', 'RECORDS')} RETRIEVED`);
 
   constructor() {
     // Moves focus into the palette when it opens and returns it to whatever

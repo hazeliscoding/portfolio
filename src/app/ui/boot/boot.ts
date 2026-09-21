@@ -9,6 +9,7 @@ import {
 } from '@angular/core';
 import { blogPosts } from '../../data/blog-posts.generated';
 import { projectsData } from '../../data/projects.data';
+import { count } from '../../core/count';
 
 interface BootLine {
   prefix: string;
@@ -19,10 +20,6 @@ interface BootLine {
   emphasis: 'primary' | 'secondary';
   /** Milliseconds after mount at which this line appears. */
   delay: number;
-}
-
-function count(n: number, one: string, many: string): string {
-  return `${n} ${n === 1 ? one : many}`;
 }
 
 // The delay ladder is not uniform. It is fast at the head, slows through the

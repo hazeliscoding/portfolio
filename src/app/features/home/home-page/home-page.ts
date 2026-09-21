@@ -9,6 +9,7 @@ import { Badge } from '../../../ui/core/badge/badge';
 import { projectsData } from '../../../data/projects.data';
 import { blogPosts } from '../../../data/blog-posts.generated';
 import { ossStats } from '../../../data/oss-stats.generated';
+import { count } from '../../../core/count';
 
 const LAST_UPDATE = '2026-09-20';
 
@@ -51,6 +52,10 @@ export class HomePage {
 
   get total(): string {
     return String(this.projects.length).padStart(2, '0');
+  }
+
+  get logStatus(): string {
+    return count(this.posts.length, 'ENTRY', 'ENTRIES');
   }
 
   indexOf(i: number): string {

@@ -88,7 +88,7 @@
       index="05"
       title="Log"
       context="RECENT"
-      [status]="posts.length + ' ENTRIES'"
+      [status]="logStatus"
       delay="240ms"
     >
       @for (b of posts; track b.slug) {
