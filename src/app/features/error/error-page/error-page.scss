@@ -1,20 +1,44 @@
-@use "abstracts/variables" as *;
+.error {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: 60vh;
+}
 
-.not-found {
-  text-align: center;
-  padding: $spacing-xbig $spacing-medium;
+.error__env {
+  position: absolute;
+  font: 600 320px/0.85 var(--font-display);
+  letter-spacing: var(--tracking-display);
+  color: var(--surface-elevated);
+  user-select: none;
+  pointer-events: none;
+  z-index: -1;
+}
 
-  &__title {
-    font-family: $font-family-display;
-    font-weight: $font-weight-normal;
-    font-size: $font-size-display-lg;
-  }
+.error__report {
+  margin: 0 0 var(--sp-2);
+  font: var(--type-mono);
+  letter-spacing: var(--tracking-wider);
+  color: var(--text-active);
+}
 
-  &__output {
-    font-family: $font-family-mono;
-    font-size: $font-size-default;
-    color: $color-text-muted;
-    margin-bottom: $spacing-big;
-    overflow-wrap: anywhere;
+.error__path {
+  margin: 0 0 var(--sp-4);
+  font: var(--type-mono-s);
+  color: var(--text-faint);
+  overflow-wrap: anywhere;
+}
+
+.error__back {
+  display: inline-block;
+  min-height: var(--target-min);
+  line-height: var(--target-min);
+  font: var(--type-mono-s);
+  letter-spacing: var(--tracking-wide);
+}
+
+@media (max-width: 840px) {
+  .error__env {
+    font-size: 160px;
   }
 }

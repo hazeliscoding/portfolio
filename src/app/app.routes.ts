@@ -47,5 +47,9 @@ export const routes: Routes = [
         './features/projectDetail/project-detail-page/project-detail-page'
       ).then((m) => m.ProjectDetailPage),
   },
-  { path: '**', loadComponent: construction },
+  {
+    path: '**',
+    loadComponent: () =>
+      import('./features/error/error-page/error-page').then((m) => m.ErrorPage),
+  },
 ];
