@@ -58,4 +58,11 @@ describe('HomePage', () => {
     const text = (fixture.nativeElement as HTMLElement).textContent ?? '';
     expect(/\p{Extended_Pictographic}/u.test(text)).toBe(false);
   });
+
+  it('lays out log rows rather than leaving them inline', () => {
+    const row = (fixture.nativeElement as HTMLElement).querySelector(
+      '.home__log-row',
+    ) as HTMLElement;
+    expect(getComputedStyle(row).display).toBe('flex');
+  });
 });

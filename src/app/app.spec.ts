@@ -63,4 +63,14 @@ describe('App', () => {
     fixture.detectChanges();
     expect((fixture.nativeElement as HTMLElement).textContent).toContain('--:--:--');
   });
+
+  it('projects each readout as a direct slot child so the bar gap applies', () => {
+    const fixture = TestBed.createComponent(App);
+    fixture.detectChanges();
+    const center = (fixture.nativeElement as HTMLElement).querySelector(
+      '.system-bar__center',
+    ) as HTMLElement;
+    expect(center.children.length).toBe(2);
+    expect(center.children[0].tagName.toLowerCase()).toBe('app-readout');
+  });
 });

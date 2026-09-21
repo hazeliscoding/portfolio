@@ -99,6 +99,28 @@
   font: var(--type-body-s);
 }
 
+.home__log-row {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  min-height: var(--target-min);
+  padding: var(--sp-2) 0;
+  border-inline-start: var(--bw-indicator) solid transparent;
+  border-bottom: var(--bw-hairline) solid var(--border-faint);
+  font: var(--type-mono-s);
+  color: var(--text-secondary);
+
+  &:hover {
+    border-inline-start-color: var(--signal-active);
+    color: var(--text-primary);
+    padding-inline-start: var(--sp-2);
+  }
+
+  &:last-child {
+    border-bottom: 0;
+  }
+}
+
 .home__body {
   margin: 0 0 var(--sp-2);
   color: var(--text-secondary);

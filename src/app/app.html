@@ -1,14 +1,10 @@
 <div class="app">
   <app-system-bar position="top">
     <span barLeft class="app__wordmark">hazel<span class="app__ext">.exe</span></span>
-    <span barCenter>
-      <app-readout label="NET" value="ONLINE" state="ok" />
-      <app-readout label="LOC" value="TEXAS // USA" />
-    </span>
-    <span barRight>
-      <app-readout label="STATUS" value="OPEN TO WORK" state="ok" />
-      <span class="app__clock">{{ clock() }}</span>
-    </span>
+    <app-readout barCenter label="NET" value="ONLINE" state="ok" />
+    <app-readout barCenter label="LOC" value="TEXAS // USA" />
+    <app-readout barRight label="STATUS" value="OPEN TO WORK" state="ok" />
+    <span barRight class="app__clock">{{ clock() }}</span>
   </app-system-bar>
 
   <div class="app__body">
