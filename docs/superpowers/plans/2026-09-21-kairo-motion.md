@@ -1153,12 +1153,27 @@ git commit -m "refactor(motion): move environmental type from ChapterHeader to t
 Add to `src/app/app.spec.ts`:
 
 ```typescript
-  it('does not render the boot overlay during the server render', () => {
+  it('starts with the boot overlay off, so the first render pass has no overlay', () => {
     const fixture = TestBed.createComponent(App);
     fixture.detectChanges();
-    // booting() only becomes true in afterNextRender, so the first pass —
-    // which is what prerendering captures — must have no overlay.
+    // This asserts only that `booting` starts false. It is NOT proof of
+    // prerender safety — it would pass against a component that never mounts
+    // the overlay at all. The real proof is Step 6's grep of the prerendered
+    // HTML, which cannot be satisfied by an absent feature.
+    expect(fixture.componentInstance.booting()).toBe(false);
     expect((fixture.nativeElement as HTMLElement).querySelector('.boot')).toBeNull();
+  });
+
+  it('mounts the boot overlay once the browser has rendered', async () => {
+    const fixture = TestBed.createComponent(App);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+    // Paired with the spec above: together they prove the overlay is off for
+    // the render that prerendering captures and on afterwards. Alone, either
+    // one is satisfiable by a component that does nothing.
+    const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    expect(fixture.componentInstance.booting()).toBe(!reduced);
   });
 
   it('exposes the motion sequence on the shell for CSS to select on', () => {
@@ -1226,26 +1241,33 @@ and mount the boot overlay as the **last** child of `.app`:
 ```
 
 
-In `app.html`, add the wipe as the first child of `<main class="main">`, as a **sticky zero-height wrapper** containing the bar:
+In `app.html`, add the wipe as a **sibling of `<main class="main">`**, inside `.app__body`, immediately before `<main>`:
 
 ```html
       <span class="app__wipe" aria-hidden="true"><span class="app__wipe-bar"></span></span>
 ```
 
-In `app.scss`:
+If M3 placed `.app__env` in this same position, the wipe goes **after** it — the env word must paint behind the sweep.
+
+In `app.scss`, add `position: relative` to the existing `.app__body` rule if it does not already have it (this makes it the containing block for the wipe; it does **not** affect `.app__env`, because only `transform`/`filter`/`contain`-style properties capture a fixed-position descendant, never `position: relative`). Then:
 
 ```scss
-// The wrapper is sticky and zero-height so it stays put while `.main` scrolls
-// beneath it. An absolutely-positioned bar would scroll away with the content
-// mid-sweep, and on a long page would only ever cover the first screenful.
-// The bar deliberately sweeps the CONTENT region only — not the top and bottom
-// bars — so the instrument frame stays visible throughout the transition.
+// The wrapper is absolutely positioned against `.app__body`, so it fills the
+// content region exactly: below the top bar, above the bottom bar, and — being
+// outside `.main` — it does not scroll with the content. The instrument frame
+// stays visible throughout the transition, which is the whole point of pinning
+// the shell.
+//
+// DO NOT reinstate the mockup's arrangement here. The mockup wraps the bar in
+// a `position: sticky; height: 0; overflow: hidden` element, and a zero-height
+// box with `overflow: hidden` clips its content to nothing — measured in a
+// browser: the bar is laid out at full height and paints zero pixels at every
+// sampled point, and hit-testing finds it only once the clip is removed. The
+// mockup's own wipe never renders. A 450ms animation that does not appear
+// reads as "subtle", not "broken", which is why it survived there.
 .app__wipe {
-  position: sticky;
-  inset-block-start: 0;
-  display: block;
-  height: 0;
-  margin: calc(var(--sp-5) * -1) calc(var(--sp-6) * -1) var(--sp-5);
+  position: absolute;
+  inset: 0;
   z-index: 3;
   pointer-events: none;
   overflow: hidden;
@@ -1253,7 +1275,7 @@ In `app.scss`:
 
 .app__wipe-bar {
   display: block;
-  height: 100dvh;
+  height: 100%;
   background: var(--surface-elevated);
   border-inline-end: var(--bw-indicator) solid var(--signal-active);
 }
@@ -1402,10 +1424,37 @@ grep -c "noscript" dist/portfolio/browser/index.html
 
 Expected: `0` for the first — the overlay must **not** be in the prerendered HTML — and at least `1` for the second.
 
-- [ ] **Step 7: Commit**
+- [ ] **Step 7: Prove the wipe actually paints**
+
+A wipe that renders zero pixels is indistinguishable from a wipe that is merely quick, so a unit test asserting the element exists is not evidence. Serve `dist/portfolio/browser`, open it, and run this in the console:
+
+```javascript
+(() => {
+  const w = document.querySelector('.app__wipe');
+  const b = document.querySelector('.app__wipe-bar');
+  const r = w.getBoundingClientRect();
+  const top = document.querySelector('.app > *').getBoundingClientRect();
+  // Park the bar mid-sweep and hit-test through it.
+  w.style.pointerEvents = 'auto'; b.style.pointerEvents = 'auto';
+  b.style.animation = 'none'; b.style.transform = 'translateX(0)';
+  const at = (x, y) => { const e = document.elementFromPoint(x, y); return e && e.className; };
+  return {
+    regionStartsBelowTopBar: r.top >= top.bottom,
+    barCoversRegion: [r.top + 10, (r.top + r.bottom) / 2, r.bottom - 10].map(y => at(innerWidth / 2, y)),
+    topBarUncovered: at(innerWidth / 2, top.top + 5),
+    noHorizontalScroll: document.documentElement.scrollWidth <= document.documentElement.clientWidth,
+  };
+})()
+```
+
+Expected: `regionStartsBelowTopBar` true; all three entries of `barCoversRegion` report the wipe bar; `topBarUncovered` reports something that is **not** the wipe bar; `noHorizontalScroll` true. Then reload and watch a real navigation — the bar should sweep left to right across the content region while the top and bottom bars stay put. Put what you saw in your report.
+
+- [ ] **Step 8: Commit**
+
+Stage the specific files you changed — not `git add -A`.
 
 ```bash
-git add -A
+git add src/app/app.ts src/app/app.html src/app/app.scss src/app/app.spec.ts src/index.html
 git commit -m "feat(motion): boot overlay, wipe transition and environmental slide-in"
 ```
 
