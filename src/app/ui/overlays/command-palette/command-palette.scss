@@ -69,12 +69,16 @@
   color: var(--text-secondary);
   cursor: pointer;
   text-align: start;
+  transition: transform var(--dur-micro) var(--ease-mech);
 
   &:hover {
     background: var(--surface-active-tint);
     border-inline-start-color: var(--signal-active);
     color: var(--text-primary);
-    padding-inline-start: calc(var(--sp-3) + 2px);
+    // `transform`, not `padding-inline-start`. Padding reflows the item's
+    // contents on every pointer move; transform is composited and touches no
+    // layout. Matches `.home__record` — the indicator travels with the row.
+    transform: translateX(2px);
   }
 }
 
