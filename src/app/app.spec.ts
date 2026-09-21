@@ -191,9 +191,16 @@ describe('App', () => {
     // has already flipped to `true` even though the DOM has not caught up
     // yet. Measured directly — `fixture.componentInstance.booting()` reads
     // `true` immediately after the first `detectChanges()` call, before any
-    // `whenStable()`. Checking pre-render is what actually proves the signal
-    // *starts* false; the DOM query below is what proves the first rendered
-    // pass has no overlay in it, which is a separate claim.
+    // `whenStable()`.
+    //
+    // Be clear about what this next line is worth: run before any change
+    // detection, it is close to asserting a field initialiser, and it would
+    // pass against a component whose reduced-motion gate was broken. It is
+    // documentation of the starting state, not regression coverage. The
+    // weight is carried by the DOM query below, by the paired
+    // `mounts the boot overlay once the browser has rendered` spec, and
+    // above all by the build-time grep of the prerendered HTML, which an
+    // absent feature cannot satisfy.
     expect(fixture.componentInstance.booting()).toBe(false);
     fixture.detectChanges();
     // This is NOT proof of prerender safety on its own — it would pass
