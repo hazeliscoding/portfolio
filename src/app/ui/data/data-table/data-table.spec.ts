@@ -62,4 +62,35 @@ describe('DataTable', () => {
     const el = fixture.nativeElement as HTMLElement;
     expect(el.querySelector('.data-table__end')?.textContent).toContain('END OF LOG');
   });
+
+  it('emits the row id on Enter', () => {
+    let emitted = '';
+    fixture.componentInstance.select.subscribe((id: string) => (emitted = id));
+    const row = (fixture.nativeElement as HTMLElement).querySelector(
+      'tbody tr',
+    ) as HTMLElement;
+    row.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+    expect(emitted).toBe('hello-world');
+  });
+
+  it('emits the row id on Space and suppresses the default scroll', () => {
+    let emitted = '';
+    fixture.componentInstance.select.subscribe((id: string) => (emitted = id));
+    const row = (fixture.nativeElement as HTMLElement).querySelector(
+      'tbody tr',
+    ) as HTMLElement;
+    const event = new KeyboardEvent('keydown', {
+      key: ' ',
+      bubbles: true,
+      cancelable: true,
+    });
+    row.dispatchEvent(event);
+    expect(emitted).toBe('hello-world');
+    expect(event.defaultPrevented).toBe(true);
+  });
+
+  it('announces the table as an interactive grid', () => {
+    const el = fixture.nativeElement as HTMLElement;
+    expect(el.querySelector('table')?.getAttribute('role')).toBe('grid');
+  });
 });

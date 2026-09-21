@@ -1,4 +1,4 @@
-<table class="data-table" [attr.data-density]="density()">
+<table class="data-table" role="grid" [attr.data-density]="density()">
   <thead>
     <tr>
       @for (col of columns(); track col.key) {
@@ -14,8 +14,8 @@
         [attr.aria-selected]="row.id === selectedId()"
         tabindex="0"
         (click)="select.emit(row.id)"
-        (keydown.enter)="select.emit(row.id)"
-        (keydown.space)="select.emit(row.id)"
+        (keydown.enter)="$event.preventDefault(); select.emit(row.id)"
+        (keydown.space)="$event.preventDefault(); select.emit(row.id)"
       >
         @for (col of columns(); track col.key) {
           <td>{{ row.cells[col.key] }}</td>
