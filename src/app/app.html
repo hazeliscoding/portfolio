@@ -9,7 +9,7 @@
     <span barCenter class="app__path">
       HAZEL.EXE <span class="app__path-sep">//</span> {{ pathLabel() }}
     </span>
-    <app-readout barRight label="STATUS" value="OPEN TO WORK" state="ok" />
+    <app-readout barRight label="STATUS" [value]="operatorStatus" state="ok" />
     <span barRight class="app__clock">{{ clock() }}</span>
   </app-system-bar>
 

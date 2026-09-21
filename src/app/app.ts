@@ -16,6 +16,7 @@ import { CommandPalette } from './ui/overlays/command-palette/command-palette';
 import { Boot } from './ui/boot/boot';
 import { MotionService } from './ui/motion/motion.service';
 import { COMMANDS, MODES, envWordFor } from './core/navigation';
+import { OPERATOR_STATUS } from './core/site';
 
 const CLOCK_PLACEHOLDER = '--:--:--';
 
@@ -28,6 +29,7 @@ const CLOCK_PLACEHOLDER = '--:--:--';
 })
 export class App {
   modes = MODES;
+  operatorStatus = OPERATOR_STATUS;
   commands = COMMANDS;
 
   motion = inject(MotionService);

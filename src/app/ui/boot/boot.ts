@@ -10,6 +10,7 @@ import {
 import { blogPosts } from '../../data/blog-posts.generated';
 import { projectsData } from '../../data/projects.data';
 import { count } from '../../core/count';
+import { OPERATOR_NAME, OPERATOR_STATUS } from '../../core/site';
 
 interface BootLine {
   prefix: string;
@@ -60,7 +61,7 @@ const BOOT_LINES: BootLine[] = [
   },
   {
     prefix: '..',
-    text: 'OPERATOR : HAZEL GRANADOS · STATUS : OPEN TO WORK',
+    text: `OPERATOR : ${OPERATOR_NAME} · STATUS : ${OPERATOR_STATUS}`,
     tone: 'faint',
     emphasis: 'secondary',
     delay: 1600,
