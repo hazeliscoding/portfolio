@@ -5395,6 +5395,20 @@ git commit -m "feat: regenerate social image and favicons for KAIRO"
 
 ### Before you delete `styles.scss`, know what else goes with it
 
+**It carries the site's only universal margin reset.** At `styles.scss:116-118`:
+
+```scss
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+```
+
+KAIRO's `_base.scss` resets `box-sizing` universally and `margin: 0` on `body` — **and nothing else**. Verified by reading both files. So deleting this one returns UA default margins to every `h1`-`h6`, `p`, `ul`, `ol`, `blockquote`, `pre` and `hr` on every route: headings gain `0.67em`-`1.5em` block margins, paragraphs gain `1em`, lists gain a `40px` indent. Nothing errors. The site simply loosens everywhere, off the 4px grid, and it will read as "the cleanup changed the spacing a bit" rather than as a regression.
+
+The blog prose fix (`docs/superpowers/specs/2026-09-21-blog-prose-design.md`, section 3b) adds a replacement to `_base.scss` — a `:where()` reset at zero specificity, so every component rule still wins on its own merits. **Confirm that landed before deleting this file.** If it has not, land it first.
+
 Its last rule is a blanket reduced-motion net:
 
 ```scss
