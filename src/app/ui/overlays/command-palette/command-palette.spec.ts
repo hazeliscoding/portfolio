@@ -78,4 +78,39 @@ describe('CommandPalette', () => {
     const dialog = el.querySelector('[role="dialog"]');
     expect(dialog?.getAttribute('aria-modal')).toBe('true');
   });
+
+  it('moves focus into the input when opened', () => {
+    const input = (fixture.nativeElement as HTMLElement).querySelector('input');
+    expect(document.activeElement).toBe(input);
+  });
+
+  it('closes on Escape when focus is on a command button', () => {
+    let closed = false;
+    fixture.componentInstance.close.subscribe(() => (closed = true));
+    const button = (fixture.nativeElement as HTMLElement).querySelector(
+      '.palette__item',
+    ) as HTMLElement;
+    button.focus();
+    button.dispatchEvent(
+      new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }),
+    );
+    fixture.detectChanges();
+    expect(closed).toBe(true);
+  });
+
+  it('cycles Tab from the last focusable back to the first', () => {
+    const el = fixture.nativeElement as HTMLElement;
+    const items = el.querySelectorAll<HTMLElement>('.palette__item');
+    const last = items[items.length - 1];
+    last.focus();
+    const event = new KeyboardEvent('keydown', {
+      key: 'Tab',
+      bubbles: true,
+      cancelable: true,
+    });
+    last.dispatchEvent(event);
+    fixture.detectChanges();
+    expect(event.defaultPrevented).toBe(true);
+    expect(document.activeElement).toBe(el.querySelector('input'));
+  });
 });
