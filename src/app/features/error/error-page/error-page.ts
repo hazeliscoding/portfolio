@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { Title } from '@angular/platform-browser';
+
 import { Window } from '../../../ui/windows/window/window';
+import { PageMeta } from '../../../core/page-meta';
 
 @Component({
   selector: 'app-error-page',
@@ -14,13 +15,18 @@ export class ErrorPage {
   currentPath = '';
 
   constructor(
+    private pageMeta: PageMeta,
     private router: Router,
-    private title: Title,
   ) {
     this.currentPath = this.router.url;
   }
 
   ngOnInit(): void {
-    this.title.setTitle('Record not found - Hazel Granados');
+    this.pageMeta.set({
+      title: 'Record not found - Hazel Granados',
+      description: 'No record exists at this address.',
+      path: this.currentPath,
+      noindex: true,
+    });
   }
 }

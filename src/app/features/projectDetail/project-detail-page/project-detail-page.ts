@@ -1,6 +1,6 @@
 import { Component, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { Meta, Title } from '@angular/platform-browser';
+
 import { ChapterHeader } from '../../../ui/chapter-header/chapter-header';
 import { Window } from '../../../ui/windows/window/window';
 import { ViewportWindow } from '../../../ui/windows/viewport-window/viewport-window';
@@ -8,6 +8,7 @@ import { Badge } from '../../../ui/core/badge/badge';
 import { KeyValue, KeyValueItem } from '../../../ui/data/key-value/key-value';
 import { Project } from '../../../data/projects.data';
 import { ProjectsDataService } from '../../../services/projects-data.service';
+import { PageMeta } from '../../../core/page-meta';
 
 @Component({
   selector: 'project-detail-page',
@@ -21,10 +22,9 @@ export class ProjectDetailPage {
   activeImage = signal('');
 
   constructor(
+    private pageMeta: PageMeta,
     private route: ActivatedRoute,
     private projectsService: ProjectsDataService,
-    private title: Title,
-    private meta: Meta,
   ) {}
 
   ngOnInit(): void {
@@ -35,8 +35,11 @@ export class ProjectDetailPage {
       this.activeImage.set(found?.image ?? '');
 
       if (found) {
-        this.title.setTitle(`${found.title} - Hazel Granados`);
-        this.meta.updateTag({ name: 'description', content: found.description });
+        this.pageMeta.set({
+          title: `${found.title} - Hazel Granados`,
+          description: found.description,
+          path: `/portfolio/${found.id}`,
+        });
       }
     });
   }

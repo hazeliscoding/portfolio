@@ -1,12 +1,13 @@
 import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { Meta, Title } from '@angular/platform-browser';
+
 import { ChapterHeader } from '../../../ui/chapter-header/chapter-header';
 import { Window } from '../../../ui/windows/window/window';
 import { ViewportWindow } from '../../../ui/windows/viewport-window/viewport-window';
 import { Badge } from '../../../ui/core/badge/badge';
 import { StatusLight } from '../../../ui/core/status-light/status-light';
 import { projectsData } from '../../../data/projects.data';
+import { PageMeta } from '../../../core/page-meta';
 
 @Component({
   selector: 'portfolio-page',
@@ -27,15 +28,14 @@ export class PortfolioPage {
   }
 
   constructor(
-    private title: Title,
-    private meta: Meta,
+    private pageMeta: PageMeta,
   ) {}
 
   ngOnInit(): void {
-    this.title.setTitle('Projects - Hazel Granados');
-    this.meta.updateTag({
-      name: 'description',
-      content: 'Project archive — selected work by Hazel Granados.',
+    this.pageMeta.set({
+      title: 'Projects - Hazel Granados',
+      description: 'Project archive — selected work by Hazel Granados.',
+      path: '/portfolio',
     });
   }
 }

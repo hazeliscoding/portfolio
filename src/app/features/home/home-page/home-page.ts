@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { Meta, Title } from '@angular/platform-browser';
+
 import { ChapterHeader } from '../../../ui/chapter-header/chapter-header';
 import { Window } from '../../../ui/windows/window/window';
 import { ViewportWindow } from '../../../ui/windows/viewport-window/viewport-window';
@@ -10,6 +10,7 @@ import { projectsData } from '../../../data/projects.data';
 import { blogPosts } from '../../../data/blog-posts.generated';
 import { ossStats } from '../../../data/oss-stats.generated';
 import { count } from '../../../core/count';
+import { PageMeta } from '../../../core/page-meta';
 
 const LAST_UPDATE = '2026-09-20';
 
@@ -63,15 +64,14 @@ export class HomePage {
   }
 
   constructor(
-    private title: Title,
-    private meta: Meta,
+    private pageMeta: PageMeta,
   ) {}
 
   ngOnInit(): void {
-    this.title.setTitle('Hazel Granados — Software Developer');
-    this.meta.updateTag({
-      name: 'description',
-      content: 'Software developer. Full-stack applications built with care.',
+    this.pageMeta.set({
+      title: 'Hazel Granados — Software Developer',
+      description: 'Software developer. Full-stack applications built with care.',
+      path: '/',
     });
   }
 }

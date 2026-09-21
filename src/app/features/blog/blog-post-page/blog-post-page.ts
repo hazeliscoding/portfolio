@@ -1,11 +1,12 @@
 import { Component, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { DomSanitizer, Meta, Title, type SafeHtml } from '@angular/platform-browser';
+import { DomSanitizer, type SafeHtml } from '@angular/platform-browser';
 import { ChapterHeader } from '../../../ui/chapter-header/chapter-header';
 import { Window } from '../../../ui/windows/window/window';
 import { KeyValue, KeyValueItem } from '../../../ui/data/key-value/key-value';
 import { Badge } from '../../../ui/core/badge/badge';
 import { BlogService, type BlogPost } from '../../../services/blog.service';
+import { PageMeta } from '../../../core/page-meta';
 
 interface Heading {
   id: string;
@@ -41,10 +42,9 @@ export class BlogPostPage {
   bodyHtml = signal<SafeHtml>('');
 
   constructor(
+    private pageMeta: PageMeta,
     private route: ActivatedRoute,
     private blog: BlogService,
-    private title: Title,
-    private meta: Meta,
     private sanitizer: DomSanitizer,
   ) {}
 
@@ -63,13 +63,16 @@ export class BlogPostPage {
       this.bodyHtml.set(found ? this.sanitizer.bypassSecurityTrustHtml(found.html) : '');
 
       if (found) {
-        this.title.setTitle(`${found.title} - Hazel Granados`);
-        this.meta.updateTag({ name: 'description', content: found.description });
+        this.pageMeta.set({
+          title: `${found.title} - Hazel Granados`,
+          description: found.description,
+          path: `/blog/${found.slug}`,
+        });
       } else {
-        this.title.setTitle('Post not found - Hazel Granados');
-        this.meta.updateTag({
-          name: 'description',
-          content: 'This blog post could not be found.',
+        this.pageMeta.set({
+          title: 'Post not found - Hazel Granados',
+          description: 'This blog post could not be found.',
+          path: `/blog/${slug}`,
         });
       }
     });

@@ -1,11 +1,12 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { Meta, Title } from '@angular/platform-browser';
+
 import { ChapterHeader } from '../../../ui/chapter-header/chapter-header';
 import { Window } from '../../../ui/windows/window/window';
 import { Column, DataTable, Row } from '../../../ui/data/data-table/data-table';
 import { blogPosts } from '../../../data/blog-posts.generated';
 import { count } from '../../../core/count';
+import { PageMeta } from '../../../core/page-meta';
 
 @Component({
   selector: 'blog-page',
@@ -40,16 +41,15 @@ export class BlogPage {
   }
 
   constructor(
+    private pageMeta: PageMeta,
     private router: Router,
-    private title: Title,
-    private meta: Meta,
   ) {}
 
   ngOnInit(): void {
-    this.title.setTitle('Blog - Hazel Granados');
-    this.meta.updateTag({
-      name: 'description',
-      content: 'Notes on building software, by Hazel Granados.',
+    this.pageMeta.set({
+      title: 'Blog - Hazel Granados',
+      description: 'Notes on building software, by Hazel Granados.',
+      path: '/blog',
     });
   }
 

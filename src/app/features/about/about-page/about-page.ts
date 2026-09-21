@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
-import { Meta, Title } from '@angular/platform-browser';
+
 import { ChapterHeader } from '../../../ui/chapter-header/chapter-header';
 import { Window } from '../../../ui/windows/window/window';
 import { KeyValue, KeyValueItem } from '../../../ui/data/key-value/key-value';
 import { Badge } from '../../../ui/core/badge/badge';
+import { PageMeta } from '../../../core/page-meta';
 
 @Component({
   selector: 'about-page',
@@ -56,15 +57,14 @@ export class AboutPage {
   ];
 
   constructor(
-    private title: Title,
-    private meta: Meta,
+    private pageMeta: PageMeta,
   ) {}
 
   ngOnInit(): void {
-    this.title.setTitle('About - Hazel Granados');
-    this.meta.updateTag({
-      name: 'description',
-      content: 'About Hazel Granados — software developer.',
+    this.pageMeta.set({
+      title: 'About - Hazel Granados',
+      description: 'About Hazel Granados — software developer.',
+      path: '/about',
     });
   }
 }
