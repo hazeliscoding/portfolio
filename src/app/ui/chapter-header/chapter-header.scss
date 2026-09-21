@@ -31,6 +31,24 @@
   color: var(--signal-active);
 }
 
+.chapter__caret {
+  display: inline-block;
+  width: 10px;
+  height: 22px;
+  background: var(--signal-active);
+  align-self: center;
+  // 1.1s, deliberately not a round second and deliberately not the same as
+  // the other loops. Cadences that share a period visibly lock together and
+  // read as one mechanism rather than several.
+  animation: k-blink 1.1s steps(1) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chapter__caret {
+    animation: none;
+  }
+}
+
 .chapter__context {
   margin: 0;
   font: var(--type-mono-s);

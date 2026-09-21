@@ -43,4 +43,11 @@ describe('ChapterHeader', () => {
     const el = fixture.nativeElement as HTMLElement;
     expect(el.querySelector('.chapter__title')?.getAttribute('data-sfx')).toBe('a');
   });
+
+  it('carries a blinking caret so the interface is never fully still', () => {
+    const el = fixture.nativeElement as HTMLElement;
+    const caret = el.querySelector('.chapter__caret');
+    expect(caret).toBeTruthy();
+    expect(caret?.getAttribute('aria-hidden')).toBe('true');
+  });
 });

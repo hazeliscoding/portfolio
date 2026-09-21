@@ -102,3 +102,19 @@
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+.detail__rec {
+  position: absolute;
+  inset-block-start: var(--sp-2);
+  inset-inline-end: var(--sp-2);
+  font: var(--type-mono-s);
+  letter-spacing: var(--tracking-wide);
+  color: var(--text-active);
+  animation: k-blink 1.4s steps(1) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .detail__rec {
+    animation: none;
+  }
+}
