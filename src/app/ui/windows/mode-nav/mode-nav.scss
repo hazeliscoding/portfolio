@@ -1,0 +1,50 @@
+.mode-nav {
+  display: flex;
+  flex-direction: column;
+  border-inline-end: var(--bw-hairline) solid var(--border-faint);
+  padding-block-start: var(--sp-1);
+}
+
+.mode-nav__header {
+  font: var(--type-mono-s);
+  letter-spacing: var(--tracking-wider);
+  color: var(--text-faint);
+  padding: var(--sp-2) var(--sp-3);
+}
+
+.mode-nav__item {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  min-height: var(--target-min);
+  padding: 0 var(--sp-3);
+  background: transparent;
+  border: 0;
+  border-inline-start: var(--bw-indicator) solid transparent;
+  font: var(--type-mono);
+  letter-spacing: var(--tracking-wide);
+  color: var(--text-muted);
+  cursor: pointer;
+  text-align: start;
+  transition: color var(--dur-control) var(--ease-mech);
+
+  &:hover {
+    color: var(--text-primary);
+  }
+
+  &--active {
+    border-inline-start-color: var(--signal-active);
+    background: var(--surface-active-tint);
+    color: var(--text-primary);
+    // 2px text shift — a non-color selection signal, per KAIRO
+    padding-inline-start: calc(var(--sp-3) + 2px);
+  }
+}
+
+.mode-nav__index {
+  color: var(--text-faint);
+}
+
+.mode-nav__item--active .mode-nav__index {
+  color: var(--signal-active);
+}
