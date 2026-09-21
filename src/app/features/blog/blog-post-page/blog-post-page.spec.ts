@@ -1,7 +1,21 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, provideRouter } from '@angular/router';
 import { of } from 'rxjs';
-import { BlogPostPage } from './blog-post-page';
+import { BlogPostPage, decodeEntities } from './blog-post-page';
+
+describe('decodeEntities', () => {
+  it('decodes the entities marked produces', () => {
+    expect(decodeEntities('&lt;tag&gt;')).toBe('<tag>');
+    expect(decodeEntities('&quot;quoted&quot;')).toBe('"quoted"');
+    expect(decodeEntities("It&#39;s")).toBe("It's");
+    expect(decodeEntities('A &amp; B')).toBe('A & B');
+  });
+
+  it('replaces &amp; last so escaped entities survive one decode', () => {
+    // If &amp; were replaced first, this would wrongly become '<'.
+    expect(decodeEntities('&amp;lt;')).toBe('&lt;');
+  });
+});
 
 describe('BlogPostPage', () => {
   let fixture: ComponentFixture<BlogPostPage>;
@@ -46,8 +60,11 @@ describe('BlogPostPage', () => {
     const contents = el.querySelector('.post__contents');
     expect(contents).toBeTruthy();
     expect(contents?.textContent).toContain('optimizing for');
-    // marked HTML-escapes heading text (e.g. an apostrophe becomes &#39;);
-    // the CONTENTS list must render the decoded text, not the raw entity.
+    // Smoke check only: the fixture's only heading uses a curly apostrophe
+    // (U+2019), which marked never escapes, so this assertion passes whether
+    // or not decodeEntities works correctly. The `decodeEntities` describe
+    // block above is what actually exercises the decoding, including the
+    // &amp;-must-be-last ordering.
     expect(contents?.textContent).not.toContain('&#');
   });
 

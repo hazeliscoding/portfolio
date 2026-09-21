@@ -12,7 +12,14 @@ interface Heading {
   text: string;
 }
 
-function decodeEntities(text: string): string {
+/**
+ * Decodes the handful of entities `marked` can emit inside heading text.
+ * `&amp;` MUST be replaced last: if it ran first, an already-escaped
+ * `&amp;lt;` (the literal text `&lt;`) would wrongly finish as `<` instead
+ * of stopping at `&lt;`. See `decodeEntities.spec.ts` for a test that pins
+ * this ordering and fails if it is ever changed.
+ */
+export function decodeEntities(text: string): string {
   return text
     .replace(/&lt;/g, '<')
     .replace(/&gt;/g, '>')
@@ -47,11 +54,12 @@ export class BlogPostPage {
       const found = this.blog.getPostBySlug(slug);
       this.post.set(found);
       this.headings.set(found ? this.extractHeadings(found.html) : []);
-      // Angular's built-in HTML sanitizer strips `id` attributes (they are
-      // not in its HTML_ATTRS allowlist), which would silently kill every
-      // CONTENTS anchor. The markdown is authored in-repo and rendered at
-      // build time — it is not user input — so it is safe to mark it
-      // trusted and bypass that sanitizer for this one binding.
+      // SAFETY: this HTML comes from markdown committed to this repository and
+      // rendered at build time — it is exactly as trusted as the application
+      // source. Angular's sanitizer strips `id`, which would break every CONTENTS
+      // anchor, so the bypass is necessary here.
+      // REMOVE THIS BYPASS if blog content ever becomes externally sourced:
+      // CMS-fed, accepting outside contributions, or fetched at runtime.
       this.bodyHtml.set(found ? this.sanitizer.bypassSecurityTrustHtml(found.html) : '');
 
       if (found) {
