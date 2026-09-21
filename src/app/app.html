@@ -1,9 +1,11 @@
 <div class="app" [attr.data-sfx]="motion.sfx()">
   <app-system-bar position="top">
-    <span barLeft class="app__wordmark">hazel<span class="app__ext">.exe</span></span>
+    <a barLeft class="app__wordmark" routerLink="/" aria-label="hazel.exe — home"
+      >hazel<span class="app__ext">.exe</span></a
+    >
     <app-readout barCenter label="NET" value="ONLINE" state="ok" />
     <app-readout barCenter label="LOC" value="TEXAS // USA" />
-    <app-readout barCenter label="SYNC" value="04ms" class="app__sync" />
+    <app-readout barCenter label="SYNC" [value]="sync()" class="app__sync" />
     <span barCenter class="app__path">
       HAZEL.EXE <span class="app__path-sep">//</span> {{ pathLabel() }}
     </span>
@@ -34,8 +36,8 @@
         <span aria-hidden="true">&#8984;K</span> COMMAND
       </button>
       <span class="app__hint">/ SEARCH</span>
-      <span class="app__hint">ESC BACK</span>
     </span>
+    <span barRight class="app__log">{{ lastLog() }}</span>
   </app-system-bar>
 
   <app-command-palette

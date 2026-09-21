@@ -8,7 +8,7 @@ import {
   signal,
   viewChild,
 } from '@angular/core';
-import { NavigationEnd, NavigationStart, Router, RouterOutlet } from '@angular/router';
+import { NavigationEnd, NavigationStart, Router, RouterLink, RouterOutlet } from '@angular/router';
 import { SystemBar } from './ui/windows/system-bar/system-bar';
 import { ModeNav } from './ui/windows/mode-nav/mode-nav';
 import { Readout } from './ui/core/readout/readout';
@@ -22,7 +22,7 @@ const CLOCK_PLACEHOLDER = '--:--:--';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, SystemBar, ModeNav, Readout, CommandPalette, Boot],
+  imports: [RouterOutlet, RouterLink, SystemBar, ModeNav, Readout, CommandPalette, Boot],
   templateUrl: './app.html',
   styleUrl: './app.scss',
 })
@@ -38,17 +38,36 @@ export class App {
 
   activeMode = computed(() => {
     const url = this.currentUrl();
+    const path = url.split('?')[0].split('#')[0];
+    if (path === '/') return 'home';
     const match = this.modes
-      .filter((m) => m.route !== '/' && url.startsWith(m.route))
+      .filter((m) => m.route !== '/' && path.startsWith(m.route))
       .sort((a, b) => b.route.length - a.route.length)[0];
-    return match?.id ?? 'home';
+    // No fallback: an unmatched URL is not a mode, and the rail should show
+    // nothing rather than claim a location.
+    return match?.id ?? '';
   });
 
   envWord = computed(() => envWordFor(this.currentUrl()));
 
   pathLabel = computed(() => {
     const active = this.modes.find((m) => m.id === this.activeMode());
-    return active ? active.label : 'HOME';
+    // 'NULL', not 'HOME': activeMode() can now return '' for an unmatched
+    // URL, and the path readout claiming HOME on a 404 would be the same
+    // lie the rail was just fixed for. 'NULL' matches envWordFor's own
+    // fallback for this exact class of URL, so the two instruments agree.
+    return active ? active.label : 'NULL';
+  });
+
+  private readonly entries = signal<string[]>([]);
+  lastLog = computed(() => this.entries()[0] ?? '');
+
+  // Derived from the URL, not random: prerender and hydration must agree.
+  sync = computed(() => {
+    const url = this.currentUrl();
+    let hash = 0;
+    for (let i = 0; i < url.length; i++) hash = (hash * 31 + url.charCodeAt(i)) | 0;
+    return `${String((Math.abs(hash) % 8) + 2).padStart(2, '0')}ms`;
   });
 
   private currentUrl = signal('/');
@@ -68,6 +87,7 @@ export class App {
       this.currentUrl.set(this.router.url);
       if (event instanceof NavigationEnd) {
         this.handleScrollFor(event);
+        this.note('NAV ' + event.urlAfterRedirects);
       }
     });
 
@@ -182,6 +202,7 @@ export class App {
   onCommandRun(id: string): void {
     const command = this.commands.find((c) => c.id === id);
     this.paletteOpen.set(false);
+    this.note('EXEC ' + id);
     if (command) this.router.navigateByUrl(command.route);
   }
 
@@ -192,5 +213,12 @@ export class App {
 
   private tick(): void {
     this.clock.set(new Date().toTimeString().slice(0, 8));
+  }
+
+  private note(message: string): void {
+    // Stamped from the shared clock signal rather than a fresh Date, so the
+    // two instruments in the bar can never disagree about the time.
+    const stamp = this.clock();
+    this.entries.update((all) => [`${stamp} ${message}`, ...all].slice(0, 5));
   }
 }

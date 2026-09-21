@@ -12,6 +12,13 @@
   font: 600 16px/1 var(--font-display);
   letter-spacing: var(--tracking-wide);
   color: var(--text-primary);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.app__wordmark:hover .app__ext,
+.app__wordmark:focus-visible .app__ext {
+  color: var(--signal-active-strong);
 }
 
 .app__ext {
@@ -49,6 +56,14 @@
 }
 
 .app__hint {
+  color: var(--text-faint);
+}
+
+.app__log {
+  max-width: 40ch;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   color: var(--text-faint);
 }
 

@@ -1,6 +1,13 @@
+import { Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { provideRouter } from '@angular/router';
+import { provideRouter, Router } from '@angular/router';
 import { App } from './app';
+
+// Stub target for the wildcard route below. The describe block's shared
+// `provideRouter([])` has no routes at all, so it cannot stand in for the
+// real app.routes.ts's catch-all `**` -> ErrorPage route the 404 test needs.
+@Component({ selector: 'app-test-not-found-stub', template: '', standalone: true })
+class NotFoundStub {}
 
 describe('App', () => {
   beforeEach(async () => {
@@ -27,6 +34,52 @@ describe('App', () => {
     const fixture = TestBed.createComponent(App);
     fixture.detectChanges();
     expect((fixture.nativeElement as HTMLElement).textContent).toContain('hazel');
+  });
+
+  it('highlights no mode when the route matches none', async () => {
+    // Deviation from the brief's verbatim spec, with evidence: run as
+    // written against the describe block's shared `provideRouter([])`, this
+    // test throws `NG04002: Cannot match any routes` — an empty route table
+    // has nothing to match '/definitely-not-a-route' against, so the router
+    // never settles on that URL for activeMode() to observe. The real app
+    // (app.routes.ts) has a wildcard `**` route to an ErrorPage for exactly
+    // this case, so this test reconfigures TestBed with an equivalent stub
+    // wildcard rather than diverging from how production actually reaches a
+    // "no mode matches" URL.
+    await TestBed.resetTestingModule()
+      .configureTestingModule({
+        imports: [App],
+        providers: [provideRouter([{ path: '**', component: NotFoundStub }])],
+      })
+      .compileComponents();
+    const fixture = TestBed.createComponent(App);
+    fixture.detectChanges();
+    const router = TestBed.inject(Router);
+    await router.navigateByUrl('/definitely-not-a-route');
+    fixture.detectChanges();
+    expect(fixture.componentInstance.activeMode()).toBe('');
+  });
+
+  it('makes the wordmark a link home', () => {
+    const fixture = TestBed.createComponent(App);
+    fixture.detectChanges();
+    const mark = (fixture.nativeElement as HTMLElement).querySelector('.app__wordmark');
+    expect(mark?.tagName).toBe('A');
+    expect(mark?.getAttribute('href')).toBe('/');
+  });
+
+  it('does not advertise a keybinding it does not implement', () => {
+    const fixture = TestBed.createComponent(App);
+    fixture.detectChanges();
+    const hints = (fixture.nativeElement as HTMLElement).querySelector('.app__hints');
+    expect(hints?.textContent).not.toContain('ESC BACK');
+  });
+
+  it('narrates navigation in the bottom bar', () => {
+    const fixture = TestBed.createComponent(App);
+    fixture.detectChanges();
+    const log = (fixture.nativeElement as HTMLElement).querySelector('.app__log');
+    expect(log).toBeTruthy();
   });
 
   it('renders the mode rail', () => {
