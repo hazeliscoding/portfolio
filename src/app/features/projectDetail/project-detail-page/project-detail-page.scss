@@ -26,6 +26,7 @@
   border: var(--bw-hairline) solid var(--border-default);
   cursor: pointer;
   text-align: start;
+  transition: border-color var(--dur-micro) var(--ease-mech);
 
   img {
     width: 100%;

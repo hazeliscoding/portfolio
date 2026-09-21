@@ -26,7 +26,6 @@
   color: var(--text-muted);
   cursor: pointer;
   text-align: start;
-  transition: color var(--dur-control) var(--ease-mech);
 
   &:hover {
     color: var(--text-primary);

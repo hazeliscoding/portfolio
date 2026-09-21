@@ -82,11 +82,12 @@
   border-bottom: var(--bw-hairline) solid var(--border-faint);
   font: var(--type-mono-s);
   color: var(--text-secondary);
+  transition: transform var(--dur-micro) var(--ease-mech);
 
   &:hover {
     border-inline-start-color: var(--signal-active);
     color: var(--text-primary);
-    padding-inline-start: var(--sp-2);
+    transform: translateX(2px);
   }
 
   &:last-child {
@@ -109,11 +110,12 @@
   border-bottom: var(--bw-hairline) solid var(--border-faint);
   font: var(--type-mono-s);
   color: var(--text-secondary);
+  transition: transform var(--dur-micro) var(--ease-mech);
 
   &:hover {
     border-inline-start-color: var(--signal-active);
     color: var(--text-primary);
-    padding-inline-start: var(--sp-2);
+    transform: translateX(2px);
   }
 
   &:last-child {

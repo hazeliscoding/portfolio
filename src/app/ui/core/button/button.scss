@@ -12,9 +12,6 @@
   background: var(--surface-elevated);
   color: var(--text-secondary);
   border: var(--bw-hairline) solid var(--border-default);
-  transition:
-    background-color var(--dur-control) var(--ease-mech),
-    color var(--dur-control) var(--ease-mech);
 
   &:hover:not(:disabled) {
     background: var(--surface-raised);
