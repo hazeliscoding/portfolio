@@ -42,3 +42,6 @@ testem.log
 Thumbs.db
 .vercel
 *:Zone.Identifier
+
+# Browser automation / MCP verification artifacts
+.playwright-mcp/
