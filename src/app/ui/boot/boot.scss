@@ -1,0 +1,150 @@
+.boot {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-alert);
+  background: var(--surface-inset);
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.boot__env {
+  position: absolute;
+  inset-inline-start: -2%;
+  inset-block-end: 2%;
+  font: 600 34vh/0.9 var(--font-display);
+  letter-spacing: var(--tracking-display);
+  color: var(--surface-elevated);
+  user-select: none;
+  pointer-events: none;
+  animation: env-a var(--dur-cinematic) var(--ease-mech) both;
+  animation-delay: 200ms;
+}
+
+.boot__window {
+  position: relative;
+  z-index: 1;
+  width: min(560px, 92vw);
+  background: var(--surface-window);
+  border: var(--bw-hairline) solid var(--border-strong);
+  border-top: var(--bw-rule) solid var(--signal-active);
+}
+
+.boot__head {
+  display: flex;
+  gap: var(--sp-3);
+  align-items: center;
+  padding: var(--sp-2) var(--sp-3);
+  border-bottom: var(--bw-hairline) solid var(--border-faint);
+  font: var(--type-mono-s);
+  color: var(--text-faint);
+}
+
+.boot__index {
+  color: var(--text-active);
+}
+
+.boot__title {
+  font: var(--type-label);
+  letter-spacing: var(--tracking-wider);
+  text-transform: uppercase;
+  color: var(--text-primary);
+}
+
+// One auto margin, not two — with a margin on both ends flexbox splits the
+// free space between them and neither lands where it was aimed.
+.boot__clock {
+  margin-inline-start: auto;
+}
+
+.boot__log {
+  padding: var(--sp-4) var(--sp-3);
+  display: grid;
+  gap: var(--sp-2);
+  font: var(--type-mono);
+  color: var(--text-secondary);
+}
+
+.boot__line {
+  margin: 0;
+  display: flex;
+  gap: var(--sp-2);
+  animation: boot-in var(--dur-control) var(--ease-mech) both;
+}
+
+// The prompt is present from the first frame; only the log streams in.
+.boot__line--live {
+  animation: none;
+  align-items: center;
+}
+
+.boot__prefix[data-tone="active"] {
+  color: var(--signal-active);
+}
+
+.boot__prefix[data-tone="faint"] {
+  color: var(--text-faint);
+}
+
+.boot__prefix[data-tone="success"] {
+  color: var(--signal-success);
+}
+
+.boot__text[data-emphasis="primary"] {
+  color: var(--text-primary);
+}
+
+.boot__cursor {
+  display: inline-block;
+  // Sized to the mono cell rather than the 4px spacing grid: a text cursor's
+  // dimensions come from the font's metrics, not the layout scale.
+  width: 9px;
+  height: 15px;
+  background: var(--text-primary);
+  animation: k-blink var(--dur-blink) steps(1) infinite;
+}
+
+// A track the fill travels along, not a bare bar — without the track there is
+// nothing to read the progress against.
+.boot__bar {
+  height: var(--bw-indicator);
+  background: var(--surface-raised);
+  overflow: hidden;
+}
+
+.boot__bar-fill {
+  display: block;
+  height: 100%;
+  background: var(--signal-active);
+  transform-origin: left center;
+  // Paired with M4's 2700ms dismissal: the bar completes, then the overlay
+  // leaves. Changing one without the other either truncates the bar or leaves
+  // a finished bar sitting on screen. Both numbers are deliberate.
+  animation: boot-bar 2600ms linear both;
+}
+
+.boot__foot {
+  display: flex;
+  gap: var(--sp-4);
+  padding: var(--sp-2) var(--sp-3);
+  border-top: var(--bw-hairline) solid var(--border-faint);
+  font: var(--type-mono-s);
+  letter-spacing: var(--tracking-wider);
+  color: var(--text-faint);
+}
+
+.boot__node {
+  margin-inline-start: auto;
+}
+
+// The shell does not mount this component at all under reduced motion. The
+// guard is here anyway so the component cannot animate in any context.
+@media (prefers-reduced-motion: reduce) {
+  .boot__env,
+  .boot__line,
+  .boot__cursor,
+  .boot__bar-fill {
+    animation: none;
+  }
+}

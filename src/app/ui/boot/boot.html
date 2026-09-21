@@ -1,0 +1,32 @@
+<div class="boot" #root role="status" tabindex="-1">
+  <span class="boot__env" aria-hidden="true">HAZEL</span>
+
+  <div class="boot__window">
+    <div class="boot__head">
+      <span class="boot__index" aria-hidden="true">00</span>
+      <span class="boot__title">Boot sequence</span>
+      <span class="boot__sep" aria-hidden="true">// hazel.exe</span>
+      <span class="boot__clock" aria-hidden="true">{{ clock() }}</span>
+    </div>
+
+    <div class="boot__log" aria-hidden="true">
+      @for (line of lines; track line.text) {
+        <p class="boot__line" [style.animation-delay.ms]="line.delay">
+          <span class="boot__prefix" [attr.data-tone]="line.tone">{{ line.prefix }}</span>
+          <span class="boot__text" [attr.data-emphasis]="line.emphasis">{{ line.text }}</span>
+        </p>
+      }
+      <p class="boot__line boot__line--live">
+        <span class="boot__prefix" data-tone="active">&gt;</span>
+        <span class="boot__cursor"></span>
+      </p>
+    </div>
+
+    <div class="boot__bar" aria-hidden="true"><span class="boot__bar-fill"></span></div>
+
+    <div class="boot__foot">
+      <span>CLICK OR PRESS ANY KEY TO SKIP</span>
+      <span class="boot__node" aria-hidden="true">NODE TX-01</span>
+    </div>
+  </div>
+</div>
