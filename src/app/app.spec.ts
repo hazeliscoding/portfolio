@@ -85,4 +85,13 @@ describe('App', () => {
     fixture.detectChanges();
     expect(el.querySelector('.palette')).toBeTruthy();
   });
+
+  it('vertically centres the bottom bar items', () => {
+    const fixture = TestBed.createComponent(App);
+    fixture.detectChanges();
+    const hints = (fixture.nativeElement as HTMLElement).querySelector(
+      '.app__hints',
+    ) as HTMLElement;
+    expect(getComputedStyle(hints).alignItems).toBe('center');
+  });
 });

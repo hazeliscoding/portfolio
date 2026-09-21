@@ -20,7 +20,7 @@ export class BlogPage {
     { key: 'tags', label: 'TAGS', width: '220px' },
   ];
 
-  posts = [...blogPosts].sort((a, b) => b.date.localeCompare(a.date));
+  posts = [...blogPosts].sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0));
 
   rows: Row[] = this.posts.map((p) => ({
     id: p.slug,

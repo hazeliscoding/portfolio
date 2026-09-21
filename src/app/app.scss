@@ -21,6 +21,7 @@
 
 .app__hints {
   display: inline-flex;
+  align-items: center;
   gap: var(--sp-5);
   color: var(--text-faint);
 }
