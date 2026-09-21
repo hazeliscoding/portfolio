@@ -121,6 +121,10 @@
   }
 }
 
+.home__log-row .home__meta {
+  margin-inline-start: 0;
+}
+
 .home__body {
   margin: 0 0 var(--sp-2);
   color: var(--text-secondary);

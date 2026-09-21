@@ -65,4 +65,11 @@ describe('HomePage', () => {
     ) as HTMLElement;
     expect(getComputedStyle(row).display).toBe('flex');
   });
+
+  it('leads the log row with the date rather than pushing it right', () => {
+    const meta = (fixture.nativeElement as HTMLElement).querySelector(
+      '.home__log-row .home__meta',
+    ) as HTMLElement;
+    expect(getComputedStyle(meta).marginInlineStart).toBe('0px');
+  });
 });

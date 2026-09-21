@@ -1,0 +1,179 @@
+- generic [ref=f1e3]:
+  - status [ref=f1e5]:
+    - generic [ref=f1e6]: hazel.exe
+    - generic [ref=f1e8]:
+      - generic [ref=f1e10]:
+        - generic [ref=f1e11]: NET
+        - generic [ref=f1e12]: ONLINE
+      - generic [ref=f1e14]:
+        - generic [ref=f1e15]: LOC
+        - generic [ref=f1e16]: TEXAS // USA
+    - generic [ref=f1e17]:
+      - generic [ref=f1e19]:
+        - generic [ref=f1e20]: STATUS
+        - generic [ref=f1e21]: OPEN TO WORK
+      - generic [ref=f1e22]: 00:09:37
+  - generic [ref=f1e23]:
+    - navigation "Mode" [ref=f1e25]:
+      - generic [ref=f1e26]: MODE
+      - button "01 HOME" [ref=f1e27] [cursor=pointer]:
+        - generic [ref=f1e28]: "01"
+        - generic [ref=f1e29]: HOME
+      - button "02 PROFILE" [ref=f1e30] [cursor=pointer]:
+        - generic [ref=f1e31]: "02"
+        - generic [ref=f1e32]: PROFILE
+      - button "03 ARCHIVE" [ref=f1e33] [cursor=pointer]:
+        - generic [ref=f1e34]: "03"
+        - generic [ref=f1e35]: ARCHIVE
+      - button "04 LOG" [ref=f1e36] [cursor=pointer]:
+        - generic [ref=f1e37]: "04"
+        - generic [ref=f1e38]: LOG
+    - main [ref=f1e39]:
+      - generic [ref=f1e40]:
+        - generic [ref=f1e42]:
+          - generic [aria-hidden]: HAZEL
+          - heading "HOME_01" [level=1] [ref=f1e43]
+          - paragraph [ref=f1e44]: HAZEL.EXE//OPERATOR PROFILE
+          - paragraph [ref=f1e45]: LAST UPDATE 2026-09-20
+        - generic [ref=f1e46]:
+          - generic [ref=f1e47]:
+            - generic "Operator" [ref=f1e48]:
+              - region "Operator" [ref=f1e49]:
+                - generic [ref=f1e50]:
+                  - generic [ref=f1e51]: "00"
+                  - generic [ref=f1e52]: Operator
+                  - generic [ref=f1e53]: //
+                  - generic [ref=f1e54]: PROFILE
+                - generic [ref=f1e56]:
+                  - figure "CAM 00" [ref=f1e58]:
+                    - generic [ref=f1e59]: NO SIGNAL
+                  - generic [ref=f1e61]:
+                    - paragraph [ref=f1e62]: Hazel Granados
+                    - paragraph [ref=f1e63]: SOFTWARE DEVELOPER
+                    - paragraph [ref=f1e64]: SHE/THEY
+                    - generic [ref=f1e65]:
+                      - link "Contact >" [ref=f1e66] [cursor=pointer]:
+                        - /url: "#contact"
+                      - link "Resume" [ref=f1e67] [cursor=pointer]:
+                        - /url: resume/resume-en.pdf
+            - generic "Stack" [ref=f1e68]:
+              - region "Stack" [ref=f1e69]:
+                - generic [ref=f1e70]:
+                  - generic [ref=f1e71]: "01"
+                  - generic [ref=f1e72]: Stack
+                  - generic [ref=f1e73]: //
+                  - generic [ref=f1e74]: RUNTIME
+                - list [ref=f1e76]:
+                  - listitem [ref=f1e77]:
+                    - generic [ref=f1e78]: "01"
+                    - generic [ref=f1e79]: C# / .NET 8
+                  - listitem [ref=f1e80]:
+                    - generic [ref=f1e81]: "02"
+                    - generic [ref=f1e82]: ASP.NET Core
+                  - listitem [ref=f1e83]:
+                    - generic [ref=f1e84]: "03"
+                    - generic [ref=f1e85]: Angular
+                  - listitem [ref=f1e86]:
+                    - generic [ref=f1e87]: "04"
+                    - generic [ref=f1e88]: EF Core + PostgreSQL
+                  - listitem [ref=f1e89]:
+                    - generic [ref=f1e90]: "05"
+                    - generic [ref=f1e91]: CQRS / MediatR
+                  - listitem [ref=f1e92]:
+                    - generic [ref=f1e93]: "06"
+                    - generic [ref=f1e94]: AWS SQS/SNS
+                  - listitem [ref=f1e95]:
+                    - generic [ref=f1e96]: "07"
+                    - generic [ref=f1e97]: Terraform
+                  - listitem [ref=f1e98]:
+                    - generic [ref=f1e99]: "08"
+                    - generic [ref=f1e100]: AWS Parameter Store
+                  - listitem [ref=f1e101]:
+                    - generic [ref=f1e102]: "09"
+                    - generic [ref=f1e103]: Docker
+                  - listitem [ref=f1e104]:
+                    - generic [ref=f1e105]: "10"
+                    - generic [ref=f1e106]: xUnit + Testcontainers
+            - generic "Services" [ref=f1e107]:
+              - region "Services" [ref=f1e108]:
+                - generic [ref=f1e109]:
+                  - generic [ref=f1e110]: "02"
+                  - generic [ref=f1e111]: Services
+                  - generic [ref=f1e112]: //
+                  - generic [ref=f1e113]: OFFERED
+                - generic [ref=f1e115]:
+                  - generic [ref=f1e116]: Full-stack web application development
+                  - generic [ref=f1e118]: Backend/API engineering
+                  - generic [ref=f1e120]: Background processing & scheduled jobs
+                  - generic [ref=f1e122]: Event-driven integrations
+                  - generic [ref=f1e124]: Database design & optimization
+                  - generic [ref=f1e126]: Cloud deployment & DevOps automation
+                  - generic [ref=f1e128]: Observability & monitoring setup
+                  - generic [ref=f1e130]: Automated testing & CI/CD pipelines
+          - generic [ref=f1e132]:
+            - generic "Open Source" [ref=f1e133]:
+              - region "Open Source" [ref=f1e134]:
+                - generic [ref=f1e135]:
+                  - generic [ref=f1e136]: "03"
+                  - generic [ref=f1e137]: Open Source
+                  - generic [ref=f1e138]: //
+                  - generic [ref=f1e139]: CONTRIBUTIONS
+                  - generic [ref=f1e140]: 3 MERGED
+                - list [ref=f1e142]:
+                  - listitem [ref=f1e143]:
+                    - link "BCUninstaller/Bulk-Crap-Uninstaller" [ref=f1e144] [cursor=pointer]:
+                      - /url: https://github.com/BCUninstaller/Bulk-Crap-Uninstaller/pulls?q=is%3Apr%20author%3Ahazeliscoding%20is%3Amerged
+                    - generic [ref=f1e145]: 20989 STARS // 2 PRS
+                  - listitem [ref=f1e146]:
+                    - link "sjmh/pyqb" [ref=f1e147] [cursor=pointer]:
+                      - /url: https://github.com/sjmh/pyqb/pulls?q=is%3Apr%20author%3Ahazeliscoding%20is%3Amerged
+                    - generic [ref=f1e148]: 10 STARS // 1 PRS
+            - generic "Archive" [ref=f1e149]:
+              - region "Archive" [ref=f1e150]:
+                - generic [ref=f1e151]:
+                  - generic [ref=f1e152]: "04"
+                  - generic [ref=f1e153]: Archive
+                  - generic [ref=f1e154]: //
+                  - generic [ref=f1e155]: FEATURED
+                  - generic [ref=f1e156]: RECORD 01 OF 01
+                - link "01 PR Sweep Electron · Angular // 2026" [ref=f1e158] [cursor=pointer]:
+                  - /url: /portfolio/pr-sweep
+                  - generic [ref=f1e159]: "01"
+                  - generic [ref=f1e160]: PR Sweep
+                  - generic [ref=f1e161]: Electron · Angular // 2026
+                  - status [ref=f1e163]:
+                    - generic [aria-hidden] [ref=f1e164]: ●
+                    - generic [ref=f1e165]: ACTIVE
+            - generic "Log" [ref=f1e166]:
+              - region "Log" [ref=f1e167]:
+                - generic [ref=f1e168]:
+                  - generic [ref=f1e169]: "05"
+                  - generic [ref=f1e170]: Log
+                  - generic [ref=f1e171]: //
+                  - generic [ref=f1e172]: RECENT
+                  - generic [ref=f1e173]: 1 ENTRIES
+                - link "2026-01-16 Hello, World!" [ref=f1e175] [cursor=pointer]:
+                  - /url: /blog/hello-world
+                  - generic [ref=f1e176]: 2026-01-16
+                  - generic [ref=f1e177]: Hello, World!
+            - generic "Contact" [ref=f1e178]:
+              - region "Contact" [ref=f1e179]:
+                - generic [ref=f1e180]:
+                  - generic [ref=f1e181]: "06"
+                  - generic [ref=f1e182]: Contact
+                  - generic [ref=f1e183]: //
+                  - generic [ref=f1e184]: DIRECT
+                - generic [ref=f1e185]:
+                  - paragraph [ref=f1e186]: "For questions or collaboration, reach out:"
+                  - link "hazel.granados@protonmail.com" [ref=f1e187] [cursor=pointer]:
+                    - /url: mailto:hazel.granados@protonmail.com
+                  - generic [ref=f1e188]:
+                    - link "LinkedIn" [ref=f1e189] [cursor=pointer]:
+                      - /url: https://www.linkedin.com/in/hazelgranados/
+                    - link "GitHub" [ref=f1e190] [cursor=pointer]:
+                      - /url: https://github.com/hazeliscoding
+  - status [ref=f1e192]:
+    - generic [ref=f1e194]:
+      - generic [ref=f1e195]: ⌘K COMMAND
+      - generic [ref=f1e196]: / SEARCH
+      - generic [ref=f1e197]: ESC BACK
