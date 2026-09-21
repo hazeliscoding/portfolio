@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>hazel.exe — social card source</title>
+
+    <!--
+      THIS FILE IS THE SOCIAL CARD. Edit it, then re-render (see below).
+
+      It used to be an SVG rasterised by sharp in scripts/generate-og-image.mjs.
+      That produced a card in the WRONG TYPEFACE for months: sharp's rasteriser
+      has no access to the Google webfonts, so "Saira Condensed" silently fell
+      back. Proven by rendering the same text as Saira Condensed, as IBM Plex
+      Mono, and as a font name that cannot exist, then hashing the three PNGs —
+      all byte-identical (6fcf98422079989f). The SVG asked for the right fonts
+      and nothing resolved them.
+
+      HTML rendered by a real browser fixes that, because the browser loads the
+      same webfonts the site does.
+
+      TO REGENERATE:
+        1. Open this file in a browser.
+        2. Set the viewport to exactly 1200 x 630.
+        3. Screenshot at 1x (no device pixel ratio scaling).
+        4. Save over public/og-image.png.
+        5. Run `npm run check:og` to confirm the dimensions.
+
+      Keep it to KAIRO: dark surface, signal red, hairline frame, no shadows,
+      no gradients, no emoji.
+    -->
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@600&family=IBM+Plex+Mono:wght@400&family=IBM+Plex+Sans:wght@400&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      html,
+      body {
+        margin: 0;
+        background: #0b0e12;
+      }
+
+      /* KAIRO tokens, inlined — this file renders outside the app. */
+      .card {
+        position: relative;
+        width: 1200px;
+        height: 630px;
+        overflow: hidden;
+        background: #0b0e12; /* --surface-canvas */
+      }
+
+      .frame {
+        position: absolute;
+        inset: 24px;
+        border: 1px solid #28313b; /* --border-default, hairline */
+      }
+
+      .wordmark {
+        position: absolute;
+        left: 96px;
+        top: 186px;
+        font: 600 132px/1 "Saira Condensed", sans-serif;
+        letter-spacing: 0.02em; /* --tracking-display */
+        color: #e9e7e1; /* --text-primary */
+      }
+
+      .wordmark i {
+        font-style: normal;
+        color: #e8382c; /* --signal-active */
+      }
+
+      .ident {
+        position: absolute;
+        left: 98px;
+        top: 350px;
+        font: 400 22px/1 "IBM Plex Mono", monospace;
+        letter-spacing: 3.5px;
+        color: #8b949d; /* --text-muted */
+      }
+
+      /* The role line. Without it the card is atmosphere and no information —
+         in a feed the image is read before the og:title beneath it. */
+      .role {
+        position: absolute;
+        left: 98px;
+        top: 406px;
+        font: 400 34px/1 "IBM Plex Sans", sans-serif;
+        color: #aeb6bd; /* --text-secondary */
+      }
+
+      .status {
+        position: absolute;
+        left: 98px;
+        top: 546px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font: 400 20px/1 "IBM Plex Mono", monospace;
+        letter-spacing: 1.8px;
+        color: #5c6670; /* --text-faint */
+      }
+
+      .dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: #55d88a; /* --signal-success */
+      }
+
+      .status b {
+        font-weight: 400;
+        color: #55d88a;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="card">
+      <div class="frame"></div>
+      <div class="wordmark">hazel<i>.exe</i></div>
+      <div class="ident">HAZEL.EXE // OPERATOR PROFILE</div>
+      <div class="role">Software Developer</div>
+      <div class="status"><span class="dot"></span>NET <b>ONLINE</b></div>
+    </div>
+  </body>
+</html>
