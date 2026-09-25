@@ -126,4 +126,39 @@ export const projectsData: Project[] = [
     year: '2026',
     stack: 'Angular · AniList GraphQL',
   },
+  {
+    id: 'quickbase-net',
+    title: 'QuickbaseNet',
+    description:
+      'A .NET library for Quickbase’s JSON API — fluent builders for querying, inserting, updating and deleting records, with typed results instead of exceptions. Published on NuGet.',
+    longDescription: [
+      'Quickbase’s API addresses everything by numeric field ID. A query is a JSON body with a table ID, field IDs and a where clause in Quickbase’s own query language, and records come back as dictionaries keyed by field ID with every value wrapped in an object. QuickbaseNet puts a fluent layer over that: a query builder covers select, where, sort and group, and a command builder batches new records and updates into one request against Quickbase’s upsert endpoint, or deletes whatever a where clause matches.',
+      'Every call returns a result instead of throwing. QuickbaseResult<T> carries IsSuccess, the typed response and a QuickbaseError that says whether Quickbase rejected the request (4xx), failed on its side (5xx) or found nothing to return, so calling code branches on an outcome rather than wrapping each request in try/catch.',
+      'It multi-targets .NET Standard 2.0 and 2.1, .NET Framework 4.8, .NET 5 and .NET 6, so it drops into legacy .NET Framework apps as well as current .NET. xUnit tests run against a mocked HTTP handler, GitHub Actions builds and tests every push and publishes to NuGet from version tags, and the package has close to 3,000 downloads.',
+    ],
+    image: 'images/projects/quickbase-net/query.png',
+    images: [
+      {
+        src: 'images/projects/quickbase-net/query.png',
+        caption: 'query — select, where, sort and group, then read values by field ID',
+      },
+      {
+        src: 'images/projects/quickbase-net/upsert.png',
+        caption: 'upsert — new records and updates in one request',
+      },
+      {
+        src: 'images/projects/quickbase-net/errors.png',
+        caption: 'delete — results instead of exceptions',
+      },
+    ],
+    links: {
+      github: 'https://github.com/hazeliscoding/quickbase-net',
+      nuget: 'https://www.nuget.org/packages/QuickbaseNet',
+    },
+    tags: ['C#', '.NET', 'NuGet', 'REST API', 'Fluent API', 'xUnit', 'CI/CD', 'Library'],
+    command: 'glow quickbase-net.md',
+    status: 'stable',
+    year: '2024',
+    stack: 'C# · .NET Standard',
+  },
 ];

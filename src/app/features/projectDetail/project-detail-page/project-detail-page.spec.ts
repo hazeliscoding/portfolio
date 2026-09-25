@@ -55,7 +55,7 @@ describe('ProjectDetailPage', () => {
 
   it('reports the record position and stack in the chapter meta', () => {
     expect(textOf(el.querySelector('.chapter__meta'))).toBe(
-      'RECORD 01 OF 02 · ELECTRON · ANGULAR',
+      'RECORD 01 OF 03 · ELECTRON · ANGULAR',
     );
   });
 
@@ -164,10 +164,10 @@ describe('ProjectDetailPage', () => {
     expect(el.querySelector('.detail__adjacent-empty')).toBeNull();
     const links = [...el.querySelectorAll('.detail__adjacent-link')];
     expect(links.map((a) => a.getAttribute('href'))).toEqual([
-      '/portfolio/animatch',
+      '/portfolio/quickbase-net',
       '/portfolio/animatch',
     ]);
-    expect(links.map(textOf)).toEqual(['< ANIMATCH', 'ANIMATCH >']);
+    expect(links.map(textOf)).toEqual(['< QUICKBASENET', 'ANIMATCH >']);
   });
 
   it('offers a way back to the archive, labelled with the archive code', () => {
@@ -215,6 +215,41 @@ describe('ProjectDetailPage (a record with a live site)', () => {
     live!.click();
 
     expect(open).toHaveBeenCalledWith(LIVE.links.demo!, '_blank', 'noopener');
+  });
+});
+
+describe('ProjectDetailPage (a record with a package)', () => {
+  const PACKAGED = projectsData.find((p) => p.links.nuget)!;
+  let el: HTMLElement;
+
+  beforeEach(async () => {
+    el = (await renderRecord(PACKAGED.id)).nativeElement as HTMLElement;
+  });
+
+  it('reads out the package before the source', () => {
+    const readout = panel(el, 'Record');
+    const keys = [...readout.querySelectorAll('.key-value__key')].map(textOf);
+    const values = [...readout.querySelectorAll('.key-value__value')].map(textOf);
+
+    expect(keys).toEqual(['STATUS', 'YEAR', 'STACK', 'SCREENSHOTS', 'PACKAGE', 'SOURCE']);
+    expect(values[4]).toBe('nuget.org/packages/QuickbaseNet');
+  });
+
+  it('leads with the package and steps the source down to secondary', () => {
+    const buttons = [...panel(el, 'Record').querySelectorAll('.detail__actions .button')];
+    expect(buttons.map(textOf)).toEqual(['View on NuGet >', 'View source >', '< All projects']);
+    expect(buttons[0].getAttribute('data-variant')).toBe('primary');
+    expect(buttons[1].getAttribute('data-variant')).toBe('secondary');
+  });
+
+  it('opens the package page from its button', () => {
+    const open = spyOn(window, 'open');
+    const nuget = [...el.querySelectorAll<HTMLButtonElement>('.detail__actions .button')].find(
+      (b) => textOf(b) === 'View on NuGet >',
+    );
+    nuget!.click();
+
+    expect(open).toHaveBeenCalledWith(PACKAGED.links.nuget!, '_blank', 'noopener');
   });
 });
 
