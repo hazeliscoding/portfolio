@@ -119,12 +119,12 @@
         @if (neighbours(); as adjacent) {
           <div class="detail__adjacent">
             <a class="detail__adjacent-link" [routerLink]="['/portfolio', adjacent.prev.id]"
-              >◀ {{ adjacent.prev.title.toUpperCase() }}</a
+              >&lt; {{ adjacent.prev.title.toUpperCase() }}</a
             >
             <a
               class="detail__adjacent-link detail__adjacent-link--next"
               [routerLink]="['/portfolio', adjacent.next.id]"
-              >{{ adjacent.next.title.toUpperCase() }} ▶</a
+              >{{ adjacent.next.title.toUpperCase() }} &gt;</a
             >
           </div>
         } @else {
