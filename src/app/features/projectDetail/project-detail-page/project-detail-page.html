@@ -85,8 +85,16 @@
         <app-key-value [items]="record()" />
 
         <div class="detail__actions">
+          @if (demoUrl()) {
+            <app-button variant="primary" size="md" (click)="openDemo()"
+              >Open live site &gt;</app-button
+            >
+          }
           @if (sourceUrl()) {
-            <app-button variant="primary" size="md" (click)="openSource()"
+            <app-button
+              [variant]="demoUrl() ? 'secondary' : 'primary'"
+              size="md"
+              (click)="openSource()"
               >View source &gt;</app-button
             >
           }

@@ -156,6 +156,13 @@ export class ProjectDetailPage implements OnInit {
   /** The readout prints the repository, not the protocol: `github.com/owner/repo`. */
   readonly sourceLabel = computed(() => this.sourceUrl().replace(/^https?:\/\//, ''));
 
+  /** A deployed project leads with its live site; the source button steps down to secondary. */
+  readonly demoUrl = computed(() => this.project()?.links.demo ?? '');
+
+  readonly demoLabel = computed(() =>
+    this.demoUrl().replace(/^https?:\/\//, '').replace(/\/$/, ''),
+  );
+
   /**
    * KAIRO's record panel offers "Read the writeup" when a project has a
    * companion log entry. `Project` carries no `writeup` field today and
@@ -180,6 +187,7 @@ export class ProjectDetailPage implements OnInit {
     if (p.year) items.push({ key: 'YEAR', value: p.year });
     if (p.stack) items.push({ key: 'STACK', value: p.stack });
     items.push({ key: 'SCREENSHOTS', value: pad(this.shots().length) });
+    if (this.demoLabel()) items.push({ key: 'LIVE', value: this.demoLabel() });
     if (this.sourceLabel()) items.push({ key: 'SOURCE', value: this.sourceLabel() });
     return items;
   });
@@ -243,6 +251,11 @@ export class ProjectDetailPage implements OnInit {
 
   openSource(): void {
     const url = this.sourceUrl();
+    if (url) window.open(url, '_blank', 'noopener');
+  }
+
+  openDemo(): void {
+    const url = this.demoUrl();
     if (url) window.open(url, '_blank', 'noopener');
   }
 
