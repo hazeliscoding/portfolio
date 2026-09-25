@@ -5,7 +5,7 @@ import { ChapterHeader } from '../../../ui/chapter-header/chapter-header';
 import { Window } from '../../../ui/windows/window/window';
 import { ViewportWindow } from '../../../ui/windows/viewport-window/viewport-window';
 import { Badge } from '../../../ui/core/badge/badge';
-import { Button } from '../../../ui/core/button/button';
+import { Button, ButtonVariant } from '../../../ui/core/button/button';
 import { KeyValue, KeyValueItem } from '../../../ui/data/key-value/key-value';
 import { RecordFault } from '../../../ui/record-fault/record-fault';
 import { MotionService } from '../../../ui/motion/motion.service';
@@ -28,6 +28,11 @@ interface Shot {
 
 function pad(n: number): string {
   return String(n).padStart(2, '0');
+}
+
+/** A link as the record prints it: no protocol, no `www.`, no trailing slash. */
+function bareUrl(url: string): string {
+  return url.replace(/^https?:\/\//, '').replace(/^www\./, '').replace(/\/$/, '');
 }
 
 @Component({
@@ -156,11 +161,20 @@ export class ProjectDetailPage implements OnInit {
   /** The readout prints the repository, not the protocol: `github.com/owner/repo`. */
   readonly sourceLabel = computed(() => this.sourceUrl().replace(/^https?:\/\//, ''));
 
-  /** A deployed project leads with its live site; the source button steps down to secondary. */
+  /**
+   * A deployed project leads with its live site, a published library with its
+   * package page; either way the source button steps down to secondary.
+   */
   readonly demoUrl = computed(() => this.project()?.links.demo ?? '');
 
-  readonly demoLabel = computed(() =>
-    this.demoUrl().replace(/^https?:\/\//, '').replace(/\/$/, ''),
+  readonly demoLabel = computed(() => bareUrl(this.demoUrl()));
+
+  readonly packageUrl = computed(() => this.project()?.links.nuget ?? '');
+
+  readonly packageLabel = computed(() => bareUrl(this.packageUrl()));
+
+  readonly sourceVariant = computed<ButtonVariant>(() =>
+    this.demoUrl() || this.packageUrl() ? 'secondary' : 'primary',
   );
 
   /**
@@ -188,6 +202,7 @@ export class ProjectDetailPage implements OnInit {
     if (p.stack) items.push({ key: 'STACK', value: p.stack });
     items.push({ key: 'SCREENSHOTS', value: pad(this.shots().length) });
     if (this.demoLabel()) items.push({ key: 'LIVE', value: this.demoLabel() });
+    if (this.packageLabel()) items.push({ key: 'PACKAGE', value: this.packageLabel() });
     if (this.sourceLabel()) items.push({ key: 'SOURCE', value: this.sourceLabel() });
     return items;
   });
@@ -256,6 +271,11 @@ export class ProjectDetailPage implements OnInit {
 
   openDemo(): void {
     const url = this.demoUrl();
+    if (url) window.open(url, '_blank', 'noopener');
+  }
+
+  openPackage(): void {
+    const url = this.packageUrl();
     if (url) window.open(url, '_blank', 'noopener');
   }
 

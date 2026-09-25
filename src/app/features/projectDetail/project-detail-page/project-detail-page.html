@@ -90,9 +90,17 @@
               >Open live site &gt;</app-button
             >
           }
-          @if (sourceUrl()) {
+          @if (packageUrl()) {
             <app-button
               [variant]="demoUrl() ? 'secondary' : 'primary'"
+              size="md"
+              (click)="openPackage()"
+              >View on NuGet &gt;</app-button
+            >
+          }
+          @if (sourceUrl()) {
+            <app-button
+              [variant]="sourceVariant()"
               size="md"
               (click)="openSource()"
               >View source &gt;</app-button
