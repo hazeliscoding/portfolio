@@ -40,8 +40,8 @@ describe('PortfolioPage', () => {
   // Padded to two digits like every other instrument reading; the singular
   // form is covered by the filter test below, where one record survives.
   it('reads the record count in the filter bar and the chapter meta', () => {
-    expect(text('.archive__count')).toBe('03 RECORDS RETRIEVED');
-    expect(text('.chapter__meta')).toBe('03 RECORDS RETRIEVED');
+    expect(text('.archive__count')).toBe('04 RECORDS RETRIEVED');
+    expect(text('.chapter__meta')).toBe('04 RECORDS RETRIEVED');
   });
 
   it('derives the filters from the real tags, leading with ALL', () => {
@@ -61,6 +61,7 @@ describe('PortfolioPage', () => {
     expect(cards[0].getAttribute('href')).toBe('/portfolio/pr-sweep');
     expect(cards[1].getAttribute('href')).toBe('/portfolio/animatch');
     expect(cards[2].getAttribute('href')).toBe('/portfolio/quickbase-net');
+    expect(cards[3].getAttribute('href')).toBe('/portfolio/jage');
     expect(el.textContent).toContain('PR Sweep');
     expect(el.textContent).toContain('AniMatch');
   });

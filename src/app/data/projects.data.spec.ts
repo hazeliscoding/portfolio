@@ -1,9 +1,14 @@
 import { projectsData } from './projects.data';
 
 describe('projectsData', () => {
-  it('holds PR Sweep, AniMatch and QuickbaseNet, in that order', () => {
-    expect(projectsData.map((p) => p.id)).toEqual(['pr-sweep', 'animatch', 'quickbase-net']);
-    expect(projectsData.map((p) => p.title)).toEqual(['PR Sweep', 'AniMatch', 'QuickbaseNet']);
+  it('holds PR Sweep, AniMatch, QuickbaseNet and JAGE, in that order', () => {
+    expect(projectsData.map((p) => p.id)).toEqual(['pr-sweep', 'animatch', 'quickbase-net', 'jage']);
+    expect(projectsData.map((p) => p.title)).toEqual([
+      'PR Sweep',
+      'AniMatch',
+      'QuickbaseNet',
+      'JAGE',
+    ]);
   });
 
   it('links AniMatch to its live site and its repository', () => {
@@ -29,5 +34,6 @@ describe('projectsData', () => {
     expect(projectsData[0].images?.length).toBe(4);
     expect(projectsData[1].images?.length).toBe(5);
     expect(projectsData[2].images?.length).toBe(3);
+    expect(projectsData[3].images?.length).toBe(4);
   });
 });

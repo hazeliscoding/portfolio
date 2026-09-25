@@ -55,7 +55,7 @@ describe('ProjectDetailPage', () => {
 
   it('reports the record position and stack in the chapter meta', () => {
     expect(textOf(el.querySelector('.chapter__meta'))).toBe(
-      'RECORD 01 OF 03 · ELECTRON · ANGULAR',
+      'RECORD 01 OF 04 · ELECTRON · ANGULAR',
     );
   });
 
@@ -164,10 +164,10 @@ describe('ProjectDetailPage', () => {
     expect(el.querySelector('.detail__adjacent-empty')).toBeNull();
     const links = [...el.querySelectorAll('.detail__adjacent-link')];
     expect(links.map((a) => a.getAttribute('href'))).toEqual([
-      '/portfolio/quickbase-net',
+      '/portfolio/jage',
       '/portfolio/animatch',
     ]);
-    expect(links.map(textOf)).toEqual(['< QUICKBASENET', 'ANIMATCH >']);
+    expect(links.map(textOf)).toEqual(['< JAGE', 'ANIMATCH >']);
   });
 
   it('offers a way back to the archive, labelled with the archive code', () => {

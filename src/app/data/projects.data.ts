@@ -161,4 +161,42 @@ export const projectsData: Project[] = [
     year: '2024',
     stack: 'C# · .NET Standard',
   },
+  {
+    id: 'jage',
+    title: 'JAGE',
+    description:
+      'Just another game engine — a small C++ engine on SDL and OpenGL 4.1, revived in 2026 after two dormant years, with a plan that builds it one system at a time: 2D first, then 3D.',
+    longDescription: [
+      'JAGE began in 2024 as a follow-along of progrematic’s Let’s Make an Engine series, and its code so far is derived from the first eleven episodes of the series’ Hippo engine (MIT). It has an SDL window with an OpenGL 4.1 core context, keyboard, mouse and hot-plugged gamepad input, meshes and shaders, and a queue of render commands flushed once per frame. Today it opens a window and draws one shader-colored quad that shifts with the mouse, the arrow keys and a gamepad.',
+      'The 2026 revival started with an audit instead of new features. The last commit didn’t build: a half-finished include change broke five files, and about 80 logging and assert calls left out their semicolon, which only compiled in Debug. The audit also found gamepad axes stored as bool, unplugged pads matched by the wrong SDL ID, a macOS define that never matched, GL attributes set after the window was created, and a failed shader link whose -1 program ID still reaches OpenGL — each one now a roadmap item.',
+      'The roadmap goes past where the series ended, in twelve milestones that each end in something that runs: get the build compiling, move to CMake and SDL3 with CI on Windows, Linux and macOS, then a game loop, sprites, Pong, Breakout, an ImGui editor with play mode, a platformer and a v0.1.0 release, and finally glTF models and a small 3D diorama. Samples drive the engine, and the plan has CI check them with reference images and recorded input replays.',
+    ],
+    image: 'images/projects/jage/window.png',
+    images: [
+      {
+        src: 'images/projects/jage/window.png',
+        caption: 'the running engine — one shader-colored quad on the cornflower clear color',
+      },
+      {
+        src: 'images/projects/jage/milestones.png',
+        caption: 'roadmap — twelve milestones, from revival to a 3D diorama',
+      },
+      {
+        src: 'images/projects/jage/audit.png',
+        caption: 'revival audit — bugs found in the 2024 code',
+      },
+      {
+        src: 'images/projects/jage/brand.png',
+        caption: 'brand — a pixel-art cube in the renderer’s clear color',
+      },
+    ],
+    links: {
+      github: 'https://github.com/hazeliscoding/jage',
+    },
+    tags: ['C++', 'OpenGL', 'SDL', 'GLSL', 'Game Engine', 'Graphics'],
+    command: 'glow jage.md',
+    status: 'revival',
+    year: '2024–2026',
+    stack: 'C++17 · OpenGL 4.1',
+  },
 ];
