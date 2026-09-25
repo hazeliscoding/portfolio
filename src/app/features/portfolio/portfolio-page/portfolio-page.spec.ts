@@ -37,11 +37,11 @@ describe('PortfolioPage', () => {
     expect(TestBed.inject(Title).getTitle()).toContain('Projects');
   });
 
-  // Padded to two digits like every other instrument reading, but singular:
-  // the archive holds one record today and "01 RECORDS" would be a bug.
+  // Padded to two digits like every other instrument reading; the singular
+  // form is covered by the filter test below, where one record survives.
   it('reads the record count in the filter bar and the chapter meta', () => {
-    expect(text('.archive__count')).toBe('01 RECORD RETRIEVED');
-    expect(text('.chapter__meta')).toBe('01 RECORD RETRIEVED');
+    expect(text('.archive__count')).toBe('02 RECORDS RETRIEVED');
+    expect(text('.chapter__meta')).toBe('02 RECORDS RETRIEVED');
   });
 
   it('derives the filters from the real tags, leading with ALL', () => {
@@ -59,7 +59,9 @@ describe('PortfolioPage', () => {
     const cards = el.querySelectorAll('a.archive__card');
     expect(cards.length).toBe(projectsData.length);
     expect(cards[0].getAttribute('href')).toBe('/portfolio/pr-sweep');
+    expect(cards[1].getAttribute('href')).toBe('/portfolio/animatch');
     expect(el.textContent).toContain('PR Sweep');
+    expect(el.textContent).toContain('AniMatch');
   });
 
   it('labels the viewport with the real screenshot count', () => {

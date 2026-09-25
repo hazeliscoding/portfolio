@@ -67,10 +67,13 @@ describe('HomePage', () => {
 
   it('renders every featured record as a link into the archive', () => {
     const records = Array.from(el.querySelectorAll('a.home__record'));
-    expect(records.length).toBe(1);
+    expect(records.length).toBe(2);
     expect(records[0].getAttribute('href')).toBe('/portfolio/pr-sweep');
     expect(text(records[0].querySelector('.home__record-title'))).toBe('PR Sweep');
     expect(text(records[0].querySelector('.home__record-idx'))).toBe('01');
+    expect(records[1].getAttribute('href')).toBe('/portfolio/animatch');
+    expect(text(records[1].querySelector('.home__record-title'))).toBe('AniMatch');
+    expect(text(records[1].querySelector('.home__record-idx'))).toBe('02');
   });
 
   it('counts the records it actually rendered', () => {

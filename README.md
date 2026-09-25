@@ -36,7 +36,7 @@ GitHub Actions rather than at build time, so a rate-limited GitHub can't fail a 
 
 ```bash
 npm start         # dev server (npm run dev binds all interfaces)
-npm run build     # prerenders 6 routes into dist/
+npm run build     # prerenders 7 routes into dist/
 npm test          # unit tests
 npm run check:og  # verify the social card is the right size
 ```

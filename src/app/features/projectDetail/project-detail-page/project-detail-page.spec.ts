@@ -55,7 +55,7 @@ describe('ProjectDetailPage', () => {
 
   it('reports the record position and stack in the chapter meta', () => {
     expect(textOf(el.querySelector('.chapter__meta'))).toBe(
-      'RECORD 01 OF 01 · ELECTRON · ANGULAR',
+      'RECORD 01 OF 02 · ELECTRON · ANGULAR',
     );
   });
 
@@ -160,11 +160,14 @@ describe('ProjectDetailPage', () => {
     expect(panel(el, 'Tags').querySelectorAll('.badge').length).toBe(RECORD.tags!.length);
   });
 
-  it('does not link the only record to itself', () => {
-    expect(el.querySelector('.detail__adjacent')).toBeNull();
-    expect(textOf(el.querySelector('.detail__adjacent-empty'))).toBe(
-      'NO ADJACENT RECORDS · 01 OF 01',
-    );
+  it('links both neighbours, wrapping around the archive', () => {
+    expect(el.querySelector('.detail__adjacent-empty')).toBeNull();
+    const links = [...el.querySelectorAll('.detail__adjacent-link')];
+    expect(links.map((a) => a.getAttribute('href'))).toEqual([
+      '/portfolio/animatch',
+      '/portfolio/animatch',
+    ]);
+    expect(links.map(textOf)).toEqual(['< ANIMATCH', 'ANIMATCH >']);
   });
 
   it('offers a way back to the archive, labelled with the archive code', () => {
@@ -177,6 +180,41 @@ describe('ProjectDetailPage', () => {
   it('contains no emoji', () => {
     const text = el.textContent ?? '';
     expect(/\p{Extended_Pictographic}/u.test(text)).toBe(false);
+  });
+});
+
+describe('ProjectDetailPage (a record with a live site)', () => {
+  const LIVE = projectsData.find((p) => p.links.demo)!;
+  let el: HTMLElement;
+
+  beforeEach(async () => {
+    el = (await renderRecord(LIVE.id)).nativeElement as HTMLElement;
+  });
+
+  it('reads out the live site before the source', () => {
+    const readout = panel(el, 'Record');
+    const keys = [...readout.querySelectorAll('.key-value__key')].map(textOf);
+    const values = [...readout.querySelectorAll('.key-value__value')].map(textOf);
+
+    expect(keys).toEqual(['STATUS', 'YEAR', 'STACK', 'SCREENSHOTS', 'LIVE', 'SOURCE']);
+    expect(values[4]).toBe('animatch-moe.vercel.app');
+  });
+
+  it('leads with the live site and steps the source down to secondary', () => {
+    const buttons = [...panel(el, 'Record').querySelectorAll('.detail__actions .button')];
+    expect(buttons.map(textOf)).toEqual(['Open live site >', 'View source >', '< All projects']);
+    expect(buttons[0].getAttribute('data-variant')).toBe('primary');
+    expect(buttons[1].getAttribute('data-variant')).toBe('secondary');
+  });
+
+  it('opens the live site from its button', () => {
+    const open = spyOn(window, 'open');
+    const live = [...el.querySelectorAll<HTMLButtonElement>('.detail__actions .button')].find(
+      (b) => textOf(b) === 'Open live site >',
+    );
+    live!.click();
+
+    expect(open).toHaveBeenCalledWith(LIVE.links.demo!, '_blank', 'noopener');
   });
 });
 
