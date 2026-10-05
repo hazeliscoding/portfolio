@@ -20,13 +20,13 @@ export type OssStats = {
 export const ossStats: OssStats = {
   "totalMergedPrs": 5,
   "projectCount": 2,
-  "totalStars": 21588,
-  "updated": "2026-09-28",
+  "totalStars": 21685,
+  "updated": "2026-10-05",
   "projects": [
     {
       "repo": "BCUninstaller/Bulk-Crap-Uninstaller",
       "url": "https://github.com/BCUninstaller/Bulk-Crap-Uninstaller/pulls?q=is%3Apr%20author%3Ahazeliscoding%20is%3Amerged",
-      "stars": 21578,
+      "stars": 21675,
       "mergedPrs": 4
     },
     {
