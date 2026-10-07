@@ -46,7 +46,7 @@ describe('projectsData', () => {
   });
 
   it('retains the images the detail page renders', () => {
-    expect(projectsData[0].images?.length).toBe(4);
+    expect(projectsData[0].images?.length).toBe(5);
     expect(projectsData[1].images?.length).toBe(5);
     expect(projectsData[2].images?.length).toBe(5);
     expect(projectsData[3].images?.length).toBe(5);

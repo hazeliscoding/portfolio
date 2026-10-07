@@ -98,7 +98,7 @@ describe('ProjectDetailPage', () => {
   });
 
   it('counts the frames in the viewport window context', () => {
-    expect(textOf(panel(el, 'Viewport').querySelector('.window__context'))).toBe('01 OF 04');
+    expect(textOf(panel(el, 'Viewport').querySelector('.window__context'))).toBe('01 OF 05');
   });
 
   it('selects a frame when its thumbnail is clicked', () => {
@@ -106,7 +106,7 @@ describe('ProjectDetailPage', () => {
     thumbs[2].click();
     fixture.detectChanges();
 
-    expect(textOf(panel(el, 'Viewport').querySelector('.window__context'))).toBe('03 OF 04');
+    expect(textOf(panel(el, 'Viewport').querySelector('.window__context'))).toBe('03 OF 05');
     expect(el.querySelector('.detail__hero img')?.getAttribute('src')).toBe(
       RECORD.images![2].src,
     );
@@ -123,7 +123,7 @@ describe('ProjectDetailPage', () => {
     document.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight' }));
     fixture.detectChanges();
 
-    expect(textOf(panel(el, 'Viewport').querySelector('.window__context'))).toBe('02 OF 04');
+    expect(textOf(panel(el, 'Viewport').querySelector('.window__context'))).toBe('02 OF 05');
   });
 
   it('leaves ArrowRight alone while a text field has focus', () => {
@@ -133,7 +133,7 @@ describe('ProjectDetailPage', () => {
     fixture.detectChanges();
     input.remove();
 
-    expect(textOf(panel(el, 'Viewport').querySelector('.window__context'))).toBe('01 OF 04');
+    expect(textOf(panel(el, 'Viewport').querySelector('.window__context'))).toBe('01 OF 05');
   });
 
   it('renders every long description paragraph, and counts them', () => {
@@ -153,7 +153,7 @@ describe('ProjectDetailPage', () => {
       'ACTIVE',
       RECORD.year!,
       RECORD.stack!,
-      '04',
+      '05',
       'github.com/hazeliscoding/pr-sweep',
     ]);
   });

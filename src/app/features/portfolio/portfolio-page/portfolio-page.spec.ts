@@ -71,7 +71,7 @@ describe('PortfolioPage', () => {
   });
 
   it('labels the viewport with the real screenshot count', () => {
-    expect(text('.viewport__label')).toBe('CAM 01 // 04 SHOTS');
+    expect(text('.viewport__label')).toBe('CAM 01 // 05 SHOTS');
     expect(el.querySelector('.viewport__img')?.getAttribute('alt')).toBe(
       'PR Sweep screenshot',
     );

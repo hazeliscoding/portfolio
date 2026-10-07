@@ -29,29 +29,33 @@ export const projectsData: Project[] = [
     id: 'pr-sweep',
     title: 'PR Sweep',
     description:
-      'A portable desktop PR dashboard for teams that work in sprints across many repos in one GitHub organization — one window that answers: what’s open, what needs review, what has changes requested, what’s approved, and what merged this sprint.',
+      'A Windows and Linux desktop app that shows where a team’s pull requests are stuck this sprint — every open PR across a GitHub organization on one board, sorted by what it’s waiting on, with a sprint summary and a standup you can copy in one click.',
     longDescription: [
-      'PRs are bucketed from GitHub’s actual reviewDecision — no labels, no manual bookkeeping. A "My queue" section surfaces every open PR in the org waiting on your review, stale PRs get flagged past a configurable threshold, and the whole board is scoped to a sprint date range and a configurable team list. Profiles save org + team + range views, and export/import as JSON so one person configures the team’s view and everyone imports it.',
-      'The interesting engineering is in the GitHub layer: OR-ing authors needs GraphQL’s advanced search backend, search hard-caps at 1000 results so busy ranges split their date window recursively, and auto-refreshes are incremental — they ask only for PRs updated since the last sweep and patch the cached result. The last sweep is snapshotted to disk, so the board renders instantly on launch and refreshes quietly. A token that isn’t SAML-authorized returns silently empty results rather than errors; PR Sweep probes for that and explains it instead of showing an empty board.',
-      'It ships like a real product: device-flow "Sign in with GitHub", credentials encrypted at rest (DPAPI via safeStorage on Windows, libsecret on Linux), a system-tray presence with live counts and review-queue notifications, code-signed Windows builds via Azure Trusted Signing, self-updating installers plus a Linux AppImage, and a Playwright screenshot harness with tests in CI.',
+      'Set the org, the team and the sprint schedule once, and the board opens on the current sprint and moves on when it ends. The Sweep at the top lists every PR that needs a human — failing CI, a merge conflict, feedback nobody addressed, a push waiting on re-review, an approval nobody merged, no reviewers — with how long it has been that way, a one-click next step and a snooze. A strip above it sums up the sprint: days left, what’s open, what needs attention, what merged and the median time to merge, and Copy standup turns that into a standup that pastes formatted into Teams and as Markdown into Discord. Below, open PRs are sorted into Needs review, Changes requested, Approved and Merged from GitHub’s own reviewDecision, with no labels to keep up, and Waiting on my review lists what anywhere in the org is waiting on you. Profiles save an org, team and period, and export as JSON for teammates to import.',
+      'The interesting engineering is in the GitHub layer. Every “this PR has a problem” signal comes from one pure attention function, which the Sweep, the summary and the standup all read. OR-ing authors needs GraphQL’s advanced search backend; search hard-caps at 1000 results, so a busy date window splits itself in half and recurses; merged PRs are searched a week at a time, four weeks in parallel, and a page that times out is re-sent at half the size. Mergeability and review times come from one follow-up query, only for the PRs that need them, and v0.11 took a full refresh for a five-person team from 28.9 s to 9.1 s. Auto-refreshes ask only for PRs updated since the last sweep and patch the cached result, and the last sweep is snapshotted to disk, so the board renders instantly on launch. A token that isn’t SAML-authorized gets silently empty results rather than errors, so PR Sweep probes for that and explains it.',
+      'It ships like a real product: device-flow "Sign in with GitHub", credentials encrypted at rest (DPAPI through safeStorage on Windows, the system keyring through libsecret on Linux), and a tray that sweeps every five minutes, counts what needs the team, and notifies when a PR lands in your queue or one of yours is approved, gets changes requested or starts failing CI. Windows builds are code-signed with Azure Trusted Signing, the Windows installer and the Linux AppImage update themselves, and the portable exe says when a new version is out. A Playwright harness screenshots every state from fixtures in light and dark, and CI runs the core tests and a WCAG AA contrast check on the theme. It only ever reads from GitHub, with no telemetry and no server of its own.',
     ],
     image: 'images/projects/pr-sweep/board.png',
     images: [
       {
         src: 'images/projects/pr-sweep/board.png',
-        caption: 'status board — review buckets, filters, stale flags',
+        caption: 'board — the sprint strip, the Sweep of stuck PRs with next steps, then a table per review state',
       },
       {
         src: 'images/projects/pr-sweep/board-dark.png',
         caption: 'dark theme',
       },
       {
+        src: 'images/projects/pr-sweep/standup.png',
+        caption: 'copy standup — what merged, what’s blocked and what needs attention, ready to paste',
+      },
+      {
         src: 'images/projects/pr-sweep/settings.png',
-        caption: 'settings — profiles, team list, OAuth',
+        caption: 'settings — profiles, team, stale threshold and the sprint schedule',
       },
       {
         src: 'images/projects/pr-sweep/onboarding-oauth.png',
-        caption: 'onboarding — sign in with GitHub (device flow)',
+        caption: 'onboarding — connect GitHub with device-flow sign-in or a token',
       },
     ],
     links: {
