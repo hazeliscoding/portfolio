@@ -74,7 +74,7 @@ describe('ProjectDetailPage', () => {
 
   it('reports the record position and stack in the chapter meta', () => {
     expect(textOf(el.querySelector('.chapter__meta'))).toBe(
-      'RECORD 01 OF 04 · ELECTRON · ANGULAR',
+      'RECORD 01 OF 01 · ELECTRON · ANGULAR',
     );
   });
 
@@ -179,14 +179,11 @@ describe('ProjectDetailPage', () => {
     expect(panel(el, 'Tags').querySelectorAll('.badge').length).toBe(RECORD.tags!.length);
   });
 
-  it('links both neighbours, wrapping around the archive', () => {
-    expect(el.querySelector('.detail__adjacent-empty')).toBeNull();
-    const links = [...el.querySelectorAll('.detail__adjacent-link')];
-    expect(links.map((a) => a.getAttribute('href'))).toEqual([
-      '/portfolio/jage',
-      '/portfolio/animatch',
-    ]);
-    expect(links.map(textOf)).toEqual(['< JAGE', 'ANIMATCH >']);
+  it('does not link the only record to itself', () => {
+    expect(el.querySelector('.detail__adjacent')).toBeNull();
+    expect(textOf(el.querySelector('.detail__adjacent-empty'))).toBe(
+      'NO ADJACENT RECORDS · 01 OF 01',
+    );
   });
 
   it('offers a way back to the archive, labelled with the archive code', () => {
