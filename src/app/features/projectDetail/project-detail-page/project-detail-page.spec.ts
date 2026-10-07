@@ -2,11 +2,19 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, provideRouter } from '@angular/router';
 import { of } from 'rxjs';
 import { ProjectDetailPage } from './project-detail-page';
-import { projectsData } from '../../../data/projects.data';
+import { Project, projectsData } from '../../../data/projects.data';
+import { ProjectsDataService } from '../../../services/projects-data.service';
 
 const RECORD = projectsData[0];
 
-async function renderRecord(id: string): Promise<ComponentFixture<ProjectDetailPage>> {
+/**
+ * Renders the record at `id`. Pass `archive` to stand in for the real data
+ * when a test needs a kind of record the archive does not hold today.
+ */
+async function renderRecord(
+  id: string,
+  archive?: Project[],
+): Promise<ComponentFixture<ProjectDetailPage>> {
   await TestBed.configureTestingModule({
     imports: [ProjectDetailPage],
     providers: [
@@ -15,6 +23,17 @@ async function renderRecord(id: string): Promise<ComponentFixture<ProjectDetailP
         provide: ActivatedRoute,
         useValue: { paramMap: of(new Map([['id', id]])) },
       },
+      ...(archive
+        ? [
+            {
+              provide: ProjectsDataService,
+              useValue: {
+                getAllProjects: () => archive,
+                getProjectById: (wanted: string) => archive.find((p) => p.id === wanted),
+              },
+            },
+          ]
+        : []),
     ],
   }).compileComponents();
   const fixture = TestBed.createComponent(ProjectDetailPage);
@@ -183,12 +202,41 @@ describe('ProjectDetailPage', () => {
   });
 });
 
+/** A deployed project. No real record has a live site today. */
+const LIVE: Project = {
+  id: 'live-record',
+  title: 'Live Record',
+  description: 'A record with a live site.',
+  image: 'images/projects/live-record/home.png',
+  links: {
+    github: 'https://github.com/hazeliscoding/live-record',
+    demo: 'https://live-record.example.com/',
+  },
+  status: 'live',
+  year: '2026',
+  stack: 'Angular',
+};
+
+/** A published library. No real record has a package today. */
+const PACKAGED: Project = {
+  id: 'packaged-record',
+  title: 'Packaged Record',
+  description: 'A record with a NuGet package.',
+  image: 'images/projects/packaged-record/usage.png',
+  links: {
+    github: 'https://github.com/hazeliscoding/packaged-record',
+    nuget: 'https://www.nuget.org/packages/PackagedRecord',
+  },
+  status: 'stable',
+  year: '2024',
+  stack: 'C# · .NET',
+};
+
 describe('ProjectDetailPage (a record with a live site)', () => {
-  const LIVE = projectsData.find((p) => p.links.demo)!;
   let el: HTMLElement;
 
   beforeEach(async () => {
-    el = (await renderRecord(LIVE.id)).nativeElement as HTMLElement;
+    el = (await renderRecord(LIVE.id, [LIVE])).nativeElement as HTMLElement;
   });
 
   it('reads out the live site before the source', () => {
@@ -197,7 +245,7 @@ describe('ProjectDetailPage (a record with a live site)', () => {
     const values = [...readout.querySelectorAll('.key-value__value')].map(textOf);
 
     expect(keys).toEqual(['STATUS', 'YEAR', 'STACK', 'SCREENSHOTS', 'LIVE', 'SOURCE']);
-    expect(values[4]).toBe('animatch-moe.vercel.app');
+    expect(values[4]).toBe('live-record.example.com');
   });
 
   it('leads with the live site and steps the source down to secondary', () => {
@@ -219,11 +267,10 @@ describe('ProjectDetailPage (a record with a live site)', () => {
 });
 
 describe('ProjectDetailPage (a record with a package)', () => {
-  const PACKAGED = projectsData.find((p) => p.links.nuget)!;
   let el: HTMLElement;
 
   beforeEach(async () => {
-    el = (await renderRecord(PACKAGED.id)).nativeElement as HTMLElement;
+    el = (await renderRecord(PACKAGED.id, [PACKAGED])).nativeElement as HTMLElement;
   });
 
   it('reads out the package before the source', () => {
@@ -232,7 +279,7 @@ describe('ProjectDetailPage (a record with a package)', () => {
     const values = [...readout.querySelectorAll('.key-value__value')].map(textOf);
 
     expect(keys).toEqual(['STATUS', 'YEAR', 'STACK', 'SCREENSHOTS', 'PACKAGE', 'SOURCE']);
-    expect(values[4]).toBe('nuget.org/packages/QuickbaseNet');
+    expect(values[4]).toBe('nuget.org/packages/PackagedRecord');
   });
 
   it('leads with the package and steps the source down to secondary', () => {
