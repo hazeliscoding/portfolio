@@ -115,4 +115,55 @@ export const projectsData: Project[] = [
     year: '2026',
     stack: '.NET 10 · Avalonia',
   },
+  {
+    id: 'gil-sweep',
+    title: 'Gil Sweep',
+    description:
+      'A Windows desktop app that answers one question for Final Fantasy XIV gatherers — what should I farm for gil right now? It prices the gatherables on your world, weighs competition, price trend and the in-game clock for timed nodes, and ranks the best farm with the reasons why.',
+    longDescription: [
+      'Each sweep prices about a hundred tracked gatherables on the player’s world through Universalis and gives every item an opportunity score from 0 to 100: how much gil changes hands for it each day, how many days of stock already sit on the market board, which way its price moved over the week, and, for timed nodes, how long until the Eorzea clock opens them. Only items the character can gather are ranked, and every score shows the facts behind it. It never shows gil per hour — it doesn’t know a node’s yield, the travel time or how fast someone gathers, so it compares markets instead of guessing. Around the ranking sit a Market view for one item in depth, a Craft view that says whether a material is worth more processed, and an optional Farm Session that queues what to gather now and which timed nodes open while you play.',
+      'Version 2 is a native rewrite of an Electron and Angular original. The ranking was ported with characterization tests against outputs captured from the v1 TypeScript, so with the new adjustments set aside it orders items exactly as v1 did, and a v1 install’s settings, watchlist and sweep history come across on first start. Universalis only counts the listings a request returns, so competition is read from the stack-size histogram of every listing on the world, fetched 20 items at a time because larger batches time out. A provider failing part-way doesn’t lose the sweep, and when Universalis is down the last sweep stays on screen with a retry.',
+      'While it runs, Gil Sweep sweeps hourly and sends Windows notifications for watched items — a reminder before a node opens, a price spike or crash, someone undercutting your retainers — and its tray icon keeps the Eorzea time and the next node windows. It is .NET 10 and Avalonia 12, installed per user with Velopack and updated in place, never during a sweep, and has no accounts or telemetry: everything it learns stays on the PC. 125 xUnit tests run offline against recorded market data in CI, which also renders every screen from fake data for the screenshots.',
+    ],
+    image: 'images/projects/gil-sweep/sweep.png',
+    images: [
+      {
+        src: 'images/projects/gil-sweep/sweep.png',
+        caption: 'sweep — the best farm right now, with price, sales, competition, trend and node',
+      },
+      {
+        src: 'images/projects/gil-sweep/market.png',
+        caption: 'market — one item in depth, and the signals behind its score',
+      },
+      {
+        src: 'images/projects/gil-sweep/farm-session.png',
+        caption: 'farm session — what to gather now and which timed nodes open while you play',
+      },
+      {
+        src: 'images/projects/gil-sweep/craft.png',
+        caption: 'craft — sell a material raw or process it first',
+      },
+      {
+        src: 'images/projects/gil-sweep/watchlist.png',
+        caption: 'watchlist — node reminders, price spikes and crashes, undercuts',
+      },
+    ],
+    links: {
+      github: 'https://github.com/hazeliscoding/gil-sweep',
+    },
+    tags: [
+      'C#',
+      '.NET',
+      'Avalonia',
+      'Universalis API',
+      'Velopack',
+      'xUnit',
+      'CI/CD',
+      'Desktop',
+    ],
+    command: 'glow gil-sweep.md',
+    status: 'active',
+    year: '2026',
+    stack: '.NET 10 · Avalonia',
+  },
 ];
