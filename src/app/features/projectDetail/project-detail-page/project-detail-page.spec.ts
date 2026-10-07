@@ -74,7 +74,7 @@ describe('ProjectDetailPage', () => {
 
   it('reports the record position and stack in the chapter meta', () => {
     expect(textOf(el.querySelector('.chapter__meta'))).toBe(
-      'RECORD 01 OF 04 · ELECTRON · ANGULAR',
+      'RECORD 01 OF 05 · ELECTRON · ANGULAR',
     );
   });
 
@@ -183,10 +183,10 @@ describe('ProjectDetailPage', () => {
     expect(el.querySelector('.detail__adjacent-empty')).toBeNull();
     const links = [...el.querySelectorAll('.detail__adjacent-link')];
     expect(links.map((a) => a.getAttribute('href'))).toEqual([
-      '/portfolio/prompuff',
+      '/portfolio/sdl3-porter',
       '/portfolio/xiv-vault',
     ]);
-    expect(links.map(textOf)).toEqual(['< PROMPUFF', 'XIV VAULT >']);
+    expect(links.map(textOf)).toEqual(['< SDL3-PORTER', 'XIV VAULT >']);
   });
 
   it('offers a way back to the archive, labelled with the archive code', () => {

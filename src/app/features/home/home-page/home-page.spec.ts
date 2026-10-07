@@ -67,13 +67,16 @@ describe('HomePage', () => {
 
   it('renders every featured record as a link into the archive', () => {
     const records = Array.from(el.querySelectorAll('a.home__record'));
-    expect(records.length).toBe(2);
+    expect(records.length).toBe(3);
     expect(records[0].getAttribute('href')).toBe('/portfolio/pr-sweep');
     expect(text(records[0].querySelector('.home__record-title'))).toBe('PR Sweep');
     expect(text(records[0].querySelector('.home__record-idx'))).toBe('01');
     expect(records[1].getAttribute('href')).toBe('/portfolio/prompuff');
     expect(text(records[1].querySelector('.home__record-title'))).toBe('Prompuff');
     expect(text(records[1].querySelector('.home__record-idx'))).toBe('02');
+    expect(records[2].getAttribute('href')).toBe('/portfolio/sdl3-porter');
+    expect(text(records[2].querySelector('.home__record-title'))).toBe('sdl3-porter');
+    expect(text(records[2].querySelector('.home__record-idx'))).toBe('03');
   });
 
   it('counts the records it actually rendered', () => {

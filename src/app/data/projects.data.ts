@@ -209,4 +209,52 @@ export const projectsData: Project[] = [
     year: '2026',
     stack: 'Avalonia · SQLite',
   },
+  {
+    id: 'sdl3-porter',
+    title: 'sdl3-porter',
+    description:
+      'A Claude Code plugin that ports C and C++ code from SDL2 to SDL3, then catches the changes that still compile but break at runtime — 17 traps, each proven by fixtures in CI and measured against agents working without it.',
+    longDescription: [
+      'SDL’s rename scripts handle most of an SDL2 port and the compiler catches most of the rest, but neither catches code that still compiles and now means something else. SDL3 functions return true on success, so a leftover SDL_Init(...) != 0 check exits on every launch; a stream opened with SDL_OpenAudioDeviceStream starts paused, so the game plays no sound; textures filter linearly by default, so pixel art blurs. Coding agents make the same mistakes, because most of the SDL code they learned from is SDL2. sdl3-porter runs SDL’s own rename scripts from pinned copies, fixes the build one subsystem at a time, then sweeps every subsystem the code uses for traps and reports each one by file, line and trap id, along with what still needs a person.',
+      'A trap only ships once it’s proven. Each has three small programs — the SDL2 original, the naive port that compiles and fails, and the correct port — and CI builds them against SDL 2.32, 3.2.0 and 3.4.18 and runs them headless on Windows, Linux and macOS: the naive port must fail and the other two must pass. Evals then run Claude Code on each trap’s sample and on a whole game, five times with the skill and five without, on Sonnet 5 and Haiku 4.5. With it, Sonnet 5 fixes every trap, and on the whole game Haiku 4.5 goes from 0.39 to 0.92.',
+      'It was dogfooded on real ports and compared with the maintainers’ own: Woof!, a Doom source port of about 165,000 lines, and scrcpy, about 31,000. Every miss became a trap, a fix to the skill or a roadmap item, and Woof!’s menu turned up a mouse-mapping bug, now the logical-scale-separate trap, that the maintainers’ port has too. It installs from its own Claude Code plugin marketplace, ships the SDL3 headers, migration guide and rename scripts it needs, collects no data, and keeps its trap ids and report format stable across every 1.x release.',
+    ],
+    image: 'images/projects/sdl3-porter/before.png',
+    images: [
+      {
+        src: 'images/projects/sdl3-porter/before.png',
+        caption: 'the bug that compiles — a naive port that builds against SDL3 without a warning',
+      },
+      {
+        src: 'images/projects/sdl3-porter/report.png',
+        caption: 'report — each trap by file, line and id, and what still needs a person',
+      },
+      {
+        src: 'images/projects/sdl3-porter/trap-card.png',
+        caption: 'trap card — what compiles, what breaks, the fix and its fixture',
+      },
+      {
+        src: 'images/projects/sdl3-porter/evals.png',
+        caption: 'evals — Claude Code with and without the skill, five runs per case',
+      },
+    ],
+    links: {
+      github: 'https://github.com/hazeliscoding/sdl3-porter',
+    },
+    tags: [
+      'Claude Code',
+      'Agent Skills',
+      'SDL3',
+      'C/C++',
+      'LLM Evals',
+      'Python',
+      'CMake',
+      'CI/CD',
+    ],
+    featured: true,
+    command: 'glow sdl3-porter.md',
+    status: 'stable',
+    year: '2026',
+    stack: 'Claude Code · SDL3',
+  },
 ];
