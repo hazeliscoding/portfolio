@@ -1,9 +1,14 @@
 import { projectsData } from './projects.data';
 
 describe('projectsData', () => {
-  it('holds PR Sweep, XIV Vault and Gil Sweep, in that order', () => {
-    expect(projectsData.map((p) => p.id)).toEqual(['pr-sweep', 'xiv-vault', 'gil-sweep']);
-    expect(projectsData.map((p) => p.title)).toEqual(['PR Sweep', 'XIV Vault', 'Gil Sweep']);
+  it('holds PR Sweep, XIV Vault, Gil Sweep and Prompuff, in that order', () => {
+    expect(projectsData.map((p) => p.id)).toEqual(['pr-sweep', 'xiv-vault', 'gil-sweep', 'prompuff']);
+    expect(projectsData.map((p) => p.title)).toEqual([
+      'PR Sweep',
+      'XIV Vault',
+      'Gil Sweep',
+      'Prompuff',
+    ]);
   });
 
   it('links XIV Vault to its repository', () => {
@@ -14,6 +19,11 @@ describe('projectsData', () => {
   it('links Gil Sweep to its repository', () => {
     const gilSweep = projectsData.find((p) => p.id === 'gil-sweep')!;
     expect(gilSweep.links.github).toBe('https://github.com/hazeliscoding/gil-sweep');
+  });
+
+  it('links Prompuff to its repository', () => {
+    const prompuff = projectsData.find((p) => p.id === 'prompuff')!;
+    expect(prompuff.links.github).toBe('https://github.com/hazeliscoding/prompuff');
   });
 
   it('has no project referencing a deleted blog post', () => {
@@ -27,5 +37,6 @@ describe('projectsData', () => {
     expect(projectsData[0].images?.length).toBe(4);
     expect(projectsData[1].images?.length).toBe(5);
     expect(projectsData[2].images?.length).toBe(5);
+    expect(projectsData[3].images?.length).toBe(5);
   });
 });

@@ -166,4 +166,47 @@ export const projectsData: Project[] = [
     year: '2026',
     stack: '.NET 10 · Avalonia',
   },
+  {
+    id: 'prompuff',
+    title: 'Prompuff',
+    description:
+      'A local-first desktop app for Windows and Linux that keeps the AI prompts that actually worked — saved, tagged and versioned, with their {{variables}} filled in and copied in one step, and nothing leaving the machine.',
+    longDescription: [
+      'Each prompt keeps a title, description, body, a note on why it worked, a collection, tags, a favorite flag and a 1–5 usefulness rating. The Render tab lists a prompt’s {{variables}}, previews the result as values are filled in and copies it, leaving anything unfilled as a token. Search covers titles, bodies, notes and tags, #tag filters by tag, a command palette opens, copies or runs anything from the keyboard, and Quick save starts a new prompt from whatever is on the clipboard. Prompts travel as plain Markdown, one file per prompt, so import and export never need Prompuff on the other end.',
+      'Versioning is the core rule. Every distinct saved state of a prompt’s title, description, body and notes is a version with a generated note such as “Edited body (+3 −1 lines)”, a save that changes none of them creates nothing, and restoring an old version adds it as a new one, so the history never loses a step; the History tab shows each version’s line diff. Under the Avalonia app sit separate Domain, Application and Infrastructure layers, and the library is one SQLite file reached through hand-written SQL rather than an ORM. Schema migrations run against PRAGMA user_version after the database is copied to a backup, and the Markdown frontmatter reader and writer are hand-written too, so there is no YAML dependency.',
+      'It ships for Windows as a per-user Velopack installer that updates itself and for Linux as an AppImage, both self-contained. A pushed tag tests and packs both platforms, starts the AppImage under Xvfb to check that it creates its library, and opens a draft release, and headless UI tests drive the real main window through saving, rendering, copying and restarting on Windows and Linux runners. There is no account, telemetry or AI call: the only network request is the update check, and logs record prompt IDs, never their text.',
+    ],
+    image: 'images/projects/prompuff/library.png',
+    images: [
+      {
+        src: 'images/projects/prompuff/library.png',
+        caption: 'library — collections, tags, favorites and usefulness ratings',
+      },
+      {
+        src: 'images/projects/prompuff/edit.png',
+        caption: 'edit — the prompt, its detected variables and why it worked',
+      },
+      {
+        src: 'images/projects/prompuff/render.png',
+        caption: 'render & copy — values filled in, the unfilled variable left as a token',
+      },
+      {
+        src: 'images/projects/prompuff/history.png',
+        caption: 'history — every saved change as a version, with a line diff and restore',
+      },
+      {
+        src: 'images/projects/prompuff/quick-save.png',
+        caption: 'quick save — a new prompt from whatever is on the clipboard',
+      },
+    ],
+    links: {
+      github: 'https://github.com/hazeliscoding/prompuff',
+    },
+    tags: ['C#', '.NET', 'Avalonia', 'SQLite', 'Velopack', 'xUnit', 'CI/CD', 'Desktop'],
+    featured: true,
+    command: 'glow prompuff.md',
+    status: 'active',
+    year: '2026',
+    stack: 'Avalonia · SQLite',
+  },
 ];
