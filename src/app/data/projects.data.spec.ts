@@ -1,13 +1,14 @@
 import { projectsData } from './projects.data';
 
 describe('projectsData', () => {
-  it('contains exactly one project', () => {
-    expect(projectsData.length).toBe(1);
+  it('holds PR Sweep and XIV Vault, in that order', () => {
+    expect(projectsData.map((p) => p.id)).toEqual(['pr-sweep', 'xiv-vault']);
+    expect(projectsData.map((p) => p.title)).toEqual(['PR Sweep', 'XIV Vault']);
   });
 
-  it('is PR Sweep', () => {
-    expect(projectsData[0].id).toBe('pr-sweep');
-    expect(projectsData[0].title).toBe('PR Sweep');
+  it('links XIV Vault to its repository', () => {
+    const xivVault = projectsData.find((p) => p.id === 'xiv-vault')!;
+    expect(xivVault.links.github).toBe('https://github.com/hazeliscoding/xiv-vault');
   });
 
   it('has no project referencing a deleted blog post', () => {
@@ -19,5 +20,6 @@ describe('projectsData', () => {
 
   it('retains the images the detail page renders', () => {
     expect(projectsData[0].images?.length).toBe(4);
+    expect(projectsData[1].images?.length).toBe(5);
   });
 });
