@@ -55,7 +55,8 @@ Every route prerenders, including each known project, post and tag. A tag page s
 until three entries carry the tag. `sitemap.xml` is read off the prerendered pages, so it lists
 exactly the pages with a canonical and without `noindex`.
 
-`vercel.json` deploys the static output with no framework preset. The Angular preset rewrote
-every unknown path to the homepage with a 200; now Vercel serves `404.html` with a real 404,
-and that page renders the client-side 404 screen. ⌘K opens the command palette; `1`–`4` switch
+`vercel.json` deploys the static output with no framework preset, and spells out its routing as
+`routes`. Vercel still detects Angular from `package.json` and appends a rewrite of every unknown
+path to the homepage with a 200, so the last route answers anything the filesystem doesn't hold
+with `404.html` and a real 404 first. That page renders the client-side 404 screen. ⌘K opens the command palette; `1`–`4` switch
 mode.
