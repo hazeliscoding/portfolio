@@ -17,7 +17,7 @@ pbEdit                the developers' level editor, still in the build
 
 That's Puzzle Boy, a minigame deep inside Nocturne. You guide Jack-o'-Lantern through a maze by pushing blocks, turning swivel blocks and filling holes, while the Manikin Kid taunts you. It's Atlus's old Game Boy puzzler (Kwirk in the West), redone in 3D. I wanted it as a game of its own that runs anywhere, so I rebuilt it: [puzzle-boy](https://github.com/hazeliscoding/puzzle-boy).
 
-![Jack-o'-Lantern turns the view, switches to the overhead camera and undoes a push from the menu, in the port](/images/blog/a-ps2-minigame-in-a-unity-remaster/tour.gif)
+![Jack-o'-Lantern turns the view, switches to the overhead camera and undoes a push from the menu, in the port](/images/blog/a-ps2-minigame-in-a-unity-remaster/tour.webp)
 
 This is part 1 of 3. It covers the first two days: reading the rules out of the game, the line I drew around its copy protection, and how the rules became tests before they became code. Part 2 is about the stages the original never plays, and how one repo became three.
 
