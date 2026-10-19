@@ -6,7 +6,7 @@ import { ViewportWindow } from '../../../ui/windows/viewport-window/viewport-win
 import { KeyValue, KeyValueItem } from '../../../ui/data/key-value/key-value';
 import { Button } from '../../../ui/core/button/button';
 import { count } from '../../../core/count';
-import { PageMeta } from '../../../core/page-meta';
+import { PageMeta, PERSON, SITE_ORIGIN } from '../../../core/page-meta';
 
 /**
  * The two resume artefacts that really exist in `public/resume/`. Root-relative
@@ -127,6 +127,10 @@ export class AboutPage implements OnInit {
       description:
         'Hazel Granados is a full-stack developer (C#, .NET, Angular) with a B.S. in Computer Science from Texas A&M University–Victoria. Background, interests and resume.',
       path: '/about',
+      jsonLd: [
+        { '@type': 'ProfilePage', url: `${SITE_ORIGIN}/about`, mainEntity: { '@id': PERSON['@id'] } },
+        PERSON,
+      ],
     });
   }
 }

@@ -1,5 +1,7 @@
+import { DOCUMENT } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, provideRouter } from '@angular/router';
+import { Meta } from '@angular/platform-browser';
 import { of } from 'rxjs';
 import { BlogPostPage, countWords, decodeEntities } from './blog-post-page';
 
@@ -62,6 +64,24 @@ describe('BlogPostPage', () => {
 
   it('should create', () => {
     expect(fixture.componentInstance).toBeTruthy();
+  });
+
+  it('describes the entry to search engines as a BlogPosting', () => {
+    const script = TestBed.inject(DOCUMENT).head.querySelector(
+      'script[type="application/ld+json"]',
+    );
+    const graph = JSON.parse(script?.textContent ?? '{}')['@graph'];
+    const posting = graph.find((node: { '@type': string }) => node['@type'] === 'BlogPosting');
+    expect(posting.headline).toBe('Hello, World!');
+    expect(posting.datePublished).toBe('2026-01-16');
+    expect(posting.author.name).toBe('Hazel Granados');
+  });
+
+  it('marks the page as an article for social cards', () => {
+    const meta = TestBed.inject(Meta);
+    expect(meta.getTag("property='og:type'")?.content).toBe('article');
+    expect(meta.getTag("property='article:published_time'")?.content).toBe('2026-01-16');
+    expect(meta.getTags("property='article:tag'").length).toBe(3);
   });
 
   it('renders the ENTRY chapter header with the four-digit entry number', () => {

@@ -12,7 +12,7 @@ import { MotionService } from '../../../ui/motion/motion.service';
 import { Project, ProjectImage } from '../../../data/projects.data';
 import { blogPosts } from '../../../data/blog-posts.generated';
 import { ProjectsDataService } from '../../../services/projects-data.service';
-import { PageMeta } from '../../../core/page-meta';
+import { PageMeta, PERSON, SITE_ORIGIN, breadcrumbs } from '../../../core/page-meta';
 import { MODE_CODES } from '../../../core/navigation';
 import { count } from '../../../core/count';
 
@@ -234,17 +234,31 @@ export class ProjectDetailPage implements OnInit {
       this.shot.set(0);
 
       if (found) {
+        const path = `/portfolio/${found.id}`;
         this.pageMeta.set({
           title: `${found.title} - Hazel Granados`,
           description: found.description,
-          path: `/portfolio/${found.id}`,
+          path,
+          jsonLd: [
+            {
+              // Every record with a repository is code; the rest are plain works.
+              '@type': found.links.github ? 'SoftwareSourceCode' : 'CreativeWork',
+              name: found.title,
+              description: found.description,
+              url: `${SITE_ORIGIN}${path}`,
+              ...(found.links.github && { codeRepository: found.links.github }),
+              ...(found.tags?.length && { keywords: found.tags }),
+              author: { '@id': PERSON['@id'] },
+            },
+            breadcrumbs(['Home', '/'], ['Projects', '/portfolio'], [found.title, path]),
+          ],
         });
         return;
       }
 
-      // An id with no record is a 404 served with a 200, exactly like the
-      // error route. Without this it would inherit the previous page's tags
-      // and get indexed under a URL that holds nothing.
+      // An id with no record is a 404, exactly like the error route. Without
+      // this it would inherit the previous page's tags and could be indexed
+      // under a URL that holds nothing.
       this.pageMeta.set({
         title: 'Record not found - Hazel Granados',
         description: 'No record exists at this address.',

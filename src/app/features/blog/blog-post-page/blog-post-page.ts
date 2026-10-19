@@ -9,7 +9,7 @@ import { Window } from '../../../ui/windows/window/window';
 import { RecordFault } from '../../../ui/record-fault/record-fault';
 import { count } from '../../../core/count';
 import { entryNumber } from '../../../core/navigation';
-import { PageMeta } from '../../../core/page-meta';
+import { PageMeta, PERSON, SITE_ORIGIN, breadcrumbs } from '../../../core/page-meta';
 import { blogPosts } from '../../../data/blog-posts.generated';
 import { BlogService, type BlogPost } from '../../../services/blog.service';
 import { ProseHtml } from './prose-html';
@@ -143,6 +143,7 @@ export class BlogPostPage {
       // it is exactly as trusted as the application source. Angular's sanitizer
       // strips `id`, which would break every CONTENTS anchor, so bypassing it is
       // necessary here.
+        const path = `/blog/${found.slug}`;
       // SANITISE IT if blog content ever becomes externally sourced: CMS-fed,
       // accepting outside contributions, or fetched at runtime.
 
@@ -150,7 +151,26 @@ export class BlogPostPage {
         this.pageMeta.set({
           title: `${found.title} - Hazel Granados`,
           description: found.description,
-          path: `/blog/${found.slug}`,
+          path,
+          image: found.image || undefined,
+          imageAlt: `${found.title} — blog entry card, Hazel Granados`,
+          article: { publishedTime: found.date, tags: found.tags },
+          jsonLd: [
+            {
+              '@type': 'BlogPosting',
+              headline: found.title,
+              description: found.description,
+              datePublished: found.date,
+              dateModified: found.date,
+              url: `${SITE_ORIGIN}${path}`,
+              mainEntityOfPage: `${SITE_ORIGIN}${path}`,
+              image: `${SITE_ORIGIN}${found.image || '/og-image.png'}`,
+              keywords: found.tags,
+              wordCount: this.words(),
+              author: PERSON,
+            },
+            breadcrumbs(['Home', '/'], ['Blog', '/blog'], [found.title, path]),
+          ],
         });
       } else {
         this.pageMeta.set({

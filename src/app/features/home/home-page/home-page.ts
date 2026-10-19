@@ -11,7 +11,7 @@ import { projectsData } from '../../../data/projects.data';
 import { blogPosts } from '../../../data/blog-posts.generated';
 import { ossStats } from '../../../data/oss-stats.generated';
 import { count } from '../../../core/count';
-import { PageMeta } from '../../../core/page-meta';
+import { PageMeta, PERSON, SITE_ORIGIN } from '../../../core/page-meta';
 
 const LAST_UPDATE = '2026-09-20';
 
@@ -158,6 +158,10 @@ export class HomePage implements OnInit {
       description:
         'Hazel Granados is a full-stack software developer working in C#, .NET and Angular. Projects, open-source contributions and notes on building software.',
       path: '/',
+      jsonLd: [
+        PERSON,
+        { '@type': 'WebSite', name: 'hazel.exe', url: `${SITE_ORIGIN}/`, author: { '@id': PERSON['@id'] } },
+      ],
     });
   }
 

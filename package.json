@@ -12,7 +12,8 @@
     "test": "ng test",
     "serve:ssr:portfolio": "node dist/portfolio/server/server.mjs",
     "dev": "ng serve --host 0.0.0.0",
-    "check:og": "node scripts/check-og-image.mjs"
+    "check:og": "node scripts/check-og-image.mjs",
+    "og:cards": "node scripts/generate-og-cards.mjs && node scripts/generate-blog.mjs"
   },
   "prettier": {
     "overrides": [
