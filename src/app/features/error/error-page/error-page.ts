@@ -26,10 +26,10 @@ export class ErrorPage implements OnInit {
   readonly currentPath = this.router.url;
 
   ngOnInit(): void {
-    // Unchanged from before the redesign, and load-bearing: the host serves
-    // this page with a 200 (SPA fallback), so without `noindex` a crawler that
-    // follows a dead link indexes "record not found" under that URL. `noindex`
-    // also suppresses the canonical link — see PageMeta.
+    // The host serves this page as 404.html with a 404 status (see
+    // scripts/postbuild.mjs). `noindex` is the second line of defence, for a
+    // client-side navigation that never receives a status, and it also
+    // suppresses the canonical link — see PageMeta.
     this.pageMeta.set({
       title: 'Record not found - Hazel Granados',
       description: 'No record exists at this address.',

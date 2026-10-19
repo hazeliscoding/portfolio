@@ -159,9 +159,9 @@ export class BlogPostPage {
           title: 'Record not found - Hazel Granados',
           description: 'No entry exists at this address.',
           path: `/blog/${slug}`,
-          // Same reason as the 404 route: the host serves this with a 200, so
-          // without it a crawler indexes a "record not found" page under
-          // whatever bad link it followed.
+          // Same reason as the 404 route. The host answers an unknown slug with
+          // a 404 status (scripts/postbuild.mjs), but a client-side navigation
+          // gets no status at all, and the page must still disown itself.
           noindex: true,
         });
       }
