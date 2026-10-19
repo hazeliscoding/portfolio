@@ -126,8 +126,11 @@ export class App {
 
       // Browser-only, deliberately. Prerendered HTML must not contain the
       // overlay: if it did and JavaScript failed, the site would be hidden
-      // behind a permanent full-screen panel.
-      if (!this.prefersReducedMotion()) {
+      // behind a permanent full-screen panel. Only a visit that lands on the
+      // home page boots: someone arriving from a link to a post or a project
+      // came for that page, not for the intro. Read once, here, so moving
+      // around the site afterwards never replays it.
+      if (window.location.pathname === '/' && !this.prefersReducedMotion()) {
         this.booting.set(true);
         // 2700, not 2600: M2's progress bar runs for 2600ms, and the overlay
         // leaves 100ms after it completes. A finished bar that lingers reads

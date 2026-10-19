@@ -337,16 +337,32 @@ describe('App', () => {
     expect((fixture.nativeElement as HTMLElement).querySelector('.boot')).toBeNull();
   });
 
-  it('mounts the boot overlay once the browser has rendered', async () => {
-    const fixture = TestBed.createComponent(App);
-    fixture.detectChanges();
-    await fixture.whenStable();
-    fixture.detectChanges();
-    // Paired with the spec above: together they prove the overlay is off for
-    // the render that prerendering captures and on afterwards. Alone, either
-    // one is satisfiable by a component that does nothing.
-    const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    expect(fixture.componentInstance.booting()).toBe(!reduced);
+  describe('landing page', () => {
+    // Karma serves the suite from /context.html, so each spec puts the page
+    // on the path it means to land on and puts it back afterwards.
+    const karmaPath = location.pathname;
+    afterEach(() => history.replaceState(null, '', karmaPath));
+
+    async function bootAfterLandingOn(path: string): Promise<boolean> {
+      history.replaceState(null, '', path);
+      const fixture = TestBed.createComponent(App);
+      fixture.detectChanges();
+      await fixture.whenStable();
+      fixture.detectChanges();
+      return fixture.componentInstance.booting();
+    }
+
+    it('mounts the boot overlay once the browser has rendered the home page', async () => {
+      // Paired with the spec above: together they prove the overlay is off for
+      // the render that prerendering captures and on afterwards. Alone, either
+      // one is satisfiable by a component that does nothing.
+      const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      expect(await bootAfterLandingOn('/')).toBe(!reduced);
+    });
+
+    it('skips the boot overlay when the visit lands on any other page', async () => {
+      expect(await bootAfterLandingOn('/blog')).toBe(false);
+    });
   });
 
   it('exposes the motion sequence on the shell for CSS to select on', () => {
