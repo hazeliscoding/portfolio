@@ -1,6 +1,5 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { DomSanitizer, type SafeHtml } from '@angular/platform-browser';
 
 import { Button } from '../../../ui/core/button/button';
 import { ChapterHeader } from '../../../ui/chapter-header/chapter-header';
@@ -13,6 +12,7 @@ import { entryNumber } from '../../../core/navigation';
 import { PageMeta } from '../../../core/page-meta';
 import { blogPosts } from '../../../data/blog-posts.generated';
 import { BlogService, type BlogPost } from '../../../services/blog.service';
+import { ProseHtml } from './prose-html';
 
 interface Heading {
   /** The `id` the markdown renderer emitted; the CONTENTS anchor targets it. */
@@ -65,7 +65,7 @@ function grouped(n: number): string {
 @Component({
   selector: 'blog-post-page',
   standalone: true,
-  imports: [RouterLink, Button, ChapterHeader, KeyValue, Window, RecordFault],
+  imports: [RouterLink, Button, ChapterHeader, KeyValue, Window, RecordFault, ProseHtml],
   templateUrl: './blog-post-page.html',
   styleUrl: './blog-post-page.scss',
 })
@@ -73,7 +73,6 @@ export class BlogPostPage {
   private readonly pageMeta = inject(PageMeta);
   private readonly route = inject(ActivatedRoute);
   private readonly blog = inject(BlogService);
-  private readonly sanitizer = inject(DomSanitizer);
 
   /** Drives the article's entrance animation; see blog-post-page.scss. */
   readonly motion = inject(MotionService);
@@ -89,7 +88,6 @@ export class BlogPostPage {
    */
   readonly requestedPath = computed(() => `/blog/${this.slug()}`);
   readonly headings = signal<Heading[]>([]);
-  readonly bodyHtml = signal<SafeHtml>('');
   readonly words = signal(0);
 
   /**
@@ -140,13 +138,13 @@ export class BlogPostPage {
       this.post.set(found);
       this.headings.set(found ? this.extractHeadings(found.html) : []);
       this.words.set(found ? countWords(found.html) : 0);
-      // SAFETY: this HTML comes from markdown committed to this repository and
-      // rendered at build time — it is exactly as trusted as the application
-      // source. Angular's sanitizer strips `id`, which would break every CONTENTS
-      // anchor, so the bypass is necessary here.
-      // REMOVE THIS BYPASS if blog content ever becomes externally sourced:
-      // CMS-fed, accepting outside contributions, or fetched at runtime.
-      this.bodyHtml.set(found ? this.sanitizer.bypassSecurityTrustHtml(found.html) : '');
+      // SAFETY: the body is written unsanitised by ProseHtml. This HTML comes
+      // from markdown committed to this repository and rendered at build time —
+      // it is exactly as trusted as the application source. Angular's sanitizer
+      // strips `id`, which would break every CONTENTS anchor, so bypassing it is
+      // necessary here.
+      // SANITISE IT if blog content ever becomes externally sourced: CMS-fed,
+      // accepting outside contributions, or fetched at runtime.
 
       if (found) {
         this.pageMeta.set({
