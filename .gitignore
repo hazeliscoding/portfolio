@@ -48,3 +48,6 @@ Thumbs.db
 
 # Browser automation / MCP verification artifacts
 .playwright-mcp/
+
+# Brainstorming mockups
+.superpowers/
