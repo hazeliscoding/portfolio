@@ -21,14 +21,35 @@ function slugify(text: string): string {
     .replace(/^-+|-+$/g, '');
 }
 
+/**
+ * Escapes text for a double-quoted attribute, leaving entities the author
+ * already wrote (`&amp;`) intact. Same rule as escapeAlt in
+ * scripts/generate-blog.mjs, which renders the feed.
+ */
+function escapeAttr(text: string): string {
+  return text
+    .replace(/&(?![#a-z0-9]+;)/gi, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
 // marked's default heading renderer emits no `id` attribute, which would
 // leave the blog post page's CONTENTS anchors pointing at nothing. Register
 // a renderer that adds one, slugifying the raw (pre-escape) heading text.
+//
+// Its image renderer writes the alt text unescaped (marked 15), so an alt
+// containing a quotation ended the attribute early and spilled the rest of the
+// sentence into junk attributes. This one escapes it.
 marked.use({
   renderer: {
     heading(token: Tokens.Heading): string {
       const id = slugify(token.text);
       return `<h${token.depth} id="${id}">${this.parser.parseInline(token.tokens)}</h${token.depth}>\n`;
+    },
+    image({ href, title, text }: Tokens.Image): string {
+      const titleAttr = title ? ` title="${escapeAttr(title)}"` : '';
+      return `<img src="${href}" alt="${escapeAttr(text)}"${titleAttr}>`;
     },
   },
 });
