@@ -19,15 +19,17 @@ What's next for the site. Shipped work lives in the git history.
   repos are one pilot whose main links go to Community Edition, the one that plays out of the box.
 - 2026-10-19: The boot sequence plays only when a visit lands on `/`. A deep link came for that
   page, not the intro.
+- 2026-10-19: App screenshots sit on a clean CRT screen, with no scanlines over them. The capture
+  is the product, and scanlines made it hard to read.
 
 ## Projects as broadcast segments
 
-- [ ] Release data: a weekly generator writes each repo's latest tag and platforms
-- [ ] Project data: kind, pitch, brand colours, logos, ticker facts and CTA per project
-- [ ] ConAtlas TX (LIVE), Puzzle Boy and Axiomarium (PILOTS) added, with detail pages
-- [ ] ON AIR and LIVE segments, and the channel guide, replace the archive grid
-- [ ] PILOTS section with test-tape cards and the lazily loaded Puzzle Boy GIF
-- [ ] Phones, reduced motion and a check against the approved mockups
+- [x] Release data: a weekly generator writes each repo's latest tag and platforms
+- [x] Project data: kind, pitch, brand colours, logos, ticker facts and CTA per project
+- [x] ConAtlas TX (LIVE), Puzzle Boy and Axiomarium (PILOTS) added, with detail pages
+- [x] ON AIR and LIVE segments, and the channel guide, replace the archive grid
+- [x] PILOTS section with test-tape cards and the lazily loaded Puzzle Boy GIF
+- [x] Phones, reduced motion and a check against the approved mockups
 
 Done when `/portfolio` shows all eight projects as segments or pilots, with versions and platforms
 read from release data, and the home page, ⌘K palette and detail pages still work for every
