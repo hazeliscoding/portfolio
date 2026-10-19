@@ -1,4 +1,8 @@
-<app-chapter-header code="HOME" index="01" [meta]="'LAST UPDATE ' + lastUpdate" />
+<!--
+  `[heading]="false"`: the page is about a person, so the name below is the
+  <h1> and HOME_01 is the location label, as on a blog entry.
+-->
+<app-chapter-header code="HOME" index="01" [meta]="'LAST UPDATE ' + lastUpdate" [heading]="false" />
 
 <div class="home">
   <div class="home__col">
@@ -18,7 +22,7 @@
         -->
         <app-viewport-window ratio="1 / 1" label="CAM 00" />
         <div class="home__identity">
-          <span class="home__name">Hazel Granados</span>
+          <h1 class="home__name">Hazel Granados</h1>
           <span class="home__role">SOFTWARE DEVELOPER · SHE/THEY</span>
           <p class="home__bio">
             Full-stack developer focused on clean, well-structured solutions.

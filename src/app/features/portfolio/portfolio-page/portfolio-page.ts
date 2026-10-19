@@ -97,7 +97,8 @@ export class PortfolioPage {
   ngOnInit(): void {
     this.pageMeta.set({
       title: 'Projects - Hazel Granados',
-      description: 'Project archive — selected work by Hazel Granados.',
+      description:
+        'Projects by Hazel Granados: desktop apps in .NET and Avalonia, Electron and Angular tools, and coding-agent skills, each with its stack, status and source.',
       path: '/portfolio',
     });
   }

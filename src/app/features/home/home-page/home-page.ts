@@ -155,7 +155,8 @@ export class HomePage implements OnInit {
   ngOnInit(): void {
     this.pageMeta.set({
       title: 'Hazel Granados — Software Developer',
-      description: 'Software developer. Full-stack applications built with care.',
+      description:
+        'Hazel Granados is a full-stack software developer working in C#, .NET and Angular. Projects, open-source contributions and notes on building software.',
       path: '/',
     });
   }
