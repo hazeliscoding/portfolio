@@ -14,6 +14,20 @@ export type Release = {
 
 /** Latest release per repo under github.com/hazeliscoding, keyed by repo name. */
 export const releases: Record<string, Release> = {
+  "axiomarium": {
+    "tag": "v0.5.0",
+    "url": "https://github.com/hazeliscoding/axiomarium/releases/tag/v0.5.0",
+    "platforms": [
+      "Windows",
+      "macOS",
+      "Linux"
+    ]
+  },
+  "conatlas-tx": {
+    "tag": "v0.1.0",
+    "url": "https://github.com/hazeliscoding/conatlas-tx/releases/tag/v0.1.0",
+    "platforms": []
+  },
   "gil-sweep": {
     "tag": "v2.0.0",
     "url": "https://github.com/hazeliscoding/gil-sweep/releases/tag/v2.0.0",
@@ -32,6 +46,24 @@ export const releases: Record<string, Release> = {
   "prompuff": {
     "tag": "v1.1.1",
     "url": "https://github.com/hazeliscoding/prompuff/releases/tag/v1.1.1",
+    "platforms": [
+      "Windows",
+      "macOS",
+      "Linux"
+    ]
+  },
+  "puzzle-boy": {
+    "tag": "v0.3.0",
+    "url": "https://github.com/hazeliscoding/puzzle-boy/releases/tag/v0.3.0",
+    "platforms": [
+      "Windows",
+      "macOS",
+      "Linux"
+    ]
+  },
+  "puzzle-boy-community": {
+    "tag": "v0.1.0",
+    "url": "https://github.com/hazeliscoding/puzzle-boy-community/releases/tag/v0.1.0",
     "platforms": [
       "Windows",
       "macOS",

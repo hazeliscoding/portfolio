@@ -40,8 +40,8 @@ describe('PortfolioPage', () => {
   // Padded to two digits like every other instrument reading; the singular
   // form is covered by the filter test below, where one record survives.
   it('reads the record count in the filter bar and the chapter meta', () => {
-    expect(text('.archive__count')).toBe('05 RECORDS RETRIEVED');
-    expect(text('.chapter__meta')).toBe('05 RECORDS RETRIEVED');
+    expect(text('.archive__count')).toBe('08 RECORDS RETRIEVED');
+    expect(text('.chapter__meta')).toBe('08 RECORDS RETRIEVED');
   });
 
   it('derives the filters from the real tags, leading with ALL', () => {

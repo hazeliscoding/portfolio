@@ -1,21 +1,42 @@
 import { projectsData } from './projects.data';
 
 describe('projectsData', () => {
-  it('holds PR Sweep, XIV Vault, Gil Sweep, Prompuff and sdl3-porter, in that order', () => {
+  it('holds the five apps, then the live site, then the two pilots, in that order', () => {
     expect(projectsData.map((p) => p.id)).toEqual([
       'pr-sweep',
       'xiv-vault',
       'gil-sweep',
       'prompuff',
       'sdl3-porter',
+      'conatlas-tx',
+      'puzzle-boy',
+      'axiomarium',
     ]);
-    expect(projectsData.map((p) => p.title)).toEqual([
-      'PR Sweep',
-      'XIV Vault',
-      'Gil Sweep',
-      'Prompuff',
-      'sdl3-porter',
+    expect(projectsData.map((p) => p.kind)).toEqual([
+      'app',
+      'app',
+      'app',
+      'app',
+      'app',
+      'site',
+      'pilot',
+      'pilot',
     ]);
+  });
+
+  it('links Puzzle Boy to Community Edition, the one that plays without Nocturne', () => {
+    const puzzleBoy = projectsData.find((p) => p.id === 'puzzle-boy')!;
+    expect(puzzleBoy.links.github).toBe('https://github.com/hazeliscoding/puzzle-boy-community');
+    expect(puzzleBoy.parts?.map((part) => part.url.split('/').pop())).toEqual([
+      'puzzle-boy',
+      'puzzle-boy-community',
+      'puzzle-boy-engine',
+    ]);
+  });
+
+  it('gives the live site its address', () => {
+    const conAtlas = projectsData.find((p) => p.id === 'conatlas-tx')!;
+    expect(conAtlas.links.demo).toBe('https://conatlas-tx.vercel.app');
   });
 
   it('links XIV Vault to its repository', () => {
@@ -72,5 +93,8 @@ describe('projectsData', () => {
     expect(projectsData[2].images?.length).toBe(5);
     expect(projectsData[3].images?.length).toBe(5);
     expect(projectsData[4].images?.length).toBe(4);
+    expect(projectsData[5].images?.length).toBe(3);
+    expect(projectsData[6].images?.length).toBe(3);
+    expect(projectsData[7].images?.length).toBe(2);
   });
 });

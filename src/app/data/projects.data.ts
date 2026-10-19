@@ -388,4 +388,171 @@ export const projectsData: Project[] = [
       '/plugin install sdl3-porter@sdl3-porter',
     ],
   },
+  {
+    id: 'conatlas-tx',
+    title: 'ConAtlas TX',
+    description:
+      'A free, open-source calendar of every anime convention in Texas on one calm page — every date, venue and status checked against the organizer’s own site, with no accounts, no tracking and no guessed dates.',
+    longDescription: [
+      'ConAtlas TX is a convention calendar for fans, cosplayers and first-timers. The home page groups upcoming Texas anime conventions by month, each with its dates, venue and verification; the calendar spans each convention across its weekend; and on a phone a convention’s page has its dates, venue, a bookmark and an Add to calendar menu. If a con hasn’t announced its weekend, the site says so rather than guessing.',
+      'The data is the product. Every convention lives in a plain YAML file versioned in Git, every published date, venue and status needs an official source, and each listing shows when it was last checked. A maintainer reviews every change before it’s published: Claude Code can help research updates, but nothing reaches the site without human approval. A data CLI checks every file and cross-record rule, lists the conventions due for a re-check and compares staged drafts with what’s published.',
+      'The site is static Astro, so it builds and runs without a server, database or AI service, and its fonts are self-hosted so a visit makes no third-party requests. Browser smoke and axe checks run against the build, both colour modes meet WCAG AA, and the convention data is CC BY 4.0 for anyone to reuse with attribution.',
+    ],
+    image: 'images/projects/conatlas-tx/home.png',
+    images: [
+      {
+        src: 'images/projects/conatlas-tx/home.png',
+        caption: 'home — upcoming Texas conventions by month, each with its dates, venue and verification',
+      },
+      {
+        src: 'images/projects/conatlas-tx/calendar.png',
+        caption: 'calendar — a month in dark mode, each convention spanning its weekend',
+      },
+      {
+        src: 'images/projects/conatlas-tx/convention-phone.png',
+        caption: 'on a phone — a convention’s dates, venue, bookmark and Add to calendar',
+      },
+    ],
+    links: {
+      github: 'https://github.com/hazeliscoding/conatlas-tx',
+      demo: 'https://conatlas-tx.vercel.app',
+    },
+    tags: ['Astro', 'TypeScript', 'YAML', 'Open data', 'Website'],
+    command: 'glow conatlas-tx.md',
+    status: 'public beta',
+    year: '2026',
+    stack: 'Astro · TypeScript',
+    kind: 'site',
+    pitch: 'Every anime convention in Texas on one calm page, with dates checked against each organizer’s own site.',
+    medium: 'Website',
+    // Dusty pink, brightened the way the site's own dark mode brightens it.
+    brand: {
+      ink: '#f2b8cb',
+      tint: '#e98aa8',
+      icon: 'images/projects/conatlas-tx/icon.svg',
+      mark: 'images/projects/conatlas-tx/icon.svg',
+    },
+    ticker: [
+      'Every Texas anime con on one page',
+      'Every date has an official source',
+      'No guessed dates',
+      'Static: no server, no database',
+    ],
+    note: 'no accounts, no tracking',
+  },
+  {
+    id: 'puzzle-boy',
+    title: 'Puzzle Boy',
+    description:
+      'The Puzzle Boy minigame from Shin Megami Tensei III Nocturne, rebuilt to run on its own for Windows, macOS and Linux — a preservation port that plays the original stages from your own copy, and a Community Edition that plays out of the box with a new campaign, a level editor and level packs.',
+    longDescription: [
+      'Community Edition is the one to play. Push blocks, turn swivels and fill holes with the original’s rules through a campaign of twenty new stages, up to a team of three Jacks, then paint your own in the level editor, which marks every problem by its cell, playtests the stage and asks the solver. Stages travel as level packs, each checked before it’s added. The Default theme draws its graphics and synthesizes its music in code, so there is nothing to download after unpacking; with Nocturne HD Remaster, one import plays every stage in the original’s look and sound instead.',
+      'The preservation port is the original, faithfully: it reads your own copy of Nocturne HD Remaster and plays its 20 stages at the original’s speed, from the Manikin Kid’s introductions to the turning view and the menu’s undo.',
+      'Both play on puzzle-boy-engine, the headless rules, stage authoring and presentation libraries they share. Nothing from ATLUS or SEGA ships in any download — the port and the Classic theme read it from your copy, and the game never looks for Nocturne unless you ask. It’s an independent fan project, in C# on MonoGame.',
+    ],
+    image: 'images/projects/puzzle-boy/playing.png',
+    images: [
+      {
+        src: 'images/projects/puzzle-boy/title.png',
+        caption: 'Community Edition — the title screen in the Default theme',
+      },
+      {
+        src: 'images/projects/puzzle-boy/playing.png',
+        caption: 'playing — Garden Path, stage 1 of 20',
+      },
+      {
+        src: 'images/projects/puzzle-boy/editor.png',
+        caption: 'level editor — paint a stage, see its problems, playtest it',
+      },
+    ],
+    links: {
+      // Community Edition, not the port: it is the one that plays without a copy of Nocturne.
+      github: 'https://github.com/hazeliscoding/puzzle-boy-community',
+    },
+    tags: ['C#', '.NET', 'MonoGame', 'Game', 'Level editor'],
+    command: 'glow puzzle-boy.md',
+    status: 'experimental',
+    year: '2026',
+    stack: 'C# · MonoGame',
+    kind: 'pilot',
+    pitch:
+      'The Puzzle Boy minigame from Shin Megami Tensei III Nocturne, rebuilt to run on its own, then expanded.',
+    medium: 'Game',
+    brand: {
+      ink: '#c9b6ff',
+      tint: '#b497ff',
+      icon: 'images/projects/puzzle-boy/icon.svg',
+      mark: 'images/projects/puzzle-boy/mark.svg',
+    },
+    parts: [
+      {
+        label: 'Preservation port',
+        url: 'https://github.com/hazeliscoding/puzzle-boy',
+        note: 'bring your own copy',
+      },
+      {
+        label: 'Community Edition',
+        url: 'https://github.com/hazeliscoding/puzzle-boy-community',
+        note: 'plays out of the box',
+      },
+      {
+        label: 'Engine',
+        url: 'https://github.com/hazeliscoding/puzzle-boy-engine',
+        note: 'library, not playable',
+      },
+    ],
+    // The Classic-theme tour from Community Edition's README, hosted by GitHub
+    // rather than committed here.
+    reel: {
+      src: 'https://github.com/user-attachments/assets/0f50755c-3d6c-4c69-97af-9c4b3d813d4e',
+      still: 'images/projects/puzzle-boy/playing.png',
+    },
+  },
+  {
+    id: 'axiomarium',
+    title: 'Axiomarium',
+    description:
+      'My open lab for building, testing and debugging an AI coding environment like software: the agents, skills, hooks, policies and evals I use, plus axm, a local CLI that inspects, validates and tests them.',
+    longDescription: [
+      'AI coding configuration drifts. Instructions contradict each other, skills overlap, old rules stay forever, and broken behaviour gets fixed by adding more prose. Axiomarium treats that as an engineering problem: failures should become tests, not paragraphs. Its vault holds agents, skills, hooks, policies, workflows, schemas and evals as plain Markdown, YAML and JSON Schema, and every asset carries a manifest saying what it is, which harnesses it supports, what it may touch, how it’s tested and how far it can be trusted.',
+      'axm is the engineering around the vault. axm explain shows what Claude Code and Codex actually load for a file, what they silently drop and which skills and hooks reach the agent; axm doctor checks the instruction files, skills and hooks of any repo; axm triggers finds skills whose descriptions overlap, and axm triggers test runs a skill’s trigger prompts on both harnesses to see whether the agent picks it. Since v0.5, axm eval run runs an asset’s eval cases in a sealed home, and axm conflicts --judge has a model find instructions that contradict each other.',
+      'It’s in early development and built for my own setup first. In a terminal the output is in colour, with a kaomoji for the outcome; piped, in CI or read by an agent, it’s plain text.',
+    ],
+    image: 'images/projects/axiomarium/doctor.gif',
+    images: [
+      {
+        src: 'images/projects/axiomarium/doctor.gif',
+        caption: 'axm doctor — an edit claims a maturity its evidence doesn’t back, and the doctor says so',
+      },
+      {
+        src: 'images/projects/axiomarium/explain.gif',
+        caption: 'axm explain — what Claude Code and Codex each load, drop and run for one file',
+      },
+    ],
+    links: {
+      github: 'https://github.com/hazeliscoding/axiomarium',
+    },
+    tags: ['C#', 'CLI', 'Claude Code', 'Codex', 'LLM Evals'],
+    command: 'glow axiomarium.md',
+    status: 'early development',
+    year: '2026',
+    stack: 'C# · CLI',
+    kind: 'pilot',
+    pitch:
+      'Build, test and debug your AI coding setup like software: agents, skills, hooks and evals, plus the axm CLI.',
+    medium: 'CLI',
+    brand: {
+      ink: '#f58cbb',
+      tint: '#f0569b',
+      icon: 'images/projects/axiomarium/icon.svg',
+      mark: 'images/projects/axiomarium/icon.svg',
+    },
+    console: [
+      { command: 'axm explain', note: 'what Claude Code and Codex load' },
+      { command: 'axm doctor', note: 'check instructions, skills, hooks' },
+      { command: 'axm triggers test', note: 'does the agent pick the skill?' },
+      { command: 'axm eval run', note: 'run evals in a sealed home' },
+      { command: 'axm conflicts --judge', note: 'find instructions that contradict' },
+    ],
+  },
 ];
