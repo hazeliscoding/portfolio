@@ -1,0 +1,17 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "broken-image",
+        "value": "*",
+        "files": [
+          "src/app/services/blog.service.ts"
+        ],
+        "createdAt": "2026-10-18T21:33:12.786Z",
+        "reason": "Claude: the match is a regex replacement string adding loading=lazy to rendered markdown <img> tags, not an img element"
+      }
+    ]
+  }
+}

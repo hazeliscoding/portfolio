@@ -92,7 +92,10 @@ export class BlogService {
     .map((post) => ({
       ...post,
       dateObj: new Date(post.date),
-      html: marked.parse(stripLeadingTitleHeading(post.markdown, post.title)) as string,
+      html: sizeImages(
+        marked.parse(stripLeadingTitleHeading(post.markdown, post.title)) as string,
+        post.imageSizes,
+      ),
     }))
     .sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0));
 
@@ -103,4 +106,24 @@ export class BlogService {
   getPostBySlug(slug: string) {
     return this.posts.find((post) => post.slug === slug) ?? null;
   }
+}
+
+/**
+ * Gives each image its intrinsic size and defers every one after the first.
+ *
+ * The size lets the browser reserve the box before the file arrives (prose
+ * sets `height: auto`, so it scales); without it the post shifted down as each
+ * image landed. The first image can be in view on arrival, where lazy loading
+ * would hold back the largest paint; the rest are below a screen of prose and
+ * need not compete with it. Several posts carry multi-megabyte GIFs, so this
+ * is most of the page's weight.
+ */
+function sizeImages(html: string, sizes: Record<string, [number, number]>): string {
+  let seen = 0;
+  return html.replace(/<img src="([^"]+)"/g, (_tag, src: string) => {
+    const size = sizes[src];
+    const dims = size ? ` width="${size[0]}" height="${size[1]}"` : '';
+    const lazy = seen++ ? ' loading="lazy" decoding="async"' : '';
+    return `<img src="${src}"${dims}${lazy}`;
+  });
 }
