@@ -32,7 +32,8 @@ export const PERSON = {
   '@id': `${SITE_ORIGIN}/#person`,
   name: 'Hazel Granados',
   url: `${SITE_ORIGIN}/`,
-  jobTitle: 'Software Developer',
+  jobTitle: 'Full-Stack Developer',
+  knowsAbout: ['C#', '.NET', 'Angular', 'TypeScript', 'AI engineering', 'LLM evaluation'],
   sameAs: ['https://github.com/hazeliscoding', 'https://www.linkedin.com/in/hazelgranados'],
 };
 

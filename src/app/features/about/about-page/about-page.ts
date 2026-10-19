@@ -51,11 +51,11 @@ function pad(n: number): string {
   styleUrl: './about-page.scss',
 })
 export class AboutPage implements OnInit {
-  /** Paragraphs harvested verbatim from about-section.ts `paragraphs`. */
+  /** Kept in step with the GitHub profile README (hazeliscoding/hazeliscoding). */
   bio: string[] = [
-    "I'm Hazel Granados (she/they), a software developer with a B.S. in Computer Science from Texas A&M University–Victoria.",
-    'I enjoy building modern web apps with strong UX, solid architecture, and maintainable code.',
-    'I am always learning and looking for interesting problems to solve.',
+    "I'm Hazel Granados (she/they), a full-stack developer with a B.S. in Computer Science from Texas A&M University–Victoria. I build with C#, .NET, Angular and cloud tooling.",
+    "Lately I'm moving into AI engineering grounded in evaluation rather than vibes: agent workflows that behave the same way every run, regression fixtures, and evals that prove a skill helps before I trust it. sdl3-porter is the first result.",
+    'I love local-first desktop apps and developer experience, and I believe a good tool should be reliable, approachable, and a little bit cozy.',
   ];
 
   /**
@@ -88,11 +88,11 @@ export class AboutPage implements OnInit {
    */
   languages: KeyValueItem[] = [{ key: 'ENGLISH', value: 'Native' }];
 
-  /** Harvested verbatim from interests-section.ts `interests`. */
   interests = [
     'Full-stack (.NET + Angular)',
-    'Cloud & serverless (AWS/Azure)',
-    'Microservices & event-driven systems',
+    'AI engineering: evals & deterministic workflows',
+    'Local-first desktop apps & developer experience',
+    'Cloud & event-driven systems (AWS/Azure)',
     'Performance, testing & CI/CD',
   ].map((label, i) => ({ idx: pad(i + 1), label }));
 
@@ -125,7 +125,7 @@ export class AboutPage implements OnInit {
     this.pageMeta.set({
       title: 'About - Hazel Granados',
       description:
-        'Hazel Granados is a full-stack developer (C#, .NET, Angular) with a B.S. in Computer Science from Texas A&M University–Victoria. Background, interests and resume.',
+        'Hazel Granados is a full-stack developer moving into AI engineering, with a B.S. in Computer Science from Texas A&M University–Victoria. Background and resume.',
       path: '/about',
       jsonLd: [
         { '@type': 'ProfilePage', url: `${SITE_ORIGIN}/about`, mainEntity: { '@id': PERSON['@id'] } },

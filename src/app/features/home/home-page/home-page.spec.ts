@@ -31,7 +31,7 @@ describe('HomePage', () => {
   it('renders the HOME_01 chapter header with the last-update reading', () => {
     expect(text(el.querySelector('.chapter__code'))).toBe('HOME');
     expect(text(el.querySelector('.chapter__index'))).toBe('_01');
-    expect(text(el.querySelector('.chapter__meta'))).toBe('LAST UPDATE 2026-09-20');
+    expect(text(el.querySelector('.chapter__meta'))).toBe('LAST UPDATE 2026-10-18');
   });
 
   it('sets the document title', () => {

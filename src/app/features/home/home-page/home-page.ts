@@ -13,7 +13,7 @@ import { ossStats } from '../../../data/oss-stats.generated';
 import { count } from '../../../core/count';
 import { PageMeta, PERSON, SITE_ORIGIN } from '../../../core/page-meta';
 
-const LAST_UPDATE = '2026-09-20';
+const LAST_UPDATE = '2026-10-18';
 
 const EMAIL = 'hazel.granados@protonmail.com';
 
@@ -76,11 +76,13 @@ export class HomePage implements OnInit {
     { label: 'C# / .NET 8', tone: 'info' },
     { label: 'ASP.NET Core', tone: 'info' },
     { label: 'Angular', tone: 'info' },
+    { label: 'Claude Code + MCP', tone: 'neutral' },
+    { label: 'Agent skills + evals', tone: 'neutral' },
     { label: 'EF Core + PostgreSQL', tone: 'neutral' },
     { label: 'CQRS / MediatR', tone: 'neutral' },
-    { label: 'AWS SQS/SNS', tone: 'neutral' },
+    { label: 'Avalonia / Electron', tone: 'neutral' },
+    { label: 'AWS + Azure', tone: 'neutral' },
     { label: 'Terraform', tone: 'neutral' },
-    { label: 'AWS Parameter Store', tone: 'neutral' },
     { label: 'Docker', tone: 'neutral' },
     { label: 'xUnit + Testcontainers', tone: 'neutral' },
   ];
@@ -88,6 +90,8 @@ export class HomePage implements OnInit {
   /** Window 02. */
   readonly services = [
     'Full-stack web application development',
+    'AI agent workflows & evals',
+    'Desktop applications (Avalonia, Electron)',
     'Backend/API engineering',
     'Background processing & scheduled jobs',
     'Event-driven integrations',
@@ -154,9 +158,9 @@ export class HomePage implements OnInit {
 
   ngOnInit(): void {
     this.pageMeta.set({
-      title: 'Hazel Granados — Software Developer',
+      title: 'Hazel Granados — Full-Stack Developer & AI Engineer',
       description:
-        'Hazel Granados is a full-stack software developer working in C#, .NET and Angular. Projects, open-source contributions and notes on building software.',
+        'Hazel Granados is a full-stack developer (C#, .NET, Angular) moving into AI engineering: deterministic agent workflows and evals that prove they work.',
       path: '/',
       jsonLd: [
         PERSON,

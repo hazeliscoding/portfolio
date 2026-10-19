@@ -105,16 +105,17 @@ describe('AboutPage', () => {
 
   it('numbers the interests and counts them in the window context', () => {
     const rows = all('.about__interest');
-    expect(rows.length).toBe(4);
+    expect(rows.length).toBe(5);
     expect(all('.about__idx').map((i) => i.textContent?.trim())).toEqual([
       '01',
       '02',
       '03',
       '04',
+      '05',
     ]);
     // The list runs edge to edge, so its window draws no body padding.
     expect(all('.window__body')[1].classList.contains('window__body--padded')).toBe(false);
-    expect(all('.window__context')[1].textContent?.trim()).toBe('04');
+    expect(all('.window__context')[1].textContent?.trim()).toBe('05');
   });
 
   it('links both resume formats as downloads', () => {
