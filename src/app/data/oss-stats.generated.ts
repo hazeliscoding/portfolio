@@ -20,19 +20,19 @@ export type OssStats = {
 export const ossStats: OssStats = {
   "totalMergedPrs": 7,
   "projectCount": 3,
-  "totalStars": 32973,
-  "updated": "2026-10-12",
+  "totalStars": 33151,
+  "updated": "2026-10-19",
   "projects": [
     {
       "repo": "BCUninstaller/Bulk-Crap-Uninstaller",
       "url": "https://github.com/BCUninstaller/Bulk-Crap-Uninstaller/pulls?q=is%3Apr%20author%3Ahazeliscoding%20is%3Amerged",
-      "stars": 21800,
+      "stars": 21949,
       "mergedPrs": 4
     },
     {
       "repo": "microsoft/winget-pkgs",
       "url": "https://github.com/microsoft/winget-pkgs/pulls?q=is%3Apr%20author%3Ahazeliscoding%20is%3Amerged",
-      "stars": 11163,
+      "stars": 11192,
       "mergedPrs": 2
     },
     {
