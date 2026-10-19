@@ -1,0 +1,4 @@
+{
+  "origins": ["https://www.hazeliscoding.dev"],
+  "originsRegex": ["http://localhost:[0-9]+"]
+}

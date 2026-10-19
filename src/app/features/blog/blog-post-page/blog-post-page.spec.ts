@@ -49,6 +49,8 @@ describe('BlogPostPage', () => {
   let fixture: ComponentFixture<BlogPostPage>;
 
   beforeEach(async () => {
+    // Keeps the giscus script out of the page; comments.spec.ts covers it.
+    spyOn(Element.prototype, 'replaceChildren');
     await TestBed.configureTestingModule({
       imports: [BlogPostPage],
       providers: [
@@ -245,6 +247,22 @@ describe('BlogPostPage', () => {
     expect(control?.getAttribute('href')).toBe('/blog');
     expect(control?.textContent).toContain('All entries');
     expect(control?.getAttribute('data-variant')).toBe('text');
+  });
+
+  it('puts the comments between the entry and the pager', () => {
+    const el = fixture.nativeElement as HTMLElement;
+    const comments = el.querySelector('article #comments')!;
+    const pager = el.querySelector('.post__pager')!;
+    expect(comments.compareDocumentPosition(el.querySelector('.post__body')!)).toBe(
+      Node.DOCUMENT_POSITION_PRECEDING,
+    );
+    expect(comments.compareDocumentPosition(pager)).toBe(Node.DOCUMENT_POSITION_FOLLOWING);
+  });
+
+  it('jumps to the comments from the RECORD window', () => {
+    const el = fixture.nativeElement as HTMLElement;
+    const jump = el.querySelector('.post__return a[href="#comments"]');
+    expect(jump?.textContent).toContain('Comments');
   });
 
   it('ships exactly one h1 — the entry title, not the chapter label', () => {

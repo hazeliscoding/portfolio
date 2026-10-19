@@ -26,6 +26,9 @@
       <div class="post__rule" aria-hidden="true"></div>
       <div class="post__body prose" [appProseHtml]="p.html"></div>
 
+      <!-- Straight after the body, so the reactions meet the reader where the post ends. -->
+      <app-comments id="comments" class="post__comments" [term]="p.slug" />
+
       @if (neighbors().older || neighbors().newer) {
         <nav class="post__pager" aria-label="More entries">
           @if (neighbors().older; as older) {
@@ -73,6 +76,8 @@
         <app-key-value [items]="record()" />
         <div class="post__return">
           <app-button variant="text" size="sm" routerLink="/blog">&lt; All entries</app-button>
+          <!-- No count: a live one would mean loading the comments up front. -->
+          <app-button variant="text" size="sm" href="#comments">Comments &gt;</app-button>
         </div>
       </app-window>
     </aside>

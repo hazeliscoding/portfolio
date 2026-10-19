@@ -148,6 +148,13 @@
 // the control under it.
 .post__return {
   margin-block-start: 14px;
+  display: flex;
+  justify-content: space-between;
+}
+
+// The same step from the body as the pager takes.
+.post__comments {
+  margin-block-start: var(--sp-6);
 }
 
 // Older on the leading edge, newer on the trailing one, like the log reads

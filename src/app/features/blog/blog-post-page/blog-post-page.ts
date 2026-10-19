@@ -12,6 +12,7 @@ import { entryNumber } from '../../../core/navigation';
 import { PageMeta, PERSON, SITE_ORIGIN, breadcrumbs } from '../../../core/page-meta';
 import { blogPosts } from '../../../data/blog-posts.generated';
 import { BlogService, type BlogPost } from '../../../services/blog.service';
+import { Comments } from './comments';
 import { ProseHtml } from './prose-html';
 
 interface Heading {
@@ -65,7 +66,7 @@ function grouped(n: number): string {
 @Component({
   selector: 'blog-post-page',
   standalone: true,
-  imports: [RouterLink, Button, ChapterHeader, KeyValue, Window, RecordFault, ProseHtml],
+  imports: [RouterLink, Button, ChapterHeader, Comments, KeyValue, Window, RecordFault, ProseHtml],
   templateUrl: './blog-post-page.html',
   styleUrl: './blog-post-page.scss',
 })
