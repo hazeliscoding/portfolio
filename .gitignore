@@ -2,6 +2,9 @@
 
 # Compiled output
 /dist
+# Written by scripts/generate-blog.mjs on every start and build
+/public/feed.xml
+/public/llms.txt
 /tmp
 /out-tsc
 /bazel-out

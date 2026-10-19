@@ -1,9 +1,10 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import { marked } from 'marked';
+import { publicDir, readPosts } from './lib/posts.mjs';
 
 const projectRoot = process.cwd();
 
-const inputDir = path.join(projectRoot, 'public', 'blog');
 const outputFile = path.join(
   projectRoot,
   'src',
@@ -11,53 +12,11 @@ const outputFile = path.join(
   'data',
   'blog-posts.generated.ts',
 );
+const feedFile = path.join(publicDir, 'feed.xml');
 
-function isSlug(value) {
-  return /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(value);
-}
-
-function parseFrontmatter(raw) {
-  const normalized = raw.replace(/\r\n/g, '\n');
-  if (!normalized.startsWith('---\n')) {
-    return { frontmatter: {}, body: raw };
-  }
-
-  const end = normalized.indexOf('\n---\n', 4);
-  if (end === -1) {
-    throw new Error('Frontmatter started but no closing --- found.');
-  }
-
-  const fmBlock = normalized.slice(4, end).trim();
-  const body = normalized.slice(end + '\n---\n'.length).replace(/^\n+/, '');
-
-  const frontmatter = {};
-  for (const line of fmBlock.split('\n')) {
-    const trimmed = line.trim();
-    if (!trimmed || trimmed.startsWith('#')) continue;
-
-    const colonIndex = trimmed.indexOf(':');
-    if (colonIndex === -1) continue;
-
-    const key = trimmed.slice(0, colonIndex).trim();
-    let value = trimmed.slice(colonIndex + 1).trim();
-
-    // Basic array syntax: [a, b, c]
-    if (value.startsWith('[') && value.endsWith(']')) {
-      const inner = value.slice(1, -1).trim();
-      const parts = inner
-        ? inner.split(',').map((p) => p.trim()).filter(Boolean)
-        : [];
-      frontmatter[key] = parts;
-      continue;
-    }
-
-    // Strip optional surrounding quotes
-    value = value.replace(/^"(.*)"$/, '$1').replace(/^'(.*)'$/, '$1');
-    frontmatter[key] = value;
-  }
-
-  return { frontmatter, body };
-}
+// Same value as SITE_ORIGIN in src/app/core/page-meta.ts, which a Node script
+// cannot import. www is the canonical host; feed readers need absolute URLs.
+const SITE_ORIGIN = 'https://www.hazeliscoding.dev';
 
 function escapeForTemplateLiteral(value) {
   return value
@@ -66,71 +25,114 @@ function escapeForTemplateLiteral(value) {
     .replace(/\$\{/g, '\\${');
 }
 
+// marked 15 writes image alt text unescaped, so a quotation inside an alt
+// broke the attribute. Same rule as escapeAttr in src/app/services/blog.service.ts.
+function escapeAlt(text) {
+  return text
+    .replace(/&(?![#a-z0-9]+;)/gi, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+marked.use({
+  renderer: {
+    image({ href, title, text }) {
+      const titleAttr = title ? ` title="${escapeAlt(title)}"` : '';
+      return `<img src="${href}" alt="${escapeAlt(text)}"${titleAttr}>`;
+    },
+  },
+});
+
+function escapeXml(value) {
+  return value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&apos;');
+}
+
+/** RFC 822, which RSS requires. Posts carry a date only, so midnight UTC. */
+function rfc822(date) {
+  return new Date(`${date}T00:00:00Z`).toUTCString();
+}
+
+/**
+ * Full post HTML for the feed. Posts link images and pages root-relative
+ * (`/images/...`), which a feed reader resolves against nothing, so every
+ * `src="/` and `href="/` is made absolute. A `]]>` inside the HTML would close
+ * the CDATA section early, so it is split across two sections.
+ */
+function feedHtml(markdown) {
+  return (marked.parse(markdown))
+    .replace(/(src|href)="\/(?!\/)/g, `$1="${SITE_ORIGIN}/`)
+    .replace(/]]>/g, ']]]]><![CDATA[>');
+}
+
+function renderFeed(posts) {
+  const items = posts
+    .map((p) => {
+      const url = `${SITE_ORIGIN}/blog/${p.slug}`;
+      const categories = p.tags
+        .map((tag) => `      <category>${escapeXml(tag)}</category>`)
+        .join('\n');
+      return `    <item>
+      <title>${escapeXml(p.title)}</title>
+      <link>${url}</link>
+      <guid isPermaLink="true">${url}</guid>
+      <pubDate>${rfc822(p.date)}</pubDate>
+      <description>${escapeXml(p.description)}</description>
+${categories}
+      <content:encoded><![CDATA[${feedHtml(p.markdown)}]]></content:encoded>
+    </item>`;
+    })
+    .join('\n');
+
+  // lastBuildDate is the newest post's date, not the clock, so rebuilding
+  // without a new post leaves the file byte-identical.
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>Hazel Granados — Blog</title>
+    <link>${SITE_ORIGIN}/blog</link>
+    <description>Notes on building software, by Hazel Granados.</description>
+    <language>en-us</language>
+    <lastBuildDate>${posts.length ? rfc822(posts[0].date) : ''}</lastBuildDate>
+    <atom:link href="${SITE_ORIGIN}/feed.xml" rel="self" type="application/rss+xml" />
+${items}
+  </channel>
+</rss>
+`;
+}
+
+/**
+ * llms.txt (llmstxt.org): a Markdown index for language models. Entries link
+ * to the post's raw Markdown in public/blog, which a model reads more cleanly
+ * than the rendered page. vercel.json keeps those .md files out of search.
+ */
+function renderLlmsTxt(posts) {
+  const entries = posts
+    .map((p) => `- [${p.title}](${SITE_ORIGIN}/blog/${p.slug}.md): ${p.description}`)
+    .join('\n');
+  return `# Hazel Granados
+
+> Full-stack software developer working in C#, .NET and Angular. This site holds a project archive, open-source contributions and a blog about building software.
+
+## Blog
+
+${entries}
+
+## Pages
+
+- [About](${SITE_ORIGIN}/about): background, education, interests and resume
+- [Projects](${SITE_ORIGIN}/portfolio): every project with its stack, status and source
+- [RSS feed](${SITE_ORIGIN}/feed.xml): every entry in full
+`;
+}
+
 async function main() {
-  let entries;
-  try {
-    entries = await fs.readdir(inputDir, { withFileTypes: true });
-  } catch (err) {
-    throw new Error(
-      `Blog input folder not found: ${inputDir}. Create it and add .md files.`,
-    );
-  }
-
-  const markdownFiles = entries
-    .filter((e) => e.isFile() && e.name.endsWith('.md'))
-    .map((e) => e.name)
-    .sort((a, b) => a.localeCompare(b));
-
-  const posts = [];
-
-  for (const fileName of markdownFiles) {
-    const slug = fileName.replace(/\.md$/, '');
-    if (!isSlug(slug)) {
-      throw new Error(
-        `Invalid post filename: ${fileName}. Use kebab-case like my-first-post.md`,
-      );
-    }
-
-    const fullPath = path.join(inputDir, fileName);
-    const raw = await fs.readFile(fullPath, 'utf8');
-    const { frontmatter, body } = parseFrontmatter(raw);
-
-    const title = frontmatter.title;
-    const date = frontmatter.date;
-
-    if (!title || typeof title !== 'string') {
-      throw new Error(`Missing required frontmatter 'title' in ${fileName}`);
-    }
-
-    if (!date || typeof date !== 'string') {
-      throw new Error(`Missing required frontmatter 'date' in ${fileName}`);
-    }
-
-    const description =
-      typeof frontmatter.description === 'string'
-        ? frontmatter.description
-        : '';
-
-    const tags = Array.isArray(frontmatter.tags)
-      ? frontmatter.tags
-      : typeof frontmatter.tags === 'string' && frontmatter.tags
-        ? frontmatter.tags
-            .split(',')
-            .map((t) => t.trim())
-            .filter(Boolean)
-        : [];
-
-    posts.push({
-      slug,
-      title,
-      date,
-      description,
-      tags,
-      markdown: body,
-    });
-  }
-
-  posts.sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0));
+  const posts = await readPosts();
 
   const ts = `/* eslint-disable */
 // This file is auto-generated by scripts/generate-blog.mjs.
@@ -142,6 +144,10 @@ export type BlogPostSource = {
   date: string; // YYYY-MM-DD
   description: string;
   tags: string[];
+  /** Root-relative social card, or '' to use the site card. */
+  image: string;
+  /** \`[width, height]\` of each embedded site image, keyed by src. */
+  imageSizes: Record<string, [number, number]>;
   markdown: string;
 };
 
@@ -152,14 +158,18 @@ export const blogPosts: BlogPostSource[] = [\n${posts
         p.title,
       )},\n    date: ${JSON.stringify(p.date)},\n    description: ${JSON.stringify(
         p.description,
-      )},\n    tags: ${JSON.stringify(p.tags)},\n    markdown: \`${markdown}\`,\n  }`;
+      )},\n    tags: ${JSON.stringify(p.tags)},\n    image: ${JSON.stringify(
+        p.image,
+      )},\n    imageSizes: ${JSON.stringify(p.imageSizes)},\n    markdown: \`${markdown}\`,\n  }`;
     })
     .join(',\n')}\n];\n`;
 
   await fs.mkdir(path.dirname(outputFile), { recursive: true });
   await fs.writeFile(outputFile, ts, 'utf8');
+  await fs.writeFile(feedFile, renderFeed(posts), 'utf8');
+  await fs.writeFile(path.join(publicDir, 'llms.txt'), renderLlmsTxt(posts), 'utf8');
 
-  console.log(`Generated ${outputFile} (${posts.length} posts)`);
+  console.log(`Generated ${outputFile}, feed.xml and llms.txt (${posts.length} posts)`);
 }
 
 await main();

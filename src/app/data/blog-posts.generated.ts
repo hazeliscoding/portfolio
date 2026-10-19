@@ -8,6 +8,10 @@ export type BlogPostSource = {
   date: string; // YYYY-MM-DD
   description: string;
   tags: string[];
+  /** Root-relative social card, or '' to use the site card. */
+  image: string;
+  /** `[width, height]` of each embedded site image, keyed by src. */
+  imageSizes: Record<string, [number, number]>;
   markdown: string;
 };
 
@@ -18,6 +22,8 @@ export const blogPosts: BlogPostSource[] = [
     date: "2026-10-18",
     description: "Rebuilding Puzzle Boy from Shin Megami Tensei III Nocturne as a standalone game, from the game's own code but without shipping a byte of it. Part 1 of 3.",
     tags: ["reverse-engineering","puzzle-boy","claude-code","ghidra","csharp","monogame"],
+    image: "/images/og/blog/a-ps2-minigame-in-a-unity-remaster.png",
+    imageSizes: {"/images/blog/a-ps2-minigame-in-a-unity-remaster/tour.webp":[640,360],"/images/blog/a-ps2-minigame-in-a-unity-remaster/manikin-kid.jpg":[960,540],"/images/blog/a-ps2-minigame-in-a-unity-remaster/first-render-stage-44.jpg":[960,562],"/images/blog/a-ps2-minigame-in-a-unity-remaster/menu-undo.jpg":[960,540],"/images/blog/a-ps2-minigame-in-a-unity-remaster/complete.jpg":[960,540],"/images/blog/a-ps2-minigame-in-a-unity-remaster/stage-20.jpg":[960,540]},
     markdown: `The method names in *Shin Megami Tensei III Nocturne HD Remaster* read like a PS2 source tree from 2003:
 
 \`\`\`text
@@ -30,7 +36,7 @@ pbEdit                the developers' level editor, still in the build
 
 That's Puzzle Boy, a minigame deep inside Nocturne. You guide Jack-o'-Lantern through a maze by pushing blocks, turning swivel blocks and filling holes, while the Manikin Kid taunts you. It's Atlus's old Game Boy puzzler (Kwirk in the West), redone in 3D. I wanted it as a game of its own that runs anywhere, so I rebuilt it: [puzzle-boy](https://github.com/hazeliscoding/puzzle-boy).
 
-![Jack-o'-Lantern turns the view, switches to the overhead camera and undoes a push from the menu, in the port](/images/blog/a-ps2-minigame-in-a-unity-remaster/tour.gif)
+![Jack-o'-Lantern turns the view, switches to the overhead camera and undoes a push from the menu, in the port](/images/blog/a-ps2-minigame-in-a-unity-remaster/tour.webp)
 
 This is part 1 of 3. It covers the first two days: reading the rules out of the game, the line I drew around its copy protection, and how the rules became tests before they became code. Part 2 is about the stages the original never plays, and how one repo became three.
 
@@ -166,6 +172,8 @@ Then I looked at the 30 stage files the original never plays, and found that six
     date: "2026-10-08",
     description: "What a coding agent gets wrong porting SDL2 to SDL3, how I measured it, and the agent that searched the whole disk for headers.",
     tags: ["claude-code","agent-skills","sdl3","evals","c"],
+    image: "/images/og/blog/every-trap-is-proven.png",
+    imageSizes: {"/images/blog/every-trap-is-proven/port.gif":[1200,900],"/images/blog/every-trap-is-proven/scores.svg":[860,1336]},
     markdown: `This compiles against SDL3 without a single warning:
 
 \`\`\`c
@@ -290,6 +298,8 @@ Then open an SDL2 project and ask Claude Code to port it to SDL3. Commit first, 
     date: "2026-01-16",
     description: "My first post on this portfolio site.",
     tags: ["angular","portfolio","personal"],
+    image: "/images/og/blog/hello-world.png",
+    imageSizes: {},
     markdown: `I’ve wanted a place on my own domain to write short notes about what I’m learning, what I’m building, and what I’m thinking about in tech.
 
 <!-- ![Blog placeholder image](/images/blog/placeholder.svg) -->
