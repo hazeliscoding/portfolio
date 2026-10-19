@@ -119,7 +119,11 @@
   position: relative;
 }
 
+// A flex container so the nav inside stretches to the full height and its
+// right-hand border runs the length of the screen; as a plain block the nav
+// was only as tall as its items, and the border stopped under the last one.
 .app__rail {
+  display: flex;
   width: 140px;
   flex-shrink: 0;
 }
