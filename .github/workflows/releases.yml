@@ -1,0 +1,56 @@
+name: Refresh release data
+
+# src/app/data/releases.generated.ts is committed output, read at build time:
+# the version badges, download links and platform lines on /portfolio.
+#
+# Same shape as oss-stats.yml, for the same reasons: not wired into prebuild,
+# so a rate-limited or briefly-down GitHub can't take a deploy with it, and a
+# failed run leaves the last good data in place. Run it by hand after
+# publishing a release rather than waiting for Monday.
+
+on:
+  schedule:
+    # Mondays, 06:47 UTC: off the hour, and clear of the OSS stats run at :17.
+    - cron: '47 6 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: releases
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      # No `npm ci`: the generator imports only node: built-ins and fetch.
+      - name: Regenerate the release data
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: node scripts/generate-releases.mjs
+
+      - name: Commit only if a release changed
+        run: |
+          set -euo pipefail
+          FILE=src/app/data/releases.generated.ts
+
+          if git diff --quiet -- "$FILE"; then
+            echo "No new releases, nothing committed."
+            exit 0
+          fi
+
+          git diff --stat -- "$FILE"
+
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add "$FILE"
+          git commit -m 'chore(releases): refresh release data'
+          git push
