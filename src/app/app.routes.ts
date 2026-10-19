@@ -15,6 +15,11 @@ export const routes: Routes = [
       import('./features/blog/blog-page/blog-page').then((m) => m.BlogPage),
   },
   {
+    path: 'blog/tags/:tag',
+    loadComponent: () =>
+      import('./features/blog/blog-page/blog-page').then((m) => m.BlogPage),
+  },
+  {
     path: 'blog/:slug',
     loadComponent: () =>
       import('./features/blog/blog-post-page/blog-post-page').then(

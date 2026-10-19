@@ -24,7 +24,8 @@
 
   <span class="chapter__caret" aria-hidden="true"></span>
 
+  <!-- Projected content follows the text, for a link that belongs in the readout (the blog's RSS). -->
   @if (meta()) {
-    <p class="chapter__meta" [attr.data-sfx]="motion.sfx()">{{ meta() }}</p>
+    <p class="chapter__meta" [attr.data-sfx]="motion.sfx()">{{ meta() }}<ng-content /></p>
   }
 </header>

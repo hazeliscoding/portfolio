@@ -13,6 +13,16 @@ export const serverRoutes: ServerRoute[] = [
   },
 
   {
+    path: 'blog/tags/:tag',
+    renderMode: RenderMode.Prerender,
+    fallback: PrerenderFallback.Client,
+    async getPrerenderParams() {
+      const tags = new Set(blogPosts.flatMap((post) => post.tags));
+      return [...tags].map((tag) => ({ tag }));
+    },
+  },
+
+  {
     path: 'blog/:slug',
     renderMode: RenderMode.Prerender,
     fallback: PrerenderFallback.Client,

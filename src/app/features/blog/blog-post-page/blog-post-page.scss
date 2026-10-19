@@ -56,6 +56,17 @@
 // reason: it has to survive a 360px phone and a 1440px desktop. 0.01em has no
 // token — --tracking-display is 0.02em, which the design uses on the chapter
 // title but deliberately not here.
+.post__tag {
+  color: inherit;
+  text-decoration: none;
+
+  &:hover,
+  &:focus-visible {
+    color: var(--text-primary);
+    text-decoration: underline;
+  }
+}
+
 .post__title {
   font: var(--type-display-m);
   font-size: clamp(28px, 3.5vw, 40px);
@@ -137,6 +148,54 @@
 // the control under it.
 .post__return {
   margin-block-start: 14px;
+}
+
+// Older on the leading edge, newer on the trailing one, like the log reads
+// back in time. Built from the TOC row's hairlines and indicator rather than
+// a new look: it is the same kind of jump.
+.post__pager {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--sp-3);
+  margin-block-start: var(--sp-6);
+  border-top: var(--bw-hairline) solid var(--border-default);
+  padding-block-start: var(--sp-3);
+}
+
+.post__pager-link {
+  display: grid;
+  // Both links stretch to the taller one; without this the shorter one
+  // spreads the spare height between its rows and its title drops.
+  align-content: start;
+  gap: var(--sp-1);
+  padding: 8px 12px 8px 9px;
+  border-inline-start: var(--bw-indicator) solid transparent;
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: all var(--dur-micro);
+
+  &:hover,
+  &:focus-visible {
+    border-inline-start-color: var(--signal-active);
+    color: var(--text-primary);
+  }
+}
+
+.post__pager-link--newer {
+  grid-column: 2;
+  text-align: end;
+}
+
+.post__pager-dir {
+  font: var(--type-mono-s);
+  letter-spacing: var(--tracking-wider);
+  color: var(--text-faint);
+  text-transform: uppercase;
+}
+
+.post__pager-title {
+  font: var(--type-body-s);
+  overflow-wrap: break-word;
 }
 
 

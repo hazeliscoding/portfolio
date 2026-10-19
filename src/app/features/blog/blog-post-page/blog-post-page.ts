@@ -101,12 +101,8 @@ export class BlogPostPage {
     return entryNumber(blogPosts.findIndex((candidate) => candidate.slug === p.slug));
   });
 
-  /** `2026-01-16 · ANGULAR · PORTFOLIO · PERSONAL`. */
-  readonly eyebrow = computed(() => {
-    const p = this.post();
-    if (!p) return '';
-    return [p.date, ...p.tags.map((tag) => tag.toUpperCase())].join(' · ');
-  });
+  /** The entries published either side of this one, for the footer links. */
+  readonly neighbors = computed(() => this.blog.getNeighbors(this.post()?.slug ?? ''));
 
   readonly wordsMeta = computed(() => {
     const n = this.words();
@@ -143,11 +139,11 @@ export class BlogPostPage {
       // it is exactly as trusted as the application source. Angular's sanitizer
       // strips `id`, which would break every CONTENTS anchor, so bypassing it is
       // necessary here.
-        const path = `/blog/${found.slug}`;
       // SANITISE IT if blog content ever becomes externally sourced: CMS-fed,
       // accepting outside contributions, or fetched at runtime.
 
       if (found) {
+        const path = `/blog/${found.slug}`;
         this.pageMeta.set({
           title: `${found.title} - Hazel Granados`,
           description: found.description,

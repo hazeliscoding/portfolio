@@ -4,6 +4,7 @@ import { ActivatedRoute, provideRouter } from '@angular/router';
 import { Meta } from '@angular/platform-browser';
 import { of } from 'rxjs';
 import { BlogPostPage, countWords, decodeEntities } from './blog-post-page';
+import { blogPosts } from '../../../data/blog-posts.generated';
 
 describe('decodeEntities', () => {
   it('decodes the entities marked produces', () => {
@@ -64,6 +65,27 @@ describe('BlogPostPage', () => {
 
   it('should create', () => {
     expect(fixture.componentInstance).toBeTruthy();
+  });
+
+  it('links each tag in the eyebrow to its listing', () => {
+    const el = fixture.nativeElement as HTMLElement;
+    const links = Array.from(el.querySelectorAll('.post__eyebrow a'));
+    expect(links.map((a) => a.getAttribute('href'))).toEqual([
+      '/blog/tags/angular',
+      '/blog/tags/portfolio',
+      '/blog/tags/personal',
+    ]);
+  });
+
+  // hello-world is the oldest entry: there is a newer one and nothing older.
+  it('links the neighbouring entries, and only the ones that exist', () => {
+    const el = fixture.nativeElement as HTMLElement;
+    const links = Array.from(el.querySelectorAll('.post__pager-link'));
+    const newer = blogPosts[blogPosts.length - 2];
+    expect(links.length).toBe(1);
+    expect(links[0].getAttribute('rel')).toBe('next');
+    expect(links[0].getAttribute('href')).toBe(`/blog/${newer.slug}`);
+    expect(links[0].textContent).toContain(newer.title);
   });
 
   it('describes the entry to search engines as a BlogPosting', () => {

@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { BlogService } from './blog.service';
+import { blogPosts } from '../data/blog-posts.generated';
 
 describe('BlogService', () => {
   let blog: BlogService;
@@ -29,5 +30,13 @@ describe('BlogService', () => {
     expect(imgs.every((img) => img.getAttribute('width') && img.getAttribute('height'))).toBe(true);
     expect(imgs[0].hasAttribute('loading')).toBe(false);
     expect(imgs.slice(1).every((img) => img.getAttribute('loading') === 'lazy')).toBe(true);
+  });
+
+  it('finds the entries either side of a post, newest first', () => {
+    const middle = blogPosts[1].slug;
+    expect(blog.getNeighbors(middle).newer?.slug).toBe(blogPosts[0].slug);
+    expect(blog.getNeighbors(middle).older?.slug).toBe(blogPosts[2].slug);
+    expect(blog.getNeighbors(blogPosts[0].slug).newer).toBeNull();
+    expect(blog.getNeighbors('no-such-entry')).toEqual({ older: null, newer: null });
   });
 });

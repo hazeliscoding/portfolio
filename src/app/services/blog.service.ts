@@ -106,6 +106,13 @@ export class BlogService {
   getPostBySlug(slug: string) {
     return this.posts.find((post) => post.slug === slug) ?? null;
   }
+
+  /** The entries either side of `slug`: `older` came out before it, `newer` after. */
+  getNeighbors(slug: string): { older: BlogPost | null; newer: BlogPost | null } {
+    const i = this.posts.findIndex((post) => post.slug === slug);
+    if (i < 0) return { older: null, newer: null };
+    return { older: this.posts[i + 1] ?? null, newer: this.posts[i - 1] ?? null };
+  }
 }
 
 /**

@@ -19,11 +19,29 @@
       chrome around it; the instruments stay in the aside.
     -->
     <article class="post__article" [attr.data-sfx]="motion.sfx()">
-      <p class="post__eyebrow">{{ eyebrow() }}</p>
+      <!-- Each tag links to its listing; written on one line so the text reads `DATE · TAG · TAG`. -->
+      <p class="post__eyebrow">{{ p.date }}@for (tag of p.tags; track tag) { · <a class="post__tag" [routerLink]="['/blog/tags', tag]">{{ tag.toUpperCase() }}</a>}</p>
       <h1 class="post__title">{{ p.title }}</h1>
       <p class="post__description">{{ p.description }}</p>
       <div class="post__rule" aria-hidden="true"></div>
       <div class="post__body prose" [appProseHtml]="p.html"></div>
+
+      @if (neighbors().older || neighbors().newer) {
+        <nav class="post__pager" aria-label="More entries">
+          @if (neighbors().older; as older) {
+            <a class="post__pager-link" [routerLink]="['/blog', older.slug]" rel="prev">
+              <span class="post__pager-dir">&lt; Older entry</span>
+              <span class="post__pager-title">{{ older.title }}</span>
+            </a>
+          }
+          @if (neighbors().newer; as newer) {
+            <a class="post__pager-link post__pager-link--newer" [routerLink]="['/blog', newer.slug]" rel="next">
+              <span class="post__pager-dir">Newer entry &gt;</span>
+              <span class="post__pager-title">{{ newer.title }}</span>
+            </a>
+          }
+        </nav>
+      }
     </article>
 
     <aside class="post__side">

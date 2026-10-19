@@ -56,6 +56,14 @@ export const ENV_WORDS: Record<string, string> = {
   '/blog': 'LOG',
 };
 
+const TAG_PREFIX = '/blog/tags/';
+
+/** The tag a `/blog/tags/:tag` path names, if any entry carries it. */
+function tagFromPath(path: string): string | null {
+  const tag = path.slice(TAG_PREFIX.length);
+  return blogPosts.some((post) => post.tags.includes(tag)) ? tag : null;
+}
+
 export function envWordFor(url: string): string {
   const path = url.split('?')[0].split('#')[0];
   if (path === '/') return ENV_WORDS['/'];
@@ -66,6 +74,10 @@ export function envWordFor(url: string): string {
     // A record that does not exist is a 404, and the word behind it should
     // say so rather than print a number for a record with no position.
     return index < 0 ? '404' : String(index + 1).padStart(2, '0');
+  }
+
+  if (path.startsWith(TAG_PREFIX)) {
+    return tagFromPath(path) ? 'TAG' : '404';
   }
 
   if (path.startsWith('/blog/')) {
@@ -121,6 +133,9 @@ export function pathLabelFor(url: string): string {
   if (path.startsWith('/portfolio/')) {
     return `${MODE_CODES['projects']} // ${path.slice('/portfolio/'.length).toUpperCase()}`;
   }
+  if (path.startsWith(TAG_PREFIX)) {
+    return `${MODE_CODES['blog']} // TAG ${tagFromPath(path)!.toUpperCase()}`;
+  }
   if (path.startsWith('/blog/')) {
     const slug = path.slice('/blog/'.length);
     const index = blogPosts.findIndex((post) => post.slug === slug);
@@ -146,6 +161,9 @@ export function logMessageFor(url: string): string {
   if (path.startsWith('/portfolio/')) {
     const id = path.slice('/portfolio/'.length).toUpperCase();
     return `OPEN RECORD → ${MODE_CODES['projects']} // ${id}`;
+  }
+  if (path.startsWith(TAG_PREFIX)) {
+    return `FILTER → ${MODE_CODES['blog']} // TAG ${tagFromPath(path)!.toUpperCase()}`;
   }
   if (path.startsWith('/blog/')) {
     const slug = path.slice('/blog/'.length).toUpperCase();
