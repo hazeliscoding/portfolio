@@ -34,6 +34,18 @@ After adding or retitling a post, run `npm run og:cards` to render its social ca
 `public/images/og/blog/` with your local Chrome, then commit the PNG. A post without one uses the
 site card.
 
+Each post's comments and reactions are a GitHub Discussion in this repo's **Blog comments**
+category, shown by [giscus](https://giscus.app). A post's discussion opens with its first comment and
+is found by the post's slug, so retitling a post keeps its thread and renaming the slug loses it.
+Reading needs no account; commenting and reacting need a GitHub sign-in. Moderate on GitHub. giscus
+always loads production's `public/giscus-kairo.css`, so a theme change shows once it's deployed.
+`giscus.json` limits which sites can embed the comments. The two ids in
+`src/app/features/blog/blog-post-page/comments.ts` come from:
+
+```bash
+gh api graphql -f query='{repository(owner:"hazeliscoding",name:"portfolio"){id discussionCategories(first:10){nodes{id name}}}}'
+```
+
 Open-source stats are generated the same way into `oss-stats.generated.ts`, but refresh weekly via
 GitHub Actions rather than at build time, so a rate-limited GitHub can't fail a deploy.
 
