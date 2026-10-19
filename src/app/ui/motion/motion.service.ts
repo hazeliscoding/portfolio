@@ -1,5 +1,6 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
+import { filter, skip } from 'rxjs';
 
 /**
  * Drives CSS animation re-triggering across route changes.
@@ -10,21 +11,14 @@ import { NavigationEnd, Router } from '@angular/router';
  * `data-sfx` attribute the stylesheet selects on. Flipping the attribute
  * swaps the animation name, which restarts the animation.
  *
- * Starts at 'a' and only changes on navigation, so the value is deterministic
- * and hydration cannot mismatch.
- *
- * It does NOT follow that prerendered HTML carries 'a'. Angular's initial
- * navigation fires a `NavigationEnd` during the server render, so every
- * prerendered page ships `data-sfx="b"`. The client then repeats the same
- * sequence — constructed at 'a', flipped to 'b' by its own initial navigation
- * — which means the attribute briefly reads 'a' during bootstrap. Measured:
- * 'b' in the served HTML, 'a' at 96ms, 'b' again at 111ms.
- *
- * That 15ms divergence restarts every entrance animation once on first load.
- * It is invisible today because the boot overlay covers the first 2700ms, and
- * under reduced motion there is no overlay but also no animation. Worth
- * knowing before anyone removes or short-circuits the overlay: the
- * double-trigger would become visible, not appear.
+ * Starts at 'a' and flips on every navigation EXCEPT the initial one. Angular
+ * fires that first `NavigationEnd` twice over — once during the server render,
+ * once again in the browser — so flipping on it shipped `data-sfx="b"` in the
+ * prerendered HTML, read 'a' for ~15ms of bootstrap, then 'b' again: every
+ * entrance animation restarted once on first load. The boot overlay hid that
+ * until it stopped playing on pages other than home. Skipping the initial
+ * navigation keeps the attribute at 'a' on the server and in the browser
+ * alike, so hydration finds it unchanged and nothing restarts.
  */
 @Injectable({ providedIn: 'root' })
 export class MotionService {
@@ -34,10 +28,11 @@ export class MotionService {
   readonly sfx = this.state.asReadonly();
 
   constructor() {
-    this.router.events.subscribe((event) => {
-      if (event instanceof NavigationEnd) {
-        this.state.update((current) => (current === 'a' ? 'b' : 'a'));
-      }
-    });
+    this.router.events
+      .pipe(
+        filter((event) => event instanceof NavigationEnd),
+        skip(1),
+      )
+      .subscribe(() => this.state.update((current) => (current === 'a' ? 'b' : 'a')));
   }
 }
