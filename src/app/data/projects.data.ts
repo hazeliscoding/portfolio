@@ -3,6 +3,33 @@ export interface ProjectImage {
   caption: string;
 }
 
+/**
+ * What a project is, in the projects page's broadcast language: a shipped app
+ * is ON AIR, a live website is LIVE, an experiment is a PILOT.
+ */
+export type ProjectKind = 'app' | 'site' | 'pilot';
+
+/** A project's own colours and marks, from its repo's brand folder, tuned for the dark station. */
+export interface ProjectBrand {
+  /** Name, call to action and links: the light end of the brand's palette. */
+  ink: string;
+  /** Channel chip, status badge and ticker: the brand's own colour. */
+  tint: string;
+  /** The segment's background glow, only where a wash of `tint` isn't the brand's look. */
+  glow?: string;
+  /** The app icon, above the name. */
+  icon: string;
+  /** The small mark in the channel guide and bug; the icon itself when there is no separate mark. */
+  mark: string;
+}
+
+/** One repository of a project that spans several. */
+export interface ProjectPart {
+  label: string;
+  url: string;
+  note: string;
+}
+
 export interface Project {
   id: string;
   title: string;
@@ -22,6 +49,24 @@ export interface Project {
   status?: string;
   year?: string;
   stack?: string;
+  kind: ProjectKind;
+  /** The one line under the name. */
+  pitch: string;
+  /** What it is, for the channel bug: Desktop, Website, Claude Code plugin… */
+  medium: string;
+  brand: ProjectBrand;
+  /** Hard facts for the segment's ticker, each taken from the project's own README or write-up. */
+  ticker?: string[];
+  /** Fine print after the platforms on the call to action. */
+  note?: string;
+  /** Commands that install it, shown in place of a download button. */
+  install?: string[];
+  /** The repos of a project that spans several, each linking its own. */
+  parts?: ProjectPart[];
+  /** A pilot's looping clip, with the still shown instead under reduced motion. */
+  reel?: { src: string; still: string };
+  /** A pilot's commands, for a CLI with nothing to screenshot on the card. */
+  console?: { command: string; note: string }[];
 }
 
 export const projectsData: Project[] = [
@@ -76,6 +121,24 @@ export const projectsData: Project[] = [
     status: 'active',
     year: '2026',
     stack: 'Electron · Angular',
+    kind: 'app',
+    pitch: 'See where your team’s pull requests are stuck, before standup.',
+    medium: 'Desktop',
+    // Navy field, gold main branch, blue feature branch: the mark's own three.
+    brand: {
+      ink: '#98c6ff',
+      tint: '#d1a249',
+      glow: 'rgba(0, 40, 110, 0.75)',
+      icon: 'images/projects/pr-sweep/icon.svg',
+      mark: 'images/projects/pr-sweep/icon.svg',
+    },
+    ticker: [
+      'Every open PR in the org on one board',
+      'Full refresh 28.9 s → 9.1 s',
+      'Copy standup in one click',
+      'No server, no telemetry',
+    ],
+    note: 'signed, updates itself',
   },
   {
     id: 'xiv-vault',
@@ -118,6 +181,22 @@ export const projectsData: Project[] = [
     status: 'active',
     year: '2026',
     stack: '.NET 10 · Avalonia',
+    kind: 'app',
+    pitch: 'Move your Dalamud plugin setup to a new PC, with nothing lost.',
+    medium: 'Desktop + CLI',
+    brand: {
+      ink: '#a9c7ff',
+      tint: '#6c9eff',
+      icon: 'images/projects/xiv-vault/icon.svg',
+      mark: 'images/projects/xiv-vault/mark.svg',
+    },
+    ticker: [
+      'SHA-256 verified backups',
+      'A safety backup before every restore',
+      'Brought back a 67-plugin setup',
+      'Nearly 200 tests',
+    ],
+    note: 'app and CLI, updates itself',
   },
   {
     id: 'gil-sweep',
@@ -169,16 +248,31 @@ export const projectsData: Project[] = [
     status: 'active',
     year: '2026',
     stack: '.NET 10 · Avalonia',
+    kind: 'app',
+    pitch: 'What should I farm for gil right now?',
+    medium: 'Desktop',
+    brand: {
+      ink: '#f0cf85',
+      tint: '#d9a94a',
+      icon: 'images/projects/gil-sweep/icon.svg',
+      mark: 'images/projects/gil-sweep/mark.svg',
+    },
+    ticker: [
+      'About 100 gatherables priced per sweep',
+      'The Eorzea clock for timed nodes',
+      '125 tests on recorded market data',
+    ],
+    note: 'no account, no telemetry',
   },
   {
     id: 'prompuff',
     title: 'Prompuff',
     description:
-      'A local-first desktop app for Windows and Linux that keeps the AI prompts that actually worked — saved, tagged and versioned, with their {{variables}} filled in and copied in one step, and nothing leaving the machine.',
+      'A local-first desktop app for Windows, macOS and Linux that keeps the AI prompts that actually worked — saved, tagged and versioned, with their {{variables}} filled in and copied in one step, and nothing leaving the machine.',
     longDescription: [
       'Each prompt keeps a title, description, body, a note on why it worked, a collection, tags, a favorite flag and a 1–5 usefulness rating. The Render tab lists a prompt’s {{variables}}, previews the result as values are filled in and copies it, leaving anything unfilled as a token. Search covers titles, bodies, notes and tags, #tag filters by tag, a command palette opens, copies or runs anything from the keyboard, and Quick save starts a new prompt from whatever is on the clipboard. Prompts travel as plain Markdown, one file per prompt, so import and export never need Prompuff on the other end.',
       'Versioning is the core rule. Every distinct saved state of a prompt’s title, description, body and notes is a version with a generated note such as “Edited body (+3 −1 lines)”, a save that changes none of them creates nothing, and restoring an old version adds it as a new one, so the history never loses a step; the History tab shows each version’s line diff. Under the Avalonia app sit separate Domain, Application and Infrastructure layers, and the library is one SQLite file reached through hand-written SQL rather than an ORM. Schema migrations run against PRAGMA user_version after the database is copied to a backup, and the Markdown frontmatter reader and writer are hand-written too, so there is no YAML dependency.',
-      'It ships for Windows as a per-user Velopack installer that updates itself and for Linux as an AppImage, both self-contained. A pushed tag tests and packs both platforms, starts the AppImage under Xvfb to check that it creates its library, and opens a draft release, and headless UI tests drive the real main window through saving, rendering, copying and restarting on Windows and Linux runners. There is no account, telemetry or AI call: the only network request is the update check, and logs record prompt IDs, never their text.',
+      'It ships for Windows as a signed per-user Velopack installer, for macOS as a package or a zip, and for Linux as an AppImage, all self-contained and all updating themselves. A pushed tag tests and packs every platform, starts the AppImage under Xvfb to check that it creates its library, and opens a draft release, and headless UI tests drive the real main window through saving, rendering, copying and restarting on Windows and Linux runners. There is no account, telemetry or AI call: the only network request is the update check, and logs record prompt IDs, never their text.',
     ],
     image: 'images/projects/prompuff/library.png',
     images: [
@@ -212,6 +306,21 @@ export const projectsData: Project[] = [
     status: 'active',
     year: '2026',
     stack: 'Avalonia · SQLite',
+    kind: 'app',
+    pitch: 'Keep the AI prompts that actually worked, on your own machine.',
+    medium: 'Desktop',
+    brand: {
+      ink: '#cdb4ff',
+      tint: '#b48eff',
+      icon: 'images/projects/prompuff/icon.svg',
+      mark: 'images/projects/prompuff/mark.svg',
+    },
+    ticker: [
+      'Every save is a version',
+      'Fill in {{variables}}, copy in one step',
+      'Plain Markdown in and out',
+    ],
+    note: 'nothing leaves your machine',
   },
   {
     id: 'sdl3-porter',
@@ -260,5 +369,23 @@ export const projectsData: Project[] = [
     status: 'stable',
     year: '2026',
     stack: 'Claude Code · SDL3',
+    kind: 'app',
+    pitch: 'Port SDL2 code to SDL3, and catch the bugs that still compile.',
+    medium: 'Claude Code plugin',
+    brand: {
+      ink: '#fdba74',
+      tint: '#fb923c',
+      icon: 'images/projects/sdl3-porter/icon.svg',
+      mark: 'images/projects/sdl3-porter/icon.svg',
+    },
+    ticker: [
+      '17 traps, each proven in CI',
+      'Haiku 4.5: 0.39 → 0.92 on a whole game',
+      'Dogfooded on Woof! and scrcpy',
+    ],
+    install: [
+      '/plugin marketplace add hazeliscoding/sdl3-porter',
+      '/plugin install sdl3-porter@sdl3-porter',
+    ],
   },
 ];

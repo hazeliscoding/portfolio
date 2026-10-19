@@ -202,8 +202,18 @@ describe('ProjectDetailPage', () => {
   });
 });
 
-/** A deployed project. No real record has a live site today. */
+/** The projects page's segment fields; nothing on the detail page reads them. */
+const SEGMENT = {
+  kind: 'app',
+  pitch: '',
+  medium: 'Desktop',
+  brand: { ink: '#ffffff', tint: '#ffffff', icon: '', mark: '' },
+} satisfies Partial<Project>;
+
+/** A deployed project, with a demo link on the record. */
 const LIVE: Project = {
+  ...SEGMENT,
+  kind: 'site',
   id: 'live-record',
   title: 'Live Record',
   description: 'A record with a live site.',
@@ -219,6 +229,7 @@ const LIVE: Project = {
 
 /** A published library. No real record has a package today. */
 const PACKAGED: Project = {
+  ...SEGMENT,
   id: 'packaged-record',
   title: 'Packaged Record',
   description: 'A record with a NuGet package.',

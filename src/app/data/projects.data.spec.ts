@@ -45,6 +45,27 @@ describe('projectsData', () => {
     expect(ids).not.toContain('agent-eval-platform');
   });
 
+  it('gives every project the pitch, medium and colours its segment prints', () => {
+    for (const p of projectsData) {
+      expect(p.pitch).withContext(p.id).not.toBe('');
+      expect(p.medium).withContext(p.id).not.toBe('');
+      expect(p.brand.ink).withContext(p.id).toMatch(/^#[0-9a-f]{6}$/);
+      expect(p.brand.tint).withContext(p.id).toMatch(/^#[0-9a-f]{6}$/);
+    }
+  });
+
+  // A logo path that drifts from the file renders as a broken image in the
+  // middle of the segment, and nothing else would notice.
+  it('serves every project logo', async () => {
+    for (const p of projectsData) {
+      for (const src of new Set([p.brand.icon, p.brand.mark])) {
+        const res = await fetch(src);
+        expect(res.ok).withContext(src).toBeTrue();
+        expect(res.headers.get('content-type')).withContext(src).toContain('svg');
+      }
+    }
+  });
+
   it('retains the images the detail page renders', () => {
     expect(projectsData[0].images?.length).toBe(5);
     expect(projectsData[1].images?.length).toBe(5);
