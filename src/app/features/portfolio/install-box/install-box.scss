@@ -1,0 +1,38 @@
+// Reads --tint from the segment around it.
+:host {
+  display: block;
+  max-width: 460px;
+  border: var(--bw-hairline) solid var(--border-default);
+  background: var(--surface-inset);
+}
+
+.install__bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 10px;
+  border-block-end: var(--bw-hairline) solid var(--border-default);
+  font: var(--type-mono-s);
+  letter-spacing: var(--tracking-wide);
+  color: var(--text-muted);
+}
+
+.install__copy {
+  padding: 2px var(--sp-1);
+  background: none;
+  border: 0;
+  font: inherit;
+  letter-spacing: inherit;
+  color: var(--tint);
+  cursor: pointer;
+}
+
+.install__cmds {
+  padding: 10px var(--sp-3);
+  font: 400 13px/1.6 var(--font-mono);
+  overflow-wrap: anywhere;
+}
+
+.install__prompt {
+  color: var(--tint);
+}

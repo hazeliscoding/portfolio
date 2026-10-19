@@ -1,0 +1,13 @@
+<div class="crt">
+  <div class="crt__screen">
+    @if (host()) {
+      <div class="crt__url" aria-hidden="true"><span class="crt__dots"></span>{{ host() }}</div>
+    }
+    <img class="crt__shot" [src]="shot()" [alt]="alt()" loading="lazy" />
+  </div>
+</div>
+@if (phone()) {
+  <div class="phone">
+    <img [src]="phone()" [alt]="phoneAlt()" loading="lazy" />
+  </div>
+}

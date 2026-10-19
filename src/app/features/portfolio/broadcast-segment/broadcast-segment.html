@@ -1,0 +1,61 @@
+@let s = segment();
+<section
+  class="segment"
+  [id]="s.id"
+  [attr.data-kind]="s.kind"
+  [class.segment--flip]="s.flip"
+  [style]="s.style"
+  [style.animation-delay]="s.delay"
+  [attr.data-sfx]="motion.sfx()"
+  [attr.aria-labelledby]="s.id + '-name'"
+>
+  <div class="segment__bug">
+    <span class="segment__channel">CH.{{ s.channel }}</span>
+    <img class="segment__bug-mark" [src]="s.mark" alt="" width="18" height="18" />
+    <span class="segment__bug-title">{{ s.title }}</span>
+    <span class="segment__slug">{{ s.slug }}</span>
+    @if (s.kind === 'site') {
+      <span class="segment__live"><span class="segment__live-dot"></span>LIVE</span>
+    } @else {
+      <span class="segment__onair">● ON AIR</span>
+    }
+  </div>
+
+  <div class="segment__main">
+    <div class="segment__copy">
+      <img class="segment__icon" [src]="s.icon" alt="" width="64" height="64" />
+      <h2 class="segment__name" [id]="s.id + '-name'">{{ s.title }}</h2>
+      <span class="segment__status">{{ s.status }}</span>
+      <p class="segment__pitch">{{ s.pitch }}</p>
+
+      @if (s.cta.kind === 'install') {
+        <app-install-box [commands]="s.cta.commands" />
+      } @else {
+        <a class="segment__cta" [href]="s.cta.href" target="_blank" rel="noopener">
+          <span class="segment__cta-label">[ {{ s.cta.label }} ↗ ]</span>
+          <span class="segment__cta-fine">{{ s.cta.fine }}</span>
+          <span class="sr-only">(opens in a new tab)</span>
+        </a>
+      }
+
+      <a class="segment__record" [routerLink]="['/portfolio', s.id]">↵ OPEN RECORD</a>
+    </div>
+
+    <app-broadcast-screen
+      class="segment__devices"
+      [shot]="s.shot"
+      [alt]="s.alt"
+      [host]="s.host"
+      [phone]="s.phone"
+      [phoneAlt]="s.title + ' on a phone'"
+    />
+  </div>
+
+  @if (s.ticker.length) {
+    <ul class="segment__ticker">
+      @for (fact of s.ticker; track fact) {
+        <li>{{ fact }}</li>
+      }
+    </ul>
+  }
+</section>

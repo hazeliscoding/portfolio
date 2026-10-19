@@ -1,0 +1,82 @@
+:host {
+  position: relative;
+  display: block;
+  min-width: 0;
+
+  &:has(.phone) {
+    padding-block-end: var(--sp-6);
+  }
+}
+
+// The CRT: a bezel around a clean screen. No scanlines over the capture — the
+// screenshot is the product, and it has to be readable.
+.crt {
+  aspect-ratio: 16 / 10;
+  padding: var(--sp-3);
+  background: var(--surface-raised);
+  border-radius: 10px;
+  box-shadow:
+    inset 0 0 0 1px var(--border-strong),
+    0 20px 50px rgba(0, 0, 0, 0.5);
+}
+
+.crt__screen {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  border-radius: 6px;
+  overflow: hidden;
+  background: var(--surface-inset);
+}
+
+// A live site sits in a browser: an address bar above the capture.
+.crt__url {
+  display: flex;
+  align-items: center;
+  flex: none;
+  height: 22px;
+  padding: 0 10px;
+  background: var(--surface-elevated);
+  font: var(--type-mono-s);
+  color: var(--text-secondary);
+}
+
+.crt__dots {
+  width: 7px;
+  height: 7px;
+  margin-inline-end: 28px;
+  border-radius: 50%;
+  background: var(--border-strong);
+  box-shadow:
+    11px 0 var(--border-strong),
+    22px 0 var(--border-strong);
+}
+
+.crt__shot {
+  display: block;
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  object-fit: cover;
+  object-position: top left;
+}
+
+.phone {
+  position: absolute;
+  right: -8px;
+  bottom: 0;
+  width: 24%;
+  aspect-ratio: 9 / 19;
+  border: 6px solid var(--surface-raised);
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6);
+
+  img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top;
+  }
+}

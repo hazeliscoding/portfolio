@@ -1,15 +1,23 @@
-// The filter bar enters as one panel, like the windows below it, and re-runs
-// on every navigation off `data-sfx`.
-.archive__filters {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: var(--sp-2);
-  // 14px: off the 4px scale, and the design's own value. The bar sits closer
-  // to the grid than a --sp-4 gap would put it, which is what keeps it reading
-  // as chrome attached to the archive rather than as a row of its own.
-  margin-block-end: 14px;
+// The projects page as a broadcast: every project is a segment on the same
+// dark station, tinted in its own brand colours (thatlev.com/projects' bands,
+// in KAIRO's language). The segments and pilot tapes are their own
+// components; this sheet holds the channel guide and the page around them.
 
+// How far a channel link's target lands below the top of `.main`, clear of the
+// sticky guide: two wrapped rows on a desktop, one row on a phone. Inherited by
+// the segments and tapes, which set their own scroll-margin from it.
+:host {
+  --guide-clearance: 104px;
+
+  @media (max-width: 839.98px) {
+    --guide-clearance: 64px;
+  }
+}
+
+// The guide and the pilots section enter like windows, and re-run on every
+// navigation off `data-sfx`.
+.guide,
+.pilots {
   &[data-sfx="a"] {
     animation: win-a var(--dur-window) var(--ease-mech) both;
   }
@@ -19,127 +27,175 @@
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  // Matched at the same specificity as the rules above (0,2,0) — a media query
-  // adds none, so a bare `.archive__filters` would lose. Same trap documented
-  // in src/app/app.scss.
-  .archive__filters[data-sfx="a"],
-  .archive__filters[data-sfx="b"] {
-    animation: none;
-  }
-}
+// ── Channel guide ────────────────────────────────────────────────────────────
 
-.archive__filters-label {
-  font: var(--type-mono-s);
-  color: var(--text-faint);
-  // 6px, off-scale: the label belongs to the pills that follow it, so it sits
-  // closer than the 8px that separates one pill from the next.
-  margin-inline-end: 6px;
-}
-
-.archive__filter {
-  // 10px horizontal is off the 4px scale; the design draws the pill to the
-  // same 8/10 rhythm as the window chrome rather than to the layout grid.
-  padding: var(--sp-2) 10px;
+.guide {
+  // Sticks to the top of `.main`, the shell's scroll container. Negative by
+  // main's own top padding, or it would stop 20px short and let segments
+  // scroll by in the gap above it.
+  position: sticky;
+  top: calc(-1 * var(--sp-5));
+  z-index: var(--z-window);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-2) var(--sp-4);
+  margin-block-end: var(--sp-4);
+  padding: var(--sp-2) var(--sp-3);
   background: var(--surface-window);
   border: var(--bw-hairline) solid var(--border-default);
-  border-radius: var(--radius-0);
-  font: 500 11px/1 var(--font-mono);
-  // 0.04em: half the --tracking-wide step. Not a token — at 11px mono the
-  // bracketed label needs less tracking than a bare label does.
+}
+
+.guide__group {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-1);
+  flex: none;
+}
+
+.guide__label {
+  margin-inline-end: var(--sp-2);
+  padding: 3px var(--sp-2);
+  border: var(--bw-hairline) solid currentColor;
+  font: 500 11px/1.2 var(--font-mono);
+  letter-spacing: var(--tracking-wide);
+  white-space: nowrap;
+  color: var(--signal-active);
+
+  &::before {
+    content: "● ";
+  }
+
+  [data-kind="site"] > & {
+    color: var(--signal-active-strong);
+
+    &::before {
+      content: "◉ ";
+    }
+  }
+
+  [data-kind="pilot"] > & {
+    color: var(--text-muted);
+
+    &::before {
+      content: "▷ ";
+    }
+  }
+}
+
+.guide__channel {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: var(--sp-1) var(--sp-2) var(--sp-1) var(--sp-1);
+  font: 400 12px/1 var(--font-mono);
   letter-spacing: 0.04em;
+  white-space: nowrap;
   color: var(--text-secondary);
-  cursor: pointer;
-  transition: all var(--dur-micro) var(--ease-mech);
+  text-transform: uppercase;
+  border: var(--bw-hairline) solid transparent;
+  transition: border-color var(--dur-micro) var(--ease-mech);
 
-  // The design applies its hover to every pill, selected included: the border
-  // steps from the active red to strong ash while the tint stays. Kept as
-  // drawn — the tint, not the border, is what marks the selection.
-  &:hover {
+  &:hover,
+  &:focus-visible {
     color: var(--text-primary);
-    border-color: var(--border-strong);
-  }
-
-  &--on {
-    border-color: var(--signal-active);
-    background: var(--surface-active-tint);
-    color: var(--text-primary);
+    border-color: var(--border-default);
   }
 }
 
-.archive__count {
-  margin-inline-start: auto;
+.guide__mark {
+  display: block;
+}
+
+.guide__number {
+  color: var(--text-muted);
+}
+
+// ── The broadcast ────────────────────────────────────────────────────────────
+
+.broadcast {
+  border: var(--bw-hairline) solid var(--border-default);
+}
+
+// ── PILOTS ───────────────────────────────────────────────────────────────────
+
+.pilots {
+  margin-block-start: var(--sp-10);
+  padding: var(--sp-8);
+  border: var(--bw-hairline) solid var(--border-default);
+  background:
+    repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.015) 0 10px, transparent 10px 20px),
+    var(--surface-canvas);
+}
+
+.pilots__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--sp-2) var(--sp-4);
+}
+
+.pilots__title {
+  margin: 0;
+  font: 600 44px/1 var(--font-display);
+  letter-spacing: var(--tracking-display);
+  text-transform: uppercase;
+}
+
+.pilots__kicker {
   font: var(--type-mono-s);
-  color: var(--text-faint);
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
 }
 
-.archive__grid {
+.pilots__lede {
+  max-width: 60ch;
+  margin: var(--sp-2) 0 var(--sp-5);
+  font: var(--type-body);
+  color: var(--text-secondary);
+}
+
+.pilots__grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: var(--sp-3);
+  gap: var(--sp-5);
 }
 
-// 960px, not one of the --bp-* tokens: the design switches the archive to two
-// columns at its own `wide` breakpoint, which is 80px above --bp-tablet.
-@media (min-width: 960px) {
-  .archive__grid {
+@media (min-width: 840px) {
+  .pilots__grid {
     grid-template-columns: 1fr 1fr;
   }
 }
 
-// The record is a link around the whole window, so the anchor has to disappear
-// into the layout: grid rather than block so the window stretches to the row's
-// height, exactly as it does when it is the grid item itself.
-.archive__card {
-  display: grid;
-  min-width: 0;
-  color: inherit;
+@media (max-width: 839.98px) {
+  // One scrolling row on a phone: wrapped, eight channels would stack into a
+  // sticky block taller than a segment's first screen.
+  .guide {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
 
-  // The global `a:hover` recolours to --text-primary, which would fight the
-  // window's own hover state. Hover is expressed by [active], not by colour.
-  &:hover {
-    color: inherit;
+  // Marks and numbers only, but the name stays the link's accessible name.
+  .guide__title {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .pilots {
+    padding: var(--sp-5) var(--sp-4);
   }
 }
 
-.archive__window {
-  display: grid;
-  min-width: 0;
-}
-
-.archive__shot {
-  display: block;
-}
-
-// The doubled frame this used to strip with ::ng-deep is now ViewportWindow's
-// own `frame="sides"` input — see the template. The bottom border stays either
-// way: it is the rule between the capture and the text below it.
-
-.archive__body {
-  display: grid;
-  // 10px, off-scale: tighter than the 12px padding around it, so the
-  // description and its tags read as one block inside the padded box.
-  gap: 10px;
-  padding: var(--sp-3);
-}
-
-.archive__desc {
-  margin: 0;
-  font: var(--type-body-s);
-  color: var(--text-secondary);
-  // Two lines, hard. Every card in a row is the same height, and a description
-  // that runs long would otherwise set that height for all of them.
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-  line-clamp: 2;
-  overflow: hidden;
-}
-
-.archive__tags {
-  display: flex;
-  flex-wrap: wrap;
-  // 6px, off-scale: badges are 11px mono with 2px/6px padding, and --sp-2
-  // between them reads as a gap rather than as a set.
-  gap: 6px;
+@media (prefers-reduced-motion: reduce) {
+  // Same specificity as the entrance rules above (0,2,0); a media query adds
+  // none, so bare class selectors would lose. Same trap documented in app.scss.
+  .guide[data-sfx],
+  .pilots[data-sfx] {
+    animation: none;
+  }
 }

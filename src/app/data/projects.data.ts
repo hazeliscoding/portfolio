@@ -63,6 +63,8 @@ export interface Project {
   install?: string[];
   /** The repos of a project that spans several, each linking its own. */
   parts?: ProjectPart[];
+  /** A phone-sized capture, shown beside a live site's browser frame. */
+  phone?: string;
   /** A pilot's looping clip, with the still shown instead under reduced motion. */
   reel?: { src: string; still: string };
   /** A pilot's commands, for a CLI with nothing to screenshot on the card. */
@@ -439,6 +441,7 @@ export const projectsData: Project[] = [
       'Static: no server, no database',
     ],
     note: 'no accounts, no tracking',
+    phone: 'images/projects/conatlas-tx/convention-phone.png',
   },
   {
     id: 'puzzle-boy',

@@ -1,68 +1,42 @@
-<app-chapter-header code="ARCHIVE" index="03" [meta]="records()" />
+<app-chapter-header code="ARCHIVE" index="03" [meta]="records" />
 
-<div
-  class="archive__filters"
-  role="group"
-  aria-labelledby="archive-filter-label"
-  [attr.data-sfx]="motion.sfx()"
->
-  <span class="archive__filters-label" id="archive-filter-label">FILTER</span>
-
-  @for (f of filters; track f) {
-    <button
-      type="button"
-      class="archive__filter"
-      [class.archive__filter--on]="filter() === f"
-      [attr.aria-pressed]="filter() === f"
-      (click)="pick(f)"
-    >[{{ f }}]</button>
+<!-- The channel guide: thatlev's jump bar, as a broadcast schedule. Sticky, so
+     it stays in reach the whole way down a long page of segments. -->
+<nav class="guide" aria-label="Channel guide" [attr.data-sfx]="motion.sfx()">
+  @for (group of guide; track group.kind) {
+    <span class="guide__group" [attr.data-kind]="group.kind">
+      <span class="guide__label">{{ group.label }}</span>
+      @for (c of group.channels; track c.id) {
+        <a class="guide__channel" [href]="'#' + c.id">
+          <img class="guide__mark" [src]="c.mark" alt="" width="20" height="20" />
+          <span class="guide__number">{{ c.channel }}</span>
+          <span class="guide__title">{{ c.title }}</span>
+        </a>
+      }
+    </span>
   }
+</nav>
 
-  <!-- Live because the filter bar is the only place the result of pressing a
-       pill is stated; the chapter header repeats it silently. -->
-  <span class="archive__count" aria-live="polite">{{ records() }}</span>
-</div>
-
-<div class="archive__grid">
-  @for (c of cards(); track c.id) {
-    <a
-      class="archive__card"
-      [routerLink]="['/portfolio', c.id]"
-      (mouseenter)="hover(c.id)"
-      (mouseleave)="hover(null)"
-      (focus)="hover(c.id)"
-      (blur)="hover(null)"
-    >
-      <app-window
-        class="archive__window"
-        variant="media"
-        [index]="c.index"
-        [title]="c.title"
-        [context]="c.year"
-        [active]="activeFor(c.id)"
-        [padded]="false"
-        [footer]="c.footer"
-        [delay]="c.delay"
-      >
-        <app-viewport-window
-          class="archive__shot"
-          frame="sides"
-          ratio="16 / 9"
-          [src]="c.image"
-          [alt]="c.alt"
-          [label]="c.cam"
-        />
-
-        <div class="archive__body">
-          <p class="archive__desc">{{ c.description }}</p>
-
-          <div class="archive__tags">
-            @for (t of c.tags; track t) {
-              <app-badge>{{ t }}</app-badge>
-            }
-          </div>
-        </div>
-      </app-window>
-    </a>
+<div class="broadcast">
+  @for (s of segments; track s.id) {
+    <app-broadcast-segment [segment]="s" />
   }
 </div>
+
+@if (pilots.length) {
+  <section class="pilots" aria-labelledby="pilots-title" [attr.data-sfx]="motion.sfx()">
+    <div class="pilots__head">
+      <h2 class="pilots__title" id="pilots-title">Pilots</h2>
+      <span class="pilots__kicker">EXPERIMENTS · STILL IN THE EDIT BAY</span>
+    </div>
+    <p class="pilots__lede">
+      Unfinished on purpose. These are where I try things out, so they may change a lot or stop.
+    </p>
+
+    <div class="pilots__grid">
+      @for (p of pilots; track p.id) {
+        <app-pilot-tape [pilot]="p" />
+      }
+    </div>
+  </section>
+}

@@ -1,43 +1,47 @@
-import { Component, computed, inject, signal } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Component, inject } from '@angular/core';
 
 import { ChapterHeader } from '../../../ui/chapter-header/chapter-header';
-import { Window } from '../../../ui/windows/window/window';
-import { ViewportWindow } from '../../../ui/windows/viewport-window/viewport-window';
-import { Badge } from '../../../ui/core/badge/badge';
+import { BrandStyle, BroadcastSegment, Cta, Segment } from '../broadcast-segment/broadcast-segment';
+import { Pilot, PilotRow, PilotTape } from '../pilot-tape/pilot-tape';
 import { MotionService } from '../../../ui/motion/motion.service';
-import { Project, projectsData } from '../../../data/projects.data';
+import { Project, ProjectKind, projectsData } from '../../../data/projects.data';
+import { Platform, Release, releases } from '../../../data/releases.generated';
 import { count } from '../../../core/count';
 import { PageMeta } from '../../../core/page-meta';
 
-/** The unfiltered state. Always the first pill; never derived from a tag. */
-const ALL = 'ALL';
+/** The broadcast word each kind goes out under. */
+const ON_AIR: Record<ProjectKind, string> = {
+  app: 'ON AIR',
+  site: 'LIVE',
+  pilot: 'PILOTS',
+};
 
-/** KAIRO's archive card shows five tags and drops the rest. */
-const TAGS_PER_CARD = 5;
+/** The status badge's first word: what the project is, before which release. */
+const STATUS: Record<ProjectKind, string> = {
+  app: 'SHIPPED',
+  site: 'LIVE',
+  pilot: 'PILOT',
+};
 
-/** Everything one archive card renders, resolved once per filter change. */
-export interface ArchiveCard {
+/** A channel in the guide strip. */
+export interface Channel {
   id: string;
-  /** Zero-padded position in the whole archive, not in the filtered view. */
-  index: string;
+  channel: string;
   title: string;
-  year: string;
-  description: string;
-  image: string;
-  alt: string;
-  /** `CAM 01 // 04 SHOTS` — the real screenshot count, not a decoration. */
-  cam: string;
-  footer: string;
-  tags: string[];
-  /** Entrance stagger, with its unit — `app-window` sets it as a CSS time. */
-  delay: string;
+  mark: string;
+}
+
+/** One group of the guide, in broadcast order. */
+export interface ChannelGroup {
+  kind: ProjectKind;
+  label: string;
+  channels: Channel[];
 }
 
 @Component({
   selector: 'portfolio-page',
   standalone: true,
-  imports: [RouterLink, ChapterHeader, Window, ViewportWindow, Badge],
+  imports: [ChapterHeader, BroadcastSegment, PilotTape],
   templateUrl: './portfolio-page.html',
   styleUrl: './portfolio-page.scss',
 })
@@ -47,119 +51,156 @@ export class PortfolioPage {
 
   private readonly projects: Project[] = projectsData;
 
-  /**
-   * ALL, then one pill per tag that actually appears in the archive.
-   *
-   * The design hardcodes six (.NET, ANGULAR, ELECTRON, MCP, DESKTOP) against
-   * its four invented records. Hardcoding those here would ship filters that
-   * retrieve nothing — a control that cannot change what it controls. First
-   * appearance order, so the pills read in the order the archive itself does.
-   */
-  readonly filters: string[] = [
-    ALL,
-    ...new Set(this.projects.flatMap((p) => p.tags ?? []).map((t) => t.toUpperCase())),
-  ];
+  readonly records = `${count(this.projects.length, 'RECORD', 'RECORDS').replace(
+    /^\d+/,
+    pad(this.projects.length),
+  )} RETRIEVED`;
 
-  readonly filter = signal(ALL);
+  readonly guide: ChannelGroup[] = (['app', 'site', 'pilot'] as const)
+    .map((kind) => ({
+      kind,
+      label: ON_AIR[kind],
+      channels: this.projects
+        .filter((p) => p.kind === kind)
+        .map((p) => ({
+          id: p.id,
+          channel: this.channelOf(p),
+          title: p.title,
+          mark: p.brand.mark,
+        })),
+    }))
+    // A kind with nothing in it yet has no group, rather than a label over nothing.
+    .filter((group) => group.channels.length);
 
-  /**
-   * The card under the pointer (or keyboard focus), by id.
-   *
-   * The design derives this from `i === 0`, so its first card is focused and
-   * the rest are explicitly backgrounded. Driving it from real hover instead
-   * means nothing is hovered on arrival, and `false` on every card would dim
-   * the entire grid at rest — so the unhovered state is `null` (neutral), not
-   * `false`.
-   */
-  private readonly hovered = signal<string | null>(null);
+  readonly segments: Segment[] = this.projects
+    .filter((p) => p.kind !== 'pilot')
+    .map((p, i) => this.toSegment(p, i));
 
-  private readonly visible = computed(() =>
-    this.projects.filter((p) => this.matches(p, this.filter())),
-  );
-
-  readonly cards = computed<ArchiveCard[]>(() =>
-    this.visible().map((p, i) => this.toCard(p, i)),
-  );
-
-  /**
-   * `04 RECORDS RETRIEVED` — the instrument reading under the filter bar and
-   * in the chapter header, from the filtered count.
-   *
-   * `count()` owns the noun form so the archive cannot say "01 RECORDS", and
-   * the leading digits are padded after the fact: two-digit readings are a
-   * KAIRO convention that a pluralisation helper has no business knowing.
-   */
-  readonly records = computed(() => {
-    const n = this.visible().length;
-    return `${count(n, 'RECORD', 'RECORDS').replace(/^\d+/, pad(n))} RETRIEVED`;
-  });
+  readonly pilots: Pilot[] = this.projects
+    .filter((p) => p.kind === 'pilot')
+    .map((p, i) => this.toPilot(p, i));
 
   ngOnInit(): void {
     this.pageMeta.set({
       title: 'Projects - Hazel Granados',
       description:
-        'Projects by Hazel Granados: desktop apps in .NET and Avalonia, Electron and Angular tools, and coding-agent skills, each with its stack, status and source.',
+        'Projects by Hazel Granados: shipped desktop apps and a Claude Code plugin, a live website, and experiments, each with its latest release and source.',
       path: '/portfolio',
     });
   }
 
-  pick(filter: string): void {
-    this.filter.set(filter);
+  /** Zero-padded position in the whole archive, so a channel keeps its number in every group. */
+  private channelOf(project: Project): string {
+    return pad(this.projects.indexOf(project) + 1);
   }
 
-  hover(id: string | null): void {
-    this.hovered.set(id);
-  }
-
-  /** `true` focuses the window; `null` leaves it neutral. Never `false` here. */
-  activeFor(id: string): true | null {
-    return this.hovered() === id ? true : null;
-  }
-
-  /** Case-insensitive substring, per the design's `match`: ANGULAR hits "Angular". */
-  private matches(project: Project, filter: string): boolean {
-    return (
-      filter === ALL || (project.tags ?? []).some((t) => t.toUpperCase().includes(filter))
-    );
-  }
-
-  private toCard(project: Project, i: number): ArchiveCard {
-    const index = pad(this.projects.indexOf(project) + 1);
-
+  private toSegment(p: Project, i: number): Segment {
+    const release = releaseOf(p);
     return {
-      id: project.id,
-      index,
-      title: project.title,
-      year: project.year ?? '',
-      description: project.description,
-      image: project.image,
-      alt: `${project.title} screenshot`,
-      cam: `CAM ${index} // ${pad(shotsOf(project))} SHOTS`,
-      footer: footerOf(project),
-      tags: (project.tags ?? []).slice(0, TAGS_PER_CARD),
-      // 40ms, then 70ms per card, from the design.
+      id: p.id,
+      kind: p.kind as 'app' | 'site',
+      channel: this.channelOf(p),
+      title: p.title,
+      slug: [p.medium.toUpperCase(), p.year].filter(Boolean).join(' · '),
+      pitch: p.pitch,
+      status: [STATUS[p.kind], release?.tag].filter(Boolean).join(' · '),
+      icon: p.brand.icon,
+      mark: p.brand.mark,
+      style: styleOf(p),
+      shot: p.image,
+      alt: `${p.title} screenshot`,
+      host: p.links.demo ? bareHost(p.links.demo) : '',
+      phone: p.phone ?? '',
+      cta: ctaOf(p, release),
+      ticker: p.ticker ?? [],
+      flip: i % 2 === 1,
+      // 40ms, then 70ms per segment: the archive cards' stagger, kept.
+      delay: `${40 + i * 70}ms`,
+    };
+  }
+
+  private toPilot(p: Project, i: number): Pilot {
+    const release = releaseOf(p);
+    const rows: PilotRow[] = p.parts
+      ? p.parts.map((part) => ({
+          label: part.label,
+          url: part.url,
+          detail: [releases[repoOf(part.url)]?.tag, part.note].filter(Boolean).join(' · '),
+        }))
+      : // A single-repo pilot reports where it stands instead of listing parts.
+        [
+          {
+            label: 'Status',
+            url: '',
+            detail: [p.status, release?.tag].filter(Boolean).join(' · '),
+          },
+        ];
+    return {
+      id: p.id,
+      channel: this.channelOf(p),
+      title: p.title,
+      slug: [p.medium.toUpperCase(), p.year].filter(Boolean).join(' · '),
+      pitch: p.pitch,
+      icon: p.brand.icon,
+      style: styleOf(p),
+      reel: p.reel,
+      console: p.console,
+      rows,
+      source: p.links.github ?? '',
+      build: release?.url ?? '',
       delay: `${40 + i * 70}ms`,
     };
   }
 }
 
-/**
- * The screenshot count the record really has. A project with no gallery still
- * has its hero capture, so it is one shot rather than none — "00 SHOTS" over a
- * visible screenshot reads as a broken counter.
- */
-function shotsOf(project: Project): number {
-  return project.images?.length ?? (project.image ? 1 : 0);
+/** `hazeliscoding/puzzle-boy` → `puzzle-boy`: the key releases.generated.ts files a repo under. */
+function repoOf(url: string): string {
+  return url.replace(/\/+$/, '').split('/').pop() ?? '';
 }
 
-/** `STATUS : ACTIVE · ELECTRON · ANGULAR · ↵ OPEN`, the design's footer strip. */
-function footerOf(project: Project): string {
-  const status = (project.status ?? 'active').toUpperCase();
-  const stack = (project.stack ?? '').toUpperCase();
+function releaseOf(p: Project): Release | undefined {
+  return p.links.github ? releases[repoOf(p.links.github)] : undefined;
+}
 
-  // A record with no declared stack drops the segment rather than printing an
-  // empty one between two separators.
-  return [`STATUS : ${status}`, stack, '↵ OPEN'].filter(Boolean).join(' · ');
+function bareHost(url: string): string {
+  return url.replace(/^https?:\/\//, '').replace(/\/$/, '');
+}
+
+function styleOf(p: Project): BrandStyle {
+  return { '--ink': p.brand.ink, '--tint': p.brand.tint, '--glow': p.brand.glow ?? null };
+}
+
+/** `Windows`, `Windows & Linux`, `Windows, macOS & Linux`. */
+export function platformList(platforms: Platform[]): string {
+  return platforms.length < 2
+    ? (platforms[0] ?? '')
+    : `${platforms.slice(0, -1).join(', ')} & ${platforms[platforms.length - 1]}`;
+}
+
+/**
+ * The one call to action. Platforms come from the release, never from the
+ * write-up: that is how Prompuff's copy went stale while its macOS build
+ * shipped. A single platform is named on the button; more go in the fine print.
+ */
+function ctaOf(p: Project, release: Release | undefined): Cta {
+  if (p.install?.length) return { kind: 'install', commands: p.install };
+  if (p.kind === 'site' && p.links.demo) {
+    return {
+      kind: 'visit',
+      label: `VISIT ${p.title.toUpperCase()}`,
+      href: p.links.demo,
+      fine: ['Free', p.note, bareHost(p.links.demo)].filter(Boolean).join(' · '),
+    };
+  }
+  const platforms = release?.platforms ?? [];
+  return {
+    kind: 'download',
+    label: platforms.length === 1 ? `DOWNLOAD FOR ${platforms[0].toUpperCase()}` : 'DOWNLOAD',
+    // The release page, not a binary: it offers every platform's file, and a
+    // direct link would pick one for the visitor.
+    href: release?.url ?? p.links.github ?? '',
+    fine: ['Free', platformList(platforms), p.note].filter(Boolean).join(' · '),
+  };
 }
 
 function pad(n: number): string {

@@ -1,0 +1,11 @@
+<div class="install__bar">
+  <span>INSTALL IN CLAUDE CODE</span>
+  <button type="button" class="install__copy" (click)="copy()">
+    {{ copied() ? 'COPIED' : 'COPY' }}
+  </button>
+</div>
+<div class="install__cmds">
+  @for (c of commands(); track c) {
+    <div><span class="install__prompt" aria-hidden="true">&gt;</span> {{ c }}</div>
+  }
+</div>
