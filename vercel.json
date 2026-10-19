@@ -4,7 +4,7 @@
   "buildCommand": "npm run build",
   "outputDirectory": "dist/portfolio/browser",
   "routes": [
-    { "src": "^/(.+)/$", "status": 308, "headers": { "Location": "/$1" } },
+    { "src": "^/([^/\\\\].*)/$", "status": 308, "headers": { "Location": "/$1" } },
     {
       "src": "^/(chunk|main|polyfills|styles)-.*",
       "headers": { "Cache-Control": "public, max-age=31536000, immutable" },
