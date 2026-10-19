@@ -3,10 +3,10 @@ import { projectsData } from './projects.data';
 describe('projectsData', () => {
   it('holds the five apps, then the live site, then the two pilots, in that order', () => {
     expect(projectsData.map((p) => p.id)).toEqual([
-      'pr-sweep',
       'xiv-vault',
       'gil-sweep',
       'prompuff',
+      'pr-sweep',
       'sdl3-porter',
       'conatlas-tx',
       'puzzle-boy',

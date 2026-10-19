@@ -74,7 +74,7 @@ describe('ProjectDetailPage', () => {
 
   it('reports the record position and stack in the chapter meta', () => {
     expect(textOf(el.querySelector('.chapter__meta'))).toBe(
-      'RECORD 01 OF 08 · ELECTRON · ANGULAR',
+      'RECORD 01 OF 08 · .NET 10 · AVALONIA',
     );
   });
 
@@ -154,7 +154,7 @@ describe('ProjectDetailPage', () => {
       RECORD.year!,
       RECORD.stack!,
       '05',
-      'github.com/hazeliscoding/pr-sweep',
+      'github.com/hazeliscoding/xiv-vault',
     ]);
   });
 
@@ -184,9 +184,9 @@ describe('ProjectDetailPage', () => {
     const links = [...el.querySelectorAll('.detail__adjacent-link')];
     expect(links.map((a) => a.getAttribute('href'))).toEqual([
       '/portfolio/axiomarium',
-      '/portfolio/xiv-vault',
+      '/portfolio/gil-sweep',
     ]);
-    expect(links.map(textOf)).toEqual(['< AXIOMARIUM', 'XIV VAULT >']);
+    expect(links.map(textOf)).toEqual(['< AXIOMARIUM', 'GIL SWEEP >']);
   });
 
   it('offers a way back to the archive, labelled with the archive code', () => {

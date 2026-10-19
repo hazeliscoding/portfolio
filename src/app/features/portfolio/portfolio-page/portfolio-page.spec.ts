@@ -63,10 +63,10 @@ describe('PortfolioPage', () => {
   describe('segments', () => {
     it('gives every app and live site a segment, in archive order, and no pilot one', () => {
       expect([...el.querySelectorAll('section.segment')].map((s) => s.id)).toEqual([
-        'pr-sweep',
         'xiv-vault',
         'gil-sweep',
         'prompuff',
+        'pr-sweep',
         'sdl3-porter',
         'conatlas-tx',
       ]);
@@ -76,7 +76,7 @@ describe('PortfolioPage', () => {
       const s = segment('pr-sweep');
       expect(text(s.querySelector('h2'))).toBe('PR Sweep');
       expect(s.getAttribute('aria-labelledby')).toBe('pr-sweep-name');
-      expect(text(s.querySelector('.segment__channel'))).toBe('CH.01');
+      expect(text(s.querySelector('.segment__channel'))).toBe('CH.04');
       expect(text(s.querySelector('.segment__slug'))).toBe('DESKTOP · 2026');
     });
 
