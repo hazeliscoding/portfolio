@@ -4,6 +4,13 @@ What's next for the site. Shipped work lives in the git history.
 
 ## Decisions
 
+- 2026-10-19: The home page becomes a broadcast too, so it reads as the same station as the
+  projects page. A lower third introduces me, then NOW PLAYING cycles the featured projects' real
+  segments (XIV Vault, Gil Sweep and Prompuff) every 8 seconds with a crossfade, then the latest
+  posts and open-source PRs run as two strips. Stack and services move to About. It gives up the
+  six numbered windows and the stack at a glance on the home page. The rotation pauses on hover and
+  focus, stops once a visitor picks a channel, has its own pause button, and never runs under
+  reduced motion.
 - 2026-10-19: Blog comments use giscus, so they live as GitHub Discussions in this repo with no
   database, accounts or tracking to run. The cost is that only people with a GitHub account can
   comment. Disqus was ruled out for its ads, tracking and heavy scripts, and a self-built service on
@@ -34,6 +41,17 @@ What's next for the site. Shipped work lives in the git history.
 Done when `/portfolio` shows all eight projects as segments or pilots, with versions and platforms
 read from release data, and the home page, ⌘K palette and detail pages still work for every
 project.
+
+## Home as a broadcast
+
+- [x] One shared function builds a project's segment for both pages
+- [x] XIV Vault, Gil Sweep and Prompuff are the featured projects
+- [x] Lower third, NOW PLAYING with rotating channels, and the LATEST and OSS strips
+- [x] Stack and services on About
+- [x] Phones, reduced motion and keyboard
+
+Done when `/` cycles the three featured segments exactly as `/portfolio` draws them, a visitor can
+pause or pick a channel, and nothing moves under reduced motion.
 
 ## Later
 
