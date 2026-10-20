@@ -119,11 +119,13 @@
   position: relative;
 }
 
-// A flex container so the nav inside stretches to the full height and its
+// A grid container so the nav inside stretches to the full height and its
 // right-hand border runs the length of the screen; as a plain block the nav
 // was only as tall as its items, and the border stopped under the last one.
+// Grid, not flex: a flex row shrinks the nav to its longest label, leaving
+// 30px of dead rail past the border.
 .app__rail {
-  display: flex;
+  display: grid;
   width: 140px;
   flex-shrink: 0;
 }
