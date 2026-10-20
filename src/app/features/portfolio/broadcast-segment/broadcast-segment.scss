@@ -23,6 +23,12 @@
 .segment {
   --wash: var(--glow, color-mix(in srgb, var(--tint) 26%, transparent));
 
+  // Fills its host, so a segment stacked with taller ones (the home page's NOW
+  // PLAYING) still ends on its ticker. On /portfolio the host is only as tall
+  // as the segment, so this changes nothing there.
+  display: flex;
+  flex-direction: column;
+  height: 100%;
   position: relative;
   overflow: hidden;
   // Clears the page's sticky channel guide when a channel link lands here.
@@ -96,6 +102,7 @@
 }
 
 .segment__main {
+  flex: 1;
   display: grid;
   grid-template-columns: 1fr 1.15fr;
   gap: var(--sp-10);

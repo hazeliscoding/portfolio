@@ -1,293 +1,506 @@
-// KAIRO's home screen: two stacks of windows, numbered 00-05, reading down the
-// left column then down the right. Geometry is taken from the design source
-// verbatim — where a value is off the 4px spacing scale (14px, 10px, 9px, 6px,
-// 2px) it is the design's own literal and is marked as such, because the
-// window chrome is drawn to the hairline rather than to the layout grid.
+// KAIRO's home screen as a broadcast, in the projects page's language: a lower
+// third, NOW PLAYING over the featured segments, and two strips.
 :host {
   display: block;
 }
 
-.home {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: var(--sp-3);
-  position: relative;
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }
 
-// The design switches home to two columns at a viewport of 960px — its own
-// breakpoint, not one of the --bp-* values, so the literal stays. Narrower
-// than that the two column stacks simply follow one another, which is what
-// puts Operator first on a phone.
-@media (min-width: 960px) {
-  .home {
-    grid-template-columns: minmax(300px, 400px) minmax(0, 1fr);
+// `minmax(0, 1fr)`, not the implicit `auto` track: an auto track is as wide as
+// its widest child's min-content, and the segments and strips pushed the page
+// past a phone's width.
+.home {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--sp-3);
+}
+
+.lower,
+.now,
+.strip {
+  &[data-sfx="a"] {
+    animation: win-a var(--dur-window) var(--ease-mech) both;
+  }
+
+  &[data-sfx="b"] {
+    animation: win-b var(--dur-window) var(--ease-mech) both;
   }
 }
 
-.home__col {
+// ---- Lower third ------------------------------------------------------
+
+.lower {
   display: grid;
-  gap: var(--sp-3);
-  align-content: start;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--sp-6) var(--sp-8);
+  align-items: end;
+  margin-block-end: var(--sp-3);
+  padding: var(--sp-8);
+  border: var(--bw-hairline) solid var(--border-default);
+  // The strap's bar: the station's red, as a project's tint marks its segment.
+  border-inline-start: 6px solid var(--signal-active);
+  background:
+    linear-gradient(90deg, color-mix(in srgb, var(--signal-active) 10%, transparent), transparent 60%),
+    var(--surface-canvas);
+}
+
+.lower__id {
   min-width: 0;
 }
 
-// ---- 00 Operator -------------------------------------------------------
-
-.home__operator {
-  display: grid;
-  grid-template-columns: 104px 1fr;
-  gap: 14px; // design literal, off the 4px scale
-  align-items: start;
-}
-
-.home__identity {
-  display: grid;
-  gap: var(--sp-1);
-  min-width: 0;
-}
-
-.home__name {
-  font: var(--type-title);
+.lower__name {
+  margin: 0;
+  font: 600 clamp(48px, 6vw, 72px) / 0.9 var(--font-display);
   letter-spacing: var(--tracking-display);
+  text-transform: uppercase;
   color: var(--text-primary);
 }
 
-// 0.06em sits between --tracking-wide and normal. It is the design's value for
-// this line and there is no token for it.
-.home__role {
-  font: var(--type-mono-s);
-  color: var(--text-muted);
-  letter-spacing: 0.06em;
+.lower__strap {
+  display: inline-flex;
+  flex-wrap: wrap;
+  margin: var(--sp-3) 0 0;
+  font: 500 12px/1 var(--font-mono);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
 }
 
-.home__bio {
-  margin: 6px 0 0; // design literal
-  font: var(--type-body-s);
+.lower__live {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 10px;
+  background: var(--signal-active);
+  color: var(--text-inverse);
+  font-weight: 600;
+}
+
+// The projects page's LIVE dot, blinking the same way.
+.lower__dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+  animation: k-blink var(--dur-blink) steps(2, end) infinite;
+}
+
+.lower__role {
+  padding: 7px 12px;
+  background: var(--surface-inverse);
+  color: var(--text-inverse);
+}
+
+.lower__bio {
+  max-width: 58ch;
+  margin: var(--sp-4) 0 0;
+  font: 400 17px/1.45 var(--font-ui);
   color: var(--text-secondary);
 }
 
-// `app-key-value` sets no :host display, so its element box is inline and the
-// block-axis margin below would be dropped. Scoped to this template by view
-// encapsulation, so it changes nothing outside the home screen.
-app-key-value {
-  display: block;
+.lower__side {
+  display: grid;
+  gap: var(--sp-4);
 }
 
-// The readout and the controls each clear the block above them by 14px — the
-// design's spacing inside an inspector window, one notch tighter than --sp-5
-// and one looser than --sp-3.
-.home__kv {
-  margin-block-start: 14px;
-}
-
-.home__actions {
-  display: flex;
-  gap: var(--sp-2);
-  margin-block-start: 14px;
-}
-
-// ---- 02 Services -------------------------------------------------------
-
-.home__services {
+// The readout's look (mono, dotted rule under each value), with an icon in
+// place of each key. Rows are 24px so each link clears WCAG 2.5.8's target.
+.lower__contact {
+  display: grid;
+  gap: var(--sp-1);
   margin: 0;
   padding: 0;
   list-style: none;
+  font: var(--type-mono-s);
 }
 
-// No transition: the design flips these on hover rather than easing them, and
-// a row of eight easing at once reads as the panel breathing.
-.home__service {
+.lower__link {
   display: flex;
-  gap: var(--sp-3);
-  align-items: baseline;
-  padding: var(--sp-2) var(--sp-3);
-  border-bottom: var(--bw-hairline) solid var(--border-faint);
-  font: var(--type-body-s);
+  align-items: center;
+  gap: 10px;
+  min-height: 24px;
+  border-bottom: var(--bw-hairline) dotted var(--border-faint);
+  color: var(--text-primary);
+}
+
+a.lower__link:hover {
+  color: var(--text-link);
+}
+
+.lower__icon {
+  flex: none;
+  width: 14px;
+  height: 14px;
+  fill: var(--text-muted);
+}
+
+a.lower__link:hover .lower__icon {
+  fill: currentColor;
+}
+
+.lower__actions {
+  display: flex;
+  gap: var(--sp-2);
+}
+
+// ---- NOW PLAYING ------------------------------------------------------
+
+.now__bar {
+  display: flex;
+  align-items: stretch;
+  border: var(--bw-hairline) solid var(--border-default);
+  border-block-end: 0;
+  background: var(--surface-window);
+  font: 400 12px/1 var(--font-mono);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+}
+
+// The 44px floor is the tabs' on a desktop row; on a phone the tabs wrap to a
+// row of their own, and the label, pause and archive link keep it themselves.
+.now__label,
+.now__pause,
+.now__all {
+  min-height: var(--target-min);
+}
+
+.now__label {
+  display: flex;
+  align-items: center;
+  padding: 0 var(--sp-4);
+  border-inline-end: var(--bw-hairline) solid var(--border-default);
+  font-weight: 500;
+  white-space: nowrap;
+  color: var(--signal-active);
+
+  &::before {
+    content: "● ";
+    white-space: pre;
+  }
+}
+
+.now__tabs {
+  display: flex;
+  min-width: 0;
+}
+
+.now__tab {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  min-height: var(--target-min);
+  padding: 0 var(--sp-4);
+  background: transparent;
+  border: 0;
+  border-inline-end: var(--bw-hairline) solid var(--border-default);
+  border-radius: var(--radius-0);
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  white-space: nowrap;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: color var(--dur-micro) var(--ease-mech);
+
+  &:hover {
+    color: var(--text-secondary);
+  }
+
+  // The selection rule, in the channel's own tint: solid when a visitor has
+  // the remote, a dim track under the progress bar while the channels run.
+  &::after {
+    content: "";
+    position: absolute;
+    inset: auto 0 0;
+    height: var(--bw-indicator);
+    background: var(--tint);
+    opacity: 0;
+  }
+
+  &[aria-selected="true"] {
+    color: var(--text-primary);
+    background: var(--surface-canvas);
+
+    &::after {
+      opacity: 1;
+    }
+  }
+}
+
+.now--playing .now__tab[aria-selected="true"]::after {
+  opacity: 0.3;
+}
+
+.now__mark {
+  display: block;
+}
+
+.now__number {
+  color: var(--text-faint);
+}
+
+.now__tab[aria-selected="true"] .now__number {
+  color: var(--text-muted);
+}
+
+// The rotation's clock. Its `animationend` changes the channel, so pausing the
+// animation pauses the rotation: hovering or focusing the tabs or the screen
+// holds the channel, and the bar shows how long until the next one.
+.now__progress {
+  position: absolute;
+  inset: auto 0 0;
+  height: var(--bw-indicator);
+  background: var(--tint);
+  transform-origin: left;
+  animation: now-progress 8s linear both;
+}
+
+.now__tabs:hover .now__progress,
+.now__tabs:focus-within .now__progress,
+.now:has(.now__screen:hover) .now__progress,
+.now:has(.now__screen:focus-within) .now__progress {
+  animation-play-state: paused;
+}
+
+@keyframes now-progress {
+  from {
+    transform: scaleX(0);
+  }
+
+  to {
+    transform: scaleX(1);
+  }
+}
+
+.now__pause,
+.now__all {
+  display: flex;
+  align-items: center;
+  padding: 0 var(--sp-4);
+  white-space: nowrap;
   color: var(--text-secondary);
 
   &:hover {
     color: var(--text-primary);
-    background: var(--surface-elevated);
   }
 }
 
-.home__service-idx {
-  font: var(--type-mono-s);
-  color: var(--text-faint);
-}
-
-// ---- 03 Open source ----------------------------------------------------
-
-.home__oss {
-  display: grid;
-  gap: 6px; // design literal
-  margin: var(--sp-3) 0 0;
-  padding: 0;
-  list-style: none;
-  font: var(--type-mono-s);
-}
-
-.home__oss-row {
-  display: flex;
-  gap: 10px; // design literal
-  border-bottom: var(--bw-hairline) dotted var(--border-faint);
-  padding-block-end: var(--sp-1);
-}
-
-// Repo names come from the generated stats file and can run longer than the
-// design's sample, and this column is 300px at its narrowest. Clipping the
-// name keeps the PR/star reading on the same line instead of wrapping it under
-// a repo nobody can read either way.
-.home__oss-name {
-  min-width: 0;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-
-.home__oss-meta {
+.now__pause {
   margin-inline-start: auto;
-  color: var(--text-faint);
-  white-space: nowrap;
-}
-
-// ---- 01 Stack ----------------------------------------------------------
-
-.home__stack {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px; // design literal
-}
-
-// ---- 04 Featured projects ----------------------------------------------
-
-.home__record {
-  display: grid;
-  grid-template-columns: 28px minmax(0, 1fr) 14px;
-  gap: var(--sp-3);
-  align-items: center;
-  // 9px on the leading edge, not 12: the 3px indicator below is part of the
-  // box, so the content still starts 12px in and does not step sideways when
-  // the indicator lights up.
-  padding: var(--sp-3) var(--sp-3) var(--sp-3) 9px;
-  border-bottom: var(--bw-hairline) solid var(--border-faint);
-  border-inline-start: var(--bw-indicator) solid transparent;
-  // Set explicitly, and again on :hover, because the global `a` / `a:hover`
-  // rules would otherwise paint the whole row link-cyan and then primary. The
-  // design holds every colour still and moves only the background.
-  color: var(--text-primary);
+  background: transparent;
+  border: 0;
+  border-inline-start: var(--bw-hairline) solid var(--border-default);
+  border-radius: var(--radius-0);
+  font: inherit;
+  letter-spacing: inherit;
   cursor: pointer;
+}
+
+.now__all {
+  border-inline-start: var(--bw-hairline) solid var(--border-default);
+}
+
+// Every channel in one cell. The incoming one fades in over the outgoing one,
+// which holds at full opacity underneath until the fade is done and only then
+// hides, so the dissolve never shows the canvas through both.
+.now__screen {
+  display: grid;
+  border: var(--bw-hairline) solid var(--border-default);
+}
+
+.now__panel {
+  display: grid;
+  grid-area: 1 / 1;
+  min-width: 0;
+  opacity: 0;
+  visibility: hidden;
   transition:
-    transform var(--dur-micro) var(--ease-mech),
-    background var(--dur-micro) var(--ease-mech),
-    border-color var(--dur-micro) var(--ease-mech);
-
-  &:hover {
-    color: var(--text-primary);
-    background: var(--surface-elevated);
-  }
-
-  // The design's "pending" state — the beat between pressing a record and the
-  // archive opening. Angular navigates immediately, so it lives on :active.
-  &:active {
-    background: var(--surface-active-tint);
-    border-inline-start-color: var(--signal-active);
-    transform: translateX(2px);
-  }
-
-  &:active .home__record-idx {
-    color: var(--text-active);
-  }
+    opacity 0s linear var(--dur-cinematic),
+    visibility 0s linear var(--dur-cinematic);
 }
 
-.home__record-idx {
-  font: var(--type-mono-s);
-  color: var(--text-faint);
+.now__panel--on {
+  z-index: 1;
+  opacity: 1;
+  visibility: visible;
+  transition: opacity var(--dur-cinematic) var(--ease-mech);
 }
 
-.home__record-main {
-  min-width: 0;
+// ---- Strips -----------------------------------------------------------
+
+// One grid for both strips, so LATEST and OPEN SOURCE share a tag width and
+// their rows start on the same line.
+.strips {
   display: grid;
-  gap: 2px; // design literal
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: var(--sp-3) 0;
 }
 
-.home__record-head {
+.strip {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: subgrid;
+  align-items: stretch;
+  border: var(--bw-hairline) solid var(--border-default);
+  background: var(--surface-canvas);
+}
+
+.strip__tag {
   display: flex;
-  gap: var(--sp-3);
-  align-items: baseline;
+  align-items: center;
+  margin: 0;
+  padding: 0 var(--sp-4);
+  background: var(--surface-inverse);
+  color: var(--text-inverse);
+  font: 600 12px/1 var(--font-mono);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.strip--oss .strip__tag {
+  background: var(--signal-info);
+}
+
+.strip__items {
+  display: flex;
   flex-wrap: wrap;
+  gap: var(--sp-1) var(--sp-8);
+  margin: 0;
+  padding: var(--sp-3) var(--sp-4);
+  list-style: none;
 }
 
-// 17px, not the 20px the token carries: the record title is a heading inside a
-// row, not the panel's own title. The unitless line-height in --type-title
-// re-resolves against it.
-.home__record-title {
-  font: var(--type-title);
-  font-size: 17px;
-  letter-spacing: var(--tracking-display);
-}
-
-.home__record-meta {
-  font: var(--type-mono-s);
-  color: var(--text-faint);
-  white-space: nowrap;
-}
-
-// One line, always. The summary is the project's full description and the row
-// is a pointer to the record, not a substitute for reading it.
-.home__record-summary {
-  font: var(--type-body-s);
-  color: var(--text-muted);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.home__record-caret {
-  font: var(--type-mono);
-  color: var(--text-faint);
-}
-
-// ---- 05 Log ------------------------------------------------------------
-
-.home__log-row {
-  display: grid;
-  grid-template-columns: 90px minmax(0, 1fr) 14px;
-  gap: 14px; // design literal
+.strip__item {
+  display: inline-flex;
   align-items: baseline;
-  padding: 10px var(--sp-3); // 10px vertical: design literal
-  border-bottom: var(--bw-hairline) solid var(--border-faint);
-  color: var(--text-primary);
-  cursor: pointer;
+  gap: var(--sp-2);
+  font: var(--type-body-s);
+  color: var(--text-secondary);
+
+  &::before {
+    content: "▸";
+    color: var(--signal-active);
+  }
 
   &:hover {
     color: var(--text-primary);
-    background: var(--surface-elevated);
   }
 }
 
-.home__log-date {
+.strip--oss .strip__item::before {
+  color: var(--signal-info);
+}
+
+.strip__meta {
+  flex: none;
+  white-space: nowrap;
   font: var(--type-mono-s);
-  color: var(--text-faint);
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
 }
 
-.home__log-main {
-  min-width: 0;
-}
-
-.home__log-title {
-  display: block;
-  font: var(--type-body);
-}
-
-.home__log-tags {
-  display: block;
+.strip__more {
+  display: flex;
+  align-items: center;
+  padding: 0 var(--sp-4);
   font: var(--type-mono-s);
-  color: var(--text-faint);
-  letter-spacing: 0.04em; // design literal; no token sits at 0.04em
+  letter-spacing: var(--tracking-wide);
+  white-space: nowrap;
+  color: var(--text-secondary);
+
+  &:hover {
+    color: var(--text-primary);
+  }
 }
 
-.home__log-caret {
-  font: var(--type-mono);
-  color: var(--text-faint);
+// ---- Phones and narrow tablets -----------------------------------------
+
+@media (max-width: 839.98px) {
+  .lower {
+    grid-template-columns: minmax(0, 1fr);
+    padding: var(--sp-5) var(--sp-4);
+  }
+
+  // The label, pause and archive link share the first row; the channels get a
+  // full-width row of their own.
+  .now__bar {
+    flex-wrap: wrap;
+  }
+
+  // `ALL 8 ›`: the noun is what doesn't fit beside the label and the pause.
+  .now__all-noun {
+    display: none;
+  }
+
+  // Mark and number only, as the projects page's channel guide does on a
+  // phone, so all three tabs fit and the rotation never lands on one scrolled
+  // out of view. The segment below names the channel in full.
+  .now__tabs {
+    order: 1;
+    flex-basis: 100%;
+    border-block-start: var(--bw-hairline) solid var(--border-default);
+  }
+
+  .now__tab {
+    flex: 1;
+    justify-content: center;
+  }
+
+  .now__title {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .strips {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .strip__tag {
+    padding-block: var(--sp-2);
+  }
+
+  .strip__items {
+    flex-direction: column;
+  }
+
+  .strip__more {
+    padding-block: 0 var(--sp-3);
+  }
+}
+
+// Nothing moves: no entrance, no blinking dot, and no rotation, since the
+// rotation runs off the progress bar's animation. With nothing to pause, the
+// pause control goes too, and a channel changes only when a visitor picks it.
+@media (prefers-reduced-motion: reduce) {
+  .lower[data-sfx],
+  .now[data-sfx],
+  .strip[data-sfx],
+  .lower__dot,
+  .now__progress {
+    animation: none;
+  }
+
+  .now__progress,
+  .now__pause {
+    display: none;
+  }
+
+  .now__all {
+    margin-inline-start: auto;
+  }
+
+  .now--playing .now__tab[aria-selected="true"]::after {
+    opacity: 1;
+  }
 }

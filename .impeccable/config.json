@@ -11,6 +11,24 @@
         ],
         "createdAt": "2026-10-18T21:33:12.786Z",
         "reason": "Claude: the match is a regex replacement string adding loading=lazy to rendered markdown <img> tags, not an img element"
+      },
+      {
+        "rule": "broken-image",
+        "value": "*",
+        "files": [
+          "src/app/features/home/home-page/home-page.html"
+        ],
+        "createdAt": "2026-10-20T01:50:42.778Z",
+        "reason": "Claude: src is an Angular [src] binding to the project's mark the static scan can't resolve; marks verified rendering in the browser 2026-10-19"
+      },
+      {
+        "rule": "side-tab",
+        "value": "*",
+        "files": [
+          "src/app/features/home/home-page/home-page.scss"
+        ],
+        "createdAt": "2026-10-20T01:54:24.059Z",
+        "reason": "Claude: the red bar is the lower third's strap, carried by the B mockup the user picked and approved (2026-10-19); it mirrors the segment's per-project tint"
       }
     ]
   }
