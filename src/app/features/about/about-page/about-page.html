@@ -37,6 +37,14 @@
         }
       </ul>
     </app-window>
+
+    <app-window index="06" title="Stack" [context]="stackContext" delay="240ms">
+      <div class="about__stack">
+        @for (t of stack; track t.label) {
+          <app-badge [tone]="t.tone">{{ t.label }}</app-badge>
+        }
+      </div>
+    </app-window>
   </div>
 
   <div class="about__col">
@@ -76,6 +84,22 @@
           >Download .docx</app-button
         >
       </div>
+    </app-window>
+
+    <app-window
+      index="07"
+      title="Services"
+      [context]="serviceCount"
+      [padded]="false"
+      delay="280ms"
+    >
+      <ul class="about__services">
+        @for (s of services; track s.label) {
+          <li class="about__service">
+            <span class="about__service-idx">{{ s.idx }}</span>{{ s.label }}
+          </li>
+        }
+      </ul>
     </app-window>
   </div>
 </div>

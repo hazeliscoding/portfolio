@@ -5,6 +5,7 @@ import { Window } from '../../../ui/windows/window/window';
 import { ViewportWindow } from '../../../ui/windows/viewport-window/viewport-window';
 import { KeyValue, KeyValueItem } from '../../../ui/data/key-value/key-value';
 import { Button } from '../../../ui/core/button/button';
+import { Badge, BadgeTone } from '../../../ui/core/badge/badge';
 import { count } from '../../../core/count';
 import { PageMeta, PERSON, SITE_ORIGIN } from '../../../core/page-meta';
 
@@ -37,16 +38,21 @@ const RESUME_UPDATED = '2026-01';
  * has to equal the number of `<app-window>` elements in the template — the spec
  * asserts exactly that, which is what keeps the two from drifting apart.
  */
-const SECTION_COUNT = 5;
+const SECTION_COUNT = 7;
 
 function pad(n: number): string {
   return String(n).padStart(2, '0');
 }
 
+interface StackModule {
+  label: string;
+  tone: BadgeTone;
+}
+
 @Component({
   selector: 'about-page',
   standalone: true,
-  imports: [ChapterHeader, Window, ViewportWindow, KeyValue, Button],
+  imports: [ChapterHeader, Window, ViewportWindow, KeyValue, Button, Badge],
   templateUrl: './about-page.html',
   styleUrl: './about-page.scss',
 })
@@ -95,6 +101,43 @@ export class AboutPage implements OnInit {
     'Cloud & event-driven systems (AWS/Azure)',
     'Performance, testing & CI/CD',
   ].map((label, i) => ({ idx: pad(i + 1), label }));
+
+  /**
+   * Moved here from the home page when it became a broadcast. The first three
+   * are the tones KAIRO marks as the core of the stack; the rest are
+   * supporting modules and stay neutral.
+   */
+  stack: StackModule[] = [
+    { label: 'C# / .NET 8', tone: 'info' },
+    { label: 'ASP.NET Core', tone: 'info' },
+    { label: 'Angular', tone: 'info' },
+    { label: 'Claude Code + MCP', tone: 'neutral' },
+    { label: 'Agent skills + evals', tone: 'neutral' },
+    { label: 'EF Core + PostgreSQL', tone: 'neutral' },
+    { label: 'CQRS / MediatR', tone: 'neutral' },
+    { label: 'Avalonia / Electron', tone: 'neutral' },
+    { label: 'AWS + Azure', tone: 'neutral' },
+    { label: 'Terraform', tone: 'neutral' },
+    { label: 'Docker', tone: 'neutral' },
+    { label: 'xUnit + Testcontainers', tone: 'neutral' },
+  ];
+
+  services = [
+    'Full-stack web application development',
+    'AI agent workflows & evals',
+    'Desktop applications (Avalonia, Electron)',
+    'Backend/API engineering',
+    'Background processing & scheduled jobs',
+    'Event-driven integrations',
+    'Database design & optimization',
+    'Cloud deployment & DevOps automation',
+    'Observability & monitoring setup',
+    'Automated testing & CI/CD pipelines',
+  ].map((label, i) => ({ idx: pad(i + 1), label }));
+
+  /** Window contexts, measured off the lists so a new entry cannot leave a header miscounting. */
+  stackContext = count(this.stack.length, 'MODULE', 'MODULES');
+  serviceCount = pad(this.services.length);
 
   resumePdf = RESUME_PDF;
   resumeDocx = RESUME_DOCX;

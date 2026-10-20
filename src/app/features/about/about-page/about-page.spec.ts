@@ -35,8 +35,8 @@ describe('AboutPage', () => {
     expect(TestBed.inject(Title).getTitle()).toContain('About');
   });
 
-  it('renders five dossier windows', () => {
-    expect(all('app-window').length).toBe(5);
+  it('renders seven dossier windows', () => {
+    expect(all('app-window').length).toBe(7);
   });
 
   // The header's reading is the page's own panel count. Asserted against the
@@ -50,24 +50,47 @@ describe('AboutPage', () => {
     expect(all('.window').map((w) => w.getAttribute('data-variant'))).toEqual([
       'dialogue',
       'data',
+      'data',
       'inspector',
       'inspector',
       'command',
+      'data',
     ]);
     expect(all('.window__index').map((i) => i.textContent?.trim())).toEqual([
       '01',
       '03',
+      '06',
       '02',
       '04',
       '05',
+      '07',
     ]);
     expect(all('.window').map((w) => (w as HTMLElement).style.animationDelay)).toEqual([
       '40ms',
       '160ms',
+      '240ms',
       '80ms',
       '120ms',
       '200ms',
+      '280ms',
     ]);
+  });
+
+  // Stack and services moved here from the home page when it became a broadcast.
+  it('counts the stack modules it renders, the first three toned as core', () => {
+    const stack = all('app-window')[2];
+    const tones = [...stack.querySelectorAll('.badge')].map((b) => b.getAttribute('data-tone'));
+    expect(stack.querySelector('.window__context')?.textContent?.trim()).toBe(
+      `${tones.length} MODULES`,
+    );
+    expect(tones.slice(0, 3)).toEqual(['info', 'info', 'info']);
+    expect(tones.slice(3).every((tone) => tone === 'neutral')).toBe(true);
+  });
+
+  it('numbers the services and counts them in the window context', () => {
+    const rows = all('.about__service');
+    expect(rows.length).toBe(10);
+    expect(all('app-window')[6].querySelector('.window__context')?.textContent?.trim()).toBe('10');
   });
 
   it('focuses only the operator panel', () => {
@@ -92,7 +115,7 @@ describe('AboutPage', () => {
   // Two rows, not three: the design's education inspector reads DEGREE /
   // INSTITUTION, and the degree and its field are one fact.
   it('reads education as DEGREE and INSTITUTION', () => {
-    const education = all('app-window')[2];
+    const education = all('app-window')[3];
     expect([...education.querySelectorAll('dt')].map((d) => d.textContent?.trim())).toEqual([
       'DEGREE',
       'INSTITUTION',
