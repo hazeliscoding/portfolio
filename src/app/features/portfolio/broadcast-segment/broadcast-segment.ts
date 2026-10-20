@@ -2,8 +2,17 @@ import { Component, inject, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 import { MotionService } from '../../../ui/motion/motion.service';
+import { Project, ProjectKind, projectsData } from '../../../data/projects.data';
+import { Platform, Release, releases } from '../../../data/releases.generated';
 import { BroadcastScreen } from '../broadcast-screen/broadcast-screen';
 import { InstallBox } from '../install-box/install-box';
+
+/** The status badge's first word: what the project is, before which release. */
+const STATUS: Record<ProjectKind, string> = {
+  app: 'SHIPPED',
+  site: 'LIVE',
+  pilot: 'PILOT',
+};
 
 /** A project's colours, as the custom properties its segment or tape reads. */
 export type BrandStyle = Record<'--ink' | '--tint' | '--glow', string | null>;
@@ -50,4 +59,89 @@ export interface Segment {
 export class BroadcastSegment {
   readonly motion = inject(MotionService);
   readonly segment = input.required<Segment>();
+}
+
+/**
+ * A project as its segment. Shared by the projects page and the home page's
+ * NOW PLAYING, so a project airs the same way on both. `i` is its place in the
+ * page's run, which sets the flip and the entrance stagger.
+ */
+export function toSegment(p: Project, i: number): Segment {
+  const release = releaseOf(p);
+  return {
+    id: p.id,
+    kind: p.kind as 'app' | 'site',
+    channel: channelOf(p),
+    title: p.title,
+    slug: [p.medium.toUpperCase(), p.year].filter(Boolean).join(' · '),
+    pitch: p.pitch,
+    status: [STATUS[p.kind], release?.tag].filter(Boolean).join(' · '),
+    icon: p.brand.icon,
+    mark: p.brand.mark,
+    style: styleOf(p),
+    shot: p.image,
+    alt: `${p.title} screenshot`,
+    host: p.links.demo ? bareHost(p.links.demo) : '',
+    phone: p.phone ?? '',
+    cta: ctaOf(p, release),
+    ticker: p.ticker ?? [],
+    flip: i % 2 === 1,
+    // 40ms, then 70ms per segment: the archive cards' stagger, kept.
+    delay: `${40 + i * 70}ms`,
+  };
+}
+
+/** Zero-padded position in the whole archive, so a channel keeps its number on every page. */
+export function channelOf(p: Project): string {
+  return String(projectsData.indexOf(p) + 1).padStart(2, '0');
+}
+
+/** `hazeliscoding/puzzle-boy` → `puzzle-boy`: the key releases.generated.ts files a repo under. */
+export function repoOf(url: string): string {
+  return url.replace(/\/+$/, '').split('/').pop() ?? '';
+}
+
+export function releaseOf(p: Project): Release | undefined {
+  return p.links.github ? releases[repoOf(p.links.github)] : undefined;
+}
+
+export function styleOf(p: Project): BrandStyle {
+  return { '--ink': p.brand.ink, '--tint': p.brand.tint, '--glow': p.brand.glow ?? null };
+}
+
+/** `Windows`, `Windows & Linux`, `Windows, macOS & Linux`. */
+export function platformList(platforms: Platform[]): string {
+  return platforms.length < 2
+    ? (platforms[0] ?? '')
+    : `${platforms.slice(0, -1).join(', ')} & ${platforms[platforms.length - 1]}`;
+}
+
+function bareHost(url: string): string {
+  return url.replace(/^https?:\/\//, '').replace(/\/$/, '');
+}
+
+/**
+ * The one call to action. Platforms come from the release, never from the
+ * write-up: that is how Prompuff's copy went stale while its macOS build
+ * shipped. A single platform is named on the button; more go in the fine print.
+ */
+function ctaOf(p: Project, release: Release | undefined): Cta {
+  if (p.install?.length) return { kind: 'install', commands: p.install };
+  if (p.kind === 'site' && p.links.demo) {
+    return {
+      kind: 'visit',
+      label: `VISIT ${p.title.toUpperCase()}`,
+      href: p.links.demo,
+      fine: ['Free', p.note, bareHost(p.links.demo)].filter(Boolean).join(' · '),
+    };
+  }
+  const platforms = release?.platforms ?? [];
+  return {
+    kind: 'download',
+    label: platforms.length === 1 ? `DOWNLOAD FOR ${platforms[0].toUpperCase()}` : 'DOWNLOAD',
+    // The release page, not a binary: it offers every platform's file, and a
+    // direct link would pick one for the visitor.
+    href: release?.url ?? p.links.github ?? '',
+    fine: ['Free', platformList(platforms), p.note].filter(Boolean).join(' · '),
+  };
 }

@@ -1,7 +1,8 @@
 import { ComponentFixture, TestBed, fakeAsync, flushMicrotasks, tick } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { Title } from '@angular/platform-browser';
-import { PortfolioPage, platformList } from './portfolio-page';
+import { PortfolioPage } from './portfolio-page';
+import { platformList } from '../broadcast-segment/broadcast-segment';
 import { projectsData } from '../../../data/projects.data';
 import { releases } from '../../../data/releases.generated';
 
