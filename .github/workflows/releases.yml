@@ -6,12 +6,14 @@ name: Refresh release data
 # Same shape as oss-stats.yml, for the same reasons: not wired into prebuild,
 # so a rate-limited or briefly-down GitHub can't take a deploy with it, and a
 # failed run leaves the last good data in place. Run it by hand after
-# publishing a release rather than waiting for Monday.
+# publishing a release to show it straight away.
 
 on:
   schedule:
-    # Mondays, 06:47 UTC: off the hour, and clear of the OSS stats run at :17.
-    - cron: '47 6 * * 1'
+    # 06:47 and 18:47 UTC daily: off the hour, and clear of the OSS stats run at
+    # :17. Twice a day because releases ship often, and a run with no new
+    # release commits nothing, so the extra runs cost no commits or deploys.
+    - cron: '47 6,18 * * *'
   workflow_dispatch:
 
 permissions:

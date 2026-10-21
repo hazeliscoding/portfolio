@@ -6,7 +6,7 @@ import path from 'node:path';
 //
 //   node scripts/generate-releases.mjs
 //
-// Also runs weekly from .github/workflows/releases.yml, which commits the
+// Also runs twice a day from .github/workflows/releases.yml, which commits the
 // result only when a release actually changed.
 //
 // The repos come from projects.data.ts itself — every github.com/<USER>/<repo>

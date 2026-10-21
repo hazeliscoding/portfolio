@@ -49,11 +49,11 @@ gh api graphql -f query='{repository(owner:"hazeliscoding",name:"portfolio"){id 
 Open-source stats are generated the same way into `oss-stats.generated.ts`, but refresh weekly via
 GitHub Actions rather than at build time, so a rate-limited GitHub can't fail a deploy.
 
-Release data works the same way. `scripts/generate-releases.mjs` records the latest release of every
-repo linked from `projects.data.ts` into `releases.generated.ts`: its tag, release page and the
-platforms its downloads cover. The projects page reads its version badges, download links and
-platform lines from there, never from a project's write-up. After publishing a release, run the
-**Refresh release data** workflow by hand rather than waiting for Monday.
+Release data works the same way, refreshed twice a day. `scripts/generate-releases.mjs` records the
+latest release of every repo linked from `projects.data.ts` into `releases.generated.ts`: its tag,
+release page and the platforms its downloads cover. The projects page reads its version badges,
+download links and platform lines from there, never from a project's write-up. To show a release
+straight away, run the **Refresh release data** workflow by hand.
 
 Each project's `kind` puts it on the projects page as a shipped app (`app`, ON AIR), a live site
 (`site`, LIVE) or an experiment (`pilot`). Its logo and mark come from the project repo's
