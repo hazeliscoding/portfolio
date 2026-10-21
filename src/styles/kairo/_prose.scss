@@ -248,6 +248,28 @@
     margin: 0 0 var(--sp-4);
   }
 
+  // Two screenshots compared: `<figure class="pair">` around two markdown
+  // images. They stack below the mobile breakpoint, where half the column is
+  // too narrow to tell two screenshots apart.
+  figure.pair {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--sp-3);
+
+    p {
+      margin: 0;
+    }
+
+    figcaption {
+      grid-column: 1 / -1;
+      margin-block-start: 0;
+    }
+
+    @media (max-width: 479.98px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
   figcaption {
     margin-block-start: var(--sp-2);
     font: var(--type-mono-s);
