@@ -4,6 +4,12 @@ What's next for the site. Shipped work lives in the git history.
 
 ## Decisions
 
+- 2026-10-20: Release data refreshes twice a day instead of weekly, because releases ship often and
+  a week was too long for the projects page to trail one. A run with no new release commits
+  nothing, so it costs no commits or deploys. OSS stats stay weekly: star counts move every day, so
+  a daily run would commit and deploy daily for changes the home page, which cuts stars to 0.1k,
+  mostly doesn't show. It gives up
+  nothing but a few seconds of free runner time.
 - 2026-10-19: The home page becomes a broadcast too, so it reads as the same station as the
   projects page. A lower third introduces me, then NOW PLAYING cycles the featured projects' real
   segments (XIV Vault, Gil Sweep and Prompuff) every 8 seconds with a crossfade, then the latest
@@ -22,7 +28,7 @@ What's next for the site. Shipped work lives in the git history.
   kinds: shipped apps are ON AIR, live sites are LIVE, experiments are PILOTS, shown smaller at the
   end. A channel guide replaces the tag filters. Names stay in the site's type, not each project's
   lockup. Versions and platforms come from each repo's latest GitHub release, refreshed weekly like
-  the OSS stats, so they can't go stale the way Prompuff's macOS build did. Puzzle Boy's three
+  the OSS stats (superseded 2026-10-20: twice a day), so they can't go stale the way Prompuff's macOS build did. Puzzle Boy's three
   repos are one pilot whose main links go to Community Edition, the one that plays out of the box.
 - 2026-10-19: The boot sequence plays only when a visit lands on `/`. A deep link came for that
   page, not the intro.
