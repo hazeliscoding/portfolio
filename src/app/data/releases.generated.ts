@@ -24,13 +24,13 @@ export const releases: Record<string, Release> = {
     ]
   },
   "conatlas-tx": {
-    "tag": "v0.1.0",
-    "url": "https://github.com/hazeliscoding/conatlas-tx/releases/tag/v0.1.0",
+    "tag": "v0.2.0",
+    "url": "https://github.com/hazeliscoding/conatlas-tx/releases/tag/v0.2.0",
     "platforms": []
   },
   "gil-sweep": {
-    "tag": "v2.0.0",
-    "url": "https://github.com/hazeliscoding/gil-sweep/releases/tag/v2.0.0",
+    "tag": "v2.0.1",
+    "url": "https://github.com/hazeliscoding/gil-sweep/releases/tag/v2.0.1",
     "platforms": [
       "Windows"
     ]
