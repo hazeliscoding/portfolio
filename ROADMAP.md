@@ -4,6 +4,13 @@ What's next for the site. Shipped work lives in the git history.
 
 ## Decisions
 
+- 2026-10-20: A post joins a series with one frontmatter field, `series`, and its part number
+  comes from date order, so there is no number to keep in sync. In a series post the pager links
+  the previous and next part, falling back to the entry published that way, so the parts stay
+  linked when other posts come out between them, and a SERIES window in the sidebar lists every
+  part. The pager carries it on phones, where the sidebar falls below the article. It gives up a
+  planned total ("of 3", which the descriptions say by hand), a page per series (the tag page lists
+  the parts) and series structured data, which search engines don't use.
 - 2026-10-20: Release data refreshes twice a day instead of weekly, because releases ship often and
   a week was too long for the projects page to trail one. A run with no new release commits
   nothing, so it costs no commits or deploys. OSS stats stay weekly: star counts move every day, so
@@ -58,6 +65,16 @@ project.
 
 Done when `/` cycles the three featured segments exactly as `/portfolio` draws them, a visitor can
 pause or pick a channel, and nothing moves under reduced motion.
+
+## Blog series
+
+- [x] `series` frontmatter, numbered by date; the build fails on two parts with one date
+- [x] The pager links the previous and next part, falling back to the entry published that way
+- [x] A SERIES window lists every part and marks the one being read
+- [x] Puzzle Boy parts 1 and 2 join the series
+
+Done when both Puzzle Boy parts show the SERIES window, part 1's pager leads to part 2, and posts
+outside a series keep their pager as it was.
 
 ## Later
 
