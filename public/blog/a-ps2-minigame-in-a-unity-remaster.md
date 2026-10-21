@@ -19,7 +19,7 @@ That's Puzzle Boy, a minigame deep inside Nocturne. You guide Jack-o'-Lantern th
 
 ![Jack-o'-Lantern turns the view, switches to the overhead camera and undoes a push from the menu, in the port](/images/blog/a-ps2-minigame-in-a-unity-remaster/tour.webp)
 
-This is part 1 of 3. It covers the first two days: reading the rules out of the game, the line I drew around its copy protection, and how the rules became tests before they became code. Part 2 is about the stages the original never plays, and how one repo became three.
+This is part 1 of 3. It covers the first two days: reading the rules out of the game, the line I drew around its copy protection, and how the rules became tests before they became code. [Part 2](/blog/one-repo-became-three) is about the stages the original never plays, and how one repo became three.
 
 ## The rules I started with
 
@@ -144,4 +144,4 @@ Two mistakes worth admitting. To take screenshots of other stages, the agent onc
 
 [v0.1.0](https://github.com/hazeliscoding/puzzle-boy/releases/tag/v0.1.0) shipped about 24 hours after the first question. It has Windows, Linux and macOS builds, all 20 stages, and the original's look, timing, sound, HUD, dialogue and menu, read from your own copy. You need *Shin Megami Tensei III Nocturne HD Remaster* to play it, and the repository holds none of it.
 
-Then I looked at the 30 stage files the original never plays, and found that six of them can't be won as shipped. That's part 2.
+Then I looked at the 30 stage files the original never plays, and found that six of them can't be won as shipped. That's [part 2](/blog/one-repo-became-three).
