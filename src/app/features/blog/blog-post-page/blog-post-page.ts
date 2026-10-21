@@ -102,8 +102,11 @@ export class BlogPostPage {
     return entryNumber(blogPosts.findIndex((candidate) => candidate.slug === p.slug));
   });
 
-  /** The entries published either side of this one, for the footer links. */
-  readonly neighbors = computed(() => this.blog.getNeighbors(this.post()?.slug ?? ''));
+  /** The footer links: the parts either side in a series, else the entries either side. */
+  readonly pager = computed(() => this.blog.getPager(this.post()?.slug ?? ''));
+
+  /** Every part of this entry's series, for the SERIES window; empty when it stands alone. */
+  readonly series = computed(() => this.blog.getSeries(this.post()?.slug ?? ''));
 
   readonly wordsMeta = computed(() => {
     const n = this.words();

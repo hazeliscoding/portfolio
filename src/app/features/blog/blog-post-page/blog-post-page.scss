@@ -116,8 +116,10 @@
   // rather than --ease-mech.
   transition: all var(--dur-micro);
 
+  // `aria-current`: the part being read, in the SERIES window, held lit.
   &:hover,
-  &:focus-visible {
+  &:focus-visible,
+  &[aria-current='page'] {
     border-inline-start-color: var(--signal-active);
     color: var(--text-primary);
   }

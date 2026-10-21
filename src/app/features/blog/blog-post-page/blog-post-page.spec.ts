@@ -283,6 +283,48 @@ describe('BlogPostPage', () => {
   });
 });
 
+describe('BlogPostPage (a part of a series)', () => {
+  let el: HTMLElement;
+
+  beforeEach(async () => {
+    spyOn(Element.prototype, 'replaceChildren');
+    await TestBed.configureTestingModule({
+      imports: [BlogPostPage],
+      providers: [
+        provideRouter([]),
+        {
+          provide: ActivatedRoute,
+          useValue: { paramMap: of(new Map([['slug', 'a-ps2-minigame-in-a-unity-remaster']])) },
+        },
+      ],
+    }).compileComponents();
+    const fixture = TestBed.createComponent(BlogPostPage);
+    fixture.detectChanges();
+    el = fixture.nativeElement as HTMLElement;
+  });
+
+  it('lists every part in a SERIES window, oldest first, marking this one', () => {
+    const series = el.querySelector('.post__series')!;
+    expect(series.querySelector('.window__context')?.textContent?.trim()).toBe('Puzzle Boy');
+    const rows = Array.from(series.querySelectorAll('.post__toc-row'));
+    expect(rows.map((row) => row.getAttribute('href'))).toEqual([
+      '/blog/a-ps2-minigame-in-a-unity-remaster',
+      '/blog/one-repo-became-three',
+    ]);
+    expect(rows.map((row) => row.getAttribute('aria-current'))).toEqual(['page', null]);
+  });
+
+  it('numbers the RECORD window after the SERIES window', () => {
+    expect(el.querySelector('.post__record .window__index')?.textContent?.trim()).toBe('03');
+  });
+
+  it('pages on to the next part, labelled as a part', () => {
+    const next = el.querySelector('.post__pager-link[rel="next"]')!;
+    expect(next.getAttribute('href')).toBe('/blog/one-repo-became-three');
+    expect(next.textContent).toContain('Part 2');
+  });
+});
+
 describe('BlogPostPage (unknown entry)', () => {
   let fixture: ComponentFixture<BlogPostPage>;
 

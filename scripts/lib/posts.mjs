@@ -149,6 +149,9 @@ export async function readPosts() {
       }
     }
 
+    const series =
+      typeof frontmatter.series === 'string' ? frontmatter.series : '';
+
     // A post without a rendered card falls back to the site card; see
     // scripts/generate-og-cards.mjs.
     const card = ogCardPath(slug);
@@ -160,6 +163,7 @@ export async function readPosts() {
       date,
       description,
       tags,
+      series,
       image,
       imageSizes: await imageSizes(body, fileName),
       markdown: body,
@@ -167,5 +171,20 @@ export async function readPosts() {
   }
 
   posts.sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0));
+
+  // A series is numbered by date, so two parts on one day would leave their
+  // order to chance.
+  const partOnDay = new Map();
+  for (const p of posts) {
+    if (!p.series) continue;
+    const key = `${p.series}\n${p.date}`;
+    if (partOnDay.has(key)) {
+      throw new Error(
+        `${partOnDay.get(key)} and ${p.slug} are both in series '${p.series}' on ${p.date}. Parts are numbered by date, so give them different dates.`,
+      );
+    }
+    partOnDay.set(key, p.slug);
+  }
+
   return posts;
 }

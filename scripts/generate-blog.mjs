@@ -144,6 +144,8 @@ export type BlogPostSource = {
   date: string; // YYYY-MM-DD
   description: string;
   tags: string[];
+  /** The series the post is a part of, or '' when it stands alone. */
+  series: string;
   /** Root-relative social card, or '' to use the site card. */
   image: string;
   /** \`[width, height]\` of each embedded site image, keyed by src. */
@@ -158,7 +160,9 @@ export const blogPosts: BlogPostSource[] = [\n${posts
         p.title,
       )},\n    date: ${JSON.stringify(p.date)},\n    description: ${JSON.stringify(
         p.description,
-      )},\n    tags: ${JSON.stringify(p.tags)},\n    image: ${JSON.stringify(
+      )},\n    tags: ${JSON.stringify(p.tags)},\n    series: ${JSON.stringify(
+        p.series,
+      )},\n    image: ${JSON.stringify(
         p.image,
       )},\n    imageSizes: ${JSON.stringify(p.imageSizes)},\n    markdown: \`${markdown}\`,\n  }`;
     })

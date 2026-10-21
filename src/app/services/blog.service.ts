@@ -7,6 +7,43 @@ export type BlogPost = BlogPostSource & {
   html: string;
 };
 
+/** One side of an entry's footer pager. */
+export interface PagerLink {
+  slug: string;
+  title: string;
+  /** `Part 2` for a part of the same series, `Older entry` or `Newer entry` otherwise. */
+  label: string;
+}
+
+type Listed = Pick<BlogPostSource, 'slug' | 'title' | 'series'>;
+
+/** The parts of `series` in `posts` (newest first), oldest first. */
+function partsOf<T extends Listed>(posts: T[], series: string): T[] {
+  return series ? posts.filter((post) => post.series === series).reverse() : [];
+}
+
+/**
+ * The footer pager for `slug`, from `posts` newest first. In a series each
+ * side is the previous or next part, so the parts stay linked when other
+ * entries come out between them; a side with no part falls back to the entry
+ * published that way.
+ */
+export function pagerFor(
+  posts: Listed[],
+  slug: string,
+): { older: PagerLink | null; newer: PagerLink | null } {
+  const i = posts.findIndex((post) => post.slug === slug);
+  if (i < 0) return { older: null, newer: null };
+  const parts = partsOf(posts, posts[i].series);
+  const n = parts.indexOf(posts[i]);
+  const link = (post: Listed | undefined, label: string) =>
+    post ? { slug: post.slug, title: post.title, label } : null;
+  return {
+    older: link(parts[n - 1], `Part ${n}`) ?? link(posts[i + 1], 'Older entry'),
+    newer: link(parts[n + 1], `Part ${n + 2}`) ?? link(posts[i - 1], 'Newer entry'),
+  };
+}
+
 /**
  * Slug rule shared by the heading renderer below and by
  * `BlogPostPage.extractHeadings`, which parses the `id` this renderer emits
@@ -107,11 +144,14 @@ export class BlogService {
     return this.posts.find((post) => post.slug === slug) ?? null;
   }
 
-  /** The entries either side of `slug`: `older` came out before it, `newer` after. */
-  getNeighbors(slug: string): { older: BlogPost | null; newer: BlogPost | null } {
-    const i = this.posts.findIndex((post) => post.slug === slug);
-    if (i < 0) return { older: null, newer: null };
-    return { older: this.posts[i + 1] ?? null, newer: this.posts[i - 1] ?? null };
+  /** The footer pager for `slug`; see `pagerFor`. */
+  getPager(slug: string) {
+    return pagerFor(this.posts, slug);
+  }
+
+  /** Every part of the series `slug` belongs to, oldest first; empty when it stands alone. */
+  getSeries(slug: string): BlogPost[] {
+    return partsOf(this.posts, this.getPostBySlug(slug)?.series ?? '');
   }
 }
 

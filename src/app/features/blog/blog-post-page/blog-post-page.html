@@ -29,17 +29,17 @@
       <!-- Straight after the body, so the reactions meet the reader where the post ends. -->
       <app-comments id="comments" class="post__comments" [term]="p.slug" />
 
-      @if (neighbors().older || neighbors().newer) {
+      @if (pager().older || pager().newer) {
         <nav class="post__pager" aria-label="More entries">
-          @if (neighbors().older; as older) {
+          @if (pager().older; as older) {
             <a class="post__pager-link" [routerLink]="['/blog', older.slug]" rel="prev">
-              <span class="post__pager-dir">&lt; Older entry</span>
+              <span class="post__pager-dir">&lt; {{ older.label }}</span>
               <span class="post__pager-title">{{ older.title }}</span>
             </a>
           }
-          @if (neighbors().newer; as newer) {
+          @if (pager().newer; as newer) {
             <a class="post__pager-link post__pager-link--newer" [routerLink]="['/blog', newer.slug]" rel="next">
-              <span class="post__pager-dir">Newer entry &gt;</span>
+              <span class="post__pager-dir">{{ newer.label }} &gt;</span>
               <span class="post__pager-title">{{ newer.title }}</span>
             </a>
           }
@@ -72,7 +72,37 @@
         }
       </app-window>
 
-      <app-window class="post__record" variant="data" index="02" title="Record" delay="180ms">
+      @if (series().length) {
+        <app-window
+          class="post__series"
+          variant="inspector"
+          index="02"
+          title="Series"
+          [context]="p.series"
+          [padded]="false"
+          delay="180ms"
+        >
+          <!-- The same row as CONTENTS: both are jumps, one within the entry and one across entries. -->
+          @for (part of series(); track part.slug; let i = $index) {
+            <a
+              class="post__toc-row"
+              [routerLink]="['/blog', part.slug]"
+              [attr.aria-current]="part.slug === p.slug ? 'page' : null"
+            >
+              <span class="post__toc-idx">{{ (i + 1).toString().padStart(2, '0') }}</span>
+              <span class="post__toc-text">{{ part.title }}</span>
+            </a>
+          }
+        </app-window>
+      }
+
+      <app-window
+        class="post__record"
+        variant="data"
+        [index]="series().length ? '03' : '02'"
+        title="Record"
+        delay="180ms"
+      >
         <app-key-value [items]="record()" />
         <div class="post__return">
           <app-button variant="text" size="sm" routerLink="/blog">&lt; All entries</app-button>

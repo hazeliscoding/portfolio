@@ -26,6 +26,8 @@ Angular 21 (standalone + signals) · SSR and prerendering via `@angular/ssr` · 
 | UI components | `src/app/ui/` |
 
 A post needs `title` and `date` frontmatter; `description` and `tags` (kebab-case) are optional.
+Posts that share a `series` name (`series: Puzzle Boy`) are its parts, numbered by date, so no two
+parts of one series can share a date.
 Posts are compiled into `src/app/data/blog-posts.generated.ts` on every `start` and `build` — that
 file is generated output, so edit the Markdown, not the TypeScript. The same step writes
 `public/feed.xml` (RSS, full text) and `public/llms.txt`, both gitignored.
