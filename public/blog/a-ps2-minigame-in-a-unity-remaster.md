@@ -3,6 +3,7 @@ title: Digging a 2003 PS2 minigame out of a 2021 Unity remaster
 date: 2026-10-18
 description: Rebuilding Puzzle Boy from Shin Megami Tensei III Nocturne as a standalone game, from the game's own code but without shipping a byte of it. Part 1 of 3.
 tags: [reverse-engineering, puzzle-boy, claude-code, ghidra, csharp, monogame]
+series: Puzzle Boy
 ---
 
 The method names in *Shin Megami Tensei III Nocturne HD Remaster* read like a PS2 source tree from 2003:

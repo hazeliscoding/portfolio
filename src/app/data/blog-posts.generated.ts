@@ -8,6 +8,8 @@ export type BlogPostSource = {
   date: string; // YYYY-MM-DD
   description: string;
   tags: string[];
+  /** The series the post is a part of, or '' when it stands alone. */
+  series: string;
   /** Root-relative social card, or '' to use the site card. */
   image: string;
   /** `[width, height]` of each embedded site image, keyed by src. */
@@ -22,6 +24,7 @@ export const blogPosts: BlogPostSource[] = [
     date: "2026-10-20",
     description: "Puzzle Boy's 30 unplayed stages, the switch key they needed, and why that key ended up in a different repo from the port. Part 2 of 3.",
     tags: ["puzzle-boy","claude-code","csharp","monogame","architecture"],
+    series: "Puzzle Boy",
     image: "/images/og/blog/one-repo-became-three.png",
     imageSizes: {"/images/blog/one-repo-became-three/four-jacks.webp":[640,360],"/images/blog/one-repo-became-three/classic-stage-select.jpg":[1280,720],"/images/blog/one-repo-became-three/classic-title.jpg":[1280,720],"/images/projects/puzzle-boy/title.png":[1280,720],"/images/blog/one-repo-became-three/classic-garden-path.jpg":[1280,720],"/images/projects/puzzle-boy/playing.png":[1280,720],"/images/projects/puzzle-boy/editor.png":[1280,720]},
     markdown: `Puzzle Boy ships 50 stage files and plays 20 of them. The 30 it never plays include all seven stages with more than one Jack-o'-Lantern, and six of those can't be finished at all.
@@ -149,6 +152,7 @@ Then I changed my mind about how Community should look. That's part 3.
     date: "2026-10-18",
     description: "Rebuilding Puzzle Boy from Shin Megami Tensei III Nocturne as a standalone game, from the game's own code but without shipping a byte of it. Part 1 of 3.",
     tags: ["reverse-engineering","puzzle-boy","claude-code","ghidra","csharp","monogame"],
+    series: "Puzzle Boy",
     image: "/images/og/blog/a-ps2-minigame-in-a-unity-remaster.png",
     imageSizes: {"/images/blog/a-ps2-minigame-in-a-unity-remaster/tour.webp":[640,360],"/images/blog/a-ps2-minigame-in-a-unity-remaster/manikin-kid.jpg":[960,540],"/images/blog/a-ps2-minigame-in-a-unity-remaster/first-render-stage-44.jpg":[960,562],"/images/blog/a-ps2-minigame-in-a-unity-remaster/menu-undo.jpg":[960,540],"/images/blog/a-ps2-minigame-in-a-unity-remaster/complete.jpg":[960,540],"/images/blog/a-ps2-minigame-in-a-unity-remaster/stage-20.jpg":[960,540]},
     markdown: `The method names in *Shin Megami Tensei III Nocturne HD Remaster* read like a PS2 source tree from 2003:
@@ -299,6 +303,7 @@ Then I looked at the 30 stage files the original never plays, and found that six
     date: "2026-10-08",
     description: "What a coding agent gets wrong porting SDL2 to SDL3, how I measured it, and the agent that searched the whole disk for headers.",
     tags: ["claude-code","agent-skills","sdl3","evals","c"],
+    series: "",
     image: "/images/og/blog/every-trap-is-proven.png",
     imageSizes: {"/images/blog/every-trap-is-proven/port.gif":[1200,900],"/images/blog/every-trap-is-proven/scores.svg":[860,1336]},
     markdown: `This compiles against SDL3 without a single warning:
@@ -425,6 +430,7 @@ Then open an SDL2 project and ask Claude Code to port it to SDL3. Commit first, 
     date: "2026-01-16",
     description: "My first post on this portfolio site.",
     tags: ["angular","portfolio","personal"],
+    series: "",
     image: "/images/og/blog/hello-world.png",
     imageSizes: {},
     markdown: `I’ve wanted a place on my own domain to write short notes about what I’m learning, what I’m building, and what I’m thinking about in tech.

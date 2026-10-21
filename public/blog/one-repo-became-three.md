@@ -3,6 +3,7 @@ title: One repo became three: keeping a preservation port honest
 date: 2026-10-20
 description: Puzzle Boy's 30 unplayed stages, the switch key they needed, and why that key ended up in a different repo from the port. Part 2 of 3.
 tags: [puzzle-boy, claude-code, csharp, monogame, architecture]
+series: Puzzle Boy
 ---
 
 Puzzle Boy ships 50 stage files and plays 20 of them. The 30 it never plays include all seven stages with more than one Jack-o'-Lantern, and six of those can't be finished at all.
