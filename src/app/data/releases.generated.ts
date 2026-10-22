@@ -44,8 +44,8 @@ export const releases: Record<string, Release> = {
     ]
   },
   "prompuff": {
-    "tag": "v1.1.1",
-    "url": "https://github.com/hazeliscoding/prompuff/releases/tag/v1.1.1",
+    "tag": "v1.2.0",
+    "url": "https://github.com/hazeliscoding/prompuff/releases/tag/v1.2.0",
     "platforms": [
       "Windows",
       "macOS",
@@ -76,8 +76,8 @@ export const releases: Record<string, Release> = {
     "platforms": []
   },
   "xiv-vault": {
-    "tag": "v1.0.0",
-    "url": "https://github.com/hazeliscoding/xiv-vault/releases/tag/v1.0.0",
+    "tag": "v1.0.1",
+    "url": "https://github.com/hazeliscoding/xiv-vault/releases/tag/v1.0.1",
     "platforms": [
       "Windows"
     ]
