@@ -81,6 +81,13 @@ describe('PortfolioPage', () => {
       expect(text(s.querySelector('.segment__slug'))).toBe('TRAY APP · 2026');
     });
 
+    it('sets a mascot sticker on the screen only where the project has one', () => {
+      const sticker = segment('sweepling').querySelector('.segment__devices img.segment__mascot');
+      expect(sticker?.getAttribute('src')).toBe('images/projects/sweepling/primrose.png');
+      expect(sticker?.getAttribute('alt')).toContain('Primrose');
+      expect(segment('gil-sweep').querySelector('.segment__mascot')).toBeNull();
+    });
+
     it('tints each segment with its own brand colours', () => {
       const s = segment('gil-sweep');
       expect(s.style.getPropertyValue('--ink')).toBe('#f0cf85');

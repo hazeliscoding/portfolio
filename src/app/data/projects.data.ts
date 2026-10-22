@@ -65,6 +65,8 @@ export interface Project {
   parts?: ProjectPart[];
   /** A phone-sized capture, shown beside a live site's browser frame. */
   phone?: string;
+  /** The project's character, a die-cut sticker set on the corner of its segment's screen. */
+  mascot?: { src: string; alt: string };
   /** A pilot's looping clip, with the still shown instead under reduced motion. */
   reel?: { src: string; still: string };
   /** A pilot's commands, for a CLI with nothing to screenshot on the card. */
@@ -303,6 +305,11 @@ export const projectsData: Project[] = [
       'No admin rights, no telemetry',
     ],
     note: 'signed, updates itself',
+    // Primrose's "Close these?" sticker from the repo's brand folder, at 320 px.
+    mascot: {
+      src: 'images/projects/sweepling/primrose.png',
+      alt: 'Primrose, Sweepling’s café owner, holds up a finger and a tray as she asks whether to clear a table.',
+    },
   },
   {
     id: 'sdl3-porter',

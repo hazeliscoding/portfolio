@@ -29,6 +29,15 @@
         ],
         "createdAt": "2026-10-20T01:54:24.059Z",
         "reason": "Claude: the red bar is the lower third's strap, carried by the B mockup the user picked and approved (2026-10-19); it mirrors the segment's per-project tint"
+      },
+      {
+        "rule": "broken-image",
+        "value": "*",
+        "files": [
+          "src/app/features/portfolio/broadcast-segment/broadcast-segment.html"
+        ],
+        "createdAt": "2026-10-22T22:42:39.807Z",
+        "reason": "model triage: every <img> here binds src with Angular [src]=, which a static scan reads as missing"
       }
     ]
   }

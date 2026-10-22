@@ -196,7 +196,25 @@
 }
 
 .segment__devices {
+  position: relative;
   min-width: 0;
+}
+
+// Stuck on the screen's inner corner, the one facing the copy. The overhang
+// stays under the phone layout's 16px padding, so it never scrolls the page.
+.segment__mascot {
+  position: absolute;
+  inset-block-end: calc(-1 * var(--sp-3));
+  inset-inline-start: calc(-1 * var(--sp-3));
+  width: clamp(96px, 26%, 168px);
+  height: auto;
+  rotate: -6deg;
+  filter: drop-shadow(0 8px 20px rgba(0, 0, 0, 0.5));
+}
+
+.segment--flip .segment__mascot {
+  inset-inline: auto calc(-1 * var(--sp-3));
+  rotate: 6deg;
 }
 
 .segment__ticker {

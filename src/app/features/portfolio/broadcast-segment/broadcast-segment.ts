@@ -41,6 +41,7 @@ export interface Segment {
   /** A live site's address bar, its host without the protocol. */
   host: string;
   phone: string;
+  mascot: Project['mascot'];
   cta: Cta;
   ticker: string[];
   /** Every other segment puts its screenshot on the left, as thatlev's bands do. */
@@ -83,6 +84,7 @@ export function toSegment(p: Project, i: number): Segment {
     alt: `${p.title} screenshot`,
     host: p.links.demo ? bareHost(p.links.demo) : '',
     phone: p.phone ?? '',
+    mascot: p.mascot,
     cta: ctaOf(p, release),
     ticker: p.ticker ?? [],
     flip: i % 2 === 1,

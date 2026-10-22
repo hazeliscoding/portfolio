@@ -41,14 +41,25 @@
       <a class="segment__record" [routerLink]="['/portfolio', s.id]">↵ OPEN RECORD</a>
     </div>
 
-    <app-broadcast-screen
-      class="segment__devices"
-      [shot]="s.shot"
-      [alt]="s.alt"
-      [host]="s.host"
-      [phone]="s.phone"
-      [phoneAlt]="s.title + ' on a phone'"
-    />
+    <div class="segment__devices">
+      <app-broadcast-screen
+        [shot]="s.shot"
+        [alt]="s.alt"
+        [host]="s.host"
+        [phone]="s.phone"
+        [phoneAlt]="s.title + ' on a phone'"
+      />
+      @if (s.mascot; as m) {
+        <img
+          class="segment__mascot"
+          [src]="m.src"
+          [alt]="m.alt"
+          width="320"
+          height="320"
+          loading="lazy"
+        />
+      }
+    </div>
   </div>
 
   @if (s.ticker.length) {
