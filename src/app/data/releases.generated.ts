@@ -35,14 +35,6 @@ export const releases: Record<string, Release> = {
       "Windows"
     ]
   },
-  "pr-sweep": {
-    "tag": "v0.13.0",
-    "url": "https://github.com/hazeliscoding/pr-sweep/releases/tag/v0.13.0",
-    "platforms": [
-      "Windows",
-      "Linux"
-    ]
-  },
   "prompuff": {
     "tag": "v1.2.0",
     "url": "https://github.com/hazeliscoding/prompuff/releases/tag/v1.2.0",
@@ -74,6 +66,13 @@ export const releases: Record<string, Release> = {
     "tag": "v1.0.2",
     "url": "https://github.com/hazeliscoding/sdl3-porter/releases/tag/v1.0.2",
     "platforms": []
+  },
+  "sweepling": {
+    "tag": "v0.1.0",
+    "url": "https://github.com/hazeliscoding/sweepling/releases/tag/v0.1.0",
+    "platforms": [
+      "Windows"
+    ]
   },
   "xiv-vault": {
     "tag": "v1.0.1",

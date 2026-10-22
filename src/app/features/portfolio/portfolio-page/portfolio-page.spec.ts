@@ -67,18 +67,18 @@ describe('PortfolioPage', () => {
         'xiv-vault',
         'gil-sweep',
         'prompuff',
-        'pr-sweep',
+        'sweepling',
         'sdl3-porter',
         'conatlas-tx',
       ]);
     });
 
     it('names the project and labels the section with it', () => {
-      const s = segment('pr-sweep');
-      expect(text(s.querySelector('h2'))).toBe('PR Sweep');
-      expect(s.getAttribute('aria-labelledby')).toBe('pr-sweep-name');
+      const s = segment('sweepling');
+      expect(text(s.querySelector('h2'))).toBe('Sweepling');
+      expect(s.getAttribute('aria-labelledby')).toBe('sweepling-name');
       expect(text(s.querySelector('.segment__channel'))).toBe('CH.04');
-      expect(text(s.querySelector('.segment__slug'))).toBe('DESKTOP · 2026');
+      expect(text(s.querySelector('.segment__slug'))).toBe('TRAY APP · 2026');
     });
 
     it('tints each segment with its own brand colours', () => {
@@ -90,8 +90,8 @@ describe('PortfolioPage', () => {
     // Keyed to the generated data, not to a literal: the weekly refresh moves
     // the tag, and the point is that the badge follows it.
     it('reads the status badge from the latest release', () => {
-      expect(text(segment('pr-sweep').querySelector('.segment__status'))).toBe(
-        `SHIPPED · ${releases['pr-sweep'].tag}`,
+      expect(text(segment('sweepling').querySelector('.segment__status'))).toBe(
+        `SHIPPED · ${releases['sweepling'].tag}`,
       );
       expect(text(segment('conatlas-tx').querySelector('.segment__status'))).toBe(
         `LIVE · ${releases['conatlas-tx'].tag}`,

@@ -20,11 +20,11 @@ describe('ViewportWindow', () => {
   });
 
   it('renders the image and its alt text when src is supplied', () => {
-    fixture.componentRef.setInput('src', 'images/projects/pr-sweep/board.png');
+    fixture.componentRef.setInput('src', 'images/projects/sweepling/review.png');
     fixture.componentRef.setInput('alt', 'status board');
     fixture.detectChanges();
     const img = (fixture.nativeElement as HTMLElement).querySelector('img');
-    expect(img?.getAttribute('src')).toBe('images/projects/pr-sweep/board.png');
+    expect(img?.getAttribute('src')).toBe('images/projects/sweepling/review.png');
     expect(img?.getAttribute('alt')).toBe('status board');
   });
 
@@ -49,7 +49,7 @@ describe('ViewportWindow', () => {
     // Off by default, and independent of whether a feed is present: KAIRO
     // puts the sweep on the detail screen's monitored viewport alone, so an
     // archive card with a screenshot in it must stay still.
-    fixture.componentRef.setInput('src', 'images/projects/pr-sweep/board.png');
+    fixture.componentRef.setInput('src', 'images/projects/sweepling/review.png');
     fixture.detectChanges();
     expect((fixture.nativeElement as HTMLElement).querySelector('.viewport__scan')).toBeNull();
 

@@ -4,6 +4,11 @@
   "buildCommand": "npm run build",
   "outputDirectory": "dist/portfolio/browser",
   "routes": [
+    {
+      "src": "^/portfolio/pr-sweep/?$",
+      "status": 307,
+      "headers": { "Location": "https://github.com/hazeliscoding/pr-sweep" }
+    },
     { "src": "^/([^/\\\\].*)/$", "status": 308, "headers": { "Location": "/$1" } },
     {
       "src": "^/(chunk|main|polyfills|styles)-.*",

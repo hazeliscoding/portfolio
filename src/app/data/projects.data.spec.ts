@@ -6,7 +6,7 @@ describe('projectsData', () => {
       'xiv-vault',
       'gil-sweep',
       'prompuff',
-      'pr-sweep',
+      'sweepling',
       'sdl3-porter',
       'conatlas-tx',
       'puzzle-boy',
@@ -91,7 +91,7 @@ describe('projectsData', () => {
     expect(projectsData[0].images?.length).toBe(5);
     expect(projectsData[1].images?.length).toBe(5);
     expect(projectsData[2].images?.length).toBe(5);
-    expect(projectsData[3].images?.length).toBe(5);
+    expect(projectsData[3].images?.length).toBe(2);
     expect(projectsData[4].images?.length).toBe(4);
     expect(projectsData[5].images?.length).toBe(3);
     expect(projectsData[6].images?.length).toBe(3);
