@@ -22,6 +22,8 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  // A tall capture keeps its top, where an app window has its heading.
+  object-position: top;
   display: block;
 
   &--pixelated {
