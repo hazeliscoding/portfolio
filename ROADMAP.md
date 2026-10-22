@@ -4,6 +4,11 @@ What's next for the site. Shipped work lives in the git history.
 
 ## Decisions
 
+- 2026-10-22: Sweepling replaces PR Sweep in channel 4. PR Sweep is still maintained, but it isn't
+  a main focus now, and the projects page shows the work I'm putting time into. Sweepling's segment
+  carries Primrose, its mascot, as a die-cut sticker on the corner of its screen, through an
+  optional `mascot` field any project can use. It gives up PR Sweep's segment and detail page; old
+  `/portfolio/pr-sweep` links redirect to its repo, temporarily (307), so it can come back.
 - 2026-10-20: A post joins a series with one frontmatter field, `series`, and its part number
   comes from date order, so there is no number to keep in sync. In a series post the pager links
   the previous and next part, falling back to the entry published that way, so the parts stay
