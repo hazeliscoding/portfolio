@@ -33,9 +33,14 @@
     display: none;
   }
 
-  .promo__slide,
-  .promo__slide--on {
+  // Scoped under .promo for the same reason: the slide rules come later.
+  .promo .promo__slide,
+  .promo .promo__copy {
     transition: none;
+  }
+
+  .promo .promo__copy {
+    transform: none;
   }
 }
 
@@ -50,11 +55,12 @@
   color: var(--text-on-night);
 }
 
-// Every slide in one cell. The incoming one fades in over the outgoing one,
-// which holds at full opacity underneath until the fade is done and only then
-// hides, so the dissolve never shows the band through both.
+// Every slide in one cell. The slides have no background of their own, so a
+// cross-fade would show two slides' text at once: the outgoing one fades out
+// first, and only then does the incoming one fade in, its copy rising a little.
 .promo__slides {
   display: grid;
+  --promo-out: 180ms;
 }
 
 .promo__slide {
@@ -67,19 +73,30 @@
   opacity: 0;
   visibility: hidden;
   transition:
-    opacity 0s linear var(--dur-cinematic),
-    visibility 0s linear var(--dur-cinematic);
+    opacity var(--promo-out) ease-out,
+    visibility 0s linear var(--promo-out);
 }
 
 .promo__slide--on {
   z-index: 1;
   opacity: 1;
   visibility: visible;
-  transition: opacity var(--dur-cinematic) var(--ease-mech);
+  transition: opacity var(--dur-cinematic) var(--ease-mech) var(--promo-out);
 }
 
+// Anchored to the top, so every slide's title lands on the same line however
+// long its copy is.
 .promo__copy {
+  align-self: start;
   padding-block: var(--sp-8);
+  transform: translateY(8px);
+  // Leaving, it holds still until it has faded, then resets for next time.
+  transition: transform 0s linear var(--promo-out);
+}
+
+.promo__slide--on .promo__copy {
+  transform: none;
+  transition: transform var(--dur-cinematic) var(--ease-mech) var(--promo-out);
 }
 
 .promo__chips {
