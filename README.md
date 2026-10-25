@@ -57,8 +57,8 @@ release page and the platforms its downloads cover. The projects page reads its 
 download links and platform lines from there, never from a project's write-up. To show a release
 straight away, run the **Refresh release data** workflow by hand.
 
-Each project's `kind` puts it on the projects page as a shipped app (`app`, ON AIR), a live site
-(`site`, LIVE) or an experiment (`pilot`). Its logo and mark come from the project repo's
+Each project's `kind` puts it on the projects page under Shipped, as an app (`app`) or a live site
+(`site`), or under Building now as an experiment (`pilot`). Its logo and mark come from the project repo's
 `docs/brand/` and live in `public/images/projects/<id>/`.
 
 ## Scripts

@@ -12,7 +12,6 @@ describe('PortfolioPage', () => {
 
   const text = (node: Element | null) => (node?.textContent ?? '').replace(/\s+/g, ' ').trim();
   const segment = (id: string) => el.querySelector<HTMLElement>(`section.segment#${id}`)!;
-  const tape = (id: string) => el.querySelector<HTMLElement>(`article.tape#${id}`)!;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -26,8 +25,9 @@ describe('PortfolioPage', () => {
 
   it('opens on a single heading with the project count above it', () => {
     expect([...el.querySelectorAll('h1')].map(text)).toEqual(["Here's what I'm building."]);
+    const pilots = projectsData.filter((p) => p.kind === 'pilot').length;
     expect(text(el.querySelector('.eyebrow'))).toBe(
-      `${projectsData.length} projects · free and open source`,
+      `${projectsData.length - pilots} shipped · ${pilots} building now · free and open source`,
     );
     // The monogram stands in for a photo, so it is decoration only.
     expect(el.querySelector('.hero__avatar')?.getAttribute('aria-hidden')).toBe('true');
@@ -44,7 +44,7 @@ describe('PortfolioPage', () => {
       expect(links.map(text)).toEqual(projectsData.map((p) => p.title));
     });
 
-    it('lands every jump on a band or card with that id', () => {
+    it('lands every jump on a band with that id', () => {
       for (const p of projectsData) {
         expect(el.querySelector(`#${p.id}`)).withContext(p.id).not.toBeNull();
       }
@@ -58,8 +58,9 @@ describe('PortfolioPage', () => {
   });
 
   describe('segments', () => {
-    it('gives every app and live site a segment, in archive order, and no pilot one', () => {
-      expect([...el.querySelectorAll('section.segment')].map((s) => s.id)).toEqual([
+    it('gives every app and live site a band under Shipped, in archive order', () => {
+      const shipped = el.querySelector('section.group[aria-labelledby="shipped-title"]')!;
+      expect([...shipped.querySelectorAll('section.segment')].map((s) => s.id)).toEqual([
         'xiv-vault',
         'gil-sweep',
         'prompuff',
@@ -71,7 +72,8 @@ describe('PortfolioPage', () => {
 
     it('names the project and labels the section with it', () => {
       const s = segment('sweepling');
-      expect(text(s.querySelector('h2'))).toBe('Sweepling');
+      // h3: the group above it holds the h2.
+      expect(text(s.querySelector('h3'))).toBe('Sweepling');
       expect(s.getAttribute('aria-labelledby')).toBe('sweepling-name');
       expect(text(s.querySelector('.segment__slug'))).toBe('Tray app · 2026');
     });
@@ -156,11 +158,14 @@ describe('PortfolioPage', () => {
       expect(text(s.querySelector('.segment__cta-label'))).toBe('Visit ConAtlas TX ↗');
     });
 
-    it('alternates the screenshot side from one segment to the next', () => {
-      const flips = [...el.querySelectorAll('section.segment')].map((s) =>
-        s.classList.contains('segment--flip'),
+    it('alternates the screenshot side from one segment to the next, in each group', () => {
+      const flips = [...el.querySelectorAll('section.group')].map((g) =>
+        [...g.querySelectorAll('section.segment')].map((s) => s.classList.contains('segment--flip')),
       );
-      expect(flips).toEqual([false, true, false, true, false, true]);
+      expect(flips).toEqual([
+        [false, true, false, true, false, true],
+        [false, true],
+      ]);
     });
 
     it('prints every ticker fact from the data', () => {
@@ -182,47 +187,62 @@ describe('PortfolioPage', () => {
     });
 
     it('loads screenshots lazily', () => {
+      // Every band but Axiomarium's, which draws its commands instead.
       const shots = [...el.querySelectorAll('img.device__shot')];
-      expect(shots.length).toBe(6);
+      expect(shots.length).toBe(projectsData.length - 1);
       expect(shots.every((img) => img.getAttribute('loading') === 'lazy')).toBe(true);
     });
   });
 
-  describe('pilots', () => {
-    it('puts both experiments on cards after the bands', () => {
-      expect([...el.querySelectorAll('article.tape')].map((t) => t.id)).toEqual([
+  describe('building now', () => {
+    it('gives both experiments a band of their own, after the shipped ones', () => {
+      const groups = [...el.querySelectorAll('section.group')];
+      expect(groups.map((g) => text(g.querySelector('h2')))).toEqual(['Shipped.', 'Building now.']);
+      expect([...groups[1].querySelectorAll('section.segment')].map((b) => b.id)).toEqual([
         'puzzle-boy',
         'axiomarium',
       ]);
-      expect(text(tape('puzzle-boy').querySelector('h3'))).toBe('Puzzle Boy');
-      expect(text(tape('puzzle-boy').querySelector('.tape__slug'))).toBe('Game · 2026');
+      expect(segment('puzzle-boy').getAttribute('data-kind')).toBe('pilot');
+      expect(text(segment('puzzle-boy').querySelector('.segment__slug'))).toBe('Game · 2026');
+    });
+
+    it('stickers each with where it stands and its latest build', () => {
+      expect(text(segment('axiomarium').querySelector('.segment__tag'))).toBe(
+        `Building now · ${releases['axiomarium'].tag}`,
+      );
+    });
+
+    it('offers the latest build, with what state it is in', () => {
+      const cta = segment('axiomarium').querySelector<HTMLAnchorElement>('a.segment__cta')!;
+      expect(cta.getAttribute('href')).toBe(releases['axiomarium'].url);
+      expect(text(cta.querySelector('.segment__cta-label'))).toBe('Try the latest build ↗');
+      expect(text(cta.querySelector('.segment__cta-fine'))).toBe(
+        `Free · ${platformList(releases['axiomarium'].platforms)} · early development`,
+      );
+    });
+
+    it('points Puzzle Boy’s build at Community Edition', () => {
+      expect(segment('puzzle-boy').querySelector('a.segment__cta')?.getAttribute('href')).toBe(
+        releases['puzzle-boy-community'].url,
+      );
     });
 
     it('lists Puzzle Boy’s three repos with their own releases', () => {
-      const rows = [...tape('puzzle-boy').querySelectorAll('.tape__rows li')];
+      const rows = [...segment('puzzle-boy').querySelectorAll('.segment__parts li')];
       expect(rows.map((r) => r.querySelector('a')?.getAttribute('href'))).toEqual([
         'https://github.com/hazeliscoding/puzzle-boy',
         'https://github.com/hazeliscoding/puzzle-boy-community',
         'https://github.com/hazeliscoding/puzzle-boy-engine',
       ]);
-      expect(text(rows[0].querySelector('.tape__detail'))).toBe(
+      expect(text(rows[0].querySelector('.segment__part-detail'))).toBe(
         `${releases['puzzle-boy'].tag} · bring your own copy`,
       );
       // The engine has never been released; it says what it is, not "undefined".
-      expect(text(rows[2].querySelector('.tape__detail'))).toBe('library, not playable');
-    });
-
-    it('points Puzzle Boy’s source and build at Community Edition', () => {
-      const links = [...tape('puzzle-boy').querySelectorAll<HTMLAnchorElement>('.tape__links a')];
-      expect(links.map((a) => a.getAttribute('href'))).toEqual([
-        'https://github.com/hazeliscoding/puzzle-boy-community',
-        releases['puzzle-boy-community'].url,
-        '/portfolio/puzzle-boy',
-      ]);
+      expect(text(rows[2].querySelector('.segment__part-detail'))).toBe('library, not playable');
     });
 
     it('plays the reel lazily, and only the still under reduced motion', () => {
-      const reel = tape('puzzle-boy').querySelector('picture.tape__reel')!;
+      const reel = segment('puzzle-boy').querySelector('picture.device__reel')!;
       expect(reel.querySelector('source')?.getAttribute('media')).toBe(
         '(prefers-reduced-motion: reduce)',
       );
@@ -232,13 +252,12 @@ describe('PortfolioPage', () => {
       expect(reel.querySelector('img')?.getAttribute('loading')).toBe('lazy');
     });
 
-    it('shows Axiomarium’s commands and where it stands', () => {
-      const t = tape('axiomarium');
-      expect(t.querySelectorAll('.tape__console > div').length).toBe(5);
-      expect([...t.querySelectorAll('.tape__rows li > span')].map(text)).toEqual([
-        'Status',
-        `early development · ${releases['axiomarium'].tag}`,
-      ]);
+    it('draws Axiomarium’s commands on its screen in place of a capture', () => {
+      const s = segment('axiomarium');
+      const screen = s.querySelector('.device__console')!;
+      expect(screen.querySelectorAll(':scope > div').length).toBe(5);
+      expect(screen.getAttribute('aria-label')).toBe('Axiomarium commands');
+      expect(s.querySelector('img.device__shot')).toBeNull();
     });
   });
 

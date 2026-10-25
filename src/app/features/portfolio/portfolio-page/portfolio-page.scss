@@ -1,10 +1,10 @@
-// The projects page: a hero, a sticky bar of every project, a dark band per
-// shipped app or live site, then the experiments as light cards. The bands and
-// cards are their own components; this sheet holds the page around them.
+// The projects page: a hero, a sticky bar of every project, then a dark band
+// per project in two groups, what has shipped and what is still being built.
+// The bands are their own component; this sheet holds the page around them.
 
 // How far a jump link's target lands below the top of the scroll container:
 // the sticky header and this page's bar on a desktop, the header alone on a
-// phone, where the bar does not stick. Inherited by the bands and cards.
+// phone, where the bar does not stick. Inherited by the bands.
 :host {
   display: block;
   --guide-clearance: 156px;
@@ -14,8 +14,7 @@
   }
 }
 
-.hero,
-.pilots {
+.hero {
   &[data-sfx="a"] {
     animation: win-a var(--dur-window) var(--ease-mech) both;
   }
@@ -98,31 +97,27 @@
   height: 20px;
 }
 
-// ── Bands ────────────────────────────────────────────────────────────────────
+// ── Shipped, then building now ───────────────────────────────────────────────
+
+.group {
+  margin-top: var(--sp-12);
+
+  & + & {
+    margin-top: var(--sp-20);
+  }
+}
+
+.group__lede {
+  max-width: 60ch;
+  margin-top: var(--sp-2);
+  color: var(--text-muted);
+}
 
 .bands {
   display: flex;
   flex-direction: column;
   gap: var(--sp-6);
-  margin-top: var(--sp-8);
-}
-
-// ── Experiments ──────────────────────────────────────────────────────────────
-
-.pilots {
-  margin-top: var(--sp-20);
-}
-
-.pilots__lede {
-  max-width: 60ch;
-  margin: calc(-1 * var(--sp-3)) 0 var(--sp-6);
-  color: var(--text-muted);
-}
-
-.pilots__grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--sp-6);
+  margin-top: var(--sp-6);
 }
 
 @media (max-width: 839.98px) {
@@ -146,16 +141,12 @@
     position: static;
   }
 
-  .pilots__grid {
-    grid-template-columns: minmax(0, 1fr);
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
   // Same specificity as the entrance rules above (0,2,0); a media query adds
   // none, so bare class selectors would lose.
-  .hero[data-sfx],
-  .pilots[data-sfx] {
+  .hero[data-sfx] {
     animation: none;
   }
 }

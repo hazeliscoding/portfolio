@@ -11,7 +11,7 @@ import { InstallBox } from '../install-box/install-box';
 const STATUS: Record<ProjectKind, string> = {
   app: 'Shipped',
   site: 'Live now',
-  pilot: 'Pilot',
+  pilot: 'Building now',
 };
 
 /** A project's colours, as the custom properties its segment or tape reads. */
@@ -23,10 +23,17 @@ export type Cta =
   | { kind: 'visit'; label: string; href: string; fine: string }
   | { kind: 'install'; commands: string[] };
 
-/** Everything one shipped app's or live site's band renders, resolved once by the page. */
+/** One repository of a project that spans several, with its own latest release. */
+export interface SegmentPart {
+  label: string;
+  url: string;
+  detail: string;
+}
+
+/** Everything one project's band renders, resolved once by the page. */
 export interface Segment {
   id: string;
-  kind: 'app' | 'site';
+  kind: ProjectKind;
   title: string;
   /** `Desktop · 2026` — what it is and when, under the name. */
   slug: string;
@@ -36,6 +43,10 @@ export interface Segment {
   mark: string;
   style: BrandStyle;
   shot: string;
+  /** What replaces a looping shot under reduced motion; empty for a still one. */
+  still: string;
+  /** A CLI's commands, drawn on the screen in place of a capture. */
+  console: { command: string; note: string }[];
   alt: string;
   /** A live site's address bar, its host without the protocol. */
   host: string;
@@ -43,6 +54,7 @@ export interface Segment {
   mascot: Project['mascot'];
   cta: Cta;
   ticker: string[];
+  parts: SegmentPart[];
   /** Every other segment puts its screenshot on the left, as thatlev's bands do. */
   flip: boolean;
   delay: string;
@@ -70,7 +82,7 @@ export function toSegment(p: Project, i: number): Segment {
   const release = releaseOf(p);
   return {
     id: p.id,
-    kind: p.kind as 'app' | 'site',
+    kind: p.kind,
     title: p.title,
     slug: [p.medium, p.year].filter(Boolean).join(' · '),
     pitch: p.pitch,
@@ -78,13 +90,25 @@ export function toSegment(p: Project, i: number): Segment {
     icon: p.brand.icon,
     mark: p.brand.mark,
     style: styleOf(p),
-    shot: p.image,
-    alt: `${p.title} screenshot`,
+    // An experiment's reel is its screenshot; a CLI shows its commands instead.
+    shot: p.reel?.src ?? p.image,
+    still: p.reel?.still ?? '',
+    console: p.reel ? [] : (p.console ?? []),
+    alt: p.reel
+      ? `${p.title} in play`
+      : p.console?.length
+        ? `${p.title} commands`
+        : `${p.title} screenshot`,
     host: p.links.demo ? bareHost(p.links.demo) : '',
     phone: p.phone ?? '',
     mascot: p.mascot,
     cta: ctaOf(p, release),
     ticker: p.ticker ?? [],
+    parts: (p.parts ?? []).map((part) => ({
+      label: part.label,
+      url: part.url,
+      detail: [releases[repoOf(part.url)]?.tag, part.note].filter(Boolean).join(' · '),
+    })),
     flip: i % 2 === 1,
     // 40ms, then 70ms per segment: the archive cards' stagger, kept.
     delay: `${40 + i * 70}ms`,
@@ -131,6 +155,14 @@ function ctaOf(p: Project, release: Release | undefined): Cta {
     };
   }
   const platforms = release?.platforms ?? [];
+  if (p.kind === 'pilot') {
+    return {
+      kind: 'download',
+      label: 'Try the latest build',
+      href: release?.url ?? p.links.github ?? '',
+      fine: ['Free', platformList(platforms), p.status].filter(Boolean).join(' · '),
+    };
+  }
   return {
     kind: 'download',
     label: platforms.length === 1 ? `Download for ${platforms[0]}` : `Download ${p.title}`,

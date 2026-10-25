@@ -84,3 +84,41 @@
     object-position: top;
   }
 }
+
+// Footage, not a window: it fills the screen from the centre.
+.device__reel {
+  display: contents;
+
+  .device__shot {
+    object-position: center;
+  }
+}
+
+// A CLI's commands, set like a terminal on the same screen.
+.device__console {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2px;
+  padding: clamp(16px, 3vw, 36px);
+  font: 400 clamp(12px, 1.15vw, 15px) / 1.9 var(--font-mono);
+  // Not a <code> element, so the base sheet's rule misses it: `--judge` stays two hyphens.
+  font-variant-ligatures: none;
+  color: var(--text-on-night);
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+.device__prompt {
+  color: var(--tint);
+}
+
+.device__note {
+  color: var(--text-on-night-muted);
+
+  // A phone's screen fits the commands, not what each one does.
+  @media (max-width: 600px) {
+    display: none;
+  }
+}

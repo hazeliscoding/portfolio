@@ -15,7 +15,7 @@
   <div class="segment__main">
     <div class="segment__copy">
       <img class="segment__icon" [src]="s.icon" alt="" width="56" height="56" />
-      <h2 class="segment__name" [id]="s.id + '-name'">{{ s.title }}</h2>
+      <h3 class="segment__name" [id]="s.id + '-name'">{{ s.title }}</h3>
       <p class="segment__slug">{{ s.slug }}</p>
       <p class="segment__pitch">{{ s.pitch }}</p>
 
@@ -37,6 +37,8 @@
     <div class="segment__devices">
       <app-broadcast-screen
         [shot]="s.shot"
+        [still]="s.still"
+        [console]="s.console"
         [alt]="s.alt"
         [host]="s.host"
         [phone]="s.phone"
@@ -59,6 +61,19 @@
     <ul class="segment__ticker" [attr.aria-label]="s.title + ' at a glance'">
       @for (fact of s.ticker; track fact) {
         <li>{{ fact }}</li>
+      }
+    </ul>
+  }
+
+  @if (s.parts.length) {
+    <ul class="segment__ticker segment__parts" [attr.aria-label]="s.title + ' repositories'">
+      @for (part of s.parts; track part.url) {
+        <li>
+          <a [href]="part.url" target="_blank" rel="noopener"
+            >{{ part.label }}<span class="sr-only"> (opens in a new tab)</span></a
+          >
+          <span class="segment__part-detail">{{ part.detail }}</span>
+        </li>
       }
     </ul>
   }

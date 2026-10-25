@@ -50,6 +50,15 @@
   color: var(--h-night-deep);
 }
 
+// Still being built: the sticker is striped like site tape.
+.segment[data-kind="pilot"] .segment__tag {
+  background: repeating-linear-gradient(
+    -45deg,
+    var(--tint) 0 10px,
+    color-mix(in srgb, var(--tint) 72%, #fff) 10px 20px
+  );
+}
+
 .segment__main {
   display: grid;
   grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
@@ -198,6 +207,29 @@
     font-size: 13px;
     color: var(--text-on-night-muted);
   }
+}
+
+// A project's repos, after its facts: each its own link and release.
+.segment__parts {
+  li {
+    display: inline-flex;
+    gap: var(--sp-2);
+  }
+
+  a {
+    font-weight: 600;
+    color: var(--text-on-night);
+
+    &:hover {
+      color: var(--ink);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+  }
+}
+
+.segment__ticker + .segment__parts {
+  margin-top: var(--sp-2);
 }
 
 // Phones and narrow tablets: one column, the screen under the copy.

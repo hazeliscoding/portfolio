@@ -4,8 +4,8 @@ export interface ProjectImage {
 }
 
 /**
- * What a project is, in the projects page's broadcast language: a shipped app
- * is ON AIR, a live website is LIVE, an experiment is a PILOT.
+ * Where a project sits on the projects page: a shipped app or live website
+ * under Shipped, an experiment under Building now.
  */
 export type ProjectKind = 'app' | 'site' | 'pilot';
 
