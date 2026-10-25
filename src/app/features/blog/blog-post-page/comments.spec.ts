@@ -30,6 +30,14 @@ describe('Comments', () => {
     expect(script().getAttribute('data-category-id')).toMatch(/^DIC_/);
   });
 
+  it('titles the section and says who can read and who can comment', () => {
+    const el = fixture.nativeElement as HTMLElement;
+    const section = el.querySelector('section.comments')!;
+    expect(section.getAttribute('aria-labelledby')).toBe('comments-title');
+    expect(el.querySelector('#comments-title')?.textContent?.trim()).toBe('Comments and reactions');
+    expect(el.querySelector('.comments__note')?.textContent).toContain('Reading needs no account');
+  });
+
   it('swaps the thread when the pager moves to another post', () => {
     fixture.componentRef.setInput('term', 'another-post');
     fixture.detectChanges();

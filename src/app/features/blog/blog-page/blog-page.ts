@@ -1,49 +1,47 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 
-import { ChapterHeader } from '../../../ui/chapter-header/chapter-header';
-import { Window } from '../../../ui/windows/window/window';
-import { Badge } from '../../../ui/core/badge/badge';
 import { MotionService } from '../../../ui/motion/motion.service';
 import { blogPosts } from '../../../data/blog-posts.generated';
-import { entryNumber } from '../../../core/navigation';
 import { count } from '../../../core/count';
 import { PageMeta, PERSON, SITE_ORIGIN, breadcrumbs } from '../../../core/page-meta';
 
 /**
- * A tag's listing stays out of search until it gathers this many entries.
- * Below it the page is a near-copy of the log with fewer rows — useful to a
+ * A tag's listing stays out of search until it gathers this many posts.
+ * Below it the page is a near-copy of the blog with fewer cards — useful to a
  * reader following a tag, thin to a search engine.
  */
 const INDEXABLE_TAG_ENTRIES = 3;
 
+/** `Puzzle Boy · Part 2`, numbered by date like the post page's series card; '' for a lone post. */
+function seriesLabel(post: (typeof blogPosts)[number]): string {
+  if (!post.series) return '';
+  // `blogPosts` is newest first, so the oldest part is the last one listed.
+  const parts = blogPosts.filter((p) => p.series === post.series).reverse();
+  return `${post.series} · Part ${parts.indexOf(post) + 1}`;
+}
+
 @Component({
   selector: 'blog-page',
   standalone: true,
-  imports: [RouterLink, ChapterHeader, Window, Badge],
+  imports: [RouterLink],
   templateUrl: './blog-page.html',
   styleUrl: './blog-page.scss',
 })
 export class BlogPage {
-  /** The standfirst fades in with the panel, so the page needs the cue too. */
+  /** The cards rise in on every visit, so the page needs the cue too. */
   readonly motion = inject(MotionService);
   private readonly route = inject(ActivatedRoute);
   private readonly pageMeta = inject(PageMeta);
 
   /**
    * `blogPosts` as generated — newest first, sorted once in
-   * `scripts/generate-blog.mjs`. Read in that order and NOT re-sorted here:
-   * `entryNumber` counts positions from the end of this exact array, so a
-   * second sort with a different tie-break would renumber the entries. A tag
-   * listing filters this list, so an entry keeps its number everywhere.
+   * `scripts/generate-blog.mjs` — and not re-sorted here, so the blog and a
+   * tag listing always agree on the order.
    */
-  private readonly allEntries = blogPosts.map((post, index) => ({
-    ...post,
-    // Oldest entry is 0001; the newest carries the highest number.
-    number: entryNumber(index),
-  }));
+  private readonly allEntries = blogPosts.map((post) => ({ ...post, part: seriesLabel(post) }));
 
-  /** Every tag in use with its entry count, most-used first. */
+  /** Every tag in use with its post count, most-used first. */
   readonly tags = Object.entries(
     blogPosts
       .flatMap((post) => post.tags)
@@ -60,8 +58,8 @@ export class BlogPage {
     return tag ? this.allEntries.filter((entry) => entry.tags.includes(tag)) : this.allEntries;
   });
 
-  /** `3 ENTRIES`, followed by the RSS link the header projects. */
-  readonly meta = computed(() => count(this.entries().length, 'ENTRY', 'ENTRIES'));
+  /** `5 posts`, printed beside the feed link. */
+  readonly meta = computed(() => count(this.entries().length, 'post', 'posts'));
 
   ngOnInit(): void {
     // One instance serves /blog/tags/a then /blog/tags/b, so the tag is read

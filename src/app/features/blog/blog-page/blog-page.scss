@@ -1,193 +1,222 @@
-// No max-width. The log is a full-width instrument: its row grid reserves a
-// fixed 110px stamp gutter and a fixed 240px tag gutter and lets only the
-// entry column flex, so clamping the page would shrink the one track that is
-// meant to absorb the width.
-:host {
-  display: block;
+.blog {
+  padding-bottom: var(--sp-8);
 }
 
-// -6px top, off the spacing scale and deliberately negative: the chapter
-// header already ends with 16px of margin, and the design pulls the standfirst
-// back up so it reads as part of the heading block rather than as the first
-// paragraph of the page. 14px below it is the design's literal too.
-.log__intro {
-  margin: -6px 0 14px;
-  font: var(--type-body);
-  color: var(--text-secondary);
-
-  // The design animates the standfirst and the panel together, inside one
-  // wrapper at 60ms. `app-window` animates itself off `data-sfx`, so the
-  // wrapper is not rebuilt here — the paragraph carries the same cue and the
-  // same delay, and the two still arrive as one gesture.
-  &[data-sfx="a"] {
-    animation: win-a var(--dur-window) var(--ease-mech) both;
-    animation-delay: 60ms;
-  }
-
-  &[data-sfx="b"] {
-    animation: win-b var(--dur-window) var(--ease-mech) both;
-    animation-delay: 60ms;
-  }
+.blog__hero {
+  padding-bottom: var(--sp-8);
 }
 
-// Matched on `.log__intro[data-sfx=...]` (0,2,0), not the bare class (0,1,0):
-// a media query adds no specificity, so a bare-class reset would lose to the
-// rules above. Same trap documented at src/app/app.scss:183.
-@media (prefers-reduced-motion: reduce) {
-  .log__intro[data-sfx="a"],
-  .log__intro[data-sfx="b"] {
-    animation: none;
-  }
-}
-
-// Projected into the chapter header's readout, so it takes that line's faint
-// mono and only lights up on hover, like every other control in the chrome.
-.log__feed {
-  color: inherit;
-  text-decoration: none;
-
-  &:hover,
-  &:focus-visible {
-    color: var(--text-active);
-    text-decoration: underline;
-  }
-}
-
-.log__intro-tag {
+.blog__meta {
+  margin-top: var(--sp-5);
   font: var(--type-mono-s);
-  color: var(--text-active);
+  color: var(--text-faint);
 }
 
-.log__filter {
+.blog__feed {
+  font-weight: 500;
+}
+
+// --- Tag filter ------------------------------------------------------------
+
+.blog__filter {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
-  margin-block-end: var(--sp-3);
+  gap: var(--sp-2);
+  margin-bottom: var(--sp-10);
 }
 
-// Drawn like a badge so the row's tags and the filter read as the same
-// vocabulary, but outlined rather than filled: these are controls, not labels.
-.log__filter-link {
+.blog__filter-link {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 2px 8px;
+  gap: var(--sp-2);
+  min-height: 36px;
+  padding: 0 14px;
+  border-radius: var(--radius-pill);
+  background: var(--surface-window);
   border: var(--bw-hairline) solid var(--border-default);
-  font: var(--type-mono-s);
-  letter-spacing: var(--tracking-wide);
-  text-transform: uppercase;
-  color: var(--text-muted);
-  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-secondary);
   transition:
+    background var(--dur-micro) var(--ease-mech),
     border-color var(--dur-micro) var(--ease-mech),
     color var(--dur-micro) var(--ease-mech);
 
-  &:hover,
-  &:focus-visible {
-    border-color: var(--signal-active);
+  &:hover {
+    border-color: var(--border-strong);
     color: var(--text-primary);
   }
 
   &[aria-current="page"] {
+    background: var(--signal-active);
     border-color: var(--signal-active);
-    color: var(--text-active);
+    color: var(--text-inverse);
   }
 }
 
-.log__filter-count {
-  color: var(--text-faint);
+.blog__filter-count {
+  font: 500 11px/1 var(--font-mono);
+  opacity: 0.7;
 }
 
-// Only reachable on a tag no entry carries, which can only be typed by hand.
-.log__empty {
-  padding: 14px 12px;
-  font: var(--type-mono-s);
-  letter-spacing: var(--tracking-wider);
-  color: var(--text-faint);
-}
+// --- Cards -----------------------------------------------------------------
 
-.log__row {
+.blog__list {
+  list-style: none;
   display: grid;
-  grid-template-columns: 110px minmax(0, 1fr) 240px;
-  gap: var(--sp-4);
-  align-items: start;
-  // 14/12/14/9, off the 4px scale: window rows are drawn to the chrome. The
-  // 9px start padding is 12px less the 3px indicator border, so the text does
-  // not shift sideways when that border lights up on hover.
-  padding: 14px 12px 14px 9px;
-  border-bottom: var(--bw-hairline) solid var(--border-faint);
-  border-inline-start: var(--bw-indicator) solid transparent;
-  // The row is a link, so the global `a` colour would turn the whole entry
-  // cyan. Each cell states its own colour; the title takes the body's.
-  color: inherit;
-  cursor: pointer;
-  // The design writes `transition: all`. These three are the only properties
-  // its hover state changes, and naming them keeps the rule honest about what
-  // moves — the same correction made to the home page's log rows.
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--sp-6);
+}
+
+.entry {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+  padding: 28px;
+  background: var(--surface-window);
+  border: var(--bw-hairline) solid var(--border-default);
+  border-radius: var(--radius-3);
+  animation: win-a var(--dur-window) var(--ease-mech) both;
   transition:
     border-color var(--dur-micro) var(--ease-mech),
-    background-color var(--dur-micro) var(--ease-mech),
-    transform var(--dur-micro) var(--ease-mech);
+    box-shadow var(--dur-control) var(--ease-mech);
 
-  // Keyboard focus gets the pointer's treatment as well. The focus ring itself
-  // comes from the global `:focus-visible` rule and is not overridden here.
-  &:hover,
-  &:focus-visible {
-    border-inline-start-color: var(--signal-active);
-    background: var(--surface-active-tint);
-    transform: translateX(2px);
+  &:hover {
+    border-color: var(--border-strong);
+    box-shadow: var(--shadow-card);
+  }
+
+  @for $i from 1 through 8 {
+    &:nth-child(#{$i}) {
+      animation-delay: #{$i * 40}ms;
+    }
   }
 }
 
-.log__stamp {
+.blog[data-sfx="b"] .entry {
+  animation-name: win-b;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .entry {
+    animation: none;
+  }
+}
+
+// The newest post on /blog reads as the lead: full width, on lavender.
+.entry--lead {
+  grid-column: 1 / -1;
+  padding: clamp(28px, 4vw, 48px);
+  background: var(--surface-elevated);
+
+  .entry__title {
+    font-size: clamp(28px, 3.4vw, 40px);
+    letter-spacing: var(--tracking-heading);
+    max-width: 24ch;
+  }
+
+  .entry__desc {
+    font-size: 17px;
+    max-width: 62ch;
+  }
+}
+
+.entry__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-2) var(--sp-3);
+}
+
+.entry__date {
   font: var(--type-mono-s);
   color: var(--text-faint);
-  // 3px: drops the 11px mono stamp onto the 20px display title's first
-  // baseline. Not a scale value, because it is an optical correction between
-  // two type sizes, not a space.
-  padding-block-start: 3px;
 }
 
-.log__entry {
-  // Without this the long description sets the column's minimum width and
-  // pushes the tag gutter off the row.
-  min-width: 0;
-  display: grid;
-  gap: var(--sp-1);
+.entry__series {
+  padding: 3px 10px;
+  border-radius: var(--radius-pill);
+  background: var(--signal-active-dim);
+  font: 500 12px/1.2 var(--font-ui);
+  color: var(--h-purple-ink);
 }
 
-.log__title {
-  font: var(--type-title);
-  letter-spacing: var(--tracking-display);
+.entry__title {
+  font: 600 22px/1.25 var(--font-display);
+  letter-spacing: -0.02em;
 }
 
-.log__desc {
-  font: var(--type-body-s);
+// The title is the card's link; its ::after stretches over the whole card.
+// Tag links sit above it, so each still opens its own listing.
+.entry__link {
+  color: inherit;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: var(--radius-3);
+  }
+
+  &:hover {
+    color: var(--signal-active-strong);
+  }
+
+  &:focus-visible {
+    box-shadow: none;
+
+    &::after {
+      box-shadow: var(--focus-ring);
+    }
+  }
+}
+
+.entry__desc {
+  font-size: 15px;
   color: var(--text-muted);
 }
 
-.log__tags {
+.entry__tags {
+  list-style: none;
   display: flex;
   flex-wrap: wrap;
-  // 6px, between --sp-1 and --sp-2: badges are 18px tall, and 4px reads as one
-  // clump while 8px breaks the row into separate objects.
   gap: 6px;
-  padding-block-start: 2px;
+  margin-top: auto;
+  padding-top: var(--sp-2);
 }
 
-// 960px is the design's own threshold — it swaps the row grid at
-// `innerWidth >= 960`. The .98 covers fractional viewport widths from zoom.
-@media (max-width: 959.98px) {
-  .log__row {
-    grid-template-columns: 90px minmax(0, 1fr);
+.entry__tag {
+  position: relative;
+  z-index: 1;
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: var(--radius-pill);
+  background: var(--surface-raised);
+  font-size: 12px;
+  color: var(--text-secondary);
+
+  &:hover {
+    background: var(--signal-active-dim);
+    color: var(--h-purple-ink);
+  }
+}
+
+.blog__empty {
+  grid-column: 1 / -1;
+  padding: var(--sp-10) var(--sp-6);
+  border: var(--bw-hairline) dashed var(--border-strong);
+  border-radius: var(--radius-3);
+  text-align: center;
+  color: var(--text-muted);
+}
+
+@media (max-width: 720px) {
+  .blog__list {
+    grid-template-columns: minmax(0, 1fr);
   }
 
-  // DIVERGENCE from the design source. With two columns the tags are the third
-  // grid item, so auto-placement drops them into the next row's FIRST cell —
-  // the 90px stamp gutter — where every badge wraps onto its own line. Pinning
-  // them to the entry column keeps them under the title they belong to, which
-  // is plainly what the two-column layout intends.
-  .log__tags {
-    grid-column: 2;
+  .entry {
+    padding: 22px;
   }
 }

@@ -1,54 +1,55 @@
-<!-- The design's meta reads `3 ENTRIES · RSS`; the feed is real now, so the RSS half is a link. -->
-<app-chapter-header code="LOG" index="04" [meta]="meta()">
-  · <a class="log__feed" href="/feed.xml" type="application/rss+xml">RSS</a>
-</app-chapter-header>
+<div class="blog shell-width" [attr.data-sfx]="motion.sfx()">
+  <header class="page-hero blog__hero">
+    @if (tag(); as t) {
+      <p class="eyebrow">Tagged</p>
+      <h1 class="page-hero__title">{{ t }}</h1>
+      <p class="page-hero__lede blog__intro">Posts tagged {{ t }}.</p>
+    } @else {
+      <p class="eyebrow">The blog</p>
+      <h1 class="page-hero__title">Writing.</h1>
+      <p class="page-hero__lede blog__intro">
+        Write-ups of what I build and how I prove it works: coding agents, C# and .NET, reverse
+        engineering, and the open-source projects behind them.
+      </p>
+    }
+    <p class="blog__meta">
+      {{ meta() }} · <a class="blog__feed" href="/feed.xml" type="application/rss+xml">RSS feed</a>
+    </p>
+  </header>
 
-<p class="log__intro" [attr.data-sfx]="motion.sfx()">
-  @if (tag(); as t) {
-    Entries tagged <span class="log__intro-tag">{{ t }}</span>.
-  } @else {
-    Short notes about building, learning, and shipping software.
-  }
-</p>
+  <nav class="blog__filter" aria-label="Filter posts by tag">
+    <a class="blog__filter-link" routerLink="/blog" [attr.aria-current]="tag() ? null : 'page'">All</a>
+    @for (t of tags; track t.name) {
+      <a
+        class="blog__filter-link"
+        [routerLink]="['/blog/tags', t.name]"
+        [attr.aria-current]="tag() === t.name ? 'page' : null"
+        >{{ t.name }}<span class="blog__filter-count">{{ t.entries }}</span></a
+      >
+    }
+  </nav>
 
-<nav class="log__filter" aria-label="Filter entries by tag">
-  <a class="log__filter-link" routerLink="/blog" [attr.aria-current]="tag() ? null : 'page'">ALL</a>
-  @for (t of tags; track t.name) {
-    <a
-      class="log__filter-link"
-      [routerLink]="['/blog/tags', t.name]"
-      [attr.aria-current]="tag() === t.name ? 'page' : null"
-      >{{ t.name }}<span class="log__filter-count">{{ t.entries }}</span></a
-    >
-  }
-</nav>
-
-<app-window
-  variant="dialogue"
-  index="01"
-  title="Entries"
-  context="NEWEST FIRST"
-  [active]="true"
-  [padded]="false"
-  footer="↵ OPEN ENTRY · ESC BACK"
-  delay="60ms"
->
-  @for (entry of entries(); track entry.slug) {
-    <a class="log__row" [routerLink]="['/blog', entry.slug]">
-      <span class="log__stamp">{{ entry.date }}<br />{{ entry.number }}</span>
-
-      <span class="log__entry">
-        <span class="log__title">{{ entry.title }}</span>
-        <span class="log__desc">{{ entry.description }}</span>
-      </span>
-
-      <span class="log__tags">
-        @for (tag of entry.tags; track tag) {
-          <app-badge tone="info">{{ tag }}</app-badge>
-        }
-      </span>
-    </a>
-  } @empty {
-    <p class="log__empty">NO ENTRIES CARRY THIS TAG</p>
-  }
-</app-window>
+  <ul class="blog__list">
+    @for (entry of entries(); track entry.slug; let first = $first) {
+      <li class="entry" [class.entry--lead]="first && !tag()">
+        <p class="entry__meta">
+          <time class="entry__date" [attr.datetime]="entry.date">{{ entry.date }}</time>
+          @if (entry.part) {
+            <span class="entry__series">{{ entry.part }}</span>
+          }
+        </p>
+        <h2 class="entry__title">
+          <a class="entry__link" [routerLink]="['/blog', entry.slug]">{{ entry.title }}</a>
+        </h2>
+        <p class="entry__desc">{{ entry.description }}</p>
+        <ul class="entry__tags" aria-label="Tags">
+          @for (t of entry.tags; track t) {
+            <li><a class="entry__tag" [routerLink]="['/blog/tags', t]">{{ t }}</a></li>
+          }
+        </ul>
+      </li>
+    } @empty {
+      <li class="blog__empty">No posts carry this tag yet.</li>
+    }
+  </ul>
+</div>

@@ -56,8 +56,8 @@ describe('pagerFor', () => {
 
   it('pages an entry that stands alone to the entries either side', () => {
     expect(pagerFor(posts, 'between')).toEqual({
-      older: { slug: 'part-1', title: 'One', label: 'Older entry' },
-      newer: { slug: 'part-2', title: 'Two', label: 'Newer entry' },
+      older: { slug: 'part-1', title: 'One', label: 'Older post' },
+      newer: { slug: 'part-2', title: 'Two', label: 'Newer post' },
     });
   });
 
@@ -67,7 +67,7 @@ describe('pagerFor', () => {
   });
 
   it('falls back to the entry published that way where a part has no part', () => {
-    expect(pagerFor(posts, 'part-1').older).toEqual({ slug: 'first', title: 'First', label: 'Older entry' });
+    expect(pagerFor(posts, 'part-1').older).toEqual({ slug: 'first', title: 'First', label: 'Older post' });
     expect(pagerFor(posts, 'part-2').newer).toBeNull();
   });
 
