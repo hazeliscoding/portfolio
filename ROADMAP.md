@@ -4,10 +4,21 @@ What's next for the site. Shipped work lives in the git history.
 
 ## Decisions
 
+- 2026-10-25: The projects page follows my GitHub profile README's lineup, so it's about software
+  that has shipped and software I'm building. Staypaw joins Shipped. Shybun, Tattlebun, Carmine
+  Workbench and Darnling join Axiomarium under Building now, and sdl3-porter stays under Shipped
+  rather than getting the README's own AI engineering group. Puzzle Boy leaves, since the README
+  doesn't list it: its page redirects to Community Edition's repo, temporarily (307), so it can come
+  back, and its blog posts and images stay. A project with nothing to screenshot yet shows its
+  mascot or a prototype's output where the screen goes, and one with no release links its repo
+  instead of a build. PR Sweep stays off, as 2026-10-22 decided, though the README still lists it.
+  It gives up Puzzle Boy's band, and with it the looping reel and repo links a band could carry,
+  which only it used.
 - 2026-10-25: The projects page splits into Shipped and Building now, the way thatlev.com/projects
   puts the apps that are ready beside the ones still on the way. Experiments leave their light cards
   for full bands like the shipped ones, with a striped "Building now" sticker, a "Try the latest
-  build" button, Puzzle Boy's three repos as links and Axiomarium's commands on its screen. The home
+  build" button, Puzzle Boy's three repos as links (superseded 2026-10-25: Puzzle Boy left) and
+  Axiomarium's commands on its screen. The home
   band takes turns between the featured apps again, on the 2026-10-19 rules: 8 seconds each with a
   crossfade, paused on hover and focus, stopped once a visitor picks an app, its own pause button,
   and never under reduced motion. It gives up the smaller cards that kept an experiment from looking
@@ -62,7 +73,8 @@ What's next for the site. Shipped work lives in the git history.
   end (superseded 2026-10-25: they get bands under Building now). A channel guide replaces the tag filters. Names stay in the site's type, not each project's
   lockup. Versions and platforms come from each repo's latest GitHub release, refreshed weekly like
   the OSS stats (superseded 2026-10-20: twice a day), so they can't go stale the way Prompuff's macOS build did. Puzzle Boy's three
-  repos are one pilot whose main links go to Community Edition, the one that plays out of the box.
+  repos are one pilot whose main links go to Community Edition, the one that plays out of the box
+  (superseded 2026-10-25: Puzzle Boy is off the page).
 - 2026-10-19 (superseded 2026-10-25: there is no boot sequence): The boot sequence plays only when a visit lands on `/`. A deep link came for that
   page, not the intro.
 - 2026-10-19: App screenshots sit on a clean CRT screen, with no scanlines over them. The capture
