@@ -159,7 +159,7 @@
   <section class="oss shell-width" aria-labelledby="oss-title">
     <div class="oss__intro">
       <h2 class="section-head__title" id="oss-title">Open source I help with.</h2>
-      <p class="oss__summary">{{ oss.summary }}, in projects other people rely on every day.</p>
+      <p class="oss__summary">{{ oss.summary }}. Each is a tool other people rely on every day.</p>
     </div>
     <ul class="oss__list">
       @for (r of oss.rows; track r.url) {
@@ -167,7 +167,7 @@
           <a class="oss__row" [href]="r.url" target="_blank" rel="noopener">
             <span class="oss__name">{{ r.name }}<span class="oss__owner">{{ r.owner }}</span></span>
             <span class="oss__stat">★ {{ r.stars }}</span>
-            <span class="oss__stat oss__stat--merged">{{ r.merged }}</span>
+            <span class="oss__stat oss__stat--merged">{{ r.prs }}</span>
             <span class="oss__go" aria-hidden="true">↗</span>
             <span class="sr-only"> (opens in a new tab)</span>
           </a>

@@ -8,23 +8,21 @@ import path from 'node:path';
 // Also runs weekly from .github/workflows/oss-stats.yml, which commits the
 // result only when the figures actually move.
 //
-// Private work is excluded by the `info.private` check below and by
-// EXCLUDED_ORGS — not by the absence of a token. That distinction matters now
-// that the script will use GITHUB_TOKEN when one is present: unauthenticated
-// requests from a GitHub Actions runner share an IP with every other job on
-// that host and burn the 60/hour limit long before this script is the one that
-// asked. The Actions token is scoped to this repository, so it cannot see the
-// user's private repos in the first place, and anything it could see still has
-// to clear the private check.
+// It uses GITHUB_TOKEN when one is present, because unauthenticated requests
+// from a GitHub Actions runner share an IP with every other job on that host
+// and burn the 60/hour limit long before this script is the one that asked.
 
 const USER = 'hazeliscoding';
-// Work orgs stay out even if a repo ever flips public; WillowPrograms is
-// excluded by request.
-const EXCLUDED_ORGS = [
-  'BAMTech-MyVector',
-  'BAMTechnologies',
-  'diamond-fiberglass',
-  'WillowPrograms',
+// Only these upstream projects appear, so work orgs and the PRs that list my
+// own apps (winget-pkgs, up-for-grabs) never do. The same list as OSS in
+// scripts/update_activity.py in hazeliscoding/hazeliscoding, which draws my
+// GitHub profile's open-source section: change both together, or the site and
+// the profile disagree.
+const PROJECTS = [
+  'BCUninstaller/Bulk-Crap-Uninstaller',
+  'storytold/pdfcraft',
+  'goatcorp/FFXIVQuickLauncher',
+  'goatcorp/XIVLauncher.Core',
 ];
 
 const outputFile = path.join(
@@ -76,31 +74,32 @@ async function readExisting() {
 }
 
 const query = encodeURIComponent(
-  `author:${USER} type:pr is:merged -user:${USER}`,
+  ['is:pr', `author:${USER}`, ...PROJECTS.map((repo) => `repo:${repo}`)].join(' '),
 );
 const search = await gh(
   `https://api.github.com/search/issues?q=${query}&per_page=100`,
 );
-
-const prsByRepo = new Map();
-for (const item of search.items) {
-  const repo = item.repository_url.replace(/.*repos\//, '');
-  const org = repo.split('/')[0];
-  if (EXCLUDED_ORGS.some((e) => e.toLowerCase() === org.toLowerCase())) continue;
-  prsByRepo.set(repo, (prsByRepo.get(repo) ?? 0) + 1);
+// shortcut: reads one page of 100 PRs and refuses to undercount; page through once there are more.
+if (search.incomplete_results || search.total_count > search.items.length) {
+  throw new Error(`Partial search results: ${search.items.length} of ${search.total_count} PRs.`);
 }
 
 const projects = [];
-for (const [repo, mergedPrs] of prsByRepo) {
+for (const repo of PROJECTS) {
+  const prs = search.items.filter((item) =>
+    item.repository_url.toLowerCase().endsWith(`/repos/${repo.toLowerCase()}`),
+  );
+  const mergedPrs = prs.filter((pr) => pr.pull_request?.merged_at).length;
+  // Open means in review; a PR closed without merging counts for nothing.
+  const openPrs = prs.filter((pr) => pr.state === 'open').length;
+  if (!mergedPrs && !openPrs) continue;
   const info = await gh(`https://api.github.com/repos/${repo}`);
-  if (info.private) continue;
   projects.push({
     repo,
-    url: `https://github.com/${repo}/pulls?q=${encodeURIComponent(
-      `is:pr author:${USER} is:merged`,
-    )}`,
+    url: `https://github.com/${repo}/pulls?q=${encodeURIComponent(`is:pr author:${USER}`)}`,
     stars: info.stargazers_count,
     mergedPrs,
+    openPrs,
   });
 }
 
@@ -108,7 +107,9 @@ projects.sort((a, b) => b.stars - a.stars || b.mergedPrs - a.mergedPrs);
 
 const figures = {
   totalMergedPrs: projects.reduce((s, p) => s + p.mergedPrs, 0),
-  projectCount: projects.length,
+  totalOpenPrs: projects.reduce((s, p) => s + p.openPrs, 0),
+  // As on the profile: a project counts once something of mine has merged there.
+  projectCount: projects.filter((p) => p.mergedPrs > 0).length,
   totalStars: projects.reduce((s, p) => s + p.stars, 0),
   projects,
 };
@@ -128,9 +129,9 @@ const { updated: previousDate, ...previousFigures } = previous ?? {};
 // having a moment than Hazel's merged PRs being revoked. Unattended, the
 // failure mode without this is the live site quietly reporting 0 MERGED PRS
 // until someone notices.
-if (previous !== null && previous.projectCount > 0 && figures.projectCount === 0) {
+if (previous !== null && previous.projects.length > 0 && figures.projects.length === 0) {
   throw new Error(
-    `Refusing to overwrite ${previous.projectCount} projects with 0. ` +
+    `Refusing to overwrite ${previous.projects.length} projects with 0. ` +
       'The API answered but matched nothing; re-run before trusting this.',
   );
 }
@@ -144,6 +145,7 @@ const unchanged =
 // the numbers do.
 const stats = {
   totalMergedPrs: figures.totalMergedPrs,
+  totalOpenPrs: figures.totalOpenPrs,
   projectCount: figures.projectCount,
   totalStars: figures.totalStars,
   updated: unchanged ? previousDate : new Date().toISOString().slice(0, 10),
@@ -159,10 +161,14 @@ export type OssProject = {
   url: string;
   stars: number;
   mergedPrs: number;
+  /** Open, so still in review. */
+  openPrs: number;
 };
 
 export type OssStats = {
   totalMergedPrs: number;
+  totalOpenPrs: number;
+  /** Projects with at least one merged PR. */
   projectCount: number;
   totalStars: number;
   updated: string; // YYYY-MM-DD
@@ -175,6 +181,6 @@ export const ossStats: OssStats = ${JSON.stringify(stats, null, 2)};
 await fs.writeFile(outputFile, ts, 'utf8');
 console.log(
   unchanged
-    ? `Unchanged — ${stats.totalMergedPrs} merged PRs across ${stats.projectCount} projects, still dated ${stats.updated}`
-    : `Updated ${outputFile} — ${stats.totalMergedPrs} merged PRs across ${stats.projectCount} projects, dated ${stats.updated}`,
+    ? `Unchanged — ${stats.totalMergedPrs} merged PRs across ${stats.projectCount} projects, ${stats.totalOpenPrs} in review, still dated ${stats.updated}`
+    : `Updated ${outputFile} — ${stats.totalMergedPrs} merged PRs across ${stats.projectCount} projects, ${stats.totalOpenPrs} in review, dated ${stats.updated}`,
 );
