@@ -1,40 +1,64 @@
-// The fault panel is centred in its own half-viewport field rather than
-// flowing from the top like every other screen. Nothing else is on the page,
-// so anchoring it to the top would leave the alert stranded above a screen of
-// empty terminal.
+// A friendly card centred in its own half-viewport field. Nothing else is on
+// the page, so anchoring it to the top would strand it above empty paper.
 .fault {
   display: grid;
   place-items: center;
-  min-height: 50vh;
+  min-height: 60vh;
+  padding-block: var(--sp-12);
 }
 
-// 460px is the design's measure for a single-column alert: wide enough for the
-// display-size line to sit on two rows at most, narrow enough that it reads as
-// a dialogue rather than a page. `min()` collapses it to the column width on a
-// phone instead of forcing a horizontal scroll.
 .fault__panel {
-  width: min(460px, 100%);
+  width: min(560px, 100%);
 }
 
-// 14px is off the 4px spacing scale on purpose — it is the window-body rhythm
-// from the design (KAIRO's window internals are drawn to the hairline, like
-// the 7px/10px header strip), and --sp-3/--sp-4 read one notch tight or loose
-// against the 12px body padding.
+.fault__back {
+  display: inline-flex;
+  gap: var(--sp-2);
+  margin-bottom: var(--sp-4);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-muted);
+
+  &:hover {
+    color: var(--text-primary);
+  }
+}
+
 .fault__body {
   display: grid;
-  gap: 14px;
+  gap: var(--sp-4);
+  padding: clamp(24px, 5vw, 40px);
+  background: var(--surface-window);
+  border: var(--bw-hairline) solid var(--border-default);
+  border-radius: var(--radius-3);
+  box-shadow: var(--shadow-card);
+}
+
+// A die-cut sticker for the code, turned a little, like the shop's tags.
+.fault__code {
+  justify-self: start;
+  padding: 6px 14px;
+  border-radius: var(--radius-pill);
+  background: var(--signal-active-dim);
+  font: 700 14px/1 var(--font-mono);
+  color: var(--h-purple-ink);
+  transform: rotate(-3deg);
+}
+
+.fault__title {
+  font: var(--type-display-m);
+  font-size: clamp(30px, 4vw, 40px);
+  letter-spacing: var(--tracking-heading);
 }
 
 .fault__report {
-  font: var(--type-display-m);
-  color: var(--text-active);
+  color: var(--text-muted);
 }
 
 // `overflow-wrap` is inherited, so setting it on the child component's host
-// element carries it into the PATH readout's <dd> without ::ng-deep. The
-// design's demo path is a tidy /portfolio/unknown-record; a real one is
+// carries it into the address readout's <dd>. A real missed address is
 // whatever a broken link or a typo produced, and an unbroken 200-character
-// path would otherwise push the 460px panel off the screen.
+// path would otherwise push the card off the screen.
 .fault__body app-key-value {
   overflow-wrap: anywhere;
 }
@@ -42,5 +66,6 @@
 .fault__controls {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--sp-2);
+  gap: var(--sp-3);
+  margin-top: var(--sp-2);
 }

@@ -31,8 +31,8 @@ export class ErrorPage implements OnInit {
     // client-side navigation that never receives a status, and it also
     // suppresses the canonical link — see PageMeta.
     this.pageMeta.set({
-      title: 'Record not found - Hazel Granados',
-      description: 'No record exists at this address.',
+      title: 'Page not found - Hazel Granados',
+      description: 'Nothing lives at this address.',
       path: this.currentPath,
       noindex: true,
     });

@@ -1,7 +1,7 @@
 <!--
-  The whole screen is the shared fault panel. Three routes can produce this
-  screen — the wildcard, an unknown record id and an unknown entry slug — and
-  KAIRO draws one of it, so the markup lives in app-record-fault and the page
-  supplies only where "back" goes and the noindex meta.
+  The whole screen is the shared 404 card. Three routes can produce it — the
+  wildcard, an unknown project id and an unknown post slug — so the markup
+  lives in app-record-fault and the page supplies only where "back" goes and
+  the noindex meta.
 -->
-<app-record-fault [path]="currentPath" backLabel="HOME_01" backRoute="/" />
+<app-record-fault [path]="currentPath" backLabel="Home" backRoute="/" />

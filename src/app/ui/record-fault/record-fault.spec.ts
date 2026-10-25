@@ -21,53 +21,48 @@ describe('RecordFault', () => {
     el = fixture.nativeElement as HTMLElement;
   });
 
-  it('names the address that actually faulted', () => {
-    // Not the design demo's fixed /portfolio/unknown-record — printing that
-    // would tell every visitor the wrong URL failed.
-    const values = Array.from(el.querySelectorAll('.key-value__value')).map(
-      (d) => d.textContent?.trim(),
+  it('names the address that actually missed', () => {
+    const values = Array.from(el.querySelectorAll('.key-value__value')).map((d) =>
+      d.textContent?.trim(),
     );
     expect(values).toContain('/portfolio/not-a-record');
-    expect(values).toContain('404 NOT_FOUND');
+    expect(values).toContain('404 Not found');
   });
 
-  it('tints the path as the reading that carries the verdict', () => {
+  it('tints the address as the reading that explains the miss', () => {
     const path = el.querySelector('.key-value__value') as HTMLElement;
     expect(path.getAttribute('data-state')).toBe('danger');
   });
 
-  it('renders the alert window with its logged footer', () => {
-    const win = el.querySelector('.window') as HTMLElement;
-    expect(win.getAttribute('data-variant')).toBe('alert');
-    expect(win.getAttribute('data-active')).toBe('true');
-    expect(el.querySelector('.window__foot')?.textContent).toContain(
-      'THIS EVENT HAS BEEN LOGGED',
-    );
+  it('is the page heading, in sentence case', () => {
+    const h1s = el.querySelectorAll('h1');
+    expect(h1s.length).toBe(1);
+    expect(h1s[0].textContent?.trim()).toBe('This page wandered off.');
+  });
+
+  it('goes home by default, and offers the projects as the other way out', () => {
+    const links = Array.from(el.querySelectorAll<HTMLAnchorElement>('a.button'));
+    expect(links.map((a) => a.getAttribute('href'))).toEqual(['/', '/portfolio']);
+    expect(links.map((a) => a.textContent?.trim())).toEqual(['Go home', 'See my projects']);
+    expect(el.querySelector('.fault__back')?.textContent?.trim()).toBe('← Home');
   });
 
   it('returns one level up, not always home', () => {
-    fixture.componentRef.setInput('backLabel', 'ARCHIVE_03');
+    fixture.componentRef.setInput('backLabel', 'All projects');
     fixture.componentRef.setInput('backRoute', '/portfolio');
     fixture.detectChanges();
-    const back = el.querySelector('.chapter__back') as HTMLAnchorElement;
-    expect(back.textContent?.trim()).toBe('< ARCHIVE_03');
+    const back = el.querySelector('.fault__back') as HTMLAnchorElement;
+    expect(back.textContent?.trim()).toBe('← All projects');
     expect(back.getAttribute('href')).toBe('/portfolio');
-  });
 
-  it('does not double-bracket the command control', () => {
-    // The `command` Button variant draws its own [ ] in CSS.
-    const labels = Array.from(el.querySelectorAll('.button__label')).map((s) =>
-      s.textContent?.trim(),
-    );
-    expect(labels).toContain('Open archive');
-    expect(labels.some((l) => l?.startsWith('['))).toBe(false);
-  });
-
-  it('offers its recovery routes as real links', () => {
-    // Navigation, so anchors — not scripted buttons. On the one page a visitor
-    // reaches by following something broken, the way out should be the thing a
-    // browser already knows how to open.
+    // Real links, not scripted buttons: back first, then home.
     const links = Array.from(el.querySelectorAll<HTMLAnchorElement>('a.button'));
-    expect(links.map((a) => a.getAttribute('href'))).toEqual(['/', '/portfolio']);
+    expect(links.map((a) => a.getAttribute('href'))).toEqual(['/portfolio', '/']);
+    expect(links.map((a) => a.textContent?.trim())).toEqual(['Back to all projects', 'Go home']);
+  });
+
+  it('keeps terminal vocabulary out of the copy', () => {
+    const text = el.textContent ?? '';
+    expect(text).not.toMatch(/NOT_FOUND|LOGGED|ARCHIVE_|\[/);
   });
 });
