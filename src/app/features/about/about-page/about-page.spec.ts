@@ -26,119 +26,33 @@ describe('AboutPage', () => {
     expect(fixture.componentInstance).toBeTruthy();
   });
 
-  it('renders the PROFILE_02 chapter header', () => {
-    expect(text('.chapter__code')).toBe('PROFILE');
-    expect(text('.chapter__index')).toBe('_02');
+  it('introduces Hazel as the page heading', () => {
+    expect(all('h1').length).toBe(1);
+    expect(text('h1')).toBe("Hi, I'm Hazel.");
   });
 
   it('sets the document title', () => {
-    expect(TestBed.inject(Title).getTitle()).toContain('About');
+    expect(TestBed.inject(Title).getTitle()).toBe('About - Hazel Granados');
   });
 
-  it('renders seven dossier windows', () => {
-    expect(all('app-window').length).toBe(7);
+  it('records location, pronouns, degree and language as labelled rows, not bio prose', () => {
+    const keys = all('.facts .key-value__key').map((k) => k.textContent?.trim());
+    const values = all('.facts .key-value__value').map((v) => v.textContent?.trim());
+    expect(keys).toEqual(['Based in', 'Pronouns', 'Studied', 'Speaks']);
+    expect(values).toContain('Texas, USA');
+    expect(values).toContain('she/they');
+    expect(values).toContain('B.S. Computer Science, Texas A&M University–Victoria');
   });
 
-  // The header's reading is the page's own panel count. Asserted against the
-  // DOM rather than against the string, so adding or removing a window without
-  // moving SECTION_COUNT fails here instead of shipping a wrong number.
-  it('counts the sections it actually renders in the chapter meta', () => {
-    expect(text('.chapter__meta')).toBe(`DOSSIER · ${all('app-window').length} SECTIONS`);
+  it('shelves the toolbox by category, one card each', () => {
+    const shelves = fixture.componentInstance.toolbox;
+    expect(all('.shelf__title').map((t) => t.textContent?.trim())).toEqual(shelves.map((s) => s.label));
+    expect(all('.shelf__items li').length).toBe(shelves.reduce((n, s) => n + s.items.length, 0));
   });
 
-  it('lays the panels out in the design order, variants and stagger', () => {
-    expect(all('.window').map((w) => w.getAttribute('data-variant'))).toEqual([
-      'dialogue',
-      'data',
-      'data',
-      'inspector',
-      'inspector',
-      'command',
-      'data',
-    ]);
-    expect(all('.window__index').map((i) => i.textContent?.trim())).toEqual([
-      '01',
-      '03',
-      '06',
-      '02',
-      '04',
-      '05',
-      '07',
-    ]);
-    expect(all('.window').map((w) => (w as HTMLElement).style.animationDelay)).toEqual([
-      '40ms',
-      '160ms',
-      '240ms',
-      '80ms',
-      '120ms',
-      '200ms',
-      '280ms',
-    ]);
-  });
-
-  // Stack and services moved here from the home page when it became a broadcast.
-  it('counts the stack modules it renders, the first three toned as core', () => {
-    const stack = all('app-window')[2];
-    const tones = [...stack.querySelectorAll('.badge')].map((b) => b.getAttribute('data-tone'));
-    expect(stack.querySelector('.window__context')?.textContent?.trim()).toBe(
-      `${tones.length} MODULES`,
-    );
-    expect(tones.slice(0, 3)).toEqual(['info', 'info', 'info']);
-    expect(tones.slice(3).every((tone) => tone === 'neutral')).toBe(true);
-  });
-
-  it('numbers the services and counts them in the window context', () => {
-    const rows = all('.about__service');
-    expect(rows.length).toBe(10);
-    expect(all('app-window')[6].querySelector('.window__context')?.textContent?.trim()).toBe('10');
-  });
-
-  it('focuses only the operator panel', () => {
-    expect(all('.window[data-active="true"]').length).toBe(1);
-    expect(all('.window')[0].getAttribute('data-active')).toBe('true');
-  });
-
-  it('frames the operator portrait as CAM 00', () => {
-    expect(text('.about__portrait .viewport__label')).toBe('CAM 00');
-  });
-
-  it('records location and pronouns as labelled rows, not bio prose', () => {
-    const paras = all('.about__para').map((p) => p.textContent?.trim());
-    expect(paras).not.toContain('Texas, USA');
-
-    const dt = all('.about__prose dt').map((d) => d.textContent?.trim());
-    const dd = all('.about__prose dd').map((d) => d.textContent?.trim());
-    expect(dt).toEqual(['LOCATION', 'PRONOUNS']);
-    expect(dd).toEqual(['Texas, USA', 'she/they']);
-  });
-
-  // Two rows, not three: the design's education inspector reads DEGREE /
-  // INSTITUTION, and the degree and its field are one fact.
-  it('reads education as DEGREE and INSTITUTION', () => {
-    const education = all('app-window')[3];
-    expect([...education.querySelectorAll('dt')].map((d) => d.textContent?.trim())).toEqual([
-      'DEGREE',
-      'INSTITUTION',
-    ]);
-    expect([...education.querySelectorAll('dd')].map((d) => d.textContent?.trim())).toEqual([
-      'B.S. Computer Science',
-      'Texas A&M University–Victoria',
-    ]);
-  });
-
-  it('numbers the interests and counts them in the window context', () => {
-    const rows = all('.about__interest');
-    expect(rows.length).toBe(5);
-    expect(all('.about__idx').map((i) => i.textContent?.trim())).toEqual([
-      '01',
-      '02',
-      '03',
-      '04',
-      '05',
-    ]);
-    // The list runs edge to edge, so its window draws no body padding.
-    expect(all('.window__body')[1].classList.contains('window__body--padded')).toBe(false);
-    expect(all('.window__context')[1].textContent?.trim()).toBe('05');
+  it('lists every service and interest', () => {
+    expect(all('.checks li').length).toBe(fixture.componentInstance.services.length);
+    expect(all('.pills li').length).toBe(fixture.componentInstance.interests.length);
   });
 
   it('links both resume formats as downloads', () => {
@@ -150,14 +64,27 @@ describe('AboutPage', () => {
     expect(docx?.hasAttribute('download')).toBe(true);
     // A download is a link, never a scripted button: the page is server
     // rendered and must work before hydration.
-    expect(el.querySelector('.about__exports button')).toBeNull();
+    expect(el.querySelector('.hero__actions button')).toBeNull();
   });
 
-  it('states the real resume export in the footer strip', () => {
-    expect(text('.window__foot')).toBe('PDF · 1 PAGE · UPDATED 2026-01');
+  it('states the real resume export under the buttons', () => {
+    expect(text('.hero__fine')).toBe('PDF · 1 page · updated 2026-01');
   });
 
-  it('contains no emoji', () => {
-    expect(/\p{Extended_Pictographic}/u.test(el.textContent ?? '')).toBe(false);
+  it('ends on a way to say hello, with the profiles flagged as opening a tab', () => {
+    expect(el.querySelector('.hello__mail')?.getAttribute('href')).toMatch(/^mailto:/);
+    const profiles = all('.hello__links a');
+    expect(profiles.length).toBe(2);
+    for (const a of profiles) {
+      expect(a.getAttribute('target')).toBe('_blank');
+      expect(a.textContent).toContain('(opens in a new tab)');
+    }
+  });
+
+  it('contains no emoji in its copy', () => {
+    // The decorative arrows are aria-hidden, and `↗` counts as pictographic.
+    const copy = el.cloneNode(true) as HTMLElement;
+    copy.querySelectorAll('[aria-hidden="true"]').forEach((n) => n.remove());
+    expect(/\p{Extended_Pictographic}/u.test(copy.textContent ?? '')).toBe(false);
   });
 });

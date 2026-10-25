@@ -1,105 +1,108 @@
-<app-chapter-header code="PROFILE" index="02" [meta]="chapterMeta" />
-
 <div class="about">
-  <div class="about__col">
-    <app-window
-      variant="dialogue"
-      index="01"
-      title="About"
-      context="OPERATOR"
-      [active]="true"
-      delay="40ms"
-    >
-      <div class="about__bio">
-        <app-viewport-window class="about__portrait" ratio="3 / 4" label="CAM 00" alt="" />
-        <div class="about__prose">
-          @for (para of bio; track $index) {
-            <p class="about__para">{{ para }}</p>
-          }
-          <app-key-value [items]="profile" [columns]="2" />
-        </div>
+  <section class="hero shell-width" aria-labelledby="about-title">
+    <figure class="polaroid">
+      <div class="polaroid__photo" aria-hidden="true">
+        <span class="polaroid__monogram">H</span>
+        <span class="polaroid__heart">♡</span>
       </div>
-    </app-window>
+      <figcaption class="polaroid__caption">Made in Texas.</figcaption>
+    </figure>
 
-    <app-window
-      variant="data"
-      index="03"
-      title="Interests"
-      [context]="interestCount"
-      [padded]="false"
-      delay="160ms"
-    >
-      <ul class="about__interests">
-        @for (i of interests; track i.label) {
-          <li class="about__interest">
-            <span class="about__idx">{{ i.idx }}</span>{{ i.label }}
-          </li>
-        }
-      </ul>
-    </app-window>
-
-    <app-window index="06" title="Stack" [context]="stackContext" delay="240ms">
-      <div class="about__stack">
-        @for (t of stack; track t.label) {
-          <app-badge [tone]="t.tone">{{ t.label }}</app-badge>
+    <div class="hero__copy">
+      <p class="eyebrow">About me</p>
+      <h1 class="page-hero__title" id="about-title">Hi, I'm Hazel.</h1>
+      <div class="hero__bio">
+        @for (para of bio; track $index) {
+          <p>{{ para }}</p>
         }
       </div>
-    </app-window>
-  </div>
-
-  <div class="about__col">
-    <app-window variant="inspector" index="02" title="Education" delay="80ms">
-      <app-key-value [items]="education" />
-    </app-window>
-
-    <app-window variant="inspector" index="04" title="Languages" delay="120ms">
-      <app-key-value [items]="languages" />
-    </app-window>
-
-    <app-window
-      variant="command"
-      index="05"
-      title="Resume"
-      context="EXPORT"
-      [footer]="resumeFooter"
-      delay="200ms"
-    >
-      <p class="about__note">
-        Full work history, education and contact details in one page.
-      </p>
       <!--
         `href` makes app-button render a real <a download>, so these keep
         middle-click, "open in new tab" and the prerendered page before
-        hydration — and they are announced as links, which is what they are.
+        hydration, and they are announced as links, which is what they are.
       -->
-      <div class="about__exports">
-        <app-button variant="primary" size="md" [href]="resumePdf" download="resume-en.pdf"
-          >Download resume &gt;</app-button
+      <div class="hero__actions">
+        <app-button class="hero__resume" variant="primary" size="lg" [href]="resumePdf" download="resume-en.pdf"
+          >Download résumé (PDF)</app-button
         >
-        <app-button
-          variant="secondary"
-          size="md"
-          [href]="resumeDocx"
-          download="resume-en.docx"
-          >Download .docx</app-button
-        >
+        <app-button variant="text" size="lg" [href]="resumeDocx" download="resume-en.docx">Get the .docx</app-button>
       </div>
-    </app-window>
+      <p class="hero__fine">{{ resumeFine }}</p>
+    </div>
 
-    <app-window
-      index="07"
-      title="Services"
-      [context]="serviceCount"
-      [padded]="false"
-      delay="280ms"
-    >
-      <ul class="about__services">
-        @for (s of services; track s.label) {
-          <li class="about__service">
-            <span class="about__service-idx">{{ s.idx }}</span>{{ s.label }}
+    <aside class="facts" aria-label="Quick facts">
+      <app-key-value [items]="facts" />
+    </aside>
+  </section>
+
+  <section class="toolbox shell-width" aria-labelledby="toolbox-title">
+    <div class="section-head">
+      <h2 class="section-head__title" id="toolbox-title">My toolbox.</h2>
+    </div>
+    <ul class="toolbox__grid">
+      @for (shelf of toolbox; track shelf.label) {
+        <li class="shelf">
+          <h3 class="shelf__title">{{ shelf.label }}</h3>
+          <ul class="shelf__items">
+            @for (item of shelf.items; track item) {
+              <li>{{ item }}</li>
+            }
+          </ul>
+        </li>
+      }
+    </ul>
+  </section>
+
+  <section class="split shell-width">
+    <div class="panel" aria-labelledby="services-title">
+      <h2 class="section-head__title" id="services-title">What I can help with.</h2>
+      <ul class="checks">
+        @for (s of services; track s) {
+          <li>{{ s }}</li>
+        }
+      </ul>
+    </div>
+
+    <div class="split__side">
+      <div class="panel" aria-labelledby="interests-title">
+        <h2 class="section-head__title" id="interests-title">What I'm into.</h2>
+        <ul class="pills">
+          @for (i of interests; track i) {
+            <li>{{ i }}</li>
+          }
+        </ul>
+      </div>
+
+      <div class="panel panel--warm" aria-labelledby="outside-title">
+        <h2 class="panel__title" id="outside-title">Outside the terminal</h2>
+        <p>
+          FFXIV, JRPGs, anime and yuri manga, shoegaze and metal, long walks, and listening to people
+          enthusiastically explain their latest obsession.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="hello shell-width" aria-labelledby="hello-title">
+    <div>
+      <h2 class="hello__title" id="hello-title">Say hello.</h2>
+      <p class="hello__text">
+        I'm happy to chat about full-stack .NET and Angular roles, AI engineering, or whatever you're
+        building.
+      </p>
+    </div>
+    <div class="hello__actions">
+      <a class="hello__mail" [href]="mailto">{{ email }} <span aria-hidden="true">↗</span></a>
+      <ul class="hello__links">
+        @for (l of links; track l.label) {
+          <li>
+            <a [href]="l.href" target="_blank" rel="noopener">
+              <svg [attr.viewBox]="l.icon.viewBox" aria-hidden="true" focusable="false"><path [attr.d]="l.icon.d" /></svg
+              >{{ l.label }}<span class="sr-only"> (opens in a new tab)</span>
+            </a>
           </li>
         }
       </ul>
-    </app-window>
-  </div>
+    </div>
+  </section>
 </div>

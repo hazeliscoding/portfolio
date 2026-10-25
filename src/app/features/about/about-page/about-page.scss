@@ -1,115 +1,348 @@
-// The dossier is two stacks of panels: the operator column carries the bio and
-// the interests list, the inspector column the three short readouts. 1.4fr /
-// 1fr, not 1fr/1fr — the bio row is a 120px frame plus prose, and an even split
-// starves it while leaving the two-row inspectors half empty.
 .about {
-  display: grid;
-  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
-  gap: var(--sp-3);
-}
-
-// `align-content: start` so a short column does not stretch its panels to the
-// height of the tall one.
-.about__col {
-  display: grid;
-  gap: var(--sp-3);
-  align-content: start;
-}
-
-.about__bio {
-  display: grid;
-  grid-template-columns: 120px 1fr;
-  gap: var(--sp-4);
-  align-items: start;
-}
-
-// Width stated on the frame itself, not left to the track: when the row stacks
-// on a phone the single column is full width, and a 3/4 viewport stretched to
-// 330px would be 440px tall.
-.about__portrait {
-  width: 120px;
-}
-
-// 520px is the design's measure. `min-width: 0` is what keeps the prose column
-// from pushing the grid wider than the window: without it the track's automatic
-// minimum is the KeyValue's min-content width, and the panel overflows on a
-// phone instead of wrapping.
-.about__prose {
-  display: grid;
-  gap: var(--sp-3);
-  max-width: 520px;
-  min-width: 0;
-}
-
-.about__para {
-  margin: 0;
-  font: var(--type-body);
-  color: var(--text-secondary);
-}
-
-// A list, semantically — the design draws it with divs, but four interests are
-// four items and a screen reader should be told how many are coming. The reset
-// makes the markup change cost nothing visually.
-.about__interests,
-.about__services {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-// 9px/12px rows, off the 4px scale on purpose: this is window chrome drawn to
-// the hairline like the Window header's own 7px/10px, not layout. The rule
-// under the last row is in the design too — it closes the list against the
-// panel's bottom edge, which is why the window is unpadded.
-.about__interest,
-.about__service {
   display: flex;
-  gap: var(--sp-3);
-  align-items: baseline;
-  padding: 9px var(--sp-3);
-  border-bottom: var(--bw-hairline) solid var(--border-faint);
-  font: var(--type-body-s);
-  color: var(--text-secondary);
+  flex-direction: column;
+  gap: var(--sp-16);
+
+  > section {
+    animation: win-a var(--dur-window) var(--ease-mech) both;
+  }
+
+  @for $i from 1 through 4 {
+    > section:nth-child(#{$i}) {
+      animation-delay: #{($i - 1) * 60}ms;
+    }
+  }
 }
 
-.about__idx,
-.about__service-idx {
+@media (prefers-reduced-motion: reduce) {
+  .about > section {
+    animation: none;
+  }
+}
+
+// --- Hero ------------------------------------------------------------------
+
+.hero {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) minmax(260px, 340px);
+  gap: var(--sp-12);
+  align-items: start;
+  padding-top: var(--sp-16);
+}
+
+.polaroid {
+  margin: var(--sp-2) 0 0;
+  padding: 10px 10px 0;
+  width: 220px;
+  background: var(--h-white);
+  border-radius: 6px;
+  box-shadow: 0 18px 40px -18px rgba(48, 34, 72, 0.45);
+  transform: rotate(-5deg);
+}
+
+.polaroid__photo {
+  position: relative;
+  display: grid;
+  place-items: center;
+  aspect-ratio: 1;
+  border-radius: 3px;
+  background: linear-gradient(150deg, #efe7ff 0%, #d9ccff 55%, #f6d6e8 100%);
+}
+
+.polaroid__monogram {
+  font: 800 112px/1 var(--font-display);
+  letter-spacing: -0.06em;
+  color: var(--signal-active);
+}
+
+.polaroid__heart {
+  position: absolute;
+  right: 18px;
+  bottom: 12px;
+  font-size: 28px;
+  color: #d66ba0;
+}
+
+.polaroid__caption {
+  padding: 12px 4px 16px;
+  text-align: center;
+  font: italic 500 15px/1 var(--font-ui);
+  color: var(--text-muted);
+}
+
+.hero__bio {
+  margin-top: var(--sp-6);
+  max-width: 62ch;
+
+  p {
+    font-size: 17px;
+    line-height: 1.7;
+    color: var(--text-muted);
+  }
+
+  p + p {
+    margin-top: var(--sp-4);
+  }
+}
+
+.hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-3) var(--sp-4);
+  margin-top: var(--sp-8);
+}
+
+.hero__fine {
+  margin-top: var(--sp-3);
   font: var(--type-mono-s);
   color: var(--text-faint);
 }
 
-.about__note {
-  margin: 0 0 var(--sp-3);
-  font: var(--type-body-s);
-  color: var(--text-secondary);
+.facts {
+  padding: 8px 22px 12px;
+  background: var(--surface-window);
+  border: var(--bw-hairline) solid var(--border-default);
+  border-radius: var(--radius-3);
 }
 
-.about__stack {
+// --- Toolbox ---------------------------------------------------------------
+
+.toolbox__grid {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--sp-6);
+}
+
+.shelf {
+  padding: 24px;
+  background: var(--surface-window);
+  border: var(--bw-hairline) solid var(--border-default);
+  border-radius: var(--radius-3);
+}
+
+.shelf__title {
+  font: 600 19px/1.2 var(--font-display);
+  letter-spacing: -0.02em;
+}
+
+.shelf__items,
+.pills {
+  list-style: none;
   display: flex;
   flex-wrap: wrap;
-  gap: 6px; // the home page's design literal, kept when the panel moved here
-}
+  gap: 8px;
+  margin-top: var(--sp-4);
 
-.about__exports {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--sp-2);
-}
-
-// The design switches at `innerWidth >= 960`, so 959 down is the single stack.
-@media (max-width: 959px) {
-  .about {
-    grid-template-columns: minmax(0, 1fr);
+  li {
+    padding: 5px 12px;
+    border-radius: var(--radius-pill);
+    background: var(--surface-elevated);
+    border: var(--bw-hairline) solid var(--border-faint);
+    font-size: 14px;
+    color: var(--text-secondary);
   }
 }
 
-// Below 480px the prose column is too narrow for the two-up LOCATION/PRONOUNS
-// readout — measured, its min-content is ~240px against ~196px available at
-// 390px — so the portrait moves above the text and gives it the full panel
-// width. The design has no phone form for this row; this is the divergence that
-// keeps it from overflowing the window.
-@media (max-width: 480px) {
-  .about__bio {
+.shelf:first-child .shelf__items li {
+  background: var(--signal-active-dim);
+  border-color: transparent;
+  color: var(--h-purple-ink);
+}
+
+// --- Services and interests ------------------------------------------------
+
+.split {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+  gap: var(--sp-6);
+  align-items: start;
+}
+
+.split__side {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-6);
+}
+
+.panel {
+  padding: 28px;
+  background: var(--surface-window);
+  border: var(--bw-hairline) solid var(--border-default);
+  border-radius: var(--radius-3);
+
+  .section-head__title {
+    font-size: 26px;
+  }
+}
+
+.panel--warm {
+  background: linear-gradient(160deg, #fff6fb 0%, var(--surface-elevated) 100%);
+
+  p {
+    margin-top: var(--sp-3);
+    color: var(--text-muted);
+  }
+}
+
+.panel__title {
+  font: 600 19px/1.2 var(--font-display);
+  letter-spacing: -0.02em;
+}
+
+.checks {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--sp-3) var(--sp-6);
+  margin-top: var(--sp-6);
+
+  li {
+    position: relative;
+    padding-left: 28px;
+    font-size: 15px;
+    color: var(--text-secondary);
+
+    &::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 3px;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background:
+        center / 10px no-repeat
+          url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 10'%3E%3Cpath d='M1 5l3.5 3.5L11 1' fill='none' stroke='%236651cf' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"),
+        var(--signal-active-dim);
+    }
+  }
+}
+
+// --- Say hello -------------------------------------------------------------
+
+.hello {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--sp-8);
+  align-items: center;
+  padding: clamp(28px, 5vw, 56px);
+  background: var(--surface-night);
+  border-radius: var(--radius-3);
+  color: var(--text-on-night);
+}
+
+.hello__title {
+  font: var(--type-display-l);
+  letter-spacing: var(--tracking-display);
+  color: var(--text-on-night);
+}
+
+.hello__text {
+  margin-top: var(--sp-3);
+  max-width: 48ch;
+  color: var(--text-on-night-muted);
+}
+
+.hello__actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--sp-4);
+}
+
+.hello__mail {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  min-height: 48px;
+  padding: 0 22px;
+  border-radius: var(--radius-pill);
+  background: var(--h-white);
+  font-weight: 600;
+  color: var(--h-night);
+
+  &:hover {
+    color: var(--h-night);
+    background: var(--h-lavender-2);
+  }
+}
+
+.hello__links {
+  list-style: none;
+  display: flex;
+  gap: var(--sp-6);
+
+  a {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 500;
+    color: var(--text-on-night);
+
+    &:hover {
+      color: var(--h-white);
+      text-decoration: underline;
+      text-underline-offset: 4px;
+    }
+  }
+
+  svg {
+    width: 18px;
+    height: 18px;
+    fill: currentColor;
+  }
+}
+
+// --- Narrow screens --------------------------------------------------------
+
+@media (max-width: 1080px) {
+  .hero {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .facts {
+    grid-column: 1 / -1;
+  }
+
+  .toolbox__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 840px) {
+  .about {
+    gap: var(--sp-12);
+  }
+
+  .hero {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--sp-8);
+    padding-top: var(--sp-10);
+  }
+
+  .polaroid {
+    width: 170px;
+  }
+
+  .polaroid__monogram {
+    font-size: 84px;
+  }
+
+  .split,
+  .hello {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .hello__actions {
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 600px) {
+  .toolbox__grid,
+  .checks {
     grid-template-columns: minmax(0, 1fr);
   }
 }
