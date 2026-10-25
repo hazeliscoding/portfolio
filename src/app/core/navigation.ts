@@ -50,24 +50,3 @@ export const COMMANDS: PaletteCommand[] = [
   })),
 ];
 
-/**
- * Entries are numbered oldest-first and printed to four digits, so the newest
- * post on a three-post blog is 0003. `blogPosts` is newest-first, so the
- * position has to be counted from the other end.
- */
-export function entryNumber(index: number): string {
-  return String(blogPosts.length - index).padStart(4, '0');
-}
-
-/**
- * The location code each mode reports as. The mode rail says PROJECTS; the
- * instruments say ARCHIVE_03. Both names are deliberate — the rail is where
- * you are going, the code is what the system calls it — and they are written
- * once here so the two can never drift apart.
- */
-export const MODE_CODES: Record<string, string> = {
-  home: 'HOME_01',
-  about: 'PROFILE_02',
-  projects: 'ARCHIVE_03',
-  blog: 'LOG_04',
-};
