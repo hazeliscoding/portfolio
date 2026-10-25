@@ -1,6 +1,6 @@
-# hazel.exe 🌸
+# hazeliscoding 🌸
 
-My personal portfolio and blog, styled as a fictional late-90s Japanese broadcast terminal.
+My personal portfolio and blog, laid out like a small maker's shop: light, friendly and product-first.
 
 **Live:** [www.hazeliscoding.dev](https://www.hazeliscoding.dev)
 
@@ -82,5 +82,5 @@ exactly the pages with a canonical and without `noindex`.
 `vercel.json` deploys the static output with no framework preset, and spells out its routing as
 `routes`. Vercel still detects Angular from `package.json` and appends a rewrite of every unknown
 path to the homepage with a 200, so the last route answers anything the filesystem doesn't hold
-with `404.html` and a real 404 first. That page renders the client-side 404 screen. ⌘K opens the command palette; `1`–`4` switch
-mode.
+with `404.html` and a real 404 first. That page renders the client-side 404 screen. ⌘K or `/` opens search; `1`–`4` open the four
+pages.

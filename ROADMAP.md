@@ -4,6 +4,17 @@ What's next for the site. Shipped work lives in the git history.
 
 ## Decisions
 
+- 2026-10-25: The site becomes a light maker's shop after thatlev.com, in place of KAIRO's dark
+  broadcast terminal, with my GitHub profile README's voice for the copy. Lavender-white paper, one
+  ink, a purple accent and near-black bands for featured work, in Bricolage Grotesque and JetBrains
+  Mono. A sticky header (wordmark, four pages, search) and a footer replace the system bars and
+  mode rail. Home opens on the first featured app's dark band, then the hero, every shipped project
+  as a card, open-source work, the latest posts, a note from me and an FAQ. Projects keep their
+  brand-coloured bands; About is a maker page. It gives up the boot intro, the clock, the log, the
+  numbered windows, NOW PLAYING's rotation and the Japanese face in the type stacks. ⌘K search and
+  the 1–4 and Escape keys stay. Component stylesheets may now reach 16 kB before the build fails
+  (8 kB warns), because a whole landing page in one component outgrew the CLI's 8 kB default. The
+  social cards are still drawn in the old style.
 - 2026-10-22: Sweepling replaces PR Sweep in channel 4. PR Sweep is still maintained, but it isn't
   a main focus now, and the projects page shows the work I'm putting time into. Sweepling's segment
   carries Primrose, its mascot, as a die-cut sticker on the corner of its screen, through an
@@ -22,7 +33,7 @@ What's next for the site. Shipped work lives in the git history.
   a daily run would commit and deploy daily for changes the home page, which cuts stars to 0.1k,
   mostly doesn't show. It gives up
   nothing but a few seconds of free runner time.
-- 2026-10-19: The home page becomes a broadcast too, so it reads as the same station as the
+- 2026-10-19 (superseded 2026-10-25: one featured band and cards, no rotation): The home page becomes a broadcast too, so it reads as the same station as the
   projects page. A lower third introduces me, then NOW PLAYING cycles the featured projects' real
   segments (XIV Vault, Gil Sweep and Prompuff) every 8 seconds with a crossfade, then the latest
   posts and open-source PRs run as two strips. Stack and services move to About. It gives up the
@@ -36,16 +47,28 @@ What's next for the site. Shipped work lives in the git history.
   link in the RECORD window. Reactions stay on, in GitHub's own colours, as the one-click kudos.
 - 2026-10-19: The projects page becomes a broadcast. Each project is a full-width segment on the
   same dark station, in its own brand colours and with its real logo, after thatlev.com/projects'
-  per-product bands, so the page shows premium products without leaving the KAIRO look. Three
+  per-product bands, so the page shows premium products without leaving the KAIRO look (the look is
+  superseded 2026-10-25; the bands stay). Three
   kinds: shipped apps are ON AIR, live sites are LIVE, experiments are PILOTS, shown smaller at the
   end. A channel guide replaces the tag filters. Names stay in the site's type, not each project's
   lockup. Versions and platforms come from each repo's latest GitHub release, refreshed weekly like
   the OSS stats (superseded 2026-10-20: twice a day), so they can't go stale the way Prompuff's macOS build did. Puzzle Boy's three
   repos are one pilot whose main links go to Community Edition, the one that plays out of the box.
-- 2026-10-19: The boot sequence plays only when a visit lands on `/`. A deep link came for that
+- 2026-10-19 (superseded 2026-10-25: there is no boot sequence): The boot sequence plays only when a visit lands on `/`. A deep link came for that
   page, not the intro.
 - 2026-10-19: App screenshots sit on a clean CRT screen, with no scanlines over them. The capture
   is the product, and scanlines made it hard to read.
+
+## Light shop redesign
+
+- [x] Tokens, fonts and base styles for the light palette
+- [x] Header, footer and search replace the terminal chrome
+- [x] Home, Projects, project pages, Blog, posts, About and the 404 page
+- [x] Phones, reduced motion, and every unit test and the prerendered build
+- [ ] Social cards (`og-image.png` and the per-post cards) redrawn in the new style
+
+Done when every route renders in the new style at desktop and phone widths, the build prerenders
+every route, and the social cards match the site.
 
 ## Projects as broadcast segments
 
