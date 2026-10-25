@@ -68,6 +68,14 @@
   padding-block: 10px;
   overflow-x: auto;
   scrollbar-width: none;
+
+  // Twelve projects outrun a desktop's width, and a mouse has no swipe, so it
+  // gets a thin scrollbar to show there's more.
+  @media (hover: hover) and (pointer: fine) {
+    padding-block-end: 6px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-default) transparent;
+  }
 }
 
 .guide__link {
