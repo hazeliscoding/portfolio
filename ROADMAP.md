@@ -4,6 +4,14 @@ What's next for the site. Shipped work lives in the git history.
 
 ## Decisions
 
+- 2026-10-25: The home page's open-source section counts the same four upstream projects as my
+  GitHub profile (Bulk Crap Uninstaller, PdfCraft, XIVLauncher and XIVLauncher.Core), with PRs in
+  review beside the merged ones, instead of every public repo with a merged PR of mine. The two
+  had drifted: the site showed pyqb and the winget-pkgs PRs that submit my own apps, and was about
+  to add up-for-grabs, where every PR lists one of my projects, while it missed PdfCraft for a week.
+  The list lives in both repos and changes in both together. It gives up counting new upstream work
+  on its own: a project joins only once I add it to both lists, and pyqb's 2020 README fix drops
+  off.
 - 2026-10-25: The social cards and the favicon join the light shop. The site card sets "Small apps
   that each do one job." beside the shipped apps' icons as stickers on a night band, and each
   post's card has its title, date and tags as lavender pills under the "H" monogram and the
