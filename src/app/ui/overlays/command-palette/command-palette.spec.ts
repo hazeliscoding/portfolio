@@ -56,7 +56,7 @@ describe('CommandPalette', () => {
     fixture.componentInstance.query.set('zzz');
     fixture.detectChanges();
     expect(el.querySelectorAll('.palette__item').length).toBe(0);
-    expect(el.textContent).toContain('NO MATCHING COMMAND');
+    expect(el.textContent).toContain('Nothing matches that yet.');
   });
 
   it('emits run with the command id on click', () => {
