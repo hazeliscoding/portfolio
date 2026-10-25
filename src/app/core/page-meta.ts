@@ -20,7 +20,7 @@ export const SITE_ORIGIN = 'https://www.hazeliscoding.dev';
  */
 export const SOCIAL_IMAGE = `${SITE_ORIGIN}/og-image.png`;
 const SOCIAL_IMAGE_ALT =
-  'hazel.exe — operator profile terminal card, Hazel Granados, full-stack developer and AI engineer';
+  'hazeliscoding: Hazel Granados, full-stack developer and AI engineer, and “Small apps that each do one job.” beside stickers of the apps Hazel has shipped';
 
 /**
  * The one person this site is about, referenced by `@id` from every page's
