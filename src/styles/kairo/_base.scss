@@ -157,3 +157,12 @@ h3 {
   color: var(--text-primary);
   white-space: nowrap;
 }
+
+// JetBrains Mono draws `!=` as `≠` and `->` as an arrow. In code a reader may
+// copy, the characters have to be the ones typed.
+code,
+kbd,
+pre,
+samp {
+  font-variant-ligatures: none;
+}
