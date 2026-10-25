@@ -7,19 +7,14 @@
   [attr.data-sfx]="motion.sfx()"
   [attr.aria-labelledby]="p.id + '-name'"
 >
-  <div class="tape__bars" aria-hidden="true"></div>
-  <div class="tape__label">
-    <span>PILOT <b>{{ p.channel }}</b></span>
-    <span>{{ p.slug }}</span>
-  </div>
-
   <div class="tape__head">
-    <img class="tape__icon" [src]="p.icon" alt="" width="44" height="44" />
+    <img class="tape__icon" [src]="p.icon" alt="" width="48" height="48" />
     <div>
+      <p class="tape__slug">{{ p.slug }}</p>
       <h3 class="tape__name" [id]="p.id + '-name'">{{ p.title }}</h3>
-      <p class="tape__pitch">{{ p.pitch }}</p>
     </div>
   </div>
+  <p class="tape__pitch">{{ p.pitch }}</p>
 
   @if (p.reel) {
     <!-- Lazy, so its megabytes load only near the viewport; the still
@@ -57,14 +52,14 @@
   <div class="tape__links">
     @if (p.source) {
       <a [href]="p.source" target="_blank" rel="noopener"
-        >SOURCE ↗<span class="sr-only"> (opens in a new tab)</span></a
+        >Source <span aria-hidden="true">↗</span><span class="sr-only"> (opens in a new tab)</span></a
       >
     }
     @if (p.build) {
       <a [href]="p.build" target="_blank" rel="noopener"
-        >LATEST BUILD ↗<span class="sr-only"> (opens in a new tab)</span></a
+        >Latest build <span aria-hidden="true">↗</span><span class="sr-only"> (opens in a new tab)</span></a
       >
     }
-    <a [routerLink]="['/portfolio', p.id]">RECORD ›</a>
+    <a class="tape__more" [routerLink]="['/portfolio', p.id]">How it works <span aria-hidden="true">→</span></a>
   </div>
 </article>

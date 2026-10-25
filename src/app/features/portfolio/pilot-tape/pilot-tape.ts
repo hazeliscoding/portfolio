@@ -12,10 +12,9 @@ export interface PilotRow {
   detail: string;
 }
 
-/** Everything one PILOT test tape renders, resolved once by the page. */
+/** Everything one experiment card renders, resolved once by the page. */
 export interface Pilot {
   id: string;
-  channel: string;
   title: string;
   slug: string;
   pitch: string;
@@ -30,8 +29,8 @@ export interface Pilot {
 }
 
 /**
- * An experiment as a test tape: unfinished, and it looks it — colour bars, a
- * dashed edge, small links instead of a big call to action.
+ * An experiment as a light card: quieter than a shipped band, with small links
+ * instead of a big call to action.
  */
 @Component({
   selector: 'app-pilot-tape',

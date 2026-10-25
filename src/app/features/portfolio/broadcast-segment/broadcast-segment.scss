@@ -1,43 +1,31 @@
-// One project as a broadcast segment, tinted from three custom properties the
-// page sets per project: --ink (name, links), --tint (chip, badge, ticker) and
-// an optional --glow (background wash; a mix of --tint when unset).
+// One project as a dark product band, tinted from three custom properties the
+// page sets per project: --ink (the light end of its palette), --tint (its own
+// colour: sticker, rule, call to action) and an optional --glow (the wash
+// behind its screen; a mix of --tint when unset).
 
 :host {
   display: block;
 }
 
-// One continuous broadcast: segments share a rule rather than float apart.
-:host + :host .segment {
-  border-block-start: var(--bw-hairline) solid var(--border-default);
-}
-
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip-path: inset(50%);
-  white-space: nowrap;
-}
-
 .segment {
-  --wash: var(--glow, color-mix(in srgb, var(--tint) 26%, transparent));
+  --wash: var(--glow, color-mix(in srgb, var(--tint) 34%, transparent));
+  --shadow-hard: color-mix(in srgb, var(--tint) 40%, #000);
 
-  // Fills its host, so a segment stacked with taller ones (the home page's NOW
-  // PLAYING) still ends on its ticker. On /portfolio the host is only as tall
-  // as the segment, so this changes nothing there.
-  display: flex;
-  flex-direction: column;
-  height: 100%;
   position: relative;
+  padding: clamp(64px, 7vw, 96px) clamp(24px, 5vw, 72px) clamp(32px, 4vw, 56px);
+  border-radius: var(--radius-3);
   overflow: hidden;
-  // Clears the page's sticky channel guide when a channel link lands here.
-  scroll-margin-top: var(--guide-clearance);
-  color: var(--text-primary);
-  background: radial-gradient(60% 90% at 80% 55%, var(--wash), transparent 72%), var(--surface-canvas);
+  // Clears the sticky header and project bar when a link in the bar lands here.
+  scroll-margin-top: var(--guide-clearance, 24px);
+  color: var(--text-on-night);
+  background:
+    radial-gradient(70% 100% at 85% 50%, var(--wash), transparent 70%),
+    var(--surface-night-deep);
 
   &--flip {
-    background: radial-gradient(60% 90% at 20% 55%, var(--wash), transparent 72%), var(--surface-canvas);
+    background:
+      radial-gradient(70% 100% at 15% 50%, var(--wash), transparent 70%),
+      var(--surface-night-deep);
   }
 
   &[data-sfx="a"] {
@@ -49,70 +37,29 @@
   }
 }
 
-.segment__bug {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--sp-2) var(--sp-4);
-  padding: 10px var(--sp-6);
-  border-block-end: var(--bw-hairline) solid var(--border-default);
-  font: 400 12px/1.2 var(--font-mono);
-  letter-spacing: var(--tracking-wide);
-  color: var(--text-muted);
-  text-transform: uppercase;
-}
-
-.segment__channel {
-  padding: 2px var(--sp-2);
+// Hung from the top edge like a price sticker, with a hard offset shadow.
+.segment__tag {
+  position: absolute;
+  top: 0;
+  inset-inline-start: clamp(24px, 5vw, 72px);
+  padding: 10px 14px 9px;
+  border-radius: 0 0 10px 10px;
   background: var(--tint);
-  color: var(--text-inverse);
-  font-weight: 600;
-}
-
-.segment__bug-mark {
-  display: block;
-}
-
-.segment__bug-title {
-  color: var(--text-secondary);
-}
-
-.segment__onair,
-.segment__live {
-  margin-inline-start: auto;
-  color: var(--signal-active);
-}
-
-.segment__live {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 2px var(--sp-2);
-  background: var(--signal-active);
-  color: var(--text-inverse);
-  font-weight: 600;
-}
-
-.segment__live-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: currentColor;
-  animation: k-blink var(--dur-blink) steps(2, end) infinite;
+  box-shadow: 4px 4px 0 var(--shadow-hard);
+  font: 500 13px/1 var(--font-mono);
+  color: var(--h-night-deep);
 }
 
 .segment__main {
-  flex: 1;
   display: grid;
-  grid-template-columns: 1fr 1.15fr;
-  gap: var(--sp-10);
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: clamp(32px, 5vw, 72px);
   align-items: center;
-  padding: var(--sp-10) var(--sp-12) var(--sp-8);
 }
 
 .segment--flip {
   .segment__main {
-    grid-template-columns: 1.15fr 1fr;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
   }
 
   .segment__copy {
@@ -126,72 +73,92 @@
 
 .segment__icon {
   display: block;
-  margin-block-end: var(--sp-4);
-  filter: drop-shadow(0 8px 20px rgba(0, 0, 0, 0.5));
+  width: 56px;
+  height: 56px;
+  margin-block-end: var(--sp-5);
+  padding: 4px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.06);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1);
 }
 
 .segment__name {
-  margin: 0 0 var(--sp-3);
-  font: 600 clamp(48px, 6vw, 84px) / 0.9 var(--font-display);
-  letter-spacing: var(--tracking-display);
-  text-transform: uppercase;
-  color: var(--ink);
+  font: 700 clamp(48px, 6.4vw, 92px) / 0.95 var(--font-display);
+  letter-spacing: -0.05em;
+  color: var(--text-on-night);
   overflow-wrap: anywhere;
 }
 
-.segment__status {
-  display: inline-block;
-  margin-block-end: var(--sp-4);
-  padding: 3px 9px;
-  border: var(--bw-hairline) solid var(--tint);
-  font: 400 11.5px/1.4 var(--font-mono);
-  letter-spacing: 0.1em;
-  color: var(--tint);
+.segment__slug {
+  margin-top: var(--sp-3);
+  font: var(--type-mono-s);
+  color: var(--text-on-night-muted);
 }
 
 .segment__pitch {
-  max-width: 30ch;
-  margin: 0 0 var(--sp-6);
-  font: 400 20px/1.35 var(--font-ui);
+  max-width: 26ch;
+  margin-top: var(--sp-6);
+  font: 600 clamp(20px, 2vw, 25px) / 1.3 var(--font-display);
+  letter-spacing: -0.02em;
+  color: var(--text-on-night);
 }
 
+// The brand-coloured rule above the call to action.
+.segment__action {
+  margin-top: var(--sp-6);
+  padding-top: var(--sp-6);
+  border-top: 2px solid var(--tint);
+}
+
+// The chunky block: the brand's own colour, a hard offset shadow, mono fine print.
 .segment__cta {
   display: inline-flex;
   flex-direction: column;
-  gap: 3px;
-  padding: 11px var(--sp-4);
-  border: var(--bw-hairline) solid var(--tint);
-  color: var(--ink);
-  transition: background var(--dur-micro) var(--ease-mech);
+  gap: 6px;
+  max-width: 420px;
+  padding: 18px 22px;
+  border-radius: var(--radius-2);
+  background: var(--tint);
+  box-shadow: 6px 6px 0 var(--text-on-night);
+  color: var(--h-night-deep);
+  transition:
+    transform var(--dur-micro) var(--ease-mech),
+    box-shadow var(--dur-micro) var(--ease-mech);
 
-  &:hover,
-  &:focus-visible {
-    color: var(--ink);
-    background: color-mix(in srgb, var(--tint) 14%, transparent);
+  &:hover {
+    color: var(--h-night-deep);
+    transform: translate(-2px, -2px);
+    box-shadow: 8px 8px 0 var(--text-on-night);
+  }
+
+  &:active {
+    transform: translate(2px, 2px);
+    box-shadow: 3px 3px 0 var(--text-on-night);
   }
 }
 
 .segment__cta-label {
-  font: 500 13px/1.3 var(--font-mono);
-  letter-spacing: var(--tracking-wide);
+  font: 700 20px/1.2 var(--font-display);
+  letter-spacing: -0.02em;
 }
 
 .segment__cta-fine {
   font: var(--type-mono-s);
-  color: var(--text-muted);
+  opacity: 0.85;
 }
 
-.segment__record {
+.segment__more {
   display: block;
   width: fit-content;
-  margin-block-start: var(--sp-4);
-  font: var(--type-mono-s);
-  letter-spacing: var(--tracking-wide);
-  color: var(--text-muted);
+  margin-top: var(--sp-6);
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--text-on-night-muted);
 
-  &:hover,
-  &:focus-visible {
-    color: var(--text-primary);
+  &:hover {
+    color: var(--text-on-night);
+    text-decoration: underline;
+    text-underline-offset: 4px;
   }
 }
 
@@ -200,12 +167,11 @@
   min-width: 0;
 }
 
-// Stuck on the screen's inner corner, the one facing the copy. The overhang
-// stays under the phone layout's 16px padding, so it never scrolls the page.
+// Stuck on the screen's inner corner, the one facing the copy.
 .segment__mascot {
   position: absolute;
-  inset-block-end: calc(-1 * var(--sp-3));
-  inset-inline-start: calc(-1 * var(--sp-3));
+  inset-block-end: calc(-1 * var(--sp-4));
+  inset-inline-start: calc(-1 * var(--sp-4));
   width: clamp(96px, 26%, 168px);
   height: auto;
   rotate: -6deg;
@@ -213,60 +179,51 @@
 }
 
 .segment--flip .segment__mascot {
-  inset-inline: auto calc(-1 * var(--sp-3));
+  inset-inline: auto calc(-1 * var(--sp-4));
   rotate: 6deg;
 }
 
+// The hard facts, as small pills along the foot of the band.
 .segment__ticker {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--sp-1) var(--sp-6);
-  margin: 0;
-  padding: 9px var(--sp-6);
+  gap: var(--sp-2);
+  margin-top: clamp(32px, 4vw, 56px);
   list-style: none;
-  background: var(--tint);
-  color: var(--text-inverse);
-  font: 500 11.5px/1.4 var(--font-mono);
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
 
-  li::before {
-    content: "▸ ";
+  li {
+    padding: 6px 12px;
+    border: var(--bw-hairline) solid rgba(255, 255, 255, 0.16);
+    border-radius: var(--radius-pill);
+    font-size: 13px;
+    color: var(--text-on-night-muted);
   }
 }
 
-// Phones and narrow tablets: one column, the screen first, as thatlev's bands
-// stack.
+// Phones and narrow tablets: one column, the screen under the copy.
 @media (max-width: 839.98px) {
   .segment .segment__main {
-    grid-template-columns: 1fr;
-    gap: var(--sp-6);
-    padding: var(--sp-6) var(--sp-4);
-  }
-
-  .segment__devices {
-    order: -1;
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .segment--flip .segment__copy {
     order: 0;
   }
 
-  .segment__bug,
-  .segment__ticker {
-    padding-inline: var(--sp-4);
-  }
-
-  .segment__pitch {
-    font-size: 18px;
+  .segment__cta {
+    box-shadow: 4px 4px 0 var(--text-on-night);
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
   // Same specificity as the entrance rules above (0,2,0); a media query adds
-  // none, so a bare `.segment` would lose. Same trap documented in app.scss.
-  .segment[data-sfx],
-  .segment .segment__live-dot {
+  // none, so a bare `.segment` would lose.
+  .segment[data-sfx] {
     animation: none;
+  }
+
+  .segment__cta:hover,
+  .segment__cta:active {
+    transform: none;
   }
 }

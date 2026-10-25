@@ -8,51 +8,52 @@
   }
 }
 
-// The CRT: a bezel around a clean screen. No scanlines over the capture — the
-// screenshot is the product, and it has to be readable.
-.crt {
+// A dark bezel around a clean screen: the capture is the product, so nothing
+// sits over it.
+.device {
   aspect-ratio: 16 / 10;
-  padding: var(--sp-3);
-  background: var(--surface-raised);
-  border-radius: 10px;
+  padding: 10px;
+  background: #121118;
+  border-radius: 18px;
   box-shadow:
-    inset 0 0 0 1px var(--border-strong),
-    0 20px 50px rgba(0, 0, 0, 0.5);
+    inset 0 0 0 1px rgba(255, 255, 255, 0.1),
+    0 30px 70px -20px rgba(0, 0, 0, 0.75);
 }
 
-.crt__screen {
+.device__screen {
   display: flex;
   flex-direction: column;
   height: 100%;
-  border-radius: 6px;
+  border-radius: 10px;
   overflow: hidden;
-  background: var(--surface-inset);
+  background: #1c1b22;
 }
 
 // A live site sits in a browser: an address bar above the capture.
-.crt__url {
+.device__url {
   display: flex;
   align-items: center;
   flex: none;
-  height: 22px;
-  padding: 0 10px;
-  background: var(--surface-elevated);
+  height: 26px;
+  padding: 0 12px;
+  background: #24232b;
   font: var(--type-mono-s);
-  color: var(--text-secondary);
+  font-size: 11px;
+  color: var(--text-on-night-muted);
 }
 
-.crt__dots {
-  width: 7px;
-  height: 7px;
-  margin-inline-end: 28px;
+.device__dots {
+  width: 8px;
+  height: 8px;
+  margin-inline-end: 34px;
   border-radius: 50%;
-  background: var(--border-strong);
+  background: #4a4953;
   box-shadow:
-    11px 0 var(--border-strong),
-    22px 0 var(--border-strong);
+    13px 0 #4a4953,
+    26px 0 #4a4953;
 }
 
-.crt__shot {
+.device__shot {
   display: block;
   flex: 1;
   min-height: 0;
@@ -61,16 +62,19 @@
   object-position: top left;
 }
 
+// The phone wears the project's own colour on its rim.
 .phone {
   position: absolute;
   right: -8px;
   bottom: 0;
   width: 24%;
   aspect-ratio: 9 / 19;
-  border: 6px solid var(--surface-raised);
-  border-radius: 18px;
+  border: 5px solid #121118;
+  border-radius: 22px;
   overflow: hidden;
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6);
+  box-shadow:
+    0 0 0 2px var(--tint, #4a4953),
+    0 20px 44px rgba(0, 0, 0, 0.6);
 
   img {
     display: block;

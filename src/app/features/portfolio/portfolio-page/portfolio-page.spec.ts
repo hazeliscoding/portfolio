@@ -24,38 +24,34 @@ describe('PortfolioPage', () => {
     el = fixture.nativeElement as HTMLElement;
   });
 
-  it('renders the ARCHIVE_03 chapter header with the record count', () => {
-    expect(text(el.querySelector('.chapter__code'))).toBe('ARCHIVE');
-    expect(text(el.querySelector('.chapter__index'))).toBe('_03');
-    expect(text(el.querySelector('.chapter__meta'))).toBe('08 RECORDS RETRIEVED');
+  it('opens on a single heading with the project count above it', () => {
+    expect([...el.querySelectorAll('h1')].map(text)).toEqual(["Here's what I'm building."]);
+    expect(text(el.querySelector('.eyebrow'))).toBe(
+      `${projectsData.length} projects · free and open source`,
+    );
+    // The monogram stands in for a photo, so it is decoration only.
+    expect(el.querySelector('.hero__avatar')?.getAttribute('aria-hidden')).toBe('true');
   });
 
   it('sets the document title', () => {
     expect(TestBed.inject(Title).getTitle()).toContain('Projects');
   });
 
-  describe('channel guide', () => {
-    it('groups the channels ON AIR, then LIVE, then PILOTS', () => {
-      const groups = [...el.querySelectorAll('.guide__group')];
-      expect(groups.map((g) => text(g.querySelector('.guide__label')))).toEqual([
-        'ON AIR',
-        'LIVE',
-        'PILOTS',
-      ]);
-      expect(groups.map((g) => g.querySelectorAll('.guide__channel').length)).toEqual([5, 1, 2]);
+  describe('project bar', () => {
+    it('jumps to each project by its id, named, in archive order', () => {
+      const links = [...el.querySelectorAll<HTMLAnchorElement>('nav.guide a.guide__link')];
+      expect(links.map((a) => a.getAttribute('href'))).toEqual(projectsData.map((p) => `#${p.id}`));
+      expect(links.map(text)).toEqual(projectsData.map((p) => p.title));
     });
 
-    it('jumps to each project by its id, numbered by its place in the archive', () => {
-      const channels = [...el.querySelectorAll<HTMLAnchorElement>('a.guide__channel')];
-      expect(channels.map((a) => a.getAttribute('href'))).toEqual(
-        projectsData.map((p) => `#${p.id}`),
-      );
-      expect(text(channels[5].querySelector('.guide__number'))).toBe('06');
-      expect(text(channels[5].querySelector('.guide__title'))).toBe('ConAtlas TX');
+    it('lands every jump on a band or card with that id', () => {
+      for (const p of projectsData) {
+        expect(el.querySelector(`#${p.id}`)).withContext(p.id).not.toBeNull();
+      }
     });
 
-    it('enters off the motion service', () => {
-      expect(el.querySelector('.guide')?.getAttribute('data-sfx')).toBe(
+    it('enters with the hero off the motion service', () => {
+      expect(el.querySelector('.hero')?.getAttribute('data-sfx')).toBe(
         fixture.componentInstance.motion.sfx(),
       );
     });
@@ -77,8 +73,7 @@ describe('PortfolioPage', () => {
       const s = segment('sweepling');
       expect(text(s.querySelector('h2'))).toBe('Sweepling');
       expect(s.getAttribute('aria-labelledby')).toBe('sweepling-name');
-      expect(text(s.querySelector('.segment__channel'))).toBe('CH.04');
-      expect(text(s.querySelector('.segment__slug'))).toBe('TRAY APP · 2026');
+      expect(text(s.querySelector('.segment__slug'))).toBe('Tray app · 2026');
     });
 
     it('sets a mascot sticker on the screen only where the project has one', () => {
@@ -96,12 +91,12 @@ describe('PortfolioPage', () => {
 
     // Keyed to the generated data, not to a literal: the weekly refresh moves
     // the tag, and the point is that the badge follows it.
-    it('reads the status badge from the latest release', () => {
-      expect(text(segment('sweepling').querySelector('.segment__status'))).toBe(
-        `SHIPPED · ${releases['sweepling'].tag}`,
+    it('reads the sticker from the latest release', () => {
+      expect(text(segment('sweepling').querySelector('.segment__tag'))).toBe(
+        `Shipped · ${releases['sweepling'].tag}`,
       );
-      expect(text(segment('conatlas-tx').querySelector('.segment__status'))).toBe(
-        `LIVE · ${releases['conatlas-tx'].tag}`,
+      expect(text(segment('conatlas-tx').querySelector('.segment__tag'))).toBe(
+        `Live now · ${releases['conatlas-tx'].tag}`,
       );
     });
 
@@ -119,7 +114,7 @@ describe('PortfolioPage', () => {
       const { platforms } = releases['xiv-vault'];
       expect(platforms.length).toBe(1);
       expect(text(segment('xiv-vault').querySelector('.segment__cta-label'))).toBe(
-        `[ DOWNLOAD FOR ${platforms[0].toUpperCase()} ↗ ]`,
+        `Download for ${platforms[0]} ↗`,
       );
     });
 
@@ -142,23 +137,23 @@ describe('PortfolioPage', () => {
       expect(write).toHaveBeenCalledWith(
         '/plugin marketplace add hazeliscoding/sdl3-porter\n/plugin install sdl3-porter@sdl3-porter',
       );
-      expect(text(segment('sdl3-porter').querySelector('.install__copy'))).toBe('COPIED');
+      expect(text(segment('sdl3-porter').querySelector('.install__copy'))).toBe('Copied');
 
       tick(1500);
       fixture.detectChanges();
-      expect(text(segment('sdl3-porter').querySelector('.install__copy'))).toBe('COPY');
+      expect(text(segment('sdl3-porter').querySelector('.install__copy'))).toBe('Copy');
     }));
 
-    it('puts the live site on air as LIVE, in a browser, with a visit link', () => {
+    it('shows the live site in a browser, beside a phone, with a visit link', () => {
       const s = segment('conatlas-tx');
-      expect(s.querySelector('.segment__live')).not.toBeNull();
-      expect(s.querySelector('.segment__onair')).toBeNull();
-      expect(text(s.querySelector('.crt__url'))).toBe('conatlas-tx.vercel.app');
+      expect(s.getAttribute('data-kind')).toBe('site');
+      expect(segment('xiv-vault').getAttribute('data-kind')).toBe('app');
+      expect(text(s.querySelector('.device__url'))).toBe('conatlas-tx.vercel.app');
       expect(s.querySelector('.phone img')).not.toBeNull();
       expect(s.querySelector('a.segment__cta')?.getAttribute('href')).toBe(
         'https://conatlas-tx.vercel.app',
       );
-      expect(text(s.querySelector('.segment__cta-label'))).toBe('[ VISIT CONATLAS TX ↗ ]');
+      expect(text(s.querySelector('.segment__cta-label'))).toBe('Visit ConAtlas TX ↗');
     });
 
     it('alternates the screenshot side from one segment to the next', () => {
@@ -173,29 +168,34 @@ describe('PortfolioPage', () => {
       expect(facts).toEqual(projectsData.find((p) => p.id === 'xiv-vault')!.ticker!);
     });
 
-    it('opens each record from its segment', () => {
-      expect(segment('gil-sweep').querySelector('a.segment__record')?.getAttribute('href')).toBe(
+    it('links each band to its project page', () => {
+      expect(segment('gil-sweep').querySelector('a.segment__more')?.getAttribute('href')).toBe(
         '/portfolio/gil-sweep',
       );
     });
 
+    it('marks every link that leaves the site for a screen reader', () => {
+      for (const a of el.querySelectorAll<HTMLAnchorElement>('a[target="_blank"]')) {
+        expect(text(a)).withContext(a.href).toContain('(opens in a new tab)');
+        expect(a.getAttribute('rel')).toBe('noopener');
+      }
+    });
+
     it('loads screenshots lazily', () => {
-      const shots = [...el.querySelectorAll('img.crt__shot')];
+      const shots = [...el.querySelectorAll('img.device__shot')];
       expect(shots.length).toBe(6);
       expect(shots.every((img) => img.getAttribute('loading') === 'lazy')).toBe(true);
     });
   });
 
   describe('pilots', () => {
-    it('puts both experiments on test tapes after the segments', () => {
+    it('puts both experiments on cards after the bands', () => {
       expect([...el.querySelectorAll('article.tape')].map((t) => t.id)).toEqual([
         'puzzle-boy',
         'axiomarium',
       ]);
-      expect([...tape('puzzle-boy').querySelectorAll('.tape__label > span')].map(text)).toEqual([
-        'PILOT 07',
-        'GAME · 2026',
-      ]);
+      expect(text(tape('puzzle-boy').querySelector('h3'))).toBe('Puzzle Boy');
+      expect(text(tape('puzzle-boy').querySelector('.tape__slug'))).toBe('Game · 2026');
     });
 
     it('lists Puzzle Boy’s three repos with their own releases', () => {
@@ -253,5 +253,10 @@ describe('PortfolioPage', () => {
   // site. Everything else Extended_Pictographic covers stays out.
   it('contains no emoji', () => {
     expect(/(?![←-⇿])\p{Extended_Pictographic}/u.test(el.textContent ?? '')).toBe(false);
+  });
+
+  // Sentence case throughout: the old station's shouted labels are gone.
+  it('keeps the broadcast vocabulary out of the copy', () => {
+    expect(el.textContent).not.toMatch(/ON AIR|OPEN RECORD|CH\.\d|RECORD ›|\[ /);
   });
 });

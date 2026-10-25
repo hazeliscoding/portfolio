@@ -1,9 +1,9 @@
-<div class="crt">
-  <div class="crt__screen">
+<div class="device">
+  <div class="device__screen">
     @if (host()) {
-      <div class="crt__url" aria-hidden="true"><span class="crt__dots"></span>{{ host() }}</div>
+      <div class="device__url" aria-hidden="true"><span class="device__dots"></span>{{ host() }}</div>
     }
-    <img class="crt__shot" [src]="shot()" [alt]="alt()" loading="lazy" />
+    <img class="device__shot" [src]="shot()" [alt]="alt()" loading="lazy" />
   </div>
 </div>
 @if (phone()) {

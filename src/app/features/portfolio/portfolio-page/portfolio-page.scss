@@ -1,22 +1,20 @@
-// The projects page as a broadcast: every project is a segment on the same
-// dark station, tinted in its own brand colours (thatlev.com/projects' bands,
-// in KAIRO's language). The segments and pilot tapes are their own
-// components; this sheet holds the channel guide and the page around them.
+// The projects page: a hero, a sticky bar of every project, a dark band per
+// shipped app or live site, then the experiments as light cards. The bands and
+// cards are their own components; this sheet holds the page around them.
 
-// How far a channel link's target lands below the top of `.main`, clear of the
-// sticky guide: two wrapped rows on a desktop, one row on a phone. Inherited by
-// the segments and tapes, which set their own scroll-margin from it.
+// How far a jump link's target lands below the top of the scroll container:
+// the sticky header and this page's bar on a desktop, the header alone on a
+// phone, where the bar does not stick. Inherited by the bands and cards.
 :host {
-  --guide-clearance: 104px;
+  display: block;
+  --guide-clearance: 156px;
 
   @media (max-width: 839.98px) {
-    --guide-clearance: 64px;
+    --guide-clearance: 128px;
   }
 }
 
-// The guide and the pilots section enter like windows, and re-run on every
-// navigation off `data-sfx`.
-.guide,
+.hero,
 .pilots {
   &[data-sfx="a"] {
     animation: win-a var(--dur-window) var(--ease-mech) both;
@@ -27,174 +25,136 @@
   }
 }
 
-// ── Channel guide ────────────────────────────────────────────────────────────
+// ── Hero ─────────────────────────────────────────────────────────────────────
+
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--sp-10);
+  align-items: center;
+}
+
+// There is no photo, so the avatar is the home page's lavender "H" monogram.
+.hero__avatar {
+  display: grid;
+  place-items: center;
+  width: clamp(160px, 17vw, 232px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: linear-gradient(150deg, #efe7ff 0%, #d9ccff 55%, #f6d6e8 100%);
+  box-shadow: 0 18px 40px -18px rgba(48, 34, 72, 0.45);
+
+  span {
+    font: 800 clamp(80px, 9vw, 120px) / 1 var(--font-display);
+    letter-spacing: -0.06em;
+    color: var(--signal-active);
+  }
+}
+
+// ── Project bar ──────────────────────────────────────────────────────────────
 
 .guide {
-  // Sticks to the top of `.main`, the shell's scroll container. Negative by
-  // main's own top padding, or it would stop 20px short and let segments
-  // scroll by in the gap above it.
+  // Sticks under the site header, inside the shell's scroll container.
   position: sticky;
-  top: calc(-1 * var(--sp-5));
+  top: 73px;
   z-index: var(--z-window);
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--sp-2) var(--sp-4);
-  margin-block-end: var(--sp-4);
-  padding: var(--sp-2) var(--sp-3);
-  background: var(--surface-window);
-  border: var(--bw-hairline) solid var(--border-default);
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: saturate(1.4) blur(14px);
+  border-block: var(--bw-hairline) solid var(--border-default);
 }
 
-.guide__group {
+.guide__inner {
   display: flex;
-  align-items: center;
   gap: var(--sp-1);
+  padding-block: 10px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.guide__link {
+  display: inline-flex;
   flex: none;
-}
-
-.guide__label {
-  margin-inline-end: var(--sp-2);
-  padding: 3px var(--sp-2);
-  border: var(--bw-hairline) solid currentColor;
-  font: 500 11px/1.2 var(--font-mono);
-  letter-spacing: var(--tracking-wide);
-  white-space: nowrap;
-  color: var(--signal-active);
-
-  &::before {
-    content: "● ";
-  }
-
-  [data-kind="site"] > & {
-    color: var(--signal-active-strong);
-
-    &::before {
-      content: "◉ ";
-    }
-  }
-
-  [data-kind="pilot"] > & {
-    color: var(--text-muted);
-
-    &::before {
-      content: "▷ ";
-    }
-  }
-}
-
-.guide__channel {
-  display: flex;
   align-items: center;
-  gap: 6px;
-  padding: var(--sp-1) var(--sp-2) var(--sp-1) var(--sp-1);
-  font: 400 12px/1 var(--font-mono);
-  letter-spacing: 0.04em;
+  gap: var(--sp-2);
+  padding: 9px 16px 9px 12px;
+  border-radius: var(--radius-pill);
+  font: 600 14px/1 var(--font-ui);
   white-space: nowrap;
   color: var(--text-secondary);
-  text-transform: uppercase;
-  border: var(--bw-hairline) solid transparent;
-  transition: border-color var(--dur-micro) var(--ease-mech);
+  transition:
+    background var(--dur-micro) var(--ease-mech),
+    color var(--dur-micro) var(--ease-mech);
 
   &:hover,
   &:focus-visible {
-    color: var(--text-primary);
-    border-color: var(--border-default);
+    color: var(--h-purple-ink);
+    background: var(--signal-active-dim);
   }
 }
 
 .guide__mark {
   display: block;
+  width: 20px;
+  height: 20px;
 }
 
-.guide__number {
-  color: var(--text-muted);
+// ── Bands ────────────────────────────────────────────────────────────────────
+
+.bands {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-6);
+  margin-top: var(--sp-8);
 }
 
-// ── The broadcast ────────────────────────────────────────────────────────────
-
-.broadcast {
-  border: var(--bw-hairline) solid var(--border-default);
-}
-
-// ── PILOTS ───────────────────────────────────────────────────────────────────
+// ── Experiments ──────────────────────────────────────────────────────────────
 
 .pilots {
-  margin-block-start: var(--sp-10);
-  padding: var(--sp-8);
-  border: var(--bw-hairline) solid var(--border-default);
-  background:
-    repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.015) 0 10px, transparent 10px 20px),
-    var(--surface-canvas);
-}
-
-.pilots__head {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: var(--sp-2) var(--sp-4);
-}
-
-.pilots__title {
-  margin: 0;
-  font: 600 44px/1 var(--font-display);
-  letter-spacing: var(--tracking-display);
-  text-transform: uppercase;
-}
-
-.pilots__kicker {
-  font: var(--type-mono-s);
-  letter-spacing: 0.1em;
-  color: var(--text-muted);
+  margin-top: var(--sp-20);
 }
 
 .pilots__lede {
   max-width: 60ch;
-  margin: var(--sp-2) 0 var(--sp-5);
-  font: var(--type-body);
-  color: var(--text-secondary);
+  margin: calc(-1 * var(--sp-3)) 0 var(--sp-6);
+  color: var(--text-muted);
 }
 
 .pilots__grid {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: var(--sp-5);
-}
-
-@media (min-width: 840px) {
-  .pilots__grid {
-    grid-template-columns: 1fr 1fr;
-  }
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--sp-6);
 }
 
 @media (max-width: 839.98px) {
-  // One scrolling row on a phone: wrapped, eight channels would stack into a
-  // sticky block taller than a segment's first screen.
+  .hero {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--sp-8);
+  }
+
+  .hero__avatar {
+    order: -1;
+    width: 120px;
+
+    span {
+      font-size: 64px;
+    }
+  }
+
+  // The header is two rows tall here, so the bar scrolls away with the page
+  // rather than stacking a second sticky strip over every band.
   .guide {
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    scrollbar-width: none;
+    position: static;
   }
 
-  // Marks and numbers only, but the name stays the link's accessible name.
-  .guide__title {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip-path: inset(50%);
-    white-space: nowrap;
-  }
-
-  .pilots {
-    padding: var(--sp-5) var(--sp-4);
+  .pilots__grid {
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
   // Same specificity as the entrance rules above (0,2,0); a media query adds
-  // none, so bare class selectors would lose. Same trap documented in app.scss.
-  .guide[data-sfx],
+  // none, so bare class selectors would lose.
+  .hero[data-sfx],
   .pilots[data-sfx] {
     animation: none;
   }

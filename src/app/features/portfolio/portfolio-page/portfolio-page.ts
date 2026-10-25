@@ -1,10 +1,8 @@
 import { Component, inject } from '@angular/core';
 
-import { ChapterHeader } from '../../../ui/chapter-header/chapter-header';
 import {
   BroadcastSegment,
   Segment,
-  channelOf,
   releaseOf,
   repoOf,
   styleOf,
@@ -12,37 +10,22 @@ import {
 } from '../broadcast-segment/broadcast-segment';
 import { Pilot, PilotRow, PilotTape } from '../pilot-tape/pilot-tape';
 import { MotionService } from '../../../ui/motion/motion.service';
-import { Project, ProjectKind, projectsData } from '../../../data/projects.data';
+import { Project, projectsData } from '../../../data/projects.data';
 import { releases } from '../../../data/releases.generated';
 import { count } from '../../../core/count';
 import { PageMeta } from '../../../core/page-meta';
 
-/** The broadcast word each kind goes out under. */
-const ON_AIR: Record<ProjectKind, string> = {
-  app: 'ON AIR',
-  site: 'LIVE',
-  pilot: 'PILOTS',
-};
-
-/** A channel in the guide strip. */
+/** A project in the sticky bar: a jump link to its band or card. */
 export interface Channel {
   id: string;
-  channel: string;
   title: string;
   mark: string;
-}
-
-/** One group of the guide, in broadcast order. */
-export interface ChannelGroup {
-  kind: ProjectKind;
-  label: string;
-  channels: Channel[];
 }
 
 @Component({
   selector: 'portfolio-page',
   standalone: true,
-  imports: [ChapterHeader, BroadcastSegment, PilotTape],
+  imports: [BroadcastSegment, PilotTape],
   templateUrl: './portfolio-page.html',
   styleUrl: './portfolio-page.scss',
 })
@@ -52,26 +35,14 @@ export class PortfolioPage {
 
   private readonly projects: Project[] = projectsData;
 
-  readonly records = `${count(this.projects.length, 'RECORD', 'RECORDS').replace(
-    /^\d+/,
-    pad(this.projects.length),
-  )} RETRIEVED`;
+  readonly projectCount = count(this.projects.length, 'project', 'projects');
 
-  readonly guide: ChannelGroup[] = (['app', 'site', 'pilot'] as const)
-    .map((kind) => ({
-      kind,
-      label: ON_AIR[kind],
-      channels: this.projects
-        .filter((p) => p.kind === kind)
-        .map((p) => ({
-          id: p.id,
-          channel: channelOf(p),
-          title: p.title,
-          mark: p.brand.mark,
-        })),
-    }))
-    // A kind with nothing in it yet has no group, rather than a label over nothing.
-    .filter((group) => group.channels.length);
+  /** Every project, in archive order. */
+  readonly guide: Channel[] = this.projects.map((p) => ({
+    id: p.id,
+    title: p.title,
+    mark: p.brand.mark,
+  }));
 
   readonly segments: Segment[] = this.projects
     .filter((p) => p.kind !== 'pilot')
@@ -108,9 +79,8 @@ export class PortfolioPage {
         ];
     return {
       id: p.id,
-      channel: channelOf(p),
       title: p.title,
-      slug: [p.medium.toUpperCase(), p.year].filter(Boolean).join(' · '),
+      slug: [p.medium, p.year].filter(Boolean).join(' · '),
       pitch: p.pitch,
       icon: p.brand.icon,
       style: styleOf(p),
@@ -122,8 +92,4 @@ export class PortfolioPage {
       delay: `${40 + i * 70}ms`,
     };
   }
-}
-
-function pad(n: number): string {
-  return String(n).padStart(2, '0');
 }

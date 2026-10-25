@@ -1,7 +1,7 @@
 import { Component, input } from '@angular/core';
 
 /**
- * A segment's screen: the capture in a CRT bezel, inside a browser frame when
+ * A segment's screen: the capture in a device bezel, inside a browser frame when
  * there is a site address, with a phone beside it when there is a phone shot.
  */
 @Component({

@@ -2,16 +2,16 @@ import { Component, inject, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 import { MotionService } from '../../../ui/motion/motion.service';
-import { Project, ProjectKind, projectsData } from '../../../data/projects.data';
+import { Project, ProjectKind } from '../../../data/projects.data';
 import { Platform, Release, releases } from '../../../data/releases.generated';
 import { BroadcastScreen } from '../broadcast-screen/broadcast-screen';
 import { InstallBox } from '../install-box/install-box';
 
-/** The status badge's first word: what the project is, before which release. */
+/** The sticker's first words: what the project is, before which release. */
 const STATUS: Record<ProjectKind, string> = {
-  app: 'SHIPPED',
-  site: 'LIVE',
-  pilot: 'PILOT',
+  app: 'Shipped',
+  site: 'Live now',
+  pilot: 'Pilot',
 };
 
 /** A project's colours, as the custom properties its segment or tape reads. */
@@ -23,13 +23,12 @@ export type Cta =
   | { kind: 'visit'; label: string; href: string; fine: string }
   | { kind: 'install'; commands: string[] };
 
-/** Everything one ON AIR or LIVE segment renders, resolved once by the page. */
+/** Everything one shipped app's or live site's band renders, resolved once by the page. */
 export interface Segment {
   id: string;
   kind: 'app' | 'site';
-  channel: string;
   title: string;
-  /** `DESKTOP · 2026` — what it is and when, for the channel bug. */
+  /** `Desktop · 2026` — what it is and when, under the name. */
   slug: string;
   pitch: string;
   status: string;
@@ -49,7 +48,7 @@ export interface Segment {
   delay: string;
 }
 
-/** One project as a broadcast segment: channel bug, name, release, call to action, screen, ticker. */
+/** One project as a product band: sticker, name, pitch, call to action, screen and facts. */
 @Component({
   selector: 'app-broadcast-segment',
   standalone: true,
@@ -64,17 +63,16 @@ export class BroadcastSegment {
 
 /**
  * A project as its segment. Shared by the projects page and the home page's
- * NOW PLAYING, so a project airs the same way on both. `i` is its place in the
- * page's run, which sets the flip and the entrance stagger.
+ * featured band, so a project reads the same way on both. `i` is its place in
+ * the page's run, which sets the flip and the entrance stagger.
  */
 export function toSegment(p: Project, i: number): Segment {
   const release = releaseOf(p);
   return {
     id: p.id,
     kind: p.kind as 'app' | 'site',
-    channel: channelOf(p),
     title: p.title,
-    slug: [p.medium.toUpperCase(), p.year].filter(Boolean).join(' · '),
+    slug: [p.medium, p.year].filter(Boolean).join(' · '),
     pitch: p.pitch,
     status: [STATUS[p.kind], release?.tag].filter(Boolean).join(' · '),
     icon: p.brand.icon,
@@ -91,11 +89,6 @@ export function toSegment(p: Project, i: number): Segment {
     // 40ms, then 70ms per segment: the archive cards' stagger, kept.
     delay: `${40 + i * 70}ms`,
   };
-}
-
-/** Zero-padded position in the whole archive, so a channel keeps its number on every page. */
-export function channelOf(p: Project): string {
-  return String(projectsData.indexOf(p) + 1).padStart(2, '0');
 }
 
 /** `hazeliscoding/puzzle-boy` → `puzzle-boy`: the key releases.generated.ts files a repo under. */
@@ -132,7 +125,7 @@ function ctaOf(p: Project, release: Release | undefined): Cta {
   if (p.kind === 'site' && p.links.demo) {
     return {
       kind: 'visit',
-      label: `VISIT ${p.title.toUpperCase()}`,
+      label: `Visit ${p.title}`,
       href: p.links.demo,
       fine: ['Free', p.note, bareHost(p.links.demo)].filter(Boolean).join(' · '),
     };
@@ -140,7 +133,7 @@ function ctaOf(p: Project, release: Release | undefined): Cta {
   const platforms = release?.platforms ?? [];
   return {
     kind: 'download',
-    label: platforms.length === 1 ? `DOWNLOAD FOR ${platforms[0].toUpperCase()}` : 'DOWNLOAD',
+    label: platforms.length === 1 ? `Download for ${platforms[0]}` : `Download ${p.title}`,
     // The release page, not a binary: it offers every platform's file, and a
     // direct link would pick one for the visitor.
     href: release?.url ?? p.links.github ?? '',
