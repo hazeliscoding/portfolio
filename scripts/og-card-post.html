@@ -2,23 +2,24 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>hazel.exe — blog entry card source</title>
+    <title>hazeliscoding — blog post card source</title>
 
     <!--
-      THE PER-ENTRY SOCIAL CARD. scripts/generate-og-cards.mjs opens this in
-      headless Chrome with ?title=&entry=&date=&tags= and screenshots it to
+      THE PER-POST SOCIAL CARD. scripts/generate-og-cards.mjs opens this in
+      headless Chrome with ?title=&date=&tags= and screenshots it to
       public/images/og/blog/<slug>.png. Rendered by a browser, not sharp, for
       the reason in og-card.html: sharp cannot load the webfonts.
 
-      Same KAIRO rules as the site card: dark surface, signal red, hairline
-      frame, no shadows, no gradients, no emoji. Colours are the token values,
-      inlined because this renders outside the app.
+      The same light shop as the site card: lavender-white paper, one ink, the
+      purple accent, the "H" monogram that stands in for a photo across the
+      site, and the tags as the blog's lavender pills. Colours are the token
+      values, inlined because this renders outside the app.
     -->
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@600&family=IBM+Plex+Mono:wght@400&display=block"
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=JetBrains+Mono:wght@500&display=block"
       rel="stylesheet"
     />
 
@@ -26,7 +27,7 @@
       html,
       body {
         margin: 0;
-        background: #0b0e12;
+        background: #fbfbfd;
       }
 
       .card {
@@ -34,118 +35,125 @@
         width: 1200px;
         height: 630px;
         overflow: hidden;
-        background: #0b0e12; /* --surface-canvas */
+        background:
+          radial-gradient(60% 80% at 100% 0%, #f2f0f7 0%, transparent 70%),
+          #fbfbfd; /* --h-paper */
+        font-family: "Bricolage Grotesque", sans-serif;
+        color: #262435; /* --h-ink */
       }
 
-      .frame {
+      .byline {
         position: absolute;
-        inset: 24px;
-        border: 1px solid #28313b; /* --border-default */
+        left: 80px;
+        top: 64px;
+        display: flex;
+        align-items: center;
+        gap: 18px;
+      }
+
+      /* The site's avatar: a purple H on the lavender gradient. */
+      .avatar {
+        display: grid;
+        place-items: center;
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: linear-gradient(150deg, #efe7ff 0%, #d9ccff 55%, #f6d6e8 100%);
+        box-shadow: 0 10px 24px -12px rgba(48, 34, 72, 0.45);
+        font: 800 34px/1 "Bricolage Grotesque", sans-serif;
+        letter-spacing: -0.06em;
+        color: #6651cf; /* --h-purple */
       }
 
       .wordmark {
-        position: absolute;
-        left: 72px;
-        top: 64px;
-        font: 600 44px/1 "Saira Condensed", sans-serif;
-        letter-spacing: 0.02em;
-        color: #e9e7e1; /* --text-primary */
+        font: 700 34px/1 "Bricolage Grotesque", sans-serif;
+        letter-spacing: -0.03em;
       }
 
       .wordmark i {
         font-style: normal;
-        color: #e8382c; /* --signal-active */
+        color: #6651cf;
       }
 
-      .entry {
+      .date {
         position: absolute;
-        right: 72px;
-        top: 76px;
-        font: 400 20px/1 "IBM Plex Mono", monospace;
-        letter-spacing: 1.8px;
-        color: #8b949d; /* --text-muted */
-      }
-
-      .entry b {
-        font-weight: 400;
-        color: #e8382c;
+        right: 80px;
+        top: 84px;
+        font: 500 21px/1 "JetBrains Mono", monospace;
+        color: #696777; /* --h-ink-3 */
       }
 
       /* The title box is fixed; fit() shrinks the type until it fits in it. */
       .title {
         position: absolute;
-        left: 72px;
-        right: 72px;
+        left: 78px;
+        right: 80px;
         top: 168px;
         height: 300px;
         display: flex;
         align-items: center;
-        font: 600 88px/1.04 "Saira Condensed", sans-serif;
-        letter-spacing: 0.01em;
-        color: #e9e7e1;
+        font: 600 84px/1.04 "Bricolage Grotesque", sans-serif;
+        letter-spacing: -0.04em;
       }
 
-      .meta {
+      .tags {
         position: absolute;
-        left: 72px;
-        right: 360px;
-        bottom: 72px;
-        font: 400 20px/1 "IBM Plex Mono", monospace;
-        letter-spacing: 1.8px;
-        /* --text-muted, not --text-faint: a card is read shrunk in a feed. */
-        color: #8b949d;
-        white-space: nowrap;
+        left: 80px;
+        right: 380px;
+        bottom: 64px;
+        display: flex;
+        gap: 10px;
         overflow: hidden;
-        text-overflow: ellipsis;
       }
 
-      .meta b {
-        font-weight: 400;
-        color: #aeb6bd; /* --text-secondary */
+      .tags span {
+        flex: none;
+        padding: 10px 18px;
+        border-radius: 999px;
+        background: #eee7fa; /* --h-lavender-2 */
+        font: 600 20px/1 "Bricolage Grotesque", sans-serif;
+        color: #5736a1; /* --h-purple-ink */
       }
 
       .site {
         position: absolute;
-        right: 72px;
-        bottom: 72px;
-        font: 400 20px/1 "IBM Plex Mono", monospace;
-        letter-spacing: 1.8px;
-        color: #8b949d;
+        right: 80px;
+        bottom: 74px;
+        font: 500 21px/1 "JetBrains Mono", monospace;
+        color: #696777;
       }
     </style>
   </head>
 
   <body>
     <div class="card">
-      <div class="frame"></div>
-      <div class="wordmark">hazel<i>.exe</i></div>
-      <div class="entry">LOG_04 // <b id="entry">0000</b></div>
-      <div class="title"><span id="title">Entry title</span></div>
-      <div class="meta"><b id="date">YYYY-MM-DD</b><span id="tags"></span></div>
-      <div class="site">HAZELISCODING.DEV</div>
+      <div class="byline">
+        <span class="avatar">H</span>
+        <span class="wordmark">hazeliscoding<i>.</i></span>
+      </div>
+      <div class="date" id="date">YYYY-MM-DD</div>
+      <div class="title"><span id="title">Post title</span></div>
+      <div class="tags" id="tags"></div>
+      <div class="site">hazeliscoding.dev</div>
     </div>
 
     <script>
       const params = new URLSearchParams(location.search);
-      const set = (id, text) => (document.getElementById(id).textContent = text);
-      set('title', params.get('title') ?? 'Entry title');
-      set('entry', params.get('entry') ?? '0000');
-      set('date', params.get('date') ?? 'YYYY-MM-DD');
-      set(
-        'tags',
-        (params.get('tags') ?? '')
-          .split(',')
-          .filter(Boolean)
-          .map((tag) => ` · ${tag.toUpperCase()}`)
-          .join(''),
-      );
+      document.getElementById('title').textContent = params.get('title') ?? 'Post title';
+      document.getElementById('date').textContent = params.get('date') ?? 'YYYY-MM-DD';
+      const tags = document.getElementById('tags');
+      for (const tag of (params.get('tags') ?? '').split(',').filter(Boolean).slice(0, 4)) {
+        const pill = document.createElement('span');
+        pill.textContent = tag;
+        tags.append(pill);
+      }
 
       // Shrink in 2px steps until the title fits its box. Runs after the
       // webfonts load: measured in the fallback face it would fit wrongly.
       document.fonts.ready.then(() => {
         const box = document.querySelector('.title');
         const text = document.getElementById('title');
-        let size = 88;
+        let size = 84;
         while (size > 40 && text.offsetHeight > box.clientHeight) {
           size -= 2;
           box.style.fontSize = `${size}px`;

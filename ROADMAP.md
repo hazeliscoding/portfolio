@@ -4,6 +4,14 @@ What's next for the site. Shipped work lives in the git history.
 
 ## Decisions
 
+- 2026-10-25: The social cards and the favicon join the light shop. The site card sets "Small apps
+  that each do one job." beside the shipped apps' icons as stickers on a night band, and each
+  post's card has its title, date and tags as lavender pills under the "H" monogram and the
+  wordmark. `npm run og:cards` now renders the site card too, so it no longer needs a hand-taken
+  screenshot. The favicon is the same purple "H" on its lavender gradient, drawn as one shape so
+  sharp can render it without the webfont, and an SVG copy keeps browser tabs sharp. Post cards
+  drop the entry number, which the site no longer shows, and keep four tags. It gives up KAIRO's
+  red terminal caret.
 - 2026-10-25: The projects page follows my GitHub profile README's lineup, so it's about software
   that has shipped and software I'm building. Staypaw joins Shipped. Shybun, Tattlebun, Carmine
   Workbench and Darnling join Axiomarium under Building now, and sdl3-porter stays under Shipped
@@ -34,7 +42,7 @@ What's next for the site. Shipped work lives in the git history.
   numbered windows, NOW PLAYING's rotation and the Japanese face in the type stacks. ⌘K search and
   the 1–4 and Escape keys stay. Component stylesheets may now reach 16 kB before the build fails
   (8 kB warns), because a whole landing page in one component outgrew the CLI's 8 kB default. The
-  social cards are still drawn in the old style.
+  social cards are still drawn in the old style (superseded 2026-10-25: they're redrawn).
 - 2026-10-22: Sweepling replaces PR Sweep in channel 4. PR Sweep is still maintained, but it isn't
   a main focus now, and the projects page shows the work I'm putting time into. Sweepling's segment
   carries Primrose, its mascot, as a die-cut sticker on the corner of its screen, through an
@@ -86,7 +94,7 @@ What's next for the site. Shipped work lives in the git history.
 - [x] Header, footer and search replace the terminal chrome
 - [x] Home, Projects, project pages, Blog, posts, About and the 404 page
 - [x] Phones, reduced motion, and every unit test and the prerendered build
-- [ ] Social cards (`og-image.png` and the per-post cards) redrawn in the new style
+- [x] Social cards (`og-image.png` and the per-post cards) redrawn in the new style
 
 Done when every route renders in the new style at desktop and phone widths, the build prerenders
 every route, and the social cards match the site.

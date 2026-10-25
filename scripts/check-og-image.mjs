@@ -32,8 +32,7 @@ const EXPECTED_HEIGHT = 630;
 const fail = (message) => {
   console.error(`check:og FAILED — ${message}`);
   console.error('');
-  console.error('To regenerate: open scripts/og-card.html in a browser at');
-  console.error('1200x630, screenshot at 1x, save over public/og-image.png.');
+  console.error('To regenerate: npm run og:cards (needs Chrome).');
   process.exit(1);
 };
 
