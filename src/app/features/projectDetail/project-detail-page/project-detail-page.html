@@ -1,169 +1,162 @@
 @if (project(); as p) {
-  <app-chapter-header
-    [code]="chapterTitle()"
-    [meta]="chapterMeta()"
-    [backLabel]="archiveCode"
-    backRoute="/portfolio"
-  />
+  <article class="detail" [style]="brandStyle()" [attr.data-sfx]="motion.sfx()">
+    <header class="detail__hero shell-width">
+      <a class="detail__back" routerLink="/portfolio"><span aria-hidden="true">←</span> All projects</a>
 
-  <p class="detail__lede" [attr.data-sfx]="motion.sfx()">{{ p.description }}</p>
+      <div class="detail__chips">
+        <img class="detail__icon" [src]="p.brand.icon" alt="" width="64" height="64" />
+        <app-badge tone="active">{{ kindLabel() }}</app-badge>
+        <span class="detail__medium">{{ p.medium }}@if (p.year) { · {{ p.year }}}</span>
+      </div>
 
-  <div class="detail">
-    <div class="detail__column">
-      <app-window
-        variant="viewport"
-        index="01"
-        title="Viewport"
-        [context]="shotContext()"
-        [active]="true"
-        [padded]="false"
-        [footer]="shotFooter()"
-        delay="80ms"
-      >
+      <h1 class="page-hero__title detail__title">{{ p.title }}</h1>
+      <p class="page-hero__lede detail__lede">{{ p.pitch }}</p>
+
+      @if (install().length) {
+        <div class="detail__install">
+          <p class="detail__install-label">Install it with</p>
+          <pre><code>@for (c of install(); track c) {<span class="detail__cmd">{{ c }}</span>}</code></pre>
+        </div>
+      }
+
+      <div class="detail__actions">
+        @if (primary(); as cta) {
+          <app-button variant="primary" size="lg" [href]="cta.href" [external]="true"
+            >{{ cta.label }} <span aria-hidden="true">↗</span
+            ><span class="sr-only"> (opens in a new tab)</span></app-button
+          >
+        }
+        @if (sourceUrl()) {
+          <app-button
+            [variant]="primary() || install().length ? 'secondary' : 'primary'"
+            size="lg"
+            [href]="sourceUrl()"
+            [external]="true"
+            >View source <span aria-hidden="true">↗</span
+            ><span class="sr-only"> (opens in a new tab)</span></app-button
+          >
+        }
+        @if (writeupRoute(); as writeup) {
+          <app-button variant="secondary" size="lg" [routerLink]="writeup">Read the write-up</app-button>
+        }
+      </div>
+
+      @if (fine()) {
+        <p class="detail__fine">{{ fine() }}</p>
+      }
+    </header>
+
+    @if (shots().length) {
+      <section class="detail__stage shell-width" aria-label="Screenshots">
         <!--
           Pointer-only, deliberately. The same advance is on every thumbnail
           below — those are real buttons — and on ArrowRight, so this surface
           carries no role and no tabindex: a widget role on a div that cannot
           take focus announces a control the keyboard cannot reach.
         -->
-        <div class="detail__hero" (click)="nextShot()">
-          <app-viewport-window
-            frame="none"
-            ratio="16 / 10"
-            [src]="heroSrc()"
-            [alt]="heroAlt()"
-            [label]="shotLabel()"
-            [scan]="true"
-          />
-          <span class="detail__rec" aria-hidden="true">● REC</span>
+        <div class="detail__shot" (click)="nextShot()">
+          <app-viewport-window frame="none" ratio="16 / 10" [src]="heroSrc()" [alt]="heroAlt()" />
         </div>
 
-        <div class="detail__strip">
-          @for (s of shots(); track s.src; let i = $index) {
-            <button
-              type="button"
-              class="detail__thumb"
-              [class.detail__thumb--active]="i === shot()"
-              [attr.aria-current]="i === shot() ? 'true' : null"
-              [attr.aria-label]="s.name"
-              (click)="select(i)"
-            >
-              <!--
-                The image is decorative here: the button already carries the
-                caption as its accessible name, and a second copy on the <img>
-                would read the same sentence twice.
-              -->
-              <app-viewport-window
-                frame="none"
-                ratio="16 / 10"
-                [src]="s.src"
-                alt=""
-                [label]="s.idx"
-              />
-            </button>
-          }
-        </div>
-      </app-window>
-
-      <app-window
-        variant="dialogue"
-        index="02"
-        title="Readme"
-        [context]="readmeContext()"
-        delay="200ms"
-      >
-        <div class="detail__readme">
-          @for (para of paragraphs(); track $index) {
-            <p class="detail__para">{{ para }}</p>
-          }
-        </div>
-      </app-window>
-    </div>
-
-    <div class="detail__column">
-      <app-window variant="inspector" index="03" title="Record" context="INFO" delay="140ms">
-        <app-key-value [items]="record()" />
-
-        <div class="detail__actions">
-          @if (demoUrl()) {
-            <app-button variant="primary" size="md" (click)="openDemo()"
-              >Open live site &gt;</app-button
-            >
-          }
-          @if (packageUrl()) {
-            <app-button
-              [variant]="demoUrl() ? 'secondary' : 'primary'"
-              size="md"
-              (click)="openPackage()"
-              >View on NuGet &gt;</app-button
-            >
-          }
-          @if (sourceUrl()) {
-            <app-button
-              [variant]="sourceVariant()"
-              size="md"
-              (click)="openSource()"
-              >View source &gt;</app-button
-            >
-          }
-          @if (writeupRoute(); as writeup) {
-            <app-button variant="secondary" size="md" [routerLink]="writeup"
-              >Read the writeup</app-button
-            >
-          }
-          <app-button variant="text" size="md" routerLink="/portfolio"
-            >&lt; All projects</app-button
-          >
-        </div>
-      </app-window>
-
-      <app-window variant="data" index="04" title="Tags" delay="240ms">
-        <div class="detail__tags">
-          @for (t of p.tags ?? []; track t) {
-            <app-badge>{{ t }}</app-badge>
-          }
-        </div>
-      </app-window>
-
-      <app-window
-        variant="command"
-        index="05"
-        title="Adjacent records"
-        [padded]="false"
-        delay="300ms"
-      >
-        @if (neighbours(); as adjacent) {
-          <div class="detail__adjacent">
-            <a class="detail__adjacent-link" [routerLink]="['/portfolio', adjacent.prev.id]"
-              >&lt; {{ adjacent.prev.title.toUpperCase() }}</a
-            >
-            <a
-              class="detail__adjacent-link detail__adjacent-link--next"
-              [routerLink]="['/portfolio', adjacent.next.id]"
-              >{{ adjacent.next.title.toUpperCase() }} &gt;</a
-            >
-          </div>
-        } @else {
-          <!--
-            The design wraps prev/next around a four-record archive. With one
-            record both neighbours would be this record, so the panel reports
-            the absence rather than linking a page to itself.
-          -->
-          <p class="detail__adjacent-empty">NO ADJACENT RECORDS · {{ recordPosition() }}</p>
+        @if (shotCaption() || shotCount()) {
+          <p class="detail__caption">
+            <span>{{ shotCaption() }}</span>
+            @if (shotCount()) {
+              <span class="detail__count">{{ shotCount() }}</span>
+            }
+          </p>
         }
-      </app-window>
+
+        @if (shots().length > 1) {
+          <div class="detail__strip">
+            @for (s of shots(); track s.src; let i = $index) {
+              <button
+                type="button"
+                class="detail__thumb"
+                [class.detail__thumb--active]="i === shot()"
+                [attr.aria-current]="i === shot() ? 'true' : null"
+                [attr.aria-label]="s.name"
+                (click)="select(i)"
+              >
+                <!--
+                  The image is decorative here: the button already carries the
+                  caption as its accessible name, and a second copy on the <img>
+                  would read the same sentence twice.
+                -->
+                <app-viewport-window frame="none" ratio="16 / 10" [src]="s.src" alt="" />
+              </button>
+            }
+          </div>
+        }
+      </section>
+    }
+
+    <div class="detail__body shell-width">
+      <div class="detail__readme">
+        <h2 class="detail__heading">About {{ p.title }}</h2>
+        <p class="detail__summary">{{ p.description }}</p>
+        @for (para of paragraphs(); track $index) {
+          <p class="detail__para">{{ para }}</p>
+        }
+      </div>
+
+      <aside class="detail__aside">
+        <app-window title="The facts">
+          <app-key-value [items]="facts()" />
+
+          @if (p.tags?.length) {
+            <h3 class="detail__subhead">Built with</h3>
+            <div class="detail__tags">
+              @for (t of p.tags; track t) {
+                <app-badge>{{ t }}</app-badge>
+              }
+            </div>
+          }
+
+          @if (p.parts?.length) {
+            <h3 class="detail__subhead">Repositories</h3>
+            <ul class="detail__parts">
+              @for (part of p.parts; track part.url) {
+                <li>
+                  <a [href]="part.url" target="_blank" rel="noopener"
+                    >{{ part.label }} <span aria-hidden="true">↗</span
+                    ><span class="sr-only"> (opens in a new tab)</span></a
+                  >
+                  <span class="detail__part-note">{{ part.note }}</span>
+                </li>
+              }
+            </ul>
+          }
+        </app-window>
+      </aside>
     </div>
-  </div>
+
+    @if (neighbours(); as adjacent) {
+      <nav class="detail__adjacent shell-width" aria-label="More projects">
+        <a class="detail__neighbour" [routerLink]="['/portfolio', adjacent.prev.id]">
+          <img [src]="adjacent.prev.brand.icon" alt="" width="48" height="48" />
+          <span class="detail__neighbour-text">
+            <span class="detail__neighbour-dir"><span aria-hidden="true">←</span> Previous</span>
+            <span class="detail__neighbour-title">{{ adjacent.prev.title }}</span>
+            <span class="detail__neighbour-pitch">{{ adjacent.prev.pitch }}</span>
+          </span>
+        </a>
+        <a class="detail__neighbour detail__neighbour--next" [routerLink]="['/portfolio', adjacent.next.id]">
+          <span class="detail__neighbour-text">
+            <span class="detail__neighbour-dir">Next <span aria-hidden="true">→</span></span>
+            <span class="detail__neighbour-title">{{ adjacent.next.title }}</span>
+            <span class="detail__neighbour-pitch">{{ adjacent.next.pitch }}</span>
+          </span>
+          <img [src]="adjacent.next.brand.icon" alt="" width="48" height="48" />
+        </a>
+      </nav>
+    }
+  </article>
 } @else {
   <!--
-    Literally the same panel as the 404 screen, not a local imitation of it:
-    an id with no record is the same fault. The return goes to the archive
-    rather than home — that is one level up from here, and it is where Escape
-    goes too.
+    The same card as the 404 screen, not a local imitation of it: an id with no
+    project is the same miss. The way back goes to the projects page — one
+    level up from here, and where Escape goes too.
   -->
-  <app-record-fault
-    [path]="requestedPath()"
-    backLabel="ARCHIVE_03"
-    backRoute="/portfolio"
-  />
+  <app-record-fault [path]="requestedPath()" backLabel="All projects" backRoute="/portfolio" />
 }

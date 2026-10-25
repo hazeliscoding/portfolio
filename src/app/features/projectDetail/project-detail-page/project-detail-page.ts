@@ -1,53 +1,47 @@
 import { Component, HostListener, OnInit, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 
-import { ChapterHeader } from '../../../ui/chapter-header/chapter-header';
 import { Window } from '../../../ui/windows/window/window';
 import { ViewportWindow } from '../../../ui/windows/viewport-window/viewport-window';
 import { Badge } from '../../../ui/core/badge/badge';
-import { Button, ButtonVariant } from '../../../ui/core/button/button';
+import { Button } from '../../../ui/core/button/button';
 import { KeyValue, KeyValueItem } from '../../../ui/data/key-value/key-value';
 import { RecordFault } from '../../../ui/record-fault/record-fault';
 import { MotionService } from '../../../ui/motion/motion.service';
-import { Project, ProjectImage } from '../../../data/projects.data';
+import { Project, ProjectImage, ProjectKind } from '../../../data/projects.data';
 import { blogPosts } from '../../../data/blog-posts.generated';
 import { ProjectsDataService } from '../../../services/projects-data.service';
 import { PageMeta, PERSON, SITE_ORIGIN, breadcrumbs } from '../../../core/page-meta';
-import { MODE_CODES } from '../../../core/navigation';
-import { count } from '../../../core/count';
+import { platformList, releaseOf, styleOf } from '../../portfolio/broadcast-segment/broadcast-segment';
 
-/** One frame of the record's camera feed. */
+/** One screenshot in the gallery. */
 interface Shot {
   src: string;
   caption: string;
-  /** Zero-padded position, printed as the thumbnail's viewport label. */
-  idx: string;
   /** The thumbnail button's accessible name. */
   name: string;
 }
 
-function pad(n: number): string {
-  return String(n).padStart(2, '0');
-}
+/** What a project is, in words a visitor uses. */
+const KIND: Record<ProjectKind, string> = {
+  app: 'Shipped app',
+  site: 'Live site',
+  pilot: 'Experiment',
+};
 
-/** A link as the record prints it: no protocol, no `www.`, no trailing slash. */
+/** A link as the page prints it: no protocol, no `www.`, no trailing slash. */
 function bareUrl(url: string): string {
   return url.replace(/^https?:\/\//, '').replace(/^www\./, '').replace(/\/$/, '');
+}
+
+function capitalize(s: string): string {
+  return s.charAt(0).toUpperCase() + s.slice(1);
 }
 
 @Component({
   selector: 'project-detail-page',
   standalone: true,
-  imports: [
-    RouterLink,
-    ChapterHeader,
-    Window,
-    ViewportWindow,
-    Badge,
-    Button,
-    KeyValue,
-    RecordFault,
-  ],
+  imports: [RouterLink, Window, ViewportWindow, Badge, Button, KeyValue, RecordFault],
   templateUrl: './project-detail-page.html',
   styleUrl: './project-detail-page.scss',
 })
@@ -57,19 +51,12 @@ export class ProjectDetailPage implements OnInit {
   private readonly pageMeta = inject(PageMeta);
   motion = inject(MotionService);
 
-  /** Every record in the archive — the source of this record's number and its neighbours. */
+  /** Every project, the source of this one's neighbours. */
   readonly records = this.projectsService.getAllProjects();
-
-  /**
-   * `ARCHIVE_03`, taken from the shell's table rather than typed again here.
-   * The return label and the location the system bar prints are the same
-   * name, and they must not be able to drift apart.
-   */
-  readonly archiveCode = MODE_CODES['projects'];
 
   readonly project = signal<Project | undefined>(undefined);
   readonly requestedId = signal('');
-  /** Index of the shot on the large viewport. */
+  /** Index of the shot on the stage. */
   readonly shot = signal(0);
 
   readonly requestedPath = computed(() => `/portfolio/${this.requestedId()}`);
@@ -79,37 +66,35 @@ export class ProjectDetailPage implements OnInit {
     return p ? this.records.indexOf(p) : -1;
   });
 
-  /**
-   * The chapter on a record screen IS the record, so there is no `_NN` index
-   * after it — the number moves into the meta line instead, where it reads as
-   * a position in the archive rather than as a chapter number.
-   */
-  readonly chapterTitle = computed(() => this.project()?.title.toUpperCase() ?? '');
+  /** The project's own colours, for the stage's glow. */
+  readonly brandStyle = computed(() => {
+    const p = this.project();
+    return p ? styleOf(p) : null;
+  });
 
-  /** `01 OF 01` — this record's position in the archive. */
-  readonly recordPosition = computed(
-    () => `${pad(this.recordIndex() + 1)} OF ${pad(this.records.length)}`,
-  );
+  readonly release = computed(() => {
+    const p = this.project();
+    return p ? releaseOf(p) : undefined;
+  });
 
-  readonly chapterMeta = computed(() => {
+  /** `Shipped app · v1.4.0`, from the release data rather than the write-up. */
+  readonly kindLabel = computed(() => {
     const p = this.project();
     if (!p) return '';
-    const position = `RECORD ${this.recordPosition()}`;
-    return p.stack ? `${position} · ${p.stack.toUpperCase()}` : position;
+    return [KIND[p.kind], this.release()?.tag].filter(Boolean).join(' · ');
   });
 
   readonly shots = computed<Shot[]>(() => {
     const p = this.project();
     if (!p) return [];
     // `images` is the real gallery. The single `image` is the fallback for a
-    // record that has not been shot yet; it has no caption of its own and one
+    // project that has not been shot yet; it has no caption of its own and one
     // is not invented for it.
     const frames: ProjectImage[] =
       p.images?.length ? p.images : p.image ? [{ src: p.image, caption: '' }] : [];
     return frames.map((frame, i) => ({
       src: frame.src,
       caption: frame.caption,
-      idx: pad(i + 1),
       name: frame.caption || `Screenshot ${i + 1}`,
     }));
   });
@@ -125,65 +110,50 @@ export class ProjectDetailPage implements OnInit {
     return caption ? `${p.title} — ${caption}` : `${p.title} screenshot`;
   });
 
-  readonly shotContext = computed(() => {
+  /** `2 of 5`, printed only when there is more than one shot to count. */
+  readonly shotCount = computed(() => {
     const total = this.shots().length;
-    return total ? `${pad(this.shot() + 1)} OF ${pad(total)}` : '';
+    return total > 1 ? `${this.shot() + 1} of ${total}` : '';
   });
 
-  readonly shotLabel = computed(() => {
-    const p = this.project();
-    return p ? `CAM ${pad(this.shot() + 1)} // ${p.id.toUpperCase()}` : '';
-  });
-
-  /**
-   * The caption lives in the window's footer strip, not under each thumbnail:
-   * captions are sentences, and printing four of them in a 56px-wide cell is
-   * what used to push the strip wider than the page.
-   *
-   * The advance hint is appended only when there is somewhere to advance to.
-   * A one-shot record that says "CLICK OR → FOR NEXT" is an instrument
-   * reporting a control that does nothing.
-   */
-  readonly shotFooter = computed(() => {
-    const caption = this.currentShot()?.caption.toUpperCase() ?? '';
-    const hint = this.shots().length > 1 ? 'CLICK OR → FOR NEXT' : '';
-    return [caption, hint].filter(Boolean).join(' · ');
-  });
+  /** Captions are lower-case notes in the data; the stage prints them as sentences. */
+  readonly shotCaption = computed(() => capitalize(this.currentShot()?.caption ?? ''));
 
   readonly paragraphs = computed(() => this.project()?.longDescription ?? []);
 
-  readonly readmeContext = computed(() =>
-    count(this.paragraphs().length, 'PARAGRAPH', 'PARAGRAPHS'),
-  );
-
   readonly sourceUrl = computed(() => this.project()?.links.github ?? '');
 
-  /** The readout prints the repository, not the protocol: `github.com/owner/repo`. */
-  readonly sourceLabel = computed(() => this.sourceUrl().replace(/^https?:\/\//, ''));
-
   /**
-   * A deployed project leads with its live site, a published library with its
-   * package page; either way the source button steps down to secondary.
+   * The one thing to do besides reading the source: visit a live site, open a
+   * published package, or download the latest release. Platforms come from the
+   * release, never the write-up, so they cannot go stale.
    */
-  readonly demoUrl = computed(() => this.project()?.links.demo ?? '');
+  readonly primary = computed<{ label: string; href: string } | null>(() => {
+    const p = this.project();
+    if (!p) return null;
+    if (p.links.demo) return { label: `Visit ${p.title}`, href: p.links.demo };
+    if (p.links.nuget) return { label: 'View on NuGet', href: p.links.nuget };
+    const release = this.release();
+    if (!release?.platforms.length) return null;
+    const one = release.platforms.length === 1;
+    return { label: one ? `Download for ${release.platforms[0]}` : `Download ${p.title}`, href: release.url };
+  });
 
-  readonly demoLabel = computed(() => bareUrl(this.demoUrl()));
+  /** Commands that install it, for a project with nothing to download. */
+  readonly install = computed(() => this.project()?.install ?? []);
 
-  readonly packageUrl = computed(() => this.project()?.links.nuget ?? '');
-
-  readonly packageLabel = computed(() => bareUrl(this.packageUrl()));
-
-  readonly sourceVariant = computed<ButtonVariant>(() =>
-    this.demoUrl() || this.packageUrl() ? 'secondary' : 'primary',
-  );
+  /** `Free · Windows & Linux · app and CLI, updates itself` */
+  readonly fine = computed(() => {
+    const p = this.project();
+    if (!p || (!this.primary() && !this.install().length)) return '';
+    const platforms = p.links.demo ? '' : platformList(this.release()?.platforms ?? []);
+    return ['Free', platforms, p.note].filter(Boolean).join(' · ');
+  });
 
   /**
-   * KAIRO's record panel offers "Read the writeup" when a project has a
-   * companion log entry. `Project` carries no `writeup` field today and
-   * `projects.data.ts` is not this screen's to change, so this reads one if
-   * the data ever grows it and only offers the link when the entry it names
-   * actually exists. With today's data it is always empty and the button does
-   * not render — inventing a destination would be worse than omitting it.
+   * Offers "Read the write-up" when a project names a companion post.
+   * `Project` carries no `writeup` field today, so this reads one if the data
+   * ever grows it and only offers the link when the post actually exists.
    */
   readonly writeupRoute = computed(() => {
     const slug = (this.project() as (Project & { writeup?: string }) | undefined)?.writeup;
@@ -191,28 +161,28 @@ export class ProjectDetailPage implements OnInit {
     return blogPosts.some((post) => post.slug === slug) ? `/blog/${slug}` : '';
   });
 
-  readonly record = computed<KeyValueItem[]>(() => {
+  readonly facts = computed<KeyValueItem[]>(() => {
     const p = this.project();
     if (!p) return [];
-    const items: KeyValueItem[] = [];
-    // Only fields the record actually carries. A key with an empty value reads
-    // as a broken instrument rather than as an absent fact.
-    if (p.status) items.push({ key: 'STATUS', value: p.status.toUpperCase(), state: 'ok' });
-    if (p.year) items.push({ key: 'YEAR', value: p.year });
-    if (p.stack) items.push({ key: 'STACK', value: p.stack });
-    items.push({ key: 'SCREENSHOTS', value: pad(this.shots().length) });
-    if (this.demoLabel()) items.push({ key: 'LIVE', value: this.demoLabel() });
-    if (this.packageLabel()) items.push({ key: 'PACKAGE', value: this.packageLabel() });
-    if (this.sourceLabel()) items.push({ key: 'SOURCE', value: this.sourceLabel() });
+    // Only facts the project actually has. A key with an empty value reads as
+    // a broken page rather than as an absent fact.
+    const items: KeyValueItem[] = [{ key: 'Kind', value: KIND[p.kind] }];
+    if (p.status) items.push({ key: 'Status', value: capitalize(p.status), state: 'ok' });
+    if (this.release()) items.push({ key: 'Version', value: this.release()!.tag });
+    const platforms = platformList(this.release()?.platforms ?? []);
+    if (platforms) items.push({ key: 'Platforms', value: platforms });
+    if (p.stack) items.push({ key: 'Stack', value: p.stack });
+    if (p.year) items.push({ key: 'Year', value: p.year });
+    if (p.links.demo) items.push({ key: 'Live', value: bareUrl(p.links.demo) });
+    if (p.links.nuget) items.push({ key: 'Package', value: bareUrl(p.links.nuget) });
+    if (p.links.github) items.push({ key: 'Source', value: bareUrl(p.links.github) });
     return items;
   });
 
   /**
-   * The design wraps around a four-record archive, so every record has a
-   * neighbour on both sides. This archive has one, and wrapping a single
-   * record would link it to itself — a control that looks like navigation and
-   * reloads the page you are on. Below two records the panel reports the
-   * absence instead.
+   * The neighbours wrap around the list, so every project has one on both
+   * sides. Below two projects wrapping would link a page to itself, so there
+   * are none.
    */
   readonly neighbours = computed(() => {
     const all = this.records;
@@ -241,7 +211,7 @@ export class ProjectDetailPage implements OnInit {
           path,
           jsonLd: [
             {
-              // Every record with a repository is code; the rest are plain works.
+              // Every project with a repository is code; the rest are plain works.
               '@type': found.links.github ? 'SoftwareSourceCode' : 'CreativeWork',
               name: found.title,
               description: found.description,
@@ -256,12 +226,12 @@ export class ProjectDetailPage implements OnInit {
         return;
       }
 
-      // An id with no record is a 404, exactly like the error route. Without
+      // An id with no project is a 404, exactly like the error route. Without
       // this it would inherit the previous page's tags and could be indexed
       // under a URL that holds nothing.
       this.pageMeta.set({
-        title: 'Record not found - Hazel Granados',
-        description: 'No record exists at this address.',
+        title: 'Project not found - Hazel Granados',
+        description: 'No project lives at this address.',
         path: this.requestedPath(),
         noindex: true,
       });
@@ -278,26 +248,11 @@ export class ProjectDetailPage implements OnInit {
     this.shot.update((current) => (current + 1) % total);
   }
 
-  openSource(): void {
-    const url = this.sourceUrl();
-    if (url) window.open(url, '_blank', 'noopener');
-  }
-
-  openDemo(): void {
-    const url = this.demoUrl();
-    if (url) window.open(url, '_blank', 'noopener');
-  }
-
-  openPackage(): void {
-    const url = this.packageUrl();
-    if (url) window.open(url, '_blank', 'noopener');
-  }
-
   /**
-   * ArrowRight advances the feed, as in the design. Scoped the same way the
-   * shell scopes its own shortcuts: never while a text field has focus — the
-   * command palette's input is one — and never with a modifier held, so
-   * browser and OS chords keep working.
+   * ArrowRight advances the gallery. Scoped the same way the shell scopes its
+   * own shortcuts: never while a text field has focus — the search palette's
+   * input is one — and never with a modifier held, so browser and OS chords
+   * keep working.
    */
   @HostListener('document:keydown', ['$event'])
   onKeydown(event: KeyboardEvent): void {
