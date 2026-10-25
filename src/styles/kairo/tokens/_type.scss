@@ -1,22 +1,21 @@
 :root {
-  // "IBM Plex Sans JP" is the second fallback in all three stacks, per the
-  // design system's tokens/typography.css. It is what renders Japanese glyphs
-  // in the KAIRO identity; without it a CJK character falls through to the
-  // generic and breaks the typeface match mid-sentence.
-  --font-display: "Saira Condensed", "IBM Plex Sans JP", system-ui, sans-serif;
-  --font-ui: "IBM Plex Sans", "IBM Plex Sans JP", system-ui, sans-serif;
-  --font-mono: "IBM Plex Mono", "IBM Plex Sans JP", ui-monospace, monospace;
-  --type-display-xl: 600 96px/0.95 var(--font-display);
-  --type-display-l: 600 56px/1 var(--font-display);
-  --type-display-m: 600 32px/1.05 var(--font-display);
+  // One grotesque for everything people read, a mono for code and commands.
+  --font-display: "Bricolage Grotesque", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-ui: "Bricolage Grotesque", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --type-display-xl: 600 clamp(44px, 6vw, 68px)/1.02 var(--font-display);
+  --type-display-l: 600 clamp(36px, 4.6vw, 50px)/1.02 var(--font-display);
+  --type-display-m: 600 clamp(26px, 3vw, 32px)/1.12 var(--font-display);
   --type-title: 600 20px/1.2 var(--font-display);
-  --type-body: 400 14px/1.55 var(--font-ui);
-  --type-body-s: 400 13px/1.5 var(--font-ui);
-  --type-label: 500 11px/1.2 var(--font-ui);
-  --type-mono: 400 12px/1.5 var(--font-mono);
-  --type-mono-s: 400 11px/1.45 var(--font-mono);
-  --tracking-wide: 0.08em;
-  --tracking-wider: 0.16em;
-  --tracking-display: 0.02em;
+  --type-body: 400 16px/1.6 var(--font-ui);
+  --type-body-s: 400 14px/1.55 var(--font-ui);
+  --type-label: 500 12px/1.3 var(--font-ui);
+  --type-mono: 400 13px/1.55 var(--font-mono);
+  --type-mono-s: 400 12px/1.45 var(--font-mono);
+  --tracking-wide: 0.01em;
+  --tracking-wider: 0.04em;
+  // Headlines run tight, the way the reference sets them: -0.05em at 68px.
+  --tracking-display: -0.045em;
+  --tracking-heading: -0.03em;
   --tracking-normal: 0;
 }

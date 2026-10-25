@@ -45,7 +45,7 @@ body {
 }
 
 html {
-  color-scheme: dark;
+  color-scheme: light;
 }
 
 body {
@@ -54,6 +54,7 @@ body {
   color: var(--text-primary);
   font: var(--type-body);
   -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
 a {
@@ -61,18 +62,19 @@ a {
   text-decoration: none;
 
   &:hover {
-    color: var(--text-primary);
+    color: var(--signal-active-strong);
   }
 }
 
 :focus-visible {
   outline: none;
   box-shadow: var(--focus-ring);
+  border-radius: var(--radius-1);
 }
 
 ::selection {
-  background: var(--signal-active);
-  color: var(--k-paper);
+  background: var(--signal-active-dim);
+  color: var(--text-primary);
 }
 
 // From the design system's tokens/base.css. Scoped to `*` there, and it has to
@@ -81,5 +83,77 @@ a {
 // chrome scrollbar.
 * {
   scrollbar-width: thin;
-  scrollbar-color: var(--k-graphite-4) var(--surface-inset);
+  scrollbar-color: var(--border-strong) transparent;
+}
+
+// The page's content column, shared by the header, every section and the
+// footer, so their edges line up. Global so any page can use it.
+.shell-width {
+  width: min(100% - 2 * var(--gutter), var(--page-width));
+  margin-inline: auto;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  color: var(--text-primary);
+  text-wrap: balance;
+}
+
+// A page's opening: a small purple eyebrow, a big tight headline and a muted
+// lede, as the reference opens "Here's what I'm building."
+.page-hero {
+  padding-block: var(--sp-16) var(--sp-12);
+}
+
+.eyebrow {
+  margin-bottom: var(--sp-4);
+  font: 500 13px/1.3 var(--font-ui);
+  color: var(--signal-active);
+}
+
+.page-hero__title {
+  font: var(--type-display-xl);
+  letter-spacing: var(--tracking-display);
+}
+
+.page-hero__lede {
+  margin-top: var(--sp-6);
+  max-width: 60ch;
+  font-size: 17px;
+  line-height: 1.7;
+  color: var(--text-muted);
+}
+
+// A section's title row: the title on the left, a "See all ↗" on the right.
+.section-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--sp-4);
+  margin-bottom: var(--sp-6);
+}
+
+.section-head__title {
+  font: 600 30px/1.1 var(--font-display);
+  letter-spacing: var(--tracking-heading);
+}
+
+.section-head__more {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
 }
