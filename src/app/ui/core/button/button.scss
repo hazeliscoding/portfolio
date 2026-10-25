@@ -1,47 +1,39 @@
-// Geometry and type from the design system's Button.jsx. The label is UI sans
-// at 11/600 with 0.14em tracking — not mono. Mono is the instrument voice
-// (readouts, indices, paths); a control that the operator presses speaks in
-// the label voice.
-// Matched on the class, not on `button`, because this control renders as an
-// <a> whenever it has somewhere to go. `text-decoration: none` and the colour
-// reset are what stop the global link rules in _base.scss from repainting it
-// cyan and underlining it the moment it becomes an anchor.
+// The shop's buttons: purple for the one thing to do, ink-dark for a strong
+// second, white with a lavender edge for the rest. Sentence case, 12px radius.
 .button {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: var(--sp-2);
   text-decoration: none;
   font-family: var(--font-ui);
-  font-size: 11px;
+  font-size: 15px;
   font-weight: 600;
-  line-height: 1;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  border-radius: var(--radius-0);
+  line-height: 1.2;
+  letter-spacing: 0;
+  border-radius: var(--radius-2);
   cursor: pointer;
   user-select: none;
-  background: var(--surface-elevated);
-  color: var(--text-secondary);
+  background: var(--surface-window);
+  color: var(--text-primary);
   border: var(--bw-hairline) solid var(--border-default);
   transition:
     background var(--dur-micro) var(--ease-mech),
     color var(--dur-micro) var(--ease-mech),
-    border-color var(--dur-micro) var(--ease-mech);
+    border-color var(--dur-micro) var(--ease-mech),
+    transform var(--dur-micro) var(--ease-mech);
 
-  // md. The sizes carry their own vertical padding rather than a flat
-  // min-height, so a button grows with its label instead of centring in a
-  // fixed box.
   padding: 11px 18px;
   min-height: 36px;
 
   &:hover:not(:disabled) {
-    background: var(--surface-raised);
+    background: var(--surface-elevated);
     color: var(--text-primary);
     border-color: var(--border-strong);
   }
 
   &:active:not(:disabled) {
-    background: var(--surface-inset);
+    transform: translateY(1px);
   }
 
   &:disabled {
@@ -52,6 +44,8 @@
   &[data-size="sm"] {
     padding: 7px 12px;
     min-height: 28px;
+    font-size: 13px;
+    border-radius: var(--radius-1);
   }
 
   &[data-size="lg"] {
@@ -61,94 +55,57 @@
 
   &[data-variant="primary"] {
     background: var(--signal-active);
-    color: #fff;
+    color: var(--text-inverse);
     border-color: transparent;
 
     &:hover:not(:disabled) {
-      background: var(--k-red-3);
+      background: var(--signal-active-strong);
       color: var(--text-inverse);
       border-color: transparent;
-    }
-
-    &:active:not(:disabled) {
-      background: var(--k-red-1);
-      color: #fff;
     }
   }
 
   &[data-variant="danger"] {
-    background: transparent;
-    color: var(--text-active);
-    border-color: var(--signal-active);
+    color: var(--signal-danger);
+    border-color: currentColor;
 
     &:hover:not(:disabled) {
-      background: transparent;
-      color: var(--text-active);
-      border-color: var(--signal-active);
-    }
-
-    &:active:not(:disabled) {
-      background: var(--signal-active-dim);
+      color: var(--signal-danger);
+      border-color: currentColor;
     }
   }
 
-  // Quiet tertiary action — no box at all until hover, then an underline.
-  // KAIRO uses it for the "< All projects" / "< All entries" returns.
   &[data-variant="text"] {
     background: transparent;
-    color: var(--text-muted);
+    color: var(--text-link);
     border-color: transparent;
+    padding-inline: 4px;
 
     &:hover:not(:disabled) {
       background: transparent;
-      color: var(--text-primary);
+      color: var(--signal-active-strong);
       border-color: transparent;
       text-decoration: underline;
       text-underline-offset: 4px;
     }
   }
 
-  // The console voice: mono, bracketed, and cyan on hover rather than red.
-  // Red is reserved for the active/destructive register.
+  // The strong second action: ink on paper.
   &[data-variant="command"] {
-    background: var(--surface-window);
-    color: var(--text-secondary);
-    border-color: var(--border-default);
-    font-family: var(--font-mono);
-    font-weight: 500;
-    letter-spacing: 0.04em;
-    text-transform: none;
+    background: var(--surface-inverse);
+    color: var(--text-inverse);
+    border-color: var(--surface-inverse);
 
     &:hover:not(:disabled) {
-      background: var(--surface-window);
-      color: var(--signal-info);
-      border-color: var(--border-default);
+      background: #36334a;
+      color: var(--text-inverse);
+      border-color: #36334a;
     }
-
-    &:active:not(:disabled) {
-      background: var(--surface-inset);
-    }
-  }
-}
-
-// Drawn in CSS, not in the template, so the brackets sit tight against the
-// label. As template nodes they would each become a flex item of `.button`
-// and pick up its 8px gap, printing `[ OPEN ARCHIVE ]`.
-.button[data-variant="command"] .button__label {
-  &::before {
-    content: "[";
-  }
-
-  &::after {
-    content: "]";
   }
 }
 
 .button__index {
   font-family: var(--font-mono);
-  color: var(--text-faint);
-}
-
-.button[data-variant="primary"] .button__index {
-  color: inherit;
+  font-size: 12px;
+  opacity: 0.7;
 }

@@ -48,10 +48,10 @@ describe('Button', () => {
     expect(buttons[1].textContent).toContain('Open archive');
   });
 
-  it('brackets the command variant without spacing the brackets off the label', () => {
+  it('draws the command variant as the dark second action, with no brackets', () => {
     const label = buttons[1].querySelector('.button__label') as HTMLElement;
-    expect(getComputedStyle(label, '::before').content).toBe('"["');
-    expect(getComputedStyle(label, '::after').content).toBe('"]"');
+    expect(getComputedStyle(label, '::before').content).toBe('none');
+    expect(getComputedStyle(buttons[1]).color).toBe('rgb(255, 255, 255)');
   });
 
   it('renders an anchor when given somewhere to go, styled the same', () => {
@@ -76,7 +76,7 @@ describe('Button', () => {
     expect(getComputedStyle(link).color).toBe(getComputedStyle(buttons[0]).color);
   });
 
-  it('uses KAIRO\'s size ladder', () => {
+  it('keeps the size ladder', () => {
     // 36 for md and 28 for sm, per the design system. Both clear WCAG 2.2
     // SC 2.5.8's 24px AA floor; the 44px AAA figure applies to `lg`, which is
     // what the touch-first controls in the bottom bar use.
