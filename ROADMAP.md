@@ -4,11 +4,20 @@ What's next for the site. Shipped work lives in the git history.
 
 ## Decisions
 
+- 2026-10-25: The projects page splits into Shipped and Building now, the way thatlev.com/projects
+  puts the apps that are ready beside the ones still on the way. Experiments leave their light cards
+  for full bands like the shipped ones, with a striped "Building now" sticker, a "Try the latest
+  build" button, Puzzle Boy's three repos as links and Axiomarium's commands on its screen. The home
+  band takes turns between the featured apps again, on the 2026-10-19 rules: 8 seconds each with a
+  crossfade, paused on hover and focus, stopped once a visitor picks an app, its own pause button,
+  and never under reduced motion. It gives up the smaller cards that kept an experiment from looking
+  finished; the sticker, the button and the group's intro now say it isn't.
 - 2026-10-25: The site becomes a light maker's shop after thatlev.com, in place of KAIRO's dark
   broadcast terminal, with my GitHub profile README's voice for the copy. Lavender-white paper, one
   ink, a purple accent and near-black bands for featured work, in Bricolage Grotesque and JetBrains
   Mono. A sticky header (wordmark, four pages, search) and a footer replace the system bars and
-  mode rail. Home opens on the first featured app's dark band, then the hero, every shipped project
+  mode rail. Home opens on the first featured app's dark band (superseded 2026-10-25: the featured
+  apps take turns on it), then the hero, every shipped project
   as a card, open-source work, the latest posts, a note from me and an FAQ. Projects keep their
   brand-coloured bands; About is a maker page. It gives up the boot intro, the clock, the log, the
   numbered windows, NOW PLAYING's rotation and the Japanese face in the type stacks. ⌘K search and
@@ -50,7 +59,7 @@ What's next for the site. Shipped work lives in the git history.
   per-product bands, so the page shows premium products without leaving the KAIRO look (the look is
   superseded 2026-10-25; the bands stay). Three
   kinds: shipped apps are ON AIR, live sites are LIVE, experiments are PILOTS, shown smaller at the
-  end. A channel guide replaces the tag filters. Names stay in the site's type, not each project's
+  end (superseded 2026-10-25: they get bands under Building now). A channel guide replaces the tag filters. Names stay in the site's type, not each project's
   lockup. Versions and platforms come from each repo's latest GitHub release, refreshed weekly like
   the OSS stats (superseded 2026-10-20: twice a day), so they can't go stale the way Prompuff's macOS build did. Puzzle Boy's three
   repos are one pilot whose main links go to Community Edition, the one that plays out of the box.
