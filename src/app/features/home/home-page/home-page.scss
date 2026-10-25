@@ -1,275 +1,270 @@
-// KAIRO's home screen as a broadcast, in the projects page's language: a lower
-// third, NOW PLAYING over the featured segments, and two strips.
-:host {
-  display: block;
-}
+@use "sass:list";
 
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip-path: inset(50%);
-  white-space: nowrap;
-}
-
-// `minmax(0, 1fr)`, not the implicit `auto` track: an auto track is as wide as
-// its widest child's min-content, and the segments and strips pushed the page
-// past a phone's width.
 .home {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: var(--sp-3);
-}
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-16);
+  padding-top: var(--sp-4);
 
-.lower,
-.now,
-.strip {
-  &[data-sfx="a"] {
+  > section {
     animation: win-a var(--dur-window) var(--ease-mech) both;
   }
 
-  &[data-sfx="b"] {
-    animation: win-b var(--dur-window) var(--ease-mech) both;
+  @for $i from 1 through 8 {
+    > section:nth-child(#{$i}) {
+      animation-delay: #{($i - 1) * 50}ms;
+    }
+  }
+
+  &[data-sfx="b"] > section {
+    animation-name: win-b;
   }
 }
 
-// ---- Lower third ------------------------------------------------------
+@media (prefers-reduced-motion: reduce) {
+  .home > section {
+    animation: none;
+  }
 
-.lower {
+  // No clock, so no rotation, and nothing for the pause button to stop. Scoped
+  // under .promo to outrank the button's own display, which comes later.
+  .promo .promo__progress,
+  .promo .promo__pause {
+    display: none;
+  }
+
+  .promo__slide,
+  .promo__slide--on {
+    transition: none;
+  }
+}
+
+// --- Featured band ---------------------------------------------------------
+
+.promo {
+  margin-top: var(--sp-2);
+  padding: 14px;
+  padding-inline-start: clamp(24px, 4vw, 56px);
+  background: var(--surface-night);
+  border-radius: var(--radius-3);
+  color: var(--text-on-night);
+}
+
+// Every slide in one cell. The incoming one fades in over the outgoing one,
+// which holds at full opacity underneath until the fade is done and only then
+// hides, so the dissolve never shows the band through both.
+.promo__slides {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: var(--sp-6) var(--sp-8);
-  align-items: end;
-  margin-block-end: var(--sp-3);
-  padding: var(--sp-8);
-  border: var(--bw-hairline) solid var(--border-default);
-  // The strap's bar: the station's red, as a project's tint marks its segment.
-  border-inline-start: 6px solid var(--signal-active);
-  background:
-    linear-gradient(90deg, color-mix(in srgb, var(--signal-active) 10%, transparent), transparent 60%),
-    var(--surface-canvas);
 }
 
-.lower__id {
+.promo__slide {
+  display: grid;
+  grid-area: 1 / 1;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: var(--sp-8);
+  align-items: center;
   min-width: 0;
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 0s linear var(--dur-cinematic),
+    visibility 0s linear var(--dur-cinematic);
 }
 
-.lower__name {
-  margin: 0;
-  font: 600 clamp(48px, 6vw, 72px) / 0.9 var(--font-display);
+.promo__slide--on {
+  z-index: 1;
+  opacity: 1;
+  visibility: visible;
+  transition: opacity var(--dur-cinematic) var(--ease-mech);
+}
+
+.promo__copy {
+  padding-block: var(--sp-8);
+}
+
+.promo__chips {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  margin-bottom: var(--sp-6);
+}
+
+.promo__icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+}
+
+.promo__pill {
+  padding: 5px 10px;
+  border: var(--bw-hairline) solid rgba(255, 255, 255, 0.22);
+  border-radius: var(--radius-pill);
+  font: 600 13px/1 var(--font-ui);
+  color: var(--text-on-night);
+}
+
+.promo__title {
+  font: var(--type-display-l);
   letter-spacing: var(--tracking-display);
-  text-transform: uppercase;
-  color: var(--text-primary);
+  color: var(--text-on-night);
+  max-width: 16ch;
 }
 
-.lower__strap {
-  display: inline-flex;
+.promo__lede {
+  margin-top: var(--sp-5);
+  max-width: 44ch;
+  font-size: 17px;
+  color: var(--text-on-night-muted);
+}
+
+.promo__actions {
+  display: flex;
   flex-wrap: wrap;
-  margin: var(--sp-3) 0 0;
-  font: 500 12px/1 var(--font-mono);
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+  align-items: center;
+  gap: var(--sp-4) var(--sp-6);
+  margin-top: var(--sp-6);
 }
 
-.lower__live {
+.promo__cta {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 7px 10px;
-  background: var(--signal-active);
-  color: var(--text-inverse);
-  font-weight: 600;
-}
-
-// The projects page's LIVE dot, blinking the same way.
-.lower__dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: currentColor;
-  animation: k-blink var(--dur-blink) steps(2, end) infinite;
-}
-
-.lower__role {
-  padding: 7px 12px;
-  background: var(--surface-inverse);
-  color: var(--text-inverse);
-}
-
-.lower__bio {
-  max-width: 58ch;
-  margin: var(--sp-4) 0 0;
-  font: 400 17px/1.45 var(--font-ui);
-  color: var(--text-secondary);
-}
-
-.lower__side {
-  display: grid;
-  gap: var(--sp-4);
-}
-
-// The readout's look (mono, dotted rule under each value), with an icon in
-// place of each key. Rows are 24px so each link clears WCAG 2.5.8's target.
-.lower__contact {
-  display: grid;
-  gap: var(--sp-1);
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  font: var(--type-mono-s);
-}
-
-.lower__link {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  min-height: 24px;
-  border-bottom: var(--bw-hairline) dotted var(--border-faint);
-  color: var(--text-primary);
-}
-
-a.lower__link:hover {
-  color: var(--text-link);
-}
-
-.lower__icon {
-  flex: none;
-  width: 14px;
-  height: 14px;
-  fill: var(--text-muted);
-}
-
-a.lower__link:hover .lower__icon {
-  fill: currentColor;
-}
-
-.lower__actions {
-  display: flex;
   gap: var(--sp-2);
-}
-
-// ---- NOW PLAYING ------------------------------------------------------
-
-.now__bar {
-  display: flex;
-  align-items: stretch;
-  border: var(--bw-hairline) solid var(--border-default);
-  border-block-end: 0;
-  background: var(--surface-window);
-  font: 400 12px/1 var(--font-mono);
-  letter-spacing: var(--tracking-wide);
-  text-transform: uppercase;
-}
-
-// The 44px floor is the tabs' on a desktop row; on a phone the tabs wrap to a
-// row of their own, and the label, pause and archive link keep it themselves.
-.now__label,
-.now__pause,
-.now__all {
-  min-height: var(--target-min);
-}
-
-.now__label {
-  display: flex;
-  align-items: center;
-  padding: 0 var(--sp-4);
-  border-inline-end: var(--bw-hairline) solid var(--border-default);
-  font-weight: 500;
-  white-space: nowrap;
-  color: var(--signal-active);
-
-  &::before {
-    content: "● ";
-    white-space: pre;
-  }
-}
-
-.now__tabs {
-  display: flex;
-  min-width: 0;
-}
-
-.now__tab {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: var(--sp-2);
-  min-height: var(--target-min);
-  padding: 0 var(--sp-4);
-  background: transparent;
-  border: 0;
-  border-inline-end: var(--bw-hairline) solid var(--border-default);
-  border-radius: var(--radius-0);
-  font: inherit;
-  letter-spacing: inherit;
-  text-transform: inherit;
-  white-space: nowrap;
-  color: var(--text-muted);
-  cursor: pointer;
-  transition: color var(--dur-micro) var(--ease-mech);
+  min-height: 46px;
+  padding: 0 22px;
+  border-radius: var(--radius-pill);
+  background: var(--h-white);
+  font: 600 16px/1 var(--font-ui);
+  color: var(--h-night);
 
   &:hover {
-    color: var(--text-secondary);
+    color: var(--h-night);
+    background: var(--h-lavender-2);
   }
+}
 
-  // The selection rule, in the channel's own tint: solid when a visitor has
-  // the remote, a dim track under the progress bar while the channels run.
-  &::after {
-    content: "";
-    position: absolute;
-    inset: auto 0 0;
-    height: var(--bw-indicator);
-    background: var(--tint);
-    opacity: 0;
+.promo__more {
+  font-weight: 600;
+  color: var(--text-on-night);
+
+  &:hover {
+    color: var(--h-white);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+}
+
+.promo__fine {
+  margin-top: var(--sp-6);
+  font-size: 13px;
+  color: var(--text-on-night-muted);
+}
+
+// The screenshot sits on a wash of the project's own colour, with its first
+// hard fact over the top like a caption.
+.promo__screen {
+  position: relative;
+  margin: 0;
+  padding: clamp(20px, 3vw, 40px);
+  border-radius: 18px;
+  background:
+    radial-gradient(120% 90% at 80% 0%, color-mix(in srgb, var(--tint) 55%, transparent), transparent 70%),
+    var(--surface-night-deep);
+  overflow: hidden;
+
+  img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+    box-shadow: 0 24px 60px -20px rgba(0, 0, 0, 0.7);
+  }
+}
+
+.promo__caption {
+  position: absolute;
+  inset-inline: 0;
+  top: 14px;
+  text-align: center;
+  font: 600 18px/1.2 var(--font-display);
+  letter-spacing: -0.01em;
+  color: var(--h-white);
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.6);
+}
+
+// One tab per featured app, then the pause button.
+.promo__bar {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  padding-block: var(--sp-3) 10px;
+}
+
+.promo__tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+}
+
+.promo__tab {
+  position: relative;
+  isolation: isolate;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  min-height: 36px;
+  padding: 0 14px 0 10px;
+  overflow: hidden;
+  border: var(--bw-hairline) solid rgba(255, 255, 255, 0.14);
+  border-radius: var(--radius-pill);
+  background: transparent;
+  font: 600 14px/1 var(--font-ui);
+  color: var(--text-on-night-muted);
+  cursor: pointer;
+  transition:
+    background var(--dur-micro) var(--ease-mech),
+    color var(--dur-micro) var(--ease-mech);
+
+  &:hover {
+    color: var(--text-on-night);
+    background: rgba(255, 255, 255, 0.06);
   }
 
   &[aria-selected="true"] {
-    color: var(--text-primary);
-    background: var(--surface-canvas);
-
-    &::after {
-      opacity: 1;
-    }
+    border-color: color-mix(in srgb, var(--tint) 60%, transparent);
+    background: color-mix(in srgb, var(--tint) 26%, transparent);
+    color: var(--text-on-night);
   }
 }
 
-.now--playing .now__tab[aria-selected="true"]::after {
-  opacity: 0.3;
+// While it plays, the active tab fills with its colour instead.
+.promo--playing .promo__tab[aria-selected="true"] {
+  background: rgba(255, 255, 255, 0.06);
 }
 
-.now__mark {
+.promo__mark {
   display: block;
+  width: 18px;
+  height: 18px;
 }
 
-.now__number {
-  color: var(--text-faint);
-}
-
-.now__tab[aria-selected="true"] .now__number {
-  color: var(--text-muted);
-}
-
-// The rotation's clock. Its `animationend` changes the channel, so pausing the
-// animation pauses the rotation: hovering or focusing the tabs or the screen
-// holds the channel, and the bar shows how long until the next one.
-.now__progress {
+// The rotation's clock. Its `animationend` shows the next app, so pausing the
+// animation pauses the rotation: hovering or focusing the band holds the app,
+// and the fill shows how long until the next one.
+.promo__progress {
   position: absolute;
-  inset: auto 0 0;
-  height: var(--bw-indicator);
-  background: var(--tint);
+  inset: 0;
+  z-index: -1;
+  background: color-mix(in srgb, var(--tint) 30%, transparent);
   transform-origin: left;
-  animation: now-progress 8s linear both;
+  animation: promo-progress 8s linear both;
 }
 
-.now__tabs:hover .now__progress,
-.now__tabs:focus-within .now__progress,
-.now:has(.now__screen:hover) .now__progress,
-.now:has(.now__screen:focus-within) .now__progress {
+.promo:hover .promo__progress,
+.promo:focus-within .promo__progress {
   animation-play-state: paused;
 }
 
-@keyframes now-progress {
+@keyframes promo-progress {
   from {
     transform: scaleX(0);
   }
@@ -279,228 +274,690 @@ a.lower__link:hover .lower__icon {
   }
 }
 
-.now__pause,
-.now__all {
-  display: flex;
-  align-items: center;
-  padding: 0 var(--sp-4);
-  white-space: nowrap;
-  color: var(--text-secondary);
+.promo__pause {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 36px;
+  height: 36px;
+  border: var(--bw-hairline) solid rgba(255, 255, 255, 0.22);
+  border-radius: 50%;
+  background: transparent;
+  color: var(--text-on-night);
+  cursor: pointer;
 
   &:hover {
-    color: var(--text-primary);
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  svg {
+    width: 14px;
+    height: 14px;
+    fill: currentColor;
   }
 }
 
-.now__pause {
-  margin-inline-start: auto;
-  background: transparent;
-  border: 0;
-  border-inline-start: var(--bw-hairline) solid var(--border-default);
-  border-radius: var(--radius-0);
-  font: inherit;
-  letter-spacing: inherit;
-  cursor: pointer;
-}
+// --- Open-source strip -----------------------------------------------------
 
-.now__all {
-  border-inline-start: var(--bw-hairline) solid var(--border-default);
-}
-
-// Every channel in one cell. The incoming one fades in over the outgoing one,
-// which holds at full opacity underneath until the fade is done and only then
-// hides, so the dissolve never shows the canvas through both.
-.now__screen {
-  display: grid;
-  border: var(--bw-hairline) solid var(--border-default);
-}
-
-.now__panel {
-  display: grid;
-  grid-area: 1 / 1;
-  min-width: 0;
-  opacity: 0;
-  visibility: hidden;
-  transition:
-    opacity 0s linear var(--dur-cinematic),
-    visibility 0s linear var(--dur-cinematic);
-}
-
-.now__panel--on {
-  z-index: 1;
-  opacity: 1;
-  visibility: visible;
-  transition: opacity var(--dur-cinematic) var(--ease-mech);
-}
-
-// ---- Strips -----------------------------------------------------------
-
-// One grid for both strips, so LATEST and OPEN SOURCE share a tag width and
-// their rows start on the same line.
-.strips {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
-  gap: var(--sp-3) 0;
-}
-
-.strip {
-  grid-column: 1 / -1;
-  display: grid;
-  grid-template-columns: subgrid;
-  align-items: stretch;
-  border: var(--bw-hairline) solid var(--border-default);
-  background: var(--surface-canvas);
-}
-
-.strip__tag {
+.community {
   display: flex;
   align-items: center;
-  margin: 0;
-  padding: 0 var(--sp-4);
+  gap: var(--sp-5);
+  margin-top: calc(-1 * var(--sp-12));
+  padding: 12px 28px 12px 12px;
+  background: var(--surface-elevated);
+  border: var(--bw-hairline) solid var(--border-default);
+  border-radius: var(--radius-3);
+}
+
+.community__tile {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius-2);
   background: var(--surface-inverse);
   color: var(--text-inverse);
-  font: 600 12px/1 var(--font-mono);
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-}
 
-.strip--oss .strip__tag {
-  background: var(--signal-info);
-}
-
-.strip__items {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--sp-1) var(--sp-8);
-  margin: 0;
-  padding: var(--sp-3) var(--sp-4);
-  list-style: none;
-}
-
-.strip__item {
-  display: inline-flex;
-  align-items: baseline;
-  gap: var(--sp-2);
-  font: var(--type-body-s);
-  color: var(--text-secondary);
-
-  &::before {
-    content: "▸";
-    color: var(--signal-active);
-  }
-
-  &:hover {
-    color: var(--text-primary);
+  svg {
+    width: 28px;
+    height: 28px;
+    fill: currentColor;
   }
 }
 
-.strip--oss .strip__item::before {
-  color: var(--signal-info);
+.community__copy {
+  flex: 1;
+  min-width: 0;
 }
 
-.strip__meta {
-  flex: none;
-  white-space: nowrap;
-  font: var(--type-mono-s);
-  letter-spacing: 0.04em;
+.community__title {
+  font: 600 21px/1.2 var(--font-display);
+  letter-spacing: var(--tracking-heading);
+}
+
+.community__text {
+  font-size: 14px;
   color: var(--text-muted);
 }
 
-.strip__more {
+.community__link {
+  flex-shrink: 0;
+  font-weight: 600;
+  font-size: 15px;
+}
+
+// --- Hero ------------------------------------------------------------------
+
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+  gap: var(--sp-8);
+  align-items: center;
+}
+
+.hero__eyebrow {
+  margin-bottom: var(--sp-4);
+  font: var(--type-label);
+  font-size: 13px;
+  color: var(--signal-active);
+}
+
+.hero__title {
+  font: var(--type-display-xl);
+  letter-spacing: var(--tracking-display);
+}
+
+.hero__text {
+  margin-top: var(--sp-6);
+  max-width: 52ch;
+  color: var(--text-muted);
+}
+
+// Die-cut stickers: a white border, a soft shadow and a slight turn each.
+.hero__stickers {
+  position: relative;
+  height: 340px;
+}
+
+.hero__sticker {
+  position: absolute;
+  width: 96px;
+  height: 96px;
+  padding: 6px;
+  background: var(--h-white);
+  border-radius: 26px;
+  box-shadow: 0 10px 24px -10px rgba(48, 34, 72, 0.35);
+  transition: transform var(--dur-control) var(--ease-mech);
+
+  $spots: (
+    (4%, 8%, -8deg),
+    (30%, 0%, 6deg),
+    (58%, 10%, -4deg),
+    (82%, 2%, 9deg),
+    (14%, 52%, 7deg),
+    (42%, 44%, -6deg),
+    (68%, 56%, 5deg),
+    (90%, 46%, -9deg)
+  );
+
+  @for $i from 1 through list.length($spots) {
+    $spot: list.nth($spots, $i);
+
+    &:nth-child(#{$i}) {
+      left: calc(#{list.nth($spot, 1)} - 40px);
+      top: list.nth($spot, 2);
+      transform: rotate(list.nth($spot, 3));
+    }
+  }
+}
+
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .hero__stickers:hover .hero__sticker {
+    transform: rotate(0deg) scale(1.04);
+  }
+}
+
+// --- Shipped cards ---------------------------------------------------------
+
+.picks__grid {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--sp-10) var(--sp-6);
+}
+
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+// A pastel of the project's own colour behind its screenshot.
+.card__media {
+  position: relative;
+  aspect-ratio: 1.36;
+  border-radius: 20px;
+  background: color-mix(in srgb, var(--tint) 20%, var(--h-white));
+  overflow: hidden;
+}
+
+.card__shot {
+  position: absolute;
+  left: 12%;
+  top: 14%;
+  width: 88%;
+  height: auto;
+  border-radius: 10px 0 0 0;
+  box-shadow: 0 16px 40px -16px rgba(48, 34, 72, 0.45);
+  transition: transform var(--dur-window) var(--ease-mech);
+}
+
+.card__icon {
+  position: absolute;
+  left: 16px;
+  bottom: 16px;
+  width: 44px;
+  height: 44px;
+  padding: 4px;
+  border-radius: 14px;
+  background: var(--h-white);
+  box-shadow: var(--shadow-soft);
+}
+
+.card__arrow {
+  position: absolute;
+  right: 14px;
+  bottom: 14px;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.93);
+  font-size: 15px;
+  color: var(--text-primary);
+  box-shadow: var(--shadow-soft);
+}
+
+.card__meta {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--sp-3);
+  margin-top: var(--sp-4);
+  font-size: 12px;
+  color: var(--text-faint);
+}
+
+.card__title {
+  margin-top: var(--sp-2);
+  font: 600 22px/1.2 var(--font-display);
+  letter-spacing: -0.02em;
+}
+
+// The title is the card's one link; its ::after stretches over the whole card.
+.card__link {
+  color: inherit;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 20px;
+  }
+
+  &:hover {
+    color: inherit;
+  }
+
+  &:focus-visible {
+    box-shadow: none;
+
+    &::after {
+      box-shadow: var(--focus-ring);
+    }
+  }
+}
+
+.card__pitch {
+  margin-top: var(--sp-2);
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+.card__foot {
   display: flex;
   align-items: center;
-  padding: 0 var(--sp-4);
-  font: var(--type-mono-s);
-  letter-spacing: var(--tracking-wide);
+  justify-content: space-between;
+  gap: var(--sp-3);
+  margin-top: auto;
+  margin-top: var(--sp-5);
+  padding-top: var(--sp-4);
+  border-top: var(--bw-hairline) solid var(--border-default);
+}
+
+.card__fine {
+  font-size: 12px;
+  color: var(--text-faint);
+}
+
+.card__button {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: 12px 18px;
+  border-radius: var(--radius-2);
+  background: var(--signal-active);
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--text-inverse);
   white-space: nowrap;
-  color: var(--text-secondary);
+  transition: background var(--dur-micro) var(--ease-mech);
+}
+
+.card:hover {
+  .card__shot {
+    transform: translate(-6px, -6px);
+  }
+
+  .card__button {
+    background: var(--signal-active-strong);
+  }
+
+  .card__title {
+    color: var(--signal-active-strong);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card:hover .card__shot {
+    transform: none;
+  }
+}
+
+// --- Open source -----------------------------------------------------------
+
+.oss {
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  gap: var(--sp-8);
+  margin-top: var(--sp-8);
+}
+
+.oss__summary {
+  margin-top: var(--sp-3);
+  color: var(--text-muted);
+}
+
+.oss__list {
+  list-style: none;
+  border-top: var(--bw-hairline) solid var(--border-default);
+}
+
+.oss__row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto 24px;
+  align-items: center;
+  gap: var(--sp-6);
+  padding: 20px 4px;
+  border-bottom: var(--bw-hairline) solid var(--border-default);
+  color: var(--text-primary);
 
   &:hover {
     color: var(--text-primary);
+
+    .oss__go {
+      color: var(--signal-active);
+      transform: translate(2px, -2px);
+    }
   }
 }
 
-// ---- Phones and narrow tablets -----------------------------------------
+.oss__name {
+  display: flex;
+  flex-direction: column;
+  font-weight: 600;
+  font-size: 17px;
+}
 
-@media (max-width: 839.98px) {
-  .lower {
-    grid-template-columns: minmax(0, 1fr);
-    padding: var(--sp-5) var(--sp-4);
+.oss__owner {
+  font-weight: 400;
+  font-size: 13px;
+  color: var(--text-faint);
+}
+
+.oss__stat {
+  font: var(--type-mono-s);
+  color: var(--text-muted);
+}
+
+.oss__stat--merged {
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  background: var(--signal-active-dim);
+  font: 500 12px/1.2 var(--font-ui);
+  color: var(--h-purple-ink);
+}
+
+.oss__go {
+  color: var(--text-faint);
+  transition:
+    transform var(--dur-micro) var(--ease-mech),
+    color var(--dur-micro) var(--ease-mech);
+}
+
+// --- Writing ---------------------------------------------------------------
+
+.writing__grid {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--sp-6);
+}
+
+.post {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+  padding: 24px;
+  background: var(--surface-window);
+  border: var(--bw-hairline) solid var(--border-default);
+  border-radius: var(--radius-3);
+  transition:
+    border-color var(--dur-micro) var(--ease-mech),
+    box-shadow var(--dur-control) var(--ease-mech);
+
+  &:hover {
+    border-color: var(--border-strong);
+    box-shadow: var(--shadow-card);
   }
+}
 
-  // The label, pause and archive link share the first row; the channels get a
-  // full-width row of their own.
-  .now__bar {
-    flex-wrap: wrap;
-  }
+.post__date {
+  font: var(--type-mono-s);
+  color: var(--text-faint);
+}
 
-  // `ALL 8 ›`: the noun is what doesn't fit beside the label and the pause.
-  .now__all-noun {
-    display: none;
-  }
+.post__title {
+  font: 600 20px/1.25 var(--font-display);
+  letter-spacing: -0.02em;
+}
 
-  // Mark and number only, as the projects page's channel guide does on a
-  // phone, so all three tabs fit and the rotation never lands on one scrolled
-  // out of view. The segment below names the channel in full.
-  .now__tabs {
-    order: 1;
-    flex-basis: 100%;
-    border-block-start: var(--bw-hairline) solid var(--border-default);
-  }
+.post__link {
+  color: inherit;
 
-  .now__tab {
-    flex: 1;
-    justify-content: center;
-  }
-
-  .now__title {
+  &::after {
+    content: "";
     position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip-path: inset(50%);
-    white-space: nowrap;
+    inset: 0;
+    border-radius: var(--radius-3);
   }
 
-  .strips {
-    grid-template-columns: minmax(0, 1fr);
+  &:hover {
+    color: var(--signal-active-strong);
   }
 
-  .strip__tag {
-    padding-block: var(--sp-2);
-  }
+  &:focus-visible {
+    box-shadow: none;
 
-  .strip__items {
-    flex-direction: column;
-  }
-
-  .strip__more {
-    padding-block: 0 var(--sp-3);
+    &::after {
+      box-shadow: var(--focus-ring);
+    }
   }
 }
 
-// Nothing moves: no entrance, no blinking dot, and no rotation, since the
-// rotation runs off the progress bar's animation. With nothing to pause, the
-// pause control goes too, and a channel changes only when a visitor picks it.
-@media (prefers-reduced-motion: reduce) {
-  .lower[data-sfx],
-  .now[data-sfx],
-  .strip[data-sfx],
-  .lower__dot,
-  .now__progress {
-    animation: none;
+.post__text {
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+.post__tags {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: auto;
+  padding-top: var(--sp-2);
+
+  li {
+    padding: 3px 10px;
+    border-radius: var(--radius-pill);
+    background: var(--surface-raised);
+    font-size: 12px;
+    color: var(--text-secondary);
+  }
+}
+
+// --- Maker -----------------------------------------------------------------
+
+.maker {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--sp-12);
+  align-items: center;
+  padding-bottom: var(--sp-10);
+  border-bottom: var(--bw-hairline) solid var(--border-default);
+}
+
+.maker__polaroid {
+  margin: 0;
+  padding: 10px 10px 0;
+  width: 190px;
+  background: var(--h-white);
+  border-radius: 6px;
+  box-shadow: 0 18px 40px -18px rgba(48, 34, 72, 0.45);
+  transform: rotate(-5deg);
+}
+
+.maker__photo {
+  position: relative;
+  display: grid;
+  place-items: center;
+  aspect-ratio: 1;
+  border-radius: 3px;
+  background: linear-gradient(150deg, #efe7ff 0%, #d9ccff 55%, #f6d6e8 100%);
+}
+
+.maker__monogram {
+  font: 800 96px/1 var(--font-display);
+  letter-spacing: -0.06em;
+  color: var(--signal-active);
+}
+
+.maker__heart {
+  position: absolute;
+  right: 16px;
+  bottom: 10px;
+  font-size: 26px;
+  color: #d66ba0;
+}
+
+.maker__caption {
+  padding: 12px 4px 14px;
+  text-align: center;
+  font: italic 500 15px/1 var(--font-ui);
+  color: var(--text-muted);
+}
+
+.maker__title {
+  margin-bottom: var(--sp-4);
+  font: var(--type-display-m);
+  letter-spacing: var(--tracking-heading);
+}
+
+.maker__copy {
+  max-width: 62ch;
+
+  p {
+    margin-top: var(--sp-3);
+    color: var(--text-muted);
+  }
+}
+
+.maker__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-4) var(--sp-6);
+  margin-top: var(--sp-6);
+}
+
+.maker__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-4);
+  padding: 16px 24px;
+  border-radius: var(--radius-2);
+  background: var(--surface-inverse);
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--text-inverse);
+
+  &:hover {
+    background: #36334a;
+    color: var(--text-inverse);
+  }
+}
+
+.maker__mail {
+  font-size: 15px;
+  font-weight: 500;
+}
+
+// --- FAQ -------------------------------------------------------------------
+
+.faq {
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  gap: var(--sp-8);
+}
+
+.faq__sub {
+  margin-top: var(--sp-2);
+  color: var(--text-muted);
+}
+
+.faq__item {
+  border-bottom: var(--bw-hairline) solid var(--border-default);
+
+  summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--sp-4);
+    padding: 24px 0;
+    font-weight: 600;
+    font-size: 16px;
+    cursor: pointer;
+    list-style: none;
+
+    &::-webkit-details-marker {
+      display: none;
+    }
+
+    &::after {
+      content: "+";
+      font: 400 20px/1 var(--font-ui);
+      color: var(--text-muted);
+      transition: transform var(--dur-control) var(--ease-mech);
+    }
   }
 
-  .now__progress,
-  .now__pause {
+  &[open] summary::after {
+    transform: rotate(45deg);
+  }
+
+  p {
+    padding-bottom: 24px;
+    max-width: 62ch;
+    color: var(--text-muted);
+  }
+}
+
+// --- Narrow screens --------------------------------------------------------
+
+@media (max-width: 1080px) {
+  .picks__grid,
+  .writing__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 840px) {
+  .home {
+    gap: var(--sp-12);
+  }
+
+  .promo__slide,
+  .hero,
+  .oss,
+  .faq {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .promo {
+    padding: var(--sp-6) var(--sp-6) 14px;
+  }
+
+  .promo__copy {
+    padding-block: 0;
+  }
+
+  .community {
+    margin-top: calc(-1 * var(--sp-8));
+    flex-wrap: wrap;
+    padding: 14px 18px;
+  }
+
+  .hero__stickers {
+    height: 220px;
+  }
+
+  .hero__sticker {
+    width: 72px;
+    height: 72px;
+    border-radius: 20px;
+  }
+
+  .maker {
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: start;
+    gap: var(--sp-8);
+  }
+
+  .oss {
+    margin-top: 0;
+  }
+}
+
+@media (max-width: 600px) {
+  // The marks name the other apps; their titles stay for screen readers.
+  .promo__tab:not([aria-selected="true"]) {
+    padding-inline: 9px;
+
+    .promo__tab-title {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+  }
+
+  .picks__grid,
+  .writing__grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .oss__row {
+    grid-template-columns: minmax(0, 1fr) auto 20px;
+    gap: var(--sp-3);
+  }
+
+  .oss__stat:not(.oss__stat--merged) {
     display: none;
-  }
-
-  .now__all {
-    margin-inline-start: auto;
-  }
-
-  .now--playing .now__tab[aria-selected="true"]::after {
-    opacity: 1;
   }
 }

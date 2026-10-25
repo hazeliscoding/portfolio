@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { Meta, Title } from '@angular/platform-browser';
 import { Router, provideRouter } from '@angular/router';
 import { ErrorPage } from './error-page';
 
@@ -20,74 +21,30 @@ describe('ErrorPage', () => {
     expect(fixture.componentInstance).toBeTruthy();
   });
 
-  it('reports the failure as a machine report', () => {
-    expect(el.textContent).toContain('NO RECORD AT THIS ADDRESS');
-  });
-
-  it('renders the alert window variant, focused', () => {
-    const window = el.querySelector('[data-variant="alert"]');
-    expect(window).toBeTruthy();
-    // `active` is what puts the red rule and the corner bracket on the panel.
-    // Neutral is the default, and a neutral 404 reads like any other card.
-    expect(window?.getAttribute('data-active')).toBe('true');
-  });
-
-  it('logs the event in the window footer', () => {
-    expect(el.querySelector('.window__foot')?.textContent).toContain(
-      'THIS EVENT HAS BEEN LOGGED',
-    );
-  });
-
-  it('takes its own chapter in the system, not a bare panel', () => {
-    expect(el.querySelector('.chapter__code')?.textContent).toBe('ERROR');
-    expect(el.querySelector('.chapter__index')?.textContent).toBe('_404');
-    expect(el.querySelector('.chapter__meta')?.textContent).toContain('ROUTE ERROR');
+  it('draws the shared 404 card, headed in sentence case', () => {
+    expect(el.querySelector('app-record-fault .fault__panel')).toBeTruthy();
+    expect(el.querySelector('h1')?.textContent?.trim()).toBe('This page wandered off.');
   });
 
   it('reads the attempted path off the router instead of hardcoding one', () => {
     const router = TestBed.inject(Router);
-    // The design demo prints a fixed /portfolio/unknown-record. The PATH
-    // readout is the one reading on this page that has to be true.
     const path = el.querySelector('.key-value__value[data-state="danger"]');
     expect(path?.textContent?.trim()).toBe(router.url);
-    expect(el.textContent).not.toContain('/portfolio/unknown-record');
-  });
-
-  it('states the status code as a readout', () => {
-    expect(el.textContent).toContain('404 NOT_FOUND');
-  });
-
-  it('offers a way back', () => {
-    expect(el.querySelector('.chapter__back')?.textContent).toContain('HOME_01');
+    expect(el.textContent).toContain('404 Not found');
   });
 
   it('offers both recovery routes as real links', () => {
     // Every control on this page navigates, so every control is an <a> with an
-    // href — middle-clickable, copyable, and announced as a link. They were
-    // <button>s wired to the router until Button grew a link mode.
-    const home = el.querySelector<HTMLAnchorElement>('a.button[data-variant="primary"]');
-    const archive = el.querySelector<HTMLAnchorElement>('a.button[data-variant="command"]');
-    expect(home?.textContent).toContain('Home >');
-    expect(home?.getAttribute('href')).toBe('/');
-    expect(archive?.textContent).toContain('Open archive');
-    expect(archive?.getAttribute('href')).toBe('/portfolio');
+    // href — middle-clickable, copyable, and announced as a link.
+    const links = [...el.querySelectorAll<HTMLAnchorElement>('a.button')];
+    expect(links.map((a) => a.getAttribute('href'))).toEqual(['/', '/portfolio']);
+    expect(links.map((a) => a.textContent?.trim())).toEqual(['Go home', 'See my projects']);
+    expect(el.querySelector('.fault__back')?.textContent?.trim()).toBe('← Home');
   });
 
-  it('leaves the command variant to draw its own brackets', () => {
-    // The brackets are ::before/::after in button.scss so they sit tight
-    // against the label. Passing "[Open archive]" would print [[Open archive]].
-    const archive = el.querySelector('.button[data-variant="command"] .button__label');
-    expect(archive?.textContent).toBe('Open archive');
-  });
-
-  it('leaves environmental type to the shell', () => {
-    // The shell renders one oversized background word per route (404 here).
-    // A second one owned by the page put two of them on screen at once.
-    expect(el.querySelector('.error__env')).toBeNull();
-  });
-
-  it('contains no emoji', () => {
-    const text = el.textContent ?? '';
-    expect(/\p{Extended_Pictographic}/u.test(text)).toBe(false);
+  it('keeps itself out of search results', () => {
+    const robots = TestBed.inject(Meta).getTag("name='robots'");
+    expect(robots?.content).toBe('noindex');
+    expect(TestBed.inject(Title).getTitle()).toBe('Page not found - Hazel Granados');
   });
 });

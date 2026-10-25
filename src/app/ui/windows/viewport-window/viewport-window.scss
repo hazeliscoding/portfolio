@@ -3,6 +3,7 @@
   position: relative;
   background: var(--surface-inset);
   border: var(--bw-hairline) solid var(--border-default);
+  border-radius: var(--radius-2);
   overflow: hidden;
 
   // Nested straight inside a Window body, the viewport's own frame lands a
@@ -72,8 +73,10 @@
   inset-inline-start: 0;
   // The label sits over arbitrary images, so it needs an opaque backing — no
   // single text colour is legible against both light and dark captures.
-  padding: 3px 6px;
-  background: rgba(7, 9, 11, 0.82);
-  font: var(--type-mono-s);
-  color: var(--k-paper);
+  margin: 10px;
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  background: rgba(38, 36, 53, 0.82);
+  font: var(--type-label);
+  color: var(--text-inverse);
 }

@@ -27,13 +27,13 @@ describe('Window', () => {
     expect(el.querySelector('.window__index')?.textContent?.trim()).toBe('03');
   });
 
-  it('renders the title uppercased', () => {
+  it('renders the title as written, in sentence case', () => {
     const el = fixture.nativeElement as HTMLElement;
     expect(el.querySelector('.window__title')?.textContent?.trim()).toBe('Archive');
     const transform = getComputedStyle(
       el.querySelector('.window__title') as Element,
     ).textTransform;
-    expect(transform).toBe('uppercase');
+    expect(transform).toBe('none');
   });
 
   it('renders the context after a // separator', () => {

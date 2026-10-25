@@ -1,4 +1,4 @@
-// KAIRO motion keyframes.
+// Motion keyframes. Entrances rise and fade in, the way a card settles.
 //
 // Entrance animations are defined TWICE — `-a` and `-b` are byte-identical.
 // That duplication is deliberate and load-bearing: a CSS animation only
@@ -9,44 +9,44 @@
 @keyframes win-a {
   from {
     opacity: 0;
-    transform: translateX(-18px);
-    clip-path: inset(0 100% 0 0);
+    transform: translateY(12px);
   }
   to {
     opacity: 1;
     transform: none;
-    clip-path: inset(0 0 0 0);
   }
 }
 
 @keyframes win-b {
   from {
     opacity: 0;
-    transform: translateX(-18px);
-    clip-path: inset(0 100% 0 0);
+    transform: translateY(12px);
   }
   to {
     opacity: 1;
     transform: none;
-    clip-path: inset(0 0 0 0);
   }
 }
 
 @keyframes ttl-a {
   from {
-    clip-path: inset(0 100% 0 0);
+    opacity: 0;
+    transform: translateY(8px);
   }
   to {
-    clip-path: inset(0 0 0 0);
+    opacity: 1;
+    transform: none;
   }
 }
 
 @keyframes ttl-b {
   from {
-    clip-path: inset(0 100% 0 0);
+    opacity: 0;
+    transform: translateY(8px);
   }
   to {
-    clip-path: inset(0 0 0 0);
+    opacity: 1;
+    transform: none;
   }
 }
 

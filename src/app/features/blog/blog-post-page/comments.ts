@@ -32,6 +32,18 @@ const GISCUS: Record<string, string> = {
   standalone: true,
   imports: [Window],
   templateUrl: './comments.html',
+  styles: `
+    .comments__title {
+      font: 600 28px/1.2 var(--font-display);
+      letter-spacing: var(--tracking-heading);
+    }
+
+    .comments__note {
+      margin: var(--sp-2) 0 var(--sp-5);
+      font-size: 15px;
+      color: var(--text-muted);
+    }
+  `,
 })
 export class Comments {
   /** The post's slug, which names its discussion. */

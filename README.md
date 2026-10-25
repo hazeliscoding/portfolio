@@ -1,6 +1,6 @@
-# hazel.exe 🌸
+# hazeliscoding 🌸
 
-My personal portfolio and blog, styled as a fictional late-90s Japanese broadcast terminal.
+My personal portfolio and blog, laid out like a small maker's shop: light, friendly and product-first.
 
 **Live:** [www.hazeliscoding.dev](https://www.hazeliscoding.dev)
 
@@ -57,8 +57,8 @@ release page and the platforms its downloads cover. The projects page reads its 
 download links and platform lines from there, never from a project's write-up. To show a release
 straight away, run the **Refresh release data** workflow by hand.
 
-Each project's `kind` puts it on the projects page as a shipped app (`app`, ON AIR), a live site
-(`site`, LIVE) or an experiment (`pilot`). Its logo and mark come from the project repo's
+Each project's `kind` puts it on the projects page under Shipped, as an app (`app`) or a live site
+(`site`), or under Building now as an experiment (`pilot`). Its logo and mark come from the project repo's
 `docs/brand/` and live in `public/images/projects/<id>/`.
 
 ## Scripts
@@ -82,5 +82,5 @@ exactly the pages with a canonical and without `noindex`.
 `vercel.json` deploys the static output with no framework preset, and spells out its routing as
 `routes`. Vercel still detects Angular from `package.json` and appends a rewrite of every unknown
 path to the homepage with a 200, so the last route answers anything the filesystem doesn't hold
-with `404.html` and a real 404 first. That page renders the client-side 404 screen. ⌘K opens the command palette; `1`–`4` switch
-mode.
+with `404.html` and a real 404 first. That page renders the client-side 404 screen. ⌘K or `/` opens search; `1`–`4` open the four
+pages.

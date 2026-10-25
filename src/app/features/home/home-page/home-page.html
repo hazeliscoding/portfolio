@@ -1,150 +1,260 @@
-<!--
-  `[heading]="false"`: the page is about a person, so the name in the lower
-  third is the <h1> and HOME_01 is the location label, as on a blog entry.
--->
-<app-chapter-header code="HOME" index="01" [meta]="'LAST UPDATE ' + lastUpdate" [heading]="false" />
-
-<div class="home">
-  <!-- The lower third: a news caption's name strap, as the station's own ident. -->
-  <section class="lower" aria-labelledby="home-name" [attr.data-sfx]="motion.sfx()">
-    <div class="lower__id">
-      <h1 class="lower__name" id="home-name">Hazel Granados</h1>
-      <p class="lower__strap">
-        <span class="lower__live"><span class="lower__dot"></span>LIVE</span
-        ><span class="lower__role">Full-stack developer · AI engineering · she/they</span>
-      </p>
-      <p class="lower__bio">
-        C#, .NET and Angular, now moving into AI engineering: deterministic agent workflows, proven
-        by evals rather than vibes.
-      </p>
-    </div>
-
-    <div class="lower__side">
-      <!-- The icon names each row for the eye; the hidden label names it for a screen reader. -->
-      <ul class="lower__contact">
-        @for (c of contacts; track c.label) {
-          <li>
-            @if (c.href) {
-              <a
-                class="lower__link"
-                [href]="c.href"
-                [attr.target]="c.external ? '_blank' : null"
-                [attr.rel]="c.external ? 'noopener' : null"
-              >
-                <svg class="lower__icon" [attr.viewBox]="c.icon.viewBox" aria-hidden="true" focusable="false">
-                  <path [attr.d]="c.icon.d" /></svg
-                ><span class="sr-only">{{ c.label }}: </span>{{ c.value }}
-                @if (c.external) {
-                  <span class="sr-only"> (opens in a new tab)</span>
-                }
-              </a>
-            } @else {
-              <span class="lower__link">
-                <svg class="lower__icon" [attr.viewBox]="c.icon.viewBox" aria-hidden="true" focusable="false">
-                  <path [attr.d]="c.icon.d" /></svg
-                ><span class="sr-only">{{ c.label }}: </span>{{ c.value }}
-              </span>
-            }
-          </li>
-        }
-      </ul>
-      <div class="lower__actions">
-        <app-button variant="primary" size="md" [href]="mailto">Contact &gt;</app-button>
-        <app-button variant="secondary" size="md" routerLink="/about">Dossier</app-button>
-      </div>
-    </div>
-  </section>
-
+<div class="home" [attr.data-sfx]="motion.sfx()">
   <!--
-    NOW PLAYING. Every channel's segment is in the page, stacked in one grid
-    cell, so the block is as tall as the tallest and changing channel moves
-    nothing below it. Only the active one is visible.
+    The featured apps take turns on the shop's dark band. Every slide is in the
+    page, stacked in one grid cell, so the band is as tall as the tallest and a
+    change moves nothing below it. Only the active one is visible.
   -->
-  <section
-    class="now"
-    aria-label="Now playing"
-    [class.now--playing]="playing()"
-    [attr.data-sfx]="motion.sfx()"
-  >
-    <div class="now__bar">
-      <span class="now__label">NOW PLAYING</span>
-      <div class="now__tabs" role="tablist" aria-label="Featured projects" (keydown)="onTabKey($event)">
-        @for (c of channels; track c.id; let i = $index) {
+  <section class="promo shell-width" aria-label="Featured apps" [class.promo--playing]="playing()">
+    <div class="promo__slides" [attr.aria-live]="playing() ? 'off' : 'polite'">
+      @for (f of featured; track f.id; let i = $index) {
+        <div
+          class="promo__slide"
+          role="tabpanel"
+          [id]="'promo-' + f.id"
+          [attr.aria-labelledby]="'promo-tab-' + f.id"
+          [class.promo__slide--on]="i === active()"
+          [style]="f.style"
+        >
+          <div class="promo__copy">
+            <div class="promo__chips">
+              <img class="promo__icon" [src]="f.icon" alt="" width="40" height="40" />
+              <span class="promo__pill">{{ f.platforms }} · {{ f.medium }}</span>
+            </div>
+            <h2 class="promo__title">{{ f.pitch }}</h2>
+            <p class="promo__lede">{{ f.lede }}</p>
+            <div class="promo__actions">
+              @if (f.cta.kind !== 'install') {
+                <a class="promo__cta" [href]="f.cta.href" target="_blank" rel="noopener"
+                  >Get {{ f.title }} free <span aria-hidden="true">↗</span
+                  ><span class="sr-only"> (opens in a new tab)</span></a
+                >
+              }
+              <a class="promo__more" [routerLink]="['/portfolio', f.id]"
+                >How it works <span aria-hidden="true">→</span></a
+              >
+            </div>
+            @if (f.cta.kind !== 'install') {
+              <p class="promo__fine">{{ f.cta.fine }}</p>
+            }
+          </div>
+
+          <figure class="promo__screen">
+            <img
+              [src]="f.shot"
+              [alt]="f.alt"
+              width="1280"
+              height="800"
+              [attr.loading]="i === 0 ? null : 'lazy'"
+            />
+            @if (f.caption) {
+              <figcaption class="promo__caption">{{ f.caption }}.</figcaption>
+            }
+          </figure>
+        </div>
+      }
+    </div>
+
+    <div class="promo__bar">
+      <div class="promo__tabs" role="tablist" aria-label="Featured apps" (keydown)="onTabKey($event)">
+        @for (f of featured; track f.id; let i = $index) {
           <button
             type="button"
             role="tab"
-            class="now__tab"
-            [id]="'tab-' + c.id"
+            class="promo__tab"
+            [id]="'promo-tab-' + f.id"
             [attr.aria-selected]="i === active()"
-            [attr.aria-controls]="'now-' + c.id"
+            [attr.aria-controls]="'promo-' + f.id"
             [tabIndex]="i === active() ? 0 : -1"
-            [style]="c.style"
+            [style]="f.style"
             (click)="pick(i)"
           >
-            <img class="now__mark" [src]="c.mark" alt="" width="18" height="18" />
-            <span class="now__number">{{ c.channel }}</span>
-            <span class="now__title">{{ c.title }}</span>
+            <img class="promo__mark" [src]="f.mark" alt="" width="18" height="18" />
+            <span class="promo__tab-title">{{ f.title }}</span>
             @if (i === active() && playing()) {
-              <span class="now__progress" aria-hidden="true" (animationend)="next()"></span>
+              <span class="promo__progress" aria-hidden="true" (animationend)="next()"></span>
             }
           </button>
         }
       </div>
       <button
         type="button"
-        class="now__pause"
-        [attr.aria-label]="playing() ? 'Pause the channels' : 'Play the channels'"
+        class="promo__pause"
+        [attr.aria-label]="playing() ? 'Pause the featured apps' : 'Play the featured apps'"
         (click)="playing.set(!playing())"
       >
-        [ {{ playing() ? 'PAUSE' : 'PLAY' }} ]
+        <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+          @if (playing()) {
+            <path d="M4 2.5h2.5v11H4zM9.5 2.5H12v11H9.5z" />
+          } @else {
+            <path d="M4.5 2.2 13.5 8l-9 5.8z" />
+          }
+        </svg>
       </button>
-      <a class="now__all" routerLink="/portfolio"
-        >ALL {{ channelCount }}<span class="now__all-noun"> CHANNELS</span> ›</a
-      >
     </div>
+  </section>
 
-    <div class="now__screen" [attr.aria-live]="playing() ? 'off' : 'polite'">
-      @for (c of channels; track c.id; let i = $index) {
-        <div
-          class="now__panel"
-          role="tabpanel"
-          [id]="'now-' + c.id"
-          [attr.aria-labelledby]="'tab-' + c.id"
-          [class.now__panel--on]="i === active()"
-        >
-          <app-broadcast-segment [segment]="c" />
-        </div>
+  <!-- The open-source strip, where the reference has its Discord. -->
+  <section class="community shell-width" aria-labelledby="community-title">
+    <span class="community__tile" aria-hidden="true">
+      <svg [attr.viewBox]="githubIcon.viewBox" focusable="false"><path [attr.d]="githubIcon.d" /></svg>
+    </span>
+    <div class="community__copy">
+      <h2 class="community__title" id="community-title">Everything here is open source.</h2>
+      <p class="community__text">Star what you like, file a bug, or just say hi.</p>
+    </div>
+    <a class="community__link" [href]="github" target="_blank" rel="noopener"
+      >Visit my GitHub <span aria-hidden="true">↗</span><span class="sr-only"> (opens in a new tab)</span></a
+    >
+  </section>
+
+  <section class="hero shell-width" aria-labelledby="hero-title">
+    <div class="hero__copy">
+      <p class="hero__eyebrow">Hazel Granados · full-stack developer &amp; AI engineer · she/they</p>
+      <h1 class="hero__title" id="hero-title">Small apps that each do one job.</h1>
+      <p class="hero__text">
+        I'm a Texas-based developer in C#, .NET and Angular. I make local-first apps for the things that
+        bug me, and AI tooling I can prove works. A good tool should be reliable, approachable and a
+        little bit cozy.
+      </p>
+    </div>
+    <!-- A sticker sheet of every project's icon. The cards below name and link them. -->
+    <div class="hero__stickers" aria-hidden="true">
+      @for (s of stickers; track s) {
+        <img class="hero__sticker" [src]="s" alt="" width="96" height="96" />
       }
     </div>
   </section>
 
-  <div class="strips">
-    <section class="strip" aria-labelledby="latest-title" [attr.data-sfx]="motion.sfx()">
-      <h2 class="strip__tag" id="latest-title">Latest</h2>
-      <ul class="strip__items">
-        @for (b of posts; track b.slug) {
-          <li>
-            <a class="strip__item" [routerLink]="['/blog', b.slug]"
-              ><span class="strip__meta">{{ b.date }}</span>{{ b.title }}</a
-            >
-          </li>
-        }
-      </ul>
-      <a class="strip__more" routerLink="/blog">ALL POSTS ›</a>
-    </section>
+  <section class="picks shell-width" aria-labelledby="picks-title">
+    <div class="section-head">
+      <h2 class="section-head__title" id="picks-title">Things I've shipped.</h2>
+      <a class="section-head__more" routerLink="/portfolio">See all {{ projectCount }} <span aria-hidden="true">↗</span></a>
+    </div>
 
-    <section class="strip strip--oss" aria-labelledby="oss-title" [attr.data-sfx]="motion.sfx()">
-      <h2 class="strip__tag" id="oss-title">Open source</h2>
-      <ul class="strip__items">
-        @for (r of ossRows; track r.url) {
-          <li>
-            <a class="strip__item" [href]="r.url" [title]="r.full" target="_blank" rel="noopener"
-              ><span class="strip__meta">{{ r.meta }}</span>{{ r.name
-              }}<span class="sr-only"> (opens in a new tab)</span></a
-            >
-          </li>
-        }
-      </ul>
-    </section>
-  </div>
+    <ul class="picks__grid">
+      @for (p of picks; track p.id) {
+        <li class="card" [style]="p.style">
+          <div class="card__media">
+            <img class="card__shot" [src]="p.shot" alt="" loading="lazy" width="640" height="400" />
+            <img class="card__icon" [src]="p.icon" alt="" width="44" height="44" />
+            <span class="card__arrow" aria-hidden="true">↗</span>
+          </div>
+          <div class="card__meta">
+            <span>{{ p.medium }}</span>
+            <span>{{ p.version }}</span>
+          </div>
+          <h3 class="card__title">
+            <a class="card__link" [routerLink]="['/portfolio', p.id]">{{ p.title }}</a>
+          </h3>
+          <p class="card__pitch">{{ p.pitch }}</p>
+          <div class="card__foot">
+            <span class="card__fine">{{ p.fine }}</span>
+            <span class="card__button" aria-hidden="true">Take a look <span>→</span></span>
+          </div>
+        </li>
+      }
+    </ul>
+  </section>
+
+  <section class="oss shell-width" aria-labelledby="oss-title">
+    <div class="oss__intro">
+      <h2 class="section-head__title" id="oss-title">Open source I help with.</h2>
+      <p class="oss__summary">{{ oss.summary }}, in projects other people rely on every day.</p>
+    </div>
+    <ul class="oss__list">
+      @for (r of oss.rows; track r.url) {
+        <li>
+          <a class="oss__row" [href]="r.url" target="_blank" rel="noopener">
+            <span class="oss__name">{{ r.name }}<span class="oss__owner">{{ r.owner }}</span></span>
+            <span class="oss__stat">★ {{ r.stars }}</span>
+            <span class="oss__stat oss__stat--merged">{{ r.merged }}</span>
+            <span class="oss__go" aria-hidden="true">↗</span>
+            <span class="sr-only"> (opens in a new tab)</span>
+          </a>
+        </li>
+      }
+    </ul>
+  </section>
+
+  <section class="writing shell-width" aria-labelledby="writing-title">
+    <div class="section-head">
+      <h2 class="section-head__title" id="writing-title">Latest writing.</h2>
+      <a class="section-head__more" routerLink="/blog">All posts <span aria-hidden="true">↗</span></a>
+    </div>
+    <ul class="writing__grid">
+      @for (b of posts; track b.slug) {
+        <li class="post">
+          <time class="post__date" [attr.datetime]="b.date">{{ b.date }}</time>
+          <h3 class="post__title">
+            <a class="post__link" [routerLink]="['/blog', b.slug]">{{ b.title }}</a>
+          </h3>
+          <p class="post__text">{{ b.description }}</p>
+          <ul class="post__tags" aria-label="Tags">
+            @for (t of b.tags; track t) {
+              <li>{{ t }}</li>
+            }
+          </ul>
+        </li>
+      }
+    </ul>
+  </section>
+
+  <section class="maker shell-width" aria-labelledby="maker-title">
+    <figure class="maker__polaroid">
+      <div class="maker__photo" aria-hidden="true">
+        <span class="maker__monogram">H</span>
+        <span class="maker__heart">♡</span>
+      </div>
+      <figcaption class="maker__caption">Hi, I'm Hazel.</figcaption>
+    </figure>
+    <div class="maker__copy">
+      <h2 class="maker__title" id="maker-title">Made by one person.</h2>
+      <p>I design, build and test everything here myself, then write up what I learned.</p>
+      <p>
+        Apparently, my response to a minor inconvenience is to build an entire app about it. Away from
+        the terminal it's FFXIV, JRPGs, anime, shoegaze and long walks.
+      </p>
+      <div class="maker__actions">
+        <a class="maker__cta" routerLink="/about">More about me <span aria-hidden="true">↗</span></a>
+        <a class="maker__mail" [href]="mailto">{{ email }}</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="faq shell-width" aria-labelledby="faq-title">
+    <div class="faq__intro">
+      <h2 class="section-head__title" id="faq-title">Before you ask…</h2>
+      <p class="faq__sub">Here's how I work.</p>
+    </div>
+    <div class="faq__list">
+      <details class="faq__item">
+        <summary>Are you open to work?</summary>
+        <p>
+          I'm happy to chat about full-stack .NET and Angular roles and AI engineering work. Email me at
+          <a [href]="mailto">{{ email }}</a> and tell me what you're building.
+        </p>
+      </details>
+      <details class="faq__item">
+        <summary>Are the apps free?</summary>
+        <p>
+          Yes. Every project here is free and its source is on GitHub. If one saves you an evening, you can
+          buy me a coffee on <a href="https://ko-fi.com/hazeliscoding" target="_blank" rel="noopener">Ko-fi</a>.
+        </p>
+      </details>
+      <details class="faq__item">
+        <summary>How do you know the AI tooling works?</summary>
+        <p>
+          Evals. Each of sdl3-porter's 17 traps is proven by fixtures in CI, and with it, Haiku 4.5 went from
+          0.39 to 0.92 on porting a whole game. <a routerLink="/blog/every-trap-is-proven">Here's how I proved it.</a>
+        </p>
+      </details>
+      <details class="faq__item">
+        <summary>What do you build with?</summary>
+        <p>
+          C#, .NET, ASP.NET, Entity Framework and SQL on the back end, Angular and TypeScript on the web,
+          Avalonia for desktop apps, and Claude Code, MCP and behavioral evals for AI tooling.
+        </p>
+      </details>
+    </div>
+  </section>
 </div>

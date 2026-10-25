@@ -4,8 +4,8 @@ export interface ProjectImage {
 }
 
 /**
- * What a project is, in the projects page's broadcast language: a shipped app
- * is ON AIR, a live website is LIVE, an experiment is a PILOT.
+ * Where a project sits on the projects page: a shipped app or live website
+ * under Shipped, an experiment under Building now.
  */
 export type ProjectKind = 'app' | 'site' | 'pilot';
 
@@ -67,9 +67,12 @@ export interface Project {
   phone?: string;
   /** The project's character, a die-cut sticker set on the corner of its segment's screen. */
   mascot?: { src: string; alt: string };
-  /** A pilot's looping clip, with the still shown instead under reduced motion. */
-  reel?: { src: string; still: string };
-  /** A pilot's commands, for a CLI with nothing to screenshot on the card. */
+  /**
+   * What a project with nothing to screenshot yet shows in its band's place for
+   * a screen: its mascot, or a prototype's output. Its `image` stays empty.
+   */
+  art?: { src: string; alt: string };
+  /** A CLI's commands, drawn on its band's screen in place of a capture. */
   console?: { command: string; note: string }[];
 }
 
@@ -312,6 +315,106 @@ export const projectsData: Project[] = [
     },
   },
   {
+    id: 'conatlas-tx',
+    title: 'ConAtlas TX',
+    description:
+      'A free, open-source calendar of every anime convention in Texas on one calm page — every date, venue and status checked against the organizer’s own site, with no accounts, no tracking and no guessed dates.',
+    longDescription: [
+      'ConAtlas TX is a convention calendar for fans, cosplayers and first-timers. The home page groups upcoming Texas anime conventions by month, each with its dates, venue and verification; the calendar spans each convention across its weekend; and on a phone a convention’s page has its dates, venue, a bookmark and an Add to calendar menu. If a con hasn’t announced its weekend, the site says so rather than guessing.',
+      'The data is the product. Every convention lives in a plain YAML file versioned in Git, every published date, venue and status needs an official source, and each listing shows when it was last checked. A maintainer reviews every change before it’s published: Claude Code can help research updates, but nothing reaches the site without human approval. A data CLI checks every file and cross-record rule, lists the conventions due for a re-check and compares staged drafts with what’s published.',
+      'The site is static Astro, so it builds and runs without a server, database or AI service, and its fonts are self-hosted so a visit makes no third-party requests. Browser smoke and axe checks run against the build, both colour modes meet WCAG AA, and the convention data is CC BY 4.0 for anyone to reuse with attribution.',
+    ],
+    image: 'images/projects/conatlas-tx/home.png',
+    images: [
+      {
+        src: 'images/projects/conatlas-tx/home.png',
+        caption: 'home — upcoming Texas conventions by month, each with its dates, venue and verification',
+      },
+      {
+        src: 'images/projects/conatlas-tx/calendar.png',
+        caption: 'calendar — a month in dark mode, each convention spanning its weekend',
+      },
+      {
+        src: 'images/projects/conatlas-tx/convention-phone.png',
+        caption: 'on a phone — a convention’s dates, venue, bookmark and Add to calendar',
+      },
+    ],
+    links: {
+      github: 'https://github.com/hazeliscoding/conatlas-tx',
+      demo: 'https://conatlas-tx.vercel.app',
+    },
+    tags: ['Astro', 'TypeScript', 'YAML', 'Open data', 'Website'],
+    command: 'glow conatlas-tx.md',
+    status: 'public beta',
+    year: '2026',
+    stack: 'Astro · TypeScript',
+    kind: 'site',
+    pitch: 'Every anime convention in Texas on one calm page, with dates checked against each organizer’s own site.',
+    medium: 'Website',
+    // Dusty pink, brightened the way the site's own dark mode brightens it.
+    brand: {
+      ink: '#f2b8cb',
+      tint: '#e98aa8',
+      icon: 'images/projects/conatlas-tx/icon.svg',
+      mark: 'images/projects/conatlas-tx/icon.svg',
+    },
+    ticker: [
+      'Every Texas anime con on one page',
+      'Every date has an official source',
+      'No guessed dates',
+      'Static: no server, no database',
+    ],
+    note: 'no accounts, no tracking',
+    phone: 'images/projects/conatlas-tx/convention-phone.png',
+  },
+  {
+    id: 'staypaw',
+    title: 'Staypaw',
+    description:
+      'A Windows tray app that puts your keyboard focus back when another app steals it — a chat popup, an installer, a browser an agent is driving — and holds the keys you press meanwhile so the stealer never gets them. Nothing injected, no telemetry.',
+    longDescription: [
+      'Windows lets apps pull focus to themselves, and your next keypress lands in the wrong window, sometimes on its default button: Space has cancelled a Visual Studio install, and Esc has killed a Bluetooth transfer. PowerToys #65 has asked for a fix since 2019. Staypaw puts focus straight back where you were typing, and protects one app you pick, a game or your editor, so nothing takes focus from it unless you click or Alt+Tab away, even while you’re idle.',
+      'A key you press during a steal never reaches the app that stole focus. Staypaw holds it and sends it to your window once focus is back, or drops it if that window is a game, so nothing is ever replayed into a match. Its tray menu protects the app you were just in, names the app that took focus last and the one that takes it most, and opens a focus log that lists every focus change and what Staypaw did about it.',
+      'It watches your keyboard, so it is built to be easy to trust. Nothing is injected: its low-level keyboard hook runs inside Staypaw itself, and it never touches a game’s process. It keeps the time of each keypress, never the key, and writes nothing about keys to disk. The update check is its only network call, and the code that sees your keys can’t reach the network: a test fails if it references the updater or any networking code. It is .NET and Avalonia compiled with NativeAOT, and ships as a signed per-user installer that needs no admin rights and updates itself, plus a portable zip.',
+    ],
+    image: 'images/projects/staypaw/welcome.png',
+    images: [
+      {
+        src: 'images/projects/staypaw/welcome.png',
+        caption: 'welcome — Calla, and the app nothing takes focus from',
+      },
+      {
+        src: 'images/projects/staypaw/tray.png',
+        caption: 'tray menu — the protected app, the last and top stealers, and the focus log',
+      },
+    ],
+    links: {
+      github: 'https://github.com/hazeliscoding/staypaw',
+    },
+    tags: ['C#', '.NET', 'Avalonia', 'NativeAOT', 'Win32', 'Velopack', 'Desktop'],
+    command: 'glow staypaw.md',
+    status: 'active',
+    year: '2026',
+    stack: 'Avalonia · NativeAOT',
+    kind: 'app',
+    pitch: 'Put your keyboard focus back when another app steals it.',
+    medium: 'Tray app',
+    // Rust on paper, the mark's dark-background pair.
+    brand: {
+      ink: '#f6cba3',
+      tint: '#e8954f',
+      icon: 'images/projects/staypaw/icon.svg',
+      mark: 'images/projects/staypaw/mark.svg',
+    },
+    ticker: [
+      'Nothing injected',
+      'Keys typed during a steal never reach the stealer',
+      'No telemetry, no keys stored',
+      'Signed, no admin rights',
+    ],
+    note: 'signed, updates itself',
+  },
+  {
     id: 'sdl3-porter',
     title: 'sdl3-porter',
     description:
@@ -377,127 +480,6 @@ export const projectsData: Project[] = [
     ],
   },
   {
-    id: 'conatlas-tx',
-    title: 'ConAtlas TX',
-    description:
-      'A free, open-source calendar of every anime convention in Texas on one calm page — every date, venue and status checked against the organizer’s own site, with no accounts, no tracking and no guessed dates.',
-    longDescription: [
-      'ConAtlas TX is a convention calendar for fans, cosplayers and first-timers. The home page groups upcoming Texas anime conventions by month, each with its dates, venue and verification; the calendar spans each convention across its weekend; and on a phone a convention’s page has its dates, venue, a bookmark and an Add to calendar menu. If a con hasn’t announced its weekend, the site says so rather than guessing.',
-      'The data is the product. Every convention lives in a plain YAML file versioned in Git, every published date, venue and status needs an official source, and each listing shows when it was last checked. A maintainer reviews every change before it’s published: Claude Code can help research updates, but nothing reaches the site without human approval. A data CLI checks every file and cross-record rule, lists the conventions due for a re-check and compares staged drafts with what’s published.',
-      'The site is static Astro, so it builds and runs without a server, database or AI service, and its fonts are self-hosted so a visit makes no third-party requests. Browser smoke and axe checks run against the build, both colour modes meet WCAG AA, and the convention data is CC BY 4.0 for anyone to reuse with attribution.',
-    ],
-    image: 'images/projects/conatlas-tx/home.png',
-    images: [
-      {
-        src: 'images/projects/conatlas-tx/home.png',
-        caption: 'home — upcoming Texas conventions by month, each with its dates, venue and verification',
-      },
-      {
-        src: 'images/projects/conatlas-tx/calendar.png',
-        caption: 'calendar — a month in dark mode, each convention spanning its weekend',
-      },
-      {
-        src: 'images/projects/conatlas-tx/convention-phone.png',
-        caption: 'on a phone — a convention’s dates, venue, bookmark and Add to calendar',
-      },
-    ],
-    links: {
-      github: 'https://github.com/hazeliscoding/conatlas-tx',
-      demo: 'https://conatlas-tx.vercel.app',
-    },
-    tags: ['Astro', 'TypeScript', 'YAML', 'Open data', 'Website'],
-    command: 'glow conatlas-tx.md',
-    status: 'public beta',
-    year: '2026',
-    stack: 'Astro · TypeScript',
-    kind: 'site',
-    pitch: 'Every anime convention in Texas on one calm page, with dates checked against each organizer’s own site.',
-    medium: 'Website',
-    // Dusty pink, brightened the way the site's own dark mode brightens it.
-    brand: {
-      ink: '#f2b8cb',
-      tint: '#e98aa8',
-      icon: 'images/projects/conatlas-tx/icon.svg',
-      mark: 'images/projects/conatlas-tx/icon.svg',
-    },
-    ticker: [
-      'Every Texas anime con on one page',
-      'Every date has an official source',
-      'No guessed dates',
-      'Static: no server, no database',
-    ],
-    note: 'no accounts, no tracking',
-    phone: 'images/projects/conatlas-tx/convention-phone.png',
-  },
-  {
-    id: 'puzzle-boy',
-    title: 'Puzzle Boy',
-    description:
-      'The Puzzle Boy minigame from Shin Megami Tensei III Nocturne, rebuilt to run on its own for Windows, macOS and Linux — a preservation port that plays the original stages from your own copy, and a Community Edition that plays out of the box with a new campaign, a level editor and level packs.',
-    longDescription: [
-      'Community Edition is the one to play. Push blocks, turn swivels and fill holes with the original’s rules through a campaign of twenty new stages, up to a team of three Jacks, then paint your own in the level editor, which marks every problem by its cell, playtests the stage and asks the solver. Stages travel as level packs, each checked before it’s added. The Default theme draws its graphics and synthesizes its music in code, so there is nothing to download after unpacking; with Nocturne HD Remaster, one import plays every stage in the original’s look and sound instead.',
-      'The preservation port is the original, faithfully: it reads your own copy of Nocturne HD Remaster and plays its 20 stages at the original’s speed, from the Manikin Kid’s introductions to the turning view and the menu’s undo.',
-      'Both play on puzzle-boy-engine, the headless rules, stage authoring and presentation libraries they share. Nothing from ATLUS or SEGA ships in any download — the port and the Classic theme read it from your copy, and the game never looks for Nocturne unless you ask. It’s an independent fan project, in C# on MonoGame.',
-    ],
-    image: 'images/projects/puzzle-boy/playing.png',
-    images: [
-      {
-        src: 'images/projects/puzzle-boy/title.png',
-        caption: 'Community Edition — the title screen in the Default theme',
-      },
-      {
-        src: 'images/projects/puzzle-boy/playing.png',
-        caption: 'playing — Garden Path, stage 1 of 20',
-      },
-      {
-        src: 'images/projects/puzzle-boy/editor.png',
-        caption: 'level editor — paint a stage, see its problems, playtest it',
-      },
-    ],
-    links: {
-      // Community Edition, not the port: it is the one that plays without a copy of Nocturne.
-      github: 'https://github.com/hazeliscoding/puzzle-boy-community',
-    },
-    tags: ['C#', '.NET', 'MonoGame', 'Game', 'Level editor'],
-    command: 'glow puzzle-boy.md',
-    status: 'experimental',
-    year: '2026',
-    stack: 'C# · MonoGame',
-    kind: 'pilot',
-    pitch:
-      'The Puzzle Boy minigame from Shin Megami Tensei III Nocturne, rebuilt to run on its own, then expanded.',
-    medium: 'Game',
-    brand: {
-      ink: '#c9b6ff',
-      tint: '#b497ff',
-      icon: 'images/projects/puzzle-boy/icon.svg',
-      mark: 'images/projects/puzzle-boy/mark.svg',
-    },
-    parts: [
-      {
-        label: 'Preservation port',
-        url: 'https://github.com/hazeliscoding/puzzle-boy',
-        note: 'bring your own copy',
-      },
-      {
-        label: 'Community Edition',
-        url: 'https://github.com/hazeliscoding/puzzle-boy-community',
-        note: 'plays out of the box',
-      },
-      {
-        label: 'Engine',
-        url: 'https://github.com/hazeliscoding/puzzle-boy-engine',
-        note: 'library, not playable',
-      },
-    ],
-    // The Classic-theme tour from Community Edition's README, hosted by GitHub
-    // rather than committed here.
-    reel: {
-      src: 'https://github.com/user-attachments/assets/0f50755c-3d6c-4c69-97af-9c4b3d813d4e',
-      still: 'images/projects/puzzle-boy/playing.png',
-    },
-  },
-  {
     id: 'axiomarium',
     title: 'Axiomarium',
     description:
@@ -543,5 +525,164 @@ export const projectsData: Project[] = [
       { command: 'axm eval run', note: 'run evals in a sealed home' },
       { command: 'axm conflicts --judge', note: 'find instructions that contradict' },
     ],
+  },
+  {
+    id: 'shybun',
+    title: 'Shybun',
+    description:
+      'A Windows tray app where one key mutes your mic and camera in every app, and a badge shows you’re muted only when Windows confirms it.',
+    longDescription: [
+      'Windows has no camera key, and its own mic key, Win+Alt+K, works only in apps that support it. PowerToys’ Video Conference Mute did both until v0.88.0 removed it in January 2025, and people still hold PowerToys at 0.87.1 to keep it. Shybun brings it back as one key that mutes every mic Windows has and the Shybun camera, from any app and without moving focus, so a Meet tab behind your editor goes quiet too. A headset plugged in while you’re muted is muted the moment it appears.',
+      'A small always-on-top badge shows the mic’s and the camera’s state as Windows reports it, read back after every change, and when Shybun can’t confirm a device is quiet, the badge says so instead of guessing. The mic half flips Windows’ own mute switch, so a meeting app’s mute icon doesn’t change: trust the badge, not the app. The Shybun camera is a Windows 11 virtual camera you pick once in each meeting app; it passes your camera through, and sends a camera-off image while you’re muted.',
+      'It’s in development: the mic half and the badge work when built from source, and the camera and a first release come next. It is .NET 10 and Avalonia 12 compiled with NativeAOT, with Win32 and COM through CsWin32, and its mute rules live in a core with no Win32 so they test without devices. Nothing is injected and nothing is recorded, the update check is its only network call, and only the camera needs admin, once, at install.',
+    ],
+    image: '',
+    links: {
+      github: 'https://github.com/hazeliscoding/shybun',
+    },
+    tags: ['C#', '.NET', 'Avalonia', 'NativeAOT', 'Win32', 'Desktop'],
+    command: 'glow shybun.md',
+    status: 'in development',
+    year: '2026',
+    stack: 'Avalonia · NativeAOT',
+    kind: 'pilot',
+    pitch: 'One key mutes your mic and camera in every Windows app.',
+    medium: 'Tray app',
+    // Blush on paper, the mark's dark-background pair.
+    brand: {
+      ink: '#f9c9d9',
+      tint: '#f08fb0',
+      icon: 'images/projects/shybun/icon.svg',
+      mark: 'images/projects/shybun/mark.svg',
+    },
+    ticker: [
+      'Mutes every mic, from any app',
+      'A badge that waits for Windows to confirm',
+      'Nothing recorded, no telemetry',
+    ],
+    art: {
+      src: 'images/projects/shybun/shiori.png',
+      alt: 'Shiori, Shybun’s shy homebody, covers her eyes with one hand and her mouth with the other and peeks out with one eye, as Shybun mutes the camera and the mic together.',
+    },
+  },
+  {
+    id: 'tattlebun',
+    title: 'Tattlebun',
+    description:
+      'A Windows tray app and Claude Code plugin that keeps a receipt of what your coding agents changed on your PC outside the repo, and undoes it once you confirm. Nothing leaves your PC.',
+    longDescription: [
+      'Git shows what an agent changed in your repo. It doesn’t show the global npm package, the PATH entry, the .gitconfig line or the startup entry it added along the way, and on Windows Claude Code’s sandbox doesn’t run at all, so an agent’s commands can do anything you can. Run three agents at once and nobody can say which one did it. Tattlebun keeps a receipt for every command an agent runs, naming the command and the session behind each change, with Undo.',
+      'Before and after each Bash or PowerShell call, it will snapshot the places agents change outside the repo: environment variables, installed apps and global npm, pip and dotnet tool packages, startup entries, scheduled tasks and services, dotfiles such as .gitconfig and .ssh/config, and new items in your home folder. Blame stays fair: a change found while one command ran is tied to it, two commands running at once get “one of these”, and receipts say “while”, never “by”. Undo puts a change back only after you confirm, and one that needs admin shows the exact command to run instead.',
+      'It’s at the planning stage: the .NET 10 and Avalonia 12 projects and their guardrail tests are scaffolded, and receipts come first. Its hooks arrive as a Claude Code plugin you add yourself, so you see them before they run. Taking a snapshot changes nothing, a slow or failing snapshot never blocks your agent, old values are kept encrypted with Windows DPAPI for 30 days so Undo can restore them, and the update check is its only network call.',
+    ],
+    image: '',
+    links: {
+      github: 'https://github.com/hazeliscoding/tattlebun',
+    },
+    tags: ['C#', '.NET', 'Avalonia', 'NativeAOT', 'Claude Code', 'Desktop'],
+    command: 'glow tattlebun.md',
+    status: 'planning',
+    year: '2026',
+    stack: 'Avalonia · NativeAOT',
+    kind: 'pilot',
+    pitch: 'See what your coding agents changed outside the repo, and undo it.',
+    medium: 'Tray app + Claude Code plugin',
+    // Cornflower on paper, the mark's dark-background pair.
+    brand: {
+      ink: '#c6d6fb',
+      tint: '#8fb0f5',
+      icon: 'images/projects/tattlebun/icon.svg',
+      mark: 'images/projects/tattlebun/mark.svg',
+    },
+    ticker: [
+      'A receipt for every agent command',
+      'Undo only after you confirm',
+      'Nothing leaves your PC',
+    ],
+    art: {
+      src: 'images/projects/tattlebun/tilly.png',
+      alt: 'Tilly, Tattlebun’s front-desk clerk, peeks wide-eyed over a long receipt she holds up to her face, as Tattlebun keeps a receipt for every command an agent runs.',
+    },
+  },
+  {
+    id: 'carmine-workbench',
+    title: 'Carmine Workbench',
+    description:
+      'A local-first desktop app that swaps the tokens, cookies and API keys in curl commands, headers, logs and JSON for labels before you share them, so the debugging detail stays. Nothing you paste leaves your PC.',
+    longDescription: [
+      'When an integration breaks, you paste curl commands, headers, logs and tokens into tickets, chats and vendor support portals, and that is how credentials leak: in 2023, attackers took HAR files from Okta’s support system and used the session tokens inside them against Okta’s customers. Carmine removes what grants access, keeps what helps debugging, and shows you every change in a diff before you copy.',
+      'It removes bearer tokens, cookies, API keys, secret URL parameters, sensitive JSON keys, private keys and known key formats, and keeps the structure: the same secret gets the same label everywhere, so a reader can still follow it across requests. Any JWT it finds is explained, with its decoded claims, its expiry in plain time and warnings; it decodes tokens but never verifies them. Each rule is one folder, a small detector plus its fixtures.',
+      'It’s in early development: the screen shows a canned sample, and there is nothing to install yet. On 2026-10-24 it moved from Angular and Tauri to .NET 10 and Avalonia 12 with NativeAOT, and the engine was ported rather than redesigned: the fixtures moved unchanged, and every case must come out byte for byte as it did before. Input stays in memory only, with no history and no telemetry, and CI rejects any networking code beyond the update check.',
+    ],
+    image: 'images/projects/carmine-workbench/sanitize.png',
+    images: [
+      {
+        src: 'images/projects/carmine-workbench/sanitize.png',
+        caption: 'sanitize — three findings, the curl with its secrets marked, the labelled diff and the decoded JWT, on a canned sample',
+      },
+    ],
+    links: {
+      github: 'https://github.com/hazeliscoding/carmine-workbench',
+    },
+    tags: ['C#', '.NET', 'Avalonia', 'NativeAOT', 'Security', 'Desktop'],
+    command: 'glow carmine-workbench.md',
+    status: 'early development',
+    year: '2026',
+    stack: 'Avalonia · NativeAOT',
+    kind: 'pilot',
+    pitch: 'Swap the secrets in curl commands and logs for labels before you share them.',
+    medium: 'Desktop',
+    // The mark's carmine, lifted so the sticker's dark text still reads on it.
+    brand: {
+      ink: '#f2b3b0',
+      tint: '#e0605f',
+      icon: 'images/projects/carmine-workbench/icon.svg',
+      mark: 'images/projects/carmine-workbench/mark.svg',
+    },
+    ticker: [
+      'The same secret, the same label everywhere',
+      'Decodes JWTs, never verifies them',
+      'Nothing you paste leaves your PC',
+    ],
+  },
+  {
+    id: 'darnling',
+    title: 'Darnling',
+    description:
+      'A web app that shows your sticker on every background, fills the see-through gaps dark mode gives away, and exports it for every place you post. Nothing leaves your browser.',
+    longDescription: [
+      'A sticker can look finished on a white page and still have see-through gaps inside its outline: a sliver between an arm and the body, a gap under the hair. On GitHub’s dark mode or in Discord those gaps show as dark slivers, and you only find out after you’ve posted. Darnling shows your sticker on white, black, GitHub’s light and dark, Discord’s dark, a checkerboard and your own brand colours, side by side at 50%, 100% and 200%.',
+      'It finds holes, the see-through areas inside the art that the outside can’t reach, and warns about a narrow gap that does reach the outside, since it may be meant. It mends them in a copy with the sticker’s border colour, like the vinyl of a real die-cut sticker, once you approve each fill, and every pixel outside those holes stays exactly as it was. Then it exports sets for READMEs, Discord, Telegram, LINE, socials and blogs, sized from each platform’s own docs.',
+      'It’s at the planning stage. The hole finder was prototyped on 2026-10-24 on Calla from Staypaw and Primrose from Sweepling, whose stickers stay out of their READMEs until their gaps are filled. It will be Vite and plain TypeScript with no UI framework: Canvas 2D draws the previews, and the hole finder is a pure function over RGBA pixels, tested with Vitest and run in a Web Worker so a large PNG never freezes the page. It’s a static page, with no uploads, accounts or analytics.',
+    ],
+    image: '',
+    links: {
+      github: 'https://github.com/hazeliscoding/darnling',
+    },
+    tags: ['TypeScript', 'Vite', 'Canvas', 'Web Worker', 'Image processing'],
+    command: 'glow darnling.md',
+    status: 'planning',
+    year: '2026',
+    stack: 'TypeScript · Canvas',
+    kind: 'pilot',
+    pitch: 'Mend the see-through gaps dark mode finds in your stickers.',
+    medium: 'Web app',
+    // The mark's dark-background rose.
+    brand: {
+      ink: '#f8c6d4',
+      tint: '#f08aa8',
+      icon: 'images/projects/darnling/icon.svg',
+      mark: 'images/projects/darnling/mark.svg',
+    },
+    ticker: [
+      'Hole finder prototyped on real stickers',
+      'Mends a copy, never your original',
+      'Nothing leaves your browser',
+    ],
+    // The prototype's output, the nearest thing to a screenshot so far.
+    art: {
+      src: 'images/projects/darnling/calla-mended.png',
+      alt: 'Calla, Staypaw’s cat-eared homebody, on GitHub’s dark background. On the left, two dark slivers show between her arms and her body. On the right, Darnling’s prototype has filled them magenta and ringed them.',
+    },
   },
 ];

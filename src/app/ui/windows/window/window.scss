@@ -1,38 +1,20 @@
-// Geometry is taken from the design system's Window.jsx verbatim. The header
-// strip is 7px/10px and the body 12px — deliberately off the 4px spacing
-// scale, because KAIRO's window chrome is drawn to the hairline, not to the
-// layout grid. Using --sp-* here is what made every panel read one notch too
-// loose.
+// A panel is a soft white card: a hairline lavender edge, a 24px radius and a
+// small label above the body instead of a title bar.
 .window {
   display: flex;
   flex-direction: column;
   min-width: 0;
   background: var(--surface-window);
-  border: var(--bw-hairline) solid var(--border-faint);
-  border-top: var(--bw-rule) solid var(--border-default);
-  border-radius: var(--radius-0);
+  border: var(--bw-hairline) solid var(--border-default);
+  border-radius: var(--radius-3);
   position: relative;
+  overflow: hidden;
   transition:
     opacity var(--dur-control) var(--ease-mech),
     border-color var(--dur-control) var(--ease-mech);
 
-  // The variant accent marks the panel that owns attention. It is NOT a
-  // permanent property of the variant: an unfocused `command` window has the
-  // same grey rule as everything else. Painting it always is what made a home
-  // screen of eight panels look like eight simultaneous alerts.
   &[data-active="true"] {
     border-color: var(--border-strong);
-    border-top-color: var(--border-strong);
-  }
-
-  &[data-active="true"][data-variant="command"],
-  &[data-active="true"][data-variant="alert"] {
-    border-top-color: var(--signal-active);
-  }
-
-  &[data-active="true"][data-variant="dialogue"],
-  &[data-active="true"][data-variant="system"] {
-    border-top-color: var(--signal-info-dim);
   }
 
   &[data-active="false"] {
@@ -55,42 +37,35 @@
   }
 }
 
-// A 9px bracket clipped to the top-left corner, sitting just outside the
-// border box so it reads as a registration mark on the frame rather than a
-// decoration inside it. Offsets are negative by exactly the border widths it
-// overlaps: 2px top rule, 1px left.
+// The old chrome's registration mark, now a small purple dot by the label.
 .window__corner {
   position: absolute;
-  top: calc(-1 * var(--bw-rule));
-  inset-inline-start: calc(-1 * var(--bw-hairline));
-  width: 9px;
-  height: 9px;
-  border-top: var(--bw-rule) solid var(--signal-active);
-  border-inline-start: var(--bw-rule) solid var(--signal-active);
+  top: 22px;
+  inset-inline-end: 20px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--signal-active);
 }
 
 .window__head {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 7px 10px;
-  border-bottom: var(--bw-hairline) solid var(--border-faint);
+  padding: 18px 20px 0;
   min-height: 18px;
-  font: var(--type-mono-s);
+  font: var(--type-label);
   color: var(--text-faint);
 }
 
 .window__index {
+  font: var(--type-mono-s);
   color: var(--text-faint);
 }
 
-// The title is UI sans at 11/500, not mono. It is the one string in the
-// chrome that is a label rather than an instrument reading, and the typeface
-// is what separates the two registers.
 .window__title {
-  font: var(--type-label);
-  letter-spacing: var(--tracking-wider);
-  text-transform: uppercase;
+  font: 600 13px/1.3 var(--font-ui);
+  letter-spacing: var(--tracking-wide);
   color: var(--text-muted);
   white-space: nowrap;
   overflow: hidden;
@@ -100,10 +75,6 @@
 .window__sep,
 .window__context {
   color: var(--text-faint);
-}
-
-.window__context {
-  text-transform: uppercase;
 }
 
 .window[data-active="true"] {
@@ -133,14 +104,14 @@
 }
 
 .window__body--padded {
-  padding: 12px;
+  padding: 16px 20px 20px;
 }
 
 .window__foot {
   display: flex;
   gap: var(--sp-4);
-  padding: 6px 10px;
+  padding: 12px 20px;
   border-top: var(--bw-hairline) solid var(--border-faint);
-  font: var(--type-mono-s);
+  font: var(--type-label);
   color: var(--text-faint);
 }

@@ -3,7 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, provideRouter } from '@angular/router';
 import { Meta } from '@angular/platform-browser';
 import { of } from 'rxjs';
-import { BlogPostPage, countWords, decodeEntities } from './blog-post-page';
+import { BlogPostPage, countWords, decodeEntities, readingMinutes } from './blog-post-page';
 import { blogPosts } from '../../../data/blog-posts.generated';
 
 describe('decodeEntities', () => {
@@ -108,22 +108,26 @@ describe('BlogPostPage', () => {
     expect(meta.getTags("property='article:tag'").length).toBe(3);
   });
 
-  it('renders the ENTRY chapter header with the four-digit entry number', () => {
+  it('offers a way back to the blog above the post', () => {
     const el = fixture.nativeElement as HTMLElement;
-    expect(el.querySelector('.chapter__code')?.textContent?.trim()).toBe('ENTRY');
-    expect(el.querySelector('.chapter__index')?.textContent?.trim()).toBe('_0001');
+    const back = el.querySelector('.post__back');
+    expect(back?.getAttribute('href')).toBe('/blog');
+    expect(back?.textContent).toContain('All posts');
   });
 
-  it('reports a word count computed from the rendered markdown', () => {
+  it('reports a word count and reading time computed from the rendered markdown', () => {
     const el = fixture.nativeElement as HTMLElement;
-    const meta = el.querySelector('.chapter__meta')?.textContent?.trim() ?? '';
     const body = el.querySelector('.post__body')!;
 
-    // Not a restatement of the implementation: this pins the printed number to
+    // Not a restatement of the implementation: this pins the printed numbers to
     // the words actually on the page, so a hardcoded or stale count fails.
     const words = countWords(body.innerHTML);
     expect(words).toBeGreaterThan(0);
-    expect(meta).toBe(`${words.toLocaleString('en-US')} WORDS`);
+    const record = el.querySelector('.post__record')?.textContent ?? '';
+    expect(record).toContain(words.toLocaleString('en-US'));
+    expect(el.querySelector('.post__eyebrow')?.textContent).toContain(
+      `${readingMinutes(words)} min read`,
+    );
   });
 
   it('sets the entry as a bare article, not inside a window', () => {
@@ -137,10 +141,11 @@ describe('BlogPostPage', () => {
     expect(el.querySelector('.post__title')?.textContent).toContain('Hello, World!');
   });
 
-  it('prints the date and the uppercased tags as the eyebrow', () => {
+  it('prints the date, the reading time and the tags as the eyebrow', () => {
     const el = fixture.nativeElement as HTMLElement;
+    const words = countWords(el.querySelector('.post__body')!.innerHTML);
     const eyebrow = el.querySelector('.post__eyebrow')?.textContent?.trim() ?? '';
-    expect(eyebrow).toBe('2026-01-16 · ANGULAR · PORTFOLIO · PERSONAL');
+    expect(eyebrow).toBe(`2026-01-16 · ${readingMinutes(words)} min read · angular · portfolio · personal`);
   });
 
   it('renders the post description under the title', () => {
@@ -156,32 +161,32 @@ describe('BlogPostPage', () => {
     expect(body?.innerHTML.length).toBeGreaterThan(0);
   });
 
-  it('applies KAIRO prose spacing to innerHTML markdown', () => {
+  it('applies the prose rhythm to the rendered markdown', () => {
     const el = fixture.nativeElement as HTMLElement;
     const body = el.querySelector('.post__body')!;
     expect(body.classList.contains('prose')).toBe(true);
 
     const p = body.querySelector('p')!;
-    expect(getComputedStyle(p).marginBottom).toBe('16px'); // --sp-4
+    expect(getComputedStyle(p).marginBottom).toBe('20px'); // --sp-5
 
     const h2 = body.querySelector('h2')!;
     const h2Style = getComputedStyle(h2);
-    expect(h2Style.marginTop).toBe('32px'); // --sp-8
-    expect(h2Style.fontSize).toBe('20px'); // --type-title, not UA 1.5em x 14
+    expect(h2Style.marginTop).toBe('48px'); // --sp-12
+    expect(h2Style.fontSize).toBe('28px');
     expect(h2Style.fontWeight).toBe('600');
   });
 
-  it('sets the running text at the design measure', () => {
+  it('sets the running text at the reading measure', () => {
     const el = fixture.nativeElement as HTMLElement;
     const p = el.querySelector('.post__body p')!;
     const style = getComputedStyle(p);
-    expect(style.fontSize).toBe('15px');
-    // 1.65 x 15px. Compared as a number: browsers disagree on how many
+    expect(style.fontSize).toBe('17px');
+    // 1.75 x 17px. Compared as a number: browsers disagree on how many
     // decimals a used line-height keeps.
-    expect(parseFloat(style.lineHeight)).toBeCloseTo(24.75, 1);
+    expect(parseFloat(style.lineHeight)).toBeCloseTo(29.75, 1);
   });
 
-  it('builds a CONTENTS inspector from the post headings', () => {
+  it('builds an on-this-page card from the post headings', () => {
     const el = fixture.nativeElement as HTMLElement;
     const contents = el.querySelector('.post__contents');
     expect(contents).toBeTruthy();
@@ -194,16 +199,16 @@ describe('BlogPostPage', () => {
     expect(contents?.textContent).not.toContain('&#');
   });
 
-  it('numbers each CONTENTS row with a section marker', () => {
+  it('numbers each contents row', () => {
     const el = fixture.nativeElement as HTMLElement;
     const markers = Array.from(el.querySelectorAll('.post__toc-idx')).map((s) =>
       s.textContent?.trim(),
     );
     expect(markers.length).toBeGreaterThan(0);
-    expect(markers[0]).toBe('§01');
+    expect(markers[0]).toBe('01');
   });
 
-  it('links each CONTENTS entry to the heading id emitted in the rendered markup', () => {
+  it('links each contents entry to the heading id emitted in the rendered markup', () => {
     const el = fixture.nativeElement as HTMLElement;
     const body = el.querySelector('.post__body');
     const headingIds = Array.from(body?.querySelectorAll('h2, h3') ?? []).map((h) =>
@@ -221,31 +226,26 @@ describe('BlogPostPage', () => {
     }
   });
 
-  it('renders a RECORD window with the date, entry, word count and tag count', () => {
+  it('sums the post up in an about card: date, reading time, words and tags', () => {
     const el = fixture.nativeElement as HTMLElement;
     const record = el.querySelector('.post__record')?.textContent ?? '';
-    expect(record).toContain('DATE');
+    expect(record).toContain('About this post');
+    expect(record).toContain('Published');
     expect(record).toContain('2026-01-16');
-    expect(record).toContain('ENTRY');
-    expect(record).toContain('0001');
-    expect(record).toContain('WORDS');
-    expect(record).toContain('TAGS');
-    expect(record).toContain('03'); // three tags, two digits
+    expect(record).toContain('Reading time');
+    expect(record).toContain('Words');
+    expect(record).toContain('Tags');
+    const values = Array.from(el.querySelectorAll('.post__record .key-value__value'));
+    expect(values[values.length - 1].textContent?.trim()).toBe('3');
   });
 
-  it('offers a way back to the log from the chapter header', () => {
-    const el = fixture.nativeElement as HTMLElement;
-    const back = el.querySelector('a[href="/blog"]');
-    expect(back?.textContent).toContain('LOG_04');
-  });
-
-  it('offers the quiet return control inside the RECORD window, as a link', () => {
+  it('offers the quiet return control inside the about card, as a link', () => {
     const el = fixture.nativeElement as HTMLElement;
     // `.button`, not `button`: it navigates, so app-button renders it as an <a>.
     const control = el.querySelector('.post__return .button');
     expect(control?.tagName.toLowerCase()).toBe('a');
     expect(control?.getAttribute('href')).toBe('/blog');
-    expect(control?.textContent).toContain('All entries');
+    expect(control?.textContent).toContain('All posts');
     expect(control?.getAttribute('data-variant')).toBe('text');
   });
 
@@ -259,22 +259,16 @@ describe('BlogPostPage', () => {
     expect(comments.compareDocumentPosition(pager)).toBe(Node.DOCUMENT_POSITION_FOLLOWING);
   });
 
-  it('jumps to the comments from the RECORD window', () => {
+  it('jumps to the comments from the about card', () => {
     const el = fixture.nativeElement as HTMLElement;
     const jump = el.querySelector('.post__return a[href="#comments"]');
     expect(jump?.textContent).toContain('Comments');
   });
 
-  it('ships exactly one h1 — the entry title, not the chapter label', () => {
-    // The chapter reads ENTRY_0001, which is where you are, not what this is.
-    // The post's own title is the heading, so the chapter steps down to a <p>.
+  it('ships exactly one h1 — the post title', () => {
     const el = fixture.nativeElement as HTMLElement;
     const headings = Array.from(el.querySelectorAll('h1')).map((h) => h.textContent?.trim());
-    expect(headings.length).toBe(1);
-    expect(headings[0]).toBe('Hello, World!');
-    expect((el.querySelector('.chapter__title') as HTMLElement).tagName.toLowerCase()).toBe(
-      'p',
-    );
+    expect(headings).toEqual(['Hello, World!']);
   });
 
   it('contains no emoji', () => {
@@ -303,7 +297,7 @@ describe('BlogPostPage (a part of a series)', () => {
     el = fixture.nativeElement as HTMLElement;
   });
 
-  it('lists every part in a SERIES window, oldest first, marking this one', () => {
+  it('lists every part in a series card, oldest first, marking this one', () => {
     const series = el.querySelector('.post__series')!;
     expect(series.querySelector('.window__context')?.textContent?.trim()).toBe('Puzzle Boy');
     const rows = Array.from(series.querySelectorAll('.post__toc-row'));
@@ -312,10 +306,10 @@ describe('BlogPostPage (a part of a series)', () => {
       '/blog/one-repo-became-three',
     ]);
     expect(rows.map((row) => row.getAttribute('aria-current'))).toEqual(['page', null]);
-  });
-
-  it('numbers the RECORD window after the SERIES window', () => {
-    expect(el.querySelector('.post__record .window__index')?.textContent?.trim()).toBe('03');
+    expect(rows.map((row) => row.querySelector('.post__toc-idx')?.textContent?.trim())).toEqual([
+      'Part 1',
+      'Part 2',
+    ]);
   });
 
   it('pages on to the next part, labelled as a part', () => {
@@ -343,23 +337,16 @@ describe('BlogPostPage (unknown entry)', () => {
     fixture.detectChanges();
   });
 
-  it('reads as the 404 chapter', () => {
+  // The panel itself is the 404 screen's, and its own spec covers what it says.
+  it('hands the miss to the shared not-found panel, with the address and a way back to the blog', () => {
     const el = fixture.nativeElement as HTMLElement;
-    expect(el.querySelector('.chapter__code')?.textContent?.trim()).toBe('ERROR');
-    expect(el.querySelector('.chapter__index')?.textContent?.trim()).toBe('_404');
+    const fault = el.querySelector('app-record-fault');
+    expect(fault?.textContent).toContain('/blog/no-such-entry');
+    expect(fault?.querySelector('a[href="/blog"]')).toBeTruthy();
   });
 
-  it('reports the failure in an alert window, like the 404 screen', () => {
-    const el = fixture.nativeElement as HTMLElement;
-    expect(el.querySelector('[data-variant="alert"]')).toBeTruthy();
-    expect(el.textContent).toContain('NO RECORD AT THIS ADDRESS');
-  });
-
-  it('shows the address that missed', () => {
-    const el = fixture.nativeElement as HTMLElement;
-    const report = el.querySelector('.fault__body')?.textContent ?? '';
-    expect(report).toContain('/blog/no-such-entry');
-    expect(report).toContain('404 NOT_FOUND');
+  it('keeps the miss out of search', () => {
+    expect(TestBed.inject(Meta).getTag('name="robots"')?.content).toBe('noindex');
   });
 
   it('renders no article', () => {

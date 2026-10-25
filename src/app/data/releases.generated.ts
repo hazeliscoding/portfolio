@@ -44,28 +44,17 @@ export const releases: Record<string, Release> = {
       "Linux"
     ]
   },
-  "puzzle-boy": {
-    "tag": "v0.3.0",
-    "url": "https://github.com/hazeliscoding/puzzle-boy/releases/tag/v0.3.0",
-    "platforms": [
-      "Windows",
-      "macOS",
-      "Linux"
-    ]
-  },
-  "puzzle-boy-community": {
-    "tag": "v0.1.0",
-    "url": "https://github.com/hazeliscoding/puzzle-boy-community/releases/tag/v0.1.0",
-    "platforms": [
-      "Windows",
-      "macOS",
-      "Linux"
-    ]
-  },
   "sdl3-porter": {
     "tag": "v1.0.2",
     "url": "https://github.com/hazeliscoding/sdl3-porter/releases/tag/v1.0.2",
     "platforms": []
+  },
+  "staypaw": {
+    "tag": "v1.1.1",
+    "url": "https://github.com/hazeliscoding/staypaw/releases/tag/v1.1.1",
+    "platforms": [
+      "Windows"
+    ]
   },
   "sweepling": {
     "tag": "v0.1.0",

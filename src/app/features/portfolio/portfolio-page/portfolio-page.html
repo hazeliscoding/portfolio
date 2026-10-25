@@ -1,41 +1,51 @@
-<app-chapter-header code="ARCHIVE" index="03" [meta]="records" />
+<section class="hero page-hero shell-width" aria-labelledby="projects-title" [attr.data-sfx]="motion.sfx()">
+  <div class="hero__copy">
+    <p class="eyebrow">
+      {{ shipped.length }} shipped · {{ building.length }} building now · free and open source
+    </p>
+    <h1 class="page-hero__title" id="projects-title">Here's what I'm building.</h1>
+    <p class="page-hero__lede">
+      Small, local-first apps that each do one job, and AI tooling I can prove works. Download the
+      ones that have shipped, or try an early build of the ones still on the way.
+    </p>
+  </div>
+  <div class="hero__avatar" aria-hidden="true"><span>H</span></div>
+</section>
 
-<!-- The channel guide: thatlev's jump bar, as a broadcast schedule. Sticky, so
-     it stays in reach the whole way down a long page of segments. -->
-<nav class="guide" aria-label="Channel guide" [attr.data-sfx]="motion.sfx()">
-  @for (group of guide; track group.kind) {
-    <span class="guide__group" [attr.data-kind]="group.kind">
-      <span class="guide__label">{{ group.label }}</span>
-      @for (c of group.channels; track c.id) {
-        <a class="guide__channel" [href]="'#' + c.id">
-          <img class="guide__mark" [src]="c.mark" alt="" width="20" height="20" />
-          <span class="guide__number">{{ c.channel }}</span>
-          <span class="guide__title">{{ c.title }}</span>
-        </a>
-      }
-    </span>
-  }
+<!-- Sticky, so every project stays one click away the whole way down. -->
+<nav class="guide" aria-label="Projects on this page">
+  <div class="guide__inner shell-width">
+    @for (c of guide; track c.id) {
+      <a class="guide__link" [href]="'#' + c.id">
+        <img class="guide__mark" [src]="c.mark" alt="" width="20" height="20" />{{ c.title }}
+      </a>
+    }
+  </div>
 </nav>
 
-<div class="broadcast">
-  @for (s of segments; track s.id) {
-    <app-broadcast-segment [segment]="s" />
-  }
-</div>
+<section class="group shell-width" aria-labelledby="shipped-title">
+  <div class="group__head">
+    <h2 class="section-head__title" id="shipped-title">Shipped.</h2>
+    <p class="group__lede">Ready to use today, each with its latest release and source.</p>
+  </div>
+  <div class="bands">
+    @for (s of shipped; track s.id) {
+      <app-broadcast-segment [segment]="s" />
+    }
+  </div>
+</section>
 
-@if (pilots.length) {
-  <section class="pilots" aria-labelledby="pilots-title" [attr.data-sfx]="motion.sfx()">
-    <div class="pilots__head">
-      <h2 class="pilots__title" id="pilots-title">Pilots</h2>
-      <span class="pilots__kicker">EXPERIMENTS · STILL IN THE EDIT BAY</span>
+@if (building.length) {
+  <section class="group shell-width" aria-labelledby="building-title">
+    <div class="group__head">
+      <h2 class="section-head__title" id="building-title">Building now.</h2>
+      <p class="group__lede">
+        Early builds you can try. They're unfinished on purpose, so they may change a lot before 1.0.
+      </p>
     </div>
-    <p class="pilots__lede">
-      Unfinished on purpose. These are where I try things out, so they may change a lot or stop.
-    </p>
-
-    <div class="pilots__grid">
-      @for (p of pilots; track p.id) {
-        <app-pilot-tape [pilot]="p" />
+    <div class="bands">
+      @for (s of building; track s.id) {
+        <app-broadcast-segment [segment]="s" />
       }
     </div>
   </section>

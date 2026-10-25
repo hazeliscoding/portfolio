@@ -1,42 +1,40 @@
-// KAIRO BLOG POST. Geometry from the design's POST screen: a reading column
-// and a 280px instrument rail, splitting at 960px (the design's `wide` flag is
-// `innerWidth >= 960`, and a media query cannot read a token, so the number is
-// written out).
 .post {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 280px;
-  gap: var(--sp-6);
+  padding-top: var(--sp-10);
 }
 
-// 720px is the measure the design sets for the entry itself — narrower than
-// the column it sits in, so the text stops before the rail on a wide screen.
-// The 18px rhythm between the header block and the body is off the 4px scale
-// in the design and kept literal.
+.post__back {
+  display: inline-flex;
+  gap: var(--sp-2);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-secondary);
+
+  &:hover {
+    color: var(--signal-active-strong);
+  }
+}
+
+.post__layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 300px;
+  gap: clamp(32px, 6vw, 88px);
+  margin-top: var(--sp-8);
+}
+
+// A calm reading column: about 68 characters of 17px prose.
 .post__article {
   max-width: 720px;
   min-width: 0;
-  display: grid;
-  gap: 18px;
-  align-content: start;
 
-  // The article is the one panel on this screen that is not an app-window, so
-  // it carries its own entrance rather than receiving it from the `delay`
-  // input. 60ms: it lands first, the rail follows at 180ms.
   &[data-sfx="a"] {
     animation: win-a var(--dur-window) var(--ease-mech) both;
-    animation-delay: 60ms;
   }
 
   &[data-sfx="b"] {
     animation: win-b var(--dur-window) var(--ease-mech) both;
-    animation-delay: 60ms;
   }
 }
 
-// Matched on `[data-sfx]`, not the bare class: the animation is set by
-// `.post__article[data-sfx="a/b"]` (0,2,0) and a bare `.post__article`
-// (0,1,0) would lose to it regardless of the media query. Same trap
-// documented in src/app/app.scss for `.app__env`.
 @media (prefers-reduced-motion: reduce) {
   .post__article[data-sfx="a"],
   .post__article[data-sfx="b"] {
@@ -44,148 +42,148 @@
   }
 }
 
-// 0.1em. Between --tracking-wide (0.08em) and --tracking-wider (0.16em), so
-// no token describes it; the design sets it literally here.
+.post__head {
+  padding-bottom: var(--sp-8);
+  margin-bottom: var(--sp-10);
+  border-bottom: var(--bw-hairline) solid var(--border-default);
+}
+
 .post__eyebrow {
-  font: var(--type-mono-s);
-  letter-spacing: 0.1em;
-  color: var(--text-active);
-}
-
-// One step down from the chapter title above it, and clamped for the same
-// reason: it has to survive a 360px phone and a 1440px desktop. 0.01em has no
-// token — --tracking-display is 0.02em, which the design uses on the chapter
-// title but deliberately not here.
-.post__tag {
-  color: inherit;
-  text-decoration: none;
-
-  &:hover,
-  &:focus-visible {
-    color: var(--text-primary);
-    text-decoration: underline;
-  }
-}
-
-.post__title {
-  font: var(--type-display-m);
-  font-size: clamp(28px, 3.5vw, 40px);
-  letter-spacing: 0.01em;
-  color: var(--text-primary);
-}
-
-.post__description {
-  font: var(--type-body);
-  color: var(--text-muted);
-}
-
-.post__rule {
-  height: var(--bw-hairline);
-  background: var(--border-default);
-}
-
-// Layout only, and barely that. The markdown typography lives in
-// src/styles/kairo/_prose.scss, which already sets the design's 15px/1.65
-// reading measure — content created by [innerHTML] never receives this
-// component's _ngcontent-* attribute, so a nested selector here could never
-// match it. `min-width: 0` lets a wide code block or table scroll inside
-// itself instead of widening the grid column.
-.post__body {
-  min-width: 0;
-}
-
-.post__side {
-  display: grid;
-  gap: var(--sp-3);
-  align-content: start;
-}
-
-// 9px on the leading edge, not 12px: the 3px indicator border makes up the
-// difference, so the text sits on the same optical line whether or not the
-// row is hovered. 10px gap is off the 4px scale in the design.
-.post__toc-row {
-  display: flex;
-  gap: 10px;
-  padding: 8px 12px 8px 9px;
-  border-bottom: var(--bw-hairline) solid var(--border-faint);
-  border-inline-start: var(--bw-indicator) solid transparent;
-  font: var(--type-body-s);
-  color: var(--text-muted);
-  cursor: pointer;
-  // No easing: the design omits one on this row, so it runs on the UA default
-  // rather than --ease-mech.
-  transition: all var(--dur-micro);
-
-  // `aria-current`: the part being read, in the SERIES window, held lit.
-  &:hover,
-  &:focus-visible,
-  &[aria-current='page'] {
-    border-inline-start-color: var(--signal-active);
-    color: var(--text-primary);
-  }
-}
-
-.post__toc-idx {
   font: var(--type-mono-s);
   color: var(--text-faint);
 }
 
-// A heading long enough to have no break opportunity must wrap rather than
-// push the 280px rail wider.
+.post__tag {
+  color: var(--signal-active);
+
+  &:hover,
+  &:focus-visible {
+    color: var(--signal-active-strong);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+}
+
+.post__title {
+  margin-top: var(--sp-5);
+  font: var(--type-display-l);
+  letter-spacing: var(--tracking-display);
+}
+
+.post__description {
+  margin-top: var(--sp-5);
+  font-size: 19px;
+  line-height: 1.6;
+  color: var(--text-muted);
+}
+
+.post__body {
+  min-width: 0;
+}
+
+.post__comments {
+  display: block;
+  margin-top: var(--sp-16);
+}
+
+// --- Aside -----------------------------------------------------------------
+
+.post__side {
+  display: grid;
+  gap: var(--sp-4);
+  align-content: start;
+  position: sticky;
+  top: 96px;
+  align-self: start;
+  // A long contents list must still scroll into reach while the aside is pinned.
+  max-height: calc(100dvh - 120px);
+  overflow-y: auto;
+}
+
+.post__toc {
+  display: grid;
+  padding: 10px 8px 12px;
+}
+
+.post__toc-row {
+  display: flex;
+  gap: 10px;
+  padding: 8px 12px;
+  border-radius: var(--radius-2);
+  font-size: 14px;
+  line-height: 1.4;
+  color: var(--text-muted);
+  transition:
+    background var(--dur-micro) var(--ease-mech),
+    color var(--dur-micro) var(--ease-mech);
+
+  &:hover,
+  &:focus-visible {
+    background: var(--surface-active-tint);
+    color: var(--text-primary);
+  }
+
+  &[aria-current="page"] {
+    background: var(--signal-active-dim);
+    color: var(--h-purple-ink);
+    font-weight: 600;
+  }
+}
+
+.post__toc-idx {
+  flex-shrink: 0;
+  padding-top: 2px;
+  font: var(--type-mono-s);
+  color: var(--text-faint);
+}
+
+[aria-current="page"] .post__toc-idx {
+  color: inherit;
+}
+
 .post__toc-text {
   min-width: 0;
   overflow-wrap: break-word;
 }
 
-// Not in the design, which always has headings to list. A post that is all
-// prose still has to say something here rather than render an empty panel.
 .post__toc-empty {
-  padding: 8px 12px 8px 9px;
-  font: var(--type-mono-s);
-  letter-spacing: var(--tracking-wider);
+  padding: 8px 12px;
+  font-size: 14px;
   color: var(--text-faint);
 }
 
-// 14px, off the 4px scale, is the design's gap between a KeyValue readout and
-// the control under it.
 .post__return {
   margin-block-start: 14px;
   display: flex;
   justify-content: space-between;
 }
 
-// The same step from the body as the pager takes.
-.post__comments {
-  margin-block-start: var(--sp-6);
-}
+// --- Pager -----------------------------------------------------------------
 
-// Older on the leading edge, newer on the trailing one, like the log reads
-// back in time. Built from the TOC row's hairlines and indicator rather than
-// a new look: it is the same kind of jump.
 .post__pager {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--sp-3);
-  margin-block-start: var(--sp-6);
-  border-top: var(--bw-hairline) solid var(--border-default);
-  padding-block-start: var(--sp-3);
+  gap: var(--sp-4);
+  margin-top: var(--sp-10);
 }
 
 .post__pager-link {
   display: grid;
-  // Both links stretch to the taller one; without this the shorter one
-  // spreads the spare height between its rows and its title drops.
   align-content: start;
-  gap: var(--sp-1);
-  padding: 8px 12px 8px 9px;
-  border-inline-start: var(--bw-indicator) solid transparent;
-  color: var(--text-muted);
-  text-decoration: none;
-  transition: all var(--dur-micro);
+  gap: var(--sp-2);
+  padding: 20px 24px;
+  background: var(--surface-window);
+  border: var(--bw-hairline) solid var(--border-default);
+  border-radius: var(--radius-3);
+  color: var(--text-primary);
+  transition:
+    border-color var(--dur-micro) var(--ease-mech),
+    box-shadow var(--dur-control) var(--ease-mech);
 
   &:hover,
   &:focus-visible {
-    border-inline-start-color: var(--signal-active);
+    border-color: var(--border-strong);
+    box-shadow: var(--shadow-card);
     color: var(--text-primary);
   }
 }
@@ -196,28 +194,33 @@
 }
 
 .post__pager-dir {
-  font: var(--type-mono-s);
-  letter-spacing: var(--tracking-wider);
-  color: var(--text-faint);
-  text-transform: uppercase;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--signal-active);
 }
 
 .post__pager-title {
-  font: var(--type-body-s);
+  font: 600 17px/1.35 var(--font-display);
+  letter-spacing: -0.01em;
   overflow-wrap: break-word;
 }
 
-
-
-
-
-
 @media (max-width: 959px) {
-  .post {
-    grid-template-columns: 1fr;
+  .post__layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .post__side {
+    position: static;
   }
 }
 
-// The not-found branch renders app-record-fault, which brings its own
-// styles. Nothing here drew it after that change, so the rules that used
-// to are gone rather than left behind as a second, unused copy.
+@media (max-width: 600px) {
+  .post__pager {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .post__pager-link--newer {
+    grid-column: auto;
+  }
+}

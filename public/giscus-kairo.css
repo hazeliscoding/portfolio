@@ -1,121 +1,115 @@
-/*! KAIRO theme for the giscus comments on blog posts.
- * Primer variable list from giscus's dark theme (MIT, GitHub Inc.); values are
- * KAIRO's (src/styles/kairo/tokens/_colors.scss), which this file cannot import
- * because giscus loads it inside its own iframe. vercel.json lets giscus.app
- * fetch it cross-origin.
+/*! The site's light theme for the giscus comments on blog posts.
+ * Primer variable list from giscus's light theme (MIT, GitHub Inc.); values are
+ * the site's (src/styles/kairo/tokens/_colors.scss), which this file cannot
+ * import because giscus loads it inside its own iframe. vercel.json lets
+ * giscus.app fetch it cross-origin. The filename is older than the palette.
  */
 
-@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600&family=JetBrains+Mono:wght@400&display=swap");
 
 main {
-  --color-prettylights-syntax-comment: #8b949d;
-  --color-prettylights-syntax-constant: #4fd2e0;
-  --color-prettylights-syntax-entity: #6fa0e8;
-  --color-prettylights-syntax-storage-modifier-import: #e9e7e1;
-  --color-prettylights-syntax-entity-tag: #55d88a;
-  --color-prettylights-syntax-keyword: #ff6a55;
-  --color-prettylights-syntax-string: #e8b04a;
-  --color-prettylights-syntax-variable: #e8b04a;
-  --color-prettylights-syntax-brackethighlighter-unmatched: #e8382c;
-  --color-prettylights-syntax-invalid-illegal-text: #e9e7e1;
-  --color-prettylights-syntax-invalid-illegal-bg: #7a1714;
-  --color-prettylights-syntax-carriage-return-text: #e9e7e1;
-  --color-prettylights-syntax-carriage-return-bg: #c2271f;
-  --color-prettylights-syntax-string-regexp: #55d88a;
-  --color-prettylights-syntax-markup-list: #e8b04a;
-  --color-prettylights-syntax-markup-heading: #6fa0e8;
-  --color-prettylights-syntax-markup-italic: #e9e7e1;
-  --color-prettylights-syntax-markup-bold: #e9e7e1;
-  --color-prettylights-syntax-markup-deleted-text: #ff6a55;
-  --color-prettylights-syntax-markup-deleted-bg: #7a1714;
-  --color-prettylights-syntax-markup-inserted-text: #55d88a;
-  --color-prettylights-syntax-markup-inserted-bg: #10141a;
-  --color-prettylights-syntax-markup-changed-text: #e8b04a;
-  --color-prettylights-syntax-markup-changed-bg: #10141a;
-  --color-prettylights-syntax-markup-ignored-text: #e9e7e1;
-  --color-prettylights-syntax-markup-ignored-bg: #3f6fb5;
-  --color-prettylights-syntax-meta-diff-range: #6fa0e8;
-  --color-prettylights-syntax-brackethighlighter-angle: #8b949d;
-  --color-prettylights-syntax-sublimelinter-gutter-mark: #3a444f;
-  --color-prettylights-syntax-constant-other-reference-link: #4fd2e0;
-  --color-btn-text: #e9e7e1;
-  --color-btn-bg: #161b22;
-  --color-btn-border: #28313b;
+  color-scheme: light;
+
+  --color-prettylights-syntax-comment: #6f6c7b;
+  --color-prettylights-syntax-constant: #3f5fd0;
+  --color-prettylights-syntax-entity: #5736a1;
+  --color-prettylights-syntax-storage-modifier-import: #262435;
+  --color-prettylights-syntax-entity-tag: #187a41;
+  --color-prettylights-syntax-keyword: #c8372d;
+  --color-prettylights-syntax-string: #a15c00;
+  --color-prettylights-syntax-variable: #a15c00;
+  --color-prettylights-syntax-brackethighlighter-unmatched: #c8372d;
+  --color-prettylights-syntax-invalid-illegal-text: #ffffff;
+  --color-prettylights-syntax-invalid-illegal-bg: #c8372d;
+  --color-prettylights-syntax-carriage-return-text: #ffffff;
+  --color-prettylights-syntax-carriage-return-bg: #c8372d;
+  --color-prettylights-syntax-string-regexp: #187a41;
+  --color-prettylights-syntax-markup-list: #a15c00;
+  --color-prettylights-syntax-markup-heading: #3f5fd0;
+  --color-prettylights-syntax-markup-italic: #262435;
+  --color-prettylights-syntax-markup-bold: #262435;
+  --color-prettylights-syntax-markup-deleted-text: #c8372d;
+  --color-prettylights-syntax-markup-deleted-bg: #fbe6e4;
+  --color-prettylights-syntax-markup-inserted-text: #187a41;
+  --color-prettylights-syntax-markup-inserted-bg: #e3f4e9;
+  --color-prettylights-syntax-markup-changed-text: #a15c00;
+  --color-prettylights-syntax-markup-changed-bg: #fbefdc;
+  --color-prettylights-syntax-markup-ignored-text: #ffffff;
+  --color-prettylights-syntax-markup-ignored-bg: #3f5fd0;
+  --color-prettylights-syntax-meta-diff-range: #5736a1;
+  --color-prettylights-syntax-brackethighlighter-angle: #6f6c7b;
+  --color-prettylights-syntax-sublimelinter-gutter-mark: #cfc8e8;
+  --color-prettylights-syntax-constant-other-reference-link: #3f5fd0;
+  --color-btn-text: #262435;
+  --color-btn-bg: #ffffff;
+  --color-btn-border: #e2ddf4;
   --color-btn-shadow: 0 0 transparent;
   --color-btn-inset-shadow: 0 0 transparent;
-  --color-btn-hover-bg: #1d242d;
-  --color-btn-hover-border: #3a444f;
-  --color-btn-active-bg: #1d242d;
-  --color-btn-active-border: #3a444f;
-  --color-btn-selected-bg: #161b22;
-  /* The primary button is KAIRO's: signal red with white text. */
-  --color-btn-primary-text: #fff;
-  --color-btn-primary-bg: #e8382c;
+  --color-btn-hover-bg: #f6f4fc;
+  --color-btn-hover-border: #cfc8e8;
+  --color-btn-active-bg: #f2f0f7;
+  --color-btn-active-border: #cfc8e8;
+  --color-btn-selected-bg: #f2f0f7;
+  /* The primary button is the site's: purple with white text. */
+  --color-btn-primary-text: #ffffff;
+  --color-btn-primary-bg: #6651cf;
   --color-btn-primary-border: transparent;
   --color-btn-primary-shadow: 0 0 transparent;
   --color-btn-primary-inset-shadow: 0 0 transparent;
-  --color-btn-primary-hover-bg: #c2271f;
+  --color-btn-primary-hover-bg: #5a45c4;
   --color-btn-primary-hover-border: transparent;
-  --color-btn-primary-selected-bg: #c2271f;
+  --color-btn-primary-selected-bg: #5a45c4;
   --color-btn-primary-selected-shadow: 0 0 transparent;
-  --color-btn-primary-disabled-text: rgb(255 255 255 / 50%);
-  --color-btn-primary-disabled-bg: #7a1714;
+  --color-btn-primary-disabled-text: rgb(255 255 255 / 80%);
+  --color-btn-primary-disabled-bg: #b3a8e7;
   --color-btn-primary-disabled-border: transparent;
-  --color-action-list-item-default-hover-bg: #1d242d;
-  --color-segmented-control-bg: #07090b;
-  --color-segmented-control-button-bg: #161b22;
-  --color-segmented-control-button-selected-border: #3a444f;
-  --color-fg-default: #e9e7e1;
-  --color-fg-muted: #8b949d;
-  /* --text-muted, not --text-faint: faint is under AA on these surfaces. */
-  --color-fg-subtle: #8b949d;
-  /* The window surface the comments sit on, so the frame has no visible edge. */
-  --color-canvas-default: #10141a;
-  --color-canvas-overlay: #161b22;
-  --color-canvas-inset: #07090b;
-  --color-canvas-subtle: #161b22;
-  --color-border-default: #28313b;
-  --color-border-muted: #1d242d;
-  --color-neutral-muted: rgb(58 68 79 / 40%);
-  /* Cyan, as --text-link: links, focus and the reader's own reactions. */
-  --color-accent-fg: #4fd2e0;
-  --color-accent-emphasis: #2fa8b8;
-  --color-accent-muted: rgb(79 210 224 / 40%);
-  --color-accent-subtle: rgb(79 210 224 / 7%);
-  --color-success-fg: #55d88a;
-  --color-attention-fg: #e8b04a;
-  --color-attention-muted: rgb(232 176 74 / 40%);
-  --color-attention-subtle: rgb(232 176 74 / 15%);
-  --color-danger-fg: #e8382c;
-  --color-danger-muted: rgb(232 56 44 / 40%);
-  --color-danger-subtle: rgb(232 56 44 / 8%);
+  --color-action-list-item-default-hover-bg: #f6f4fc;
+  --color-segmented-control-bg: #f2f0f7;
+  --color-segmented-control-button-bg: #ffffff;
+  --color-segmented-control-button-selected-border: #cfc8e8;
+  --color-fg-default: #262435;
+  --color-fg-muted: #696777;
+  --color-fg-subtle: #6f6c7b;
+  /* The card surface the comments sit on, so the frame has no visible edge. */
+  --color-canvas-default: #ffffff;
+  --color-canvas-overlay: #ffffff;
+  --color-canvas-inset: #f2f0f7;
+  --color-canvas-subtle: #f6f4fc;
+  --color-border-default: #e2ddf4;
+  --color-border-muted: #eeeaf8;
+  --color-neutral-muted: rgb(207 200 232 / 40%);
+  /* Purple, as --text-link: links, focus and the reader's own reactions. */
+  --color-accent-fg: #5a45c4;
+  --color-accent-emphasis: #6651cf;
+  --color-accent-muted: rgb(102 81 207 / 40%);
+  --color-accent-subtle: rgb(102 81 207 / 8%);
+  --color-success-fg: #187a41;
+  --color-attention-fg: #a15c00;
+  --color-attention-muted: rgb(161 92 0 / 40%);
+  --color-attention-subtle: rgb(161 92 0 / 10%);
+  --color-danger-fg: #c8372d;
+  --color-danger-muted: rgb(200 55 45 / 40%);
+  --color-danger-subtle: rgb(200 55 45 / 8%);
   --color-primer-shadow-inset: 0 0 transparent;
-  --color-scale-gray-7: #1d242d;
-  --color-scale-blue-8: rgb(79 210 224 / 15%);
+  --color-scale-gray-7: #f2f0f7;
+  --color-scale-blue-8: rgb(102 81 207 / 12%);
 
   /*! Extensions from @primer/css/alerts/flash.scss */
   --color-social-reaction-bg-hover: var(--color-scale-gray-7);
   --color-social-reaction-bg-reacted-hover: var(--color-scale-blue-8);
 
-  font-family: "IBM Plex Sans", system-ui, sans-serif;
+  font-family: "Bricolage Grotesque", system-ui, sans-serif;
 }
 
 main code,
 main pre {
-  font-family: "IBM Plex Mono", ui-monospace, monospace;
-}
-
-/* KAIRO draws square corners. */
-main *,
-main *::before,
-main *::after {
-  border-radius: 0 !important;
+  font-family: "JetBrains Mono", ui-monospace, monospace;
 }
 
 main .pagination-loader-container {
-  background-image: url("https://github.com/images/modules/pulls/progressive-disclosure-line-dark.svg");
+  background-image: url("https://github.com/images/modules/pulls/progressive-disclosure-line.svg");
 }
 
 main .gsc-loading-image {
-  background-image: url("https://github.githubassets.com/images/mona-loading-dark.gif");
+  background-image: url("https://github.githubassets.com/images/mona-loading-default.gif");
 }

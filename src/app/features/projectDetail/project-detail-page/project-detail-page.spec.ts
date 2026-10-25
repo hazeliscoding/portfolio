@@ -3,13 +3,15 @@ import { ActivatedRoute, provideRouter } from '@angular/router';
 import { of } from 'rxjs';
 import { ProjectDetailPage } from './project-detail-page';
 import { Project, projectsData } from '../../../data/projects.data';
+import { releases } from '../../../data/releases.generated';
 import { ProjectsDataService } from '../../../services/projects-data.service';
 
 const RECORD = projectsData[0];
+const RELEASE = releases['xiv-vault'];
 
 /**
- * Renders the record at `id`. Pass `archive` to stand in for the real data
- * when a test needs a kind of record the archive does not hold today.
+ * Renders the project at `id`. Pass `archive` to stand in for the real data
+ * when a test needs a kind of project the data does not hold today.
  */
 async function renderRecord(
   id: string,
@@ -41,17 +43,19 @@ async function renderRecord(
   return fixture;
 }
 
-/** Panels are identified by the title in their chrome, not by DOM order. */
-function panel(el: HTMLElement, title: string): HTMLElement {
-  const found = [...el.querySelectorAll<HTMLElement>('.window')].find(
-    (w) => w.querySelector('.window__title')?.textContent?.trim() === title,
-  );
-  if (!found) throw new Error(`no window titled "${title}"`);
-  return found;
+function textOf(el: Element | null | undefined): string {
+  return el?.textContent?.replace(/\s+/g, ' ').trim() ?? '';
 }
 
-function textOf(el: Element | null | undefined): string {
-  return el?.textContent?.trim() ?? '';
+/** The facts card's readout as `[key, value]` pairs. */
+function facts(el: HTMLElement): [string, string][] {
+  const keys = [...el.querySelectorAll('.detail__aside .key-value__key')].map(textOf);
+  const values = [...el.querySelectorAll('.detail__aside .key-value__value')].map(textOf);
+  return keys.map((k, i) => [k, values[i]]);
+}
+
+function actions(el: HTMLElement): HTMLAnchorElement[] {
+  return [...el.querySelectorAll<HTMLAnchorElement>('.detail__actions a.button')];
 }
 
 describe('ProjectDetailPage', () => {
@@ -67,19 +71,36 @@ describe('ProjectDetailPage', () => {
     expect(fixture.componentInstance).toBeTruthy();
   });
 
-  it('makes the chapter the record itself, with no chapter index', () => {
-    expect(textOf(el.querySelector('.chapter__code'))).toBe(RECORD.title.toUpperCase());
-    expect(el.querySelector('.chapter__index')).toBeNull();
+  it('makes the project name the one h1, with its pitch as the lede', () => {
+    const h1s = el.querySelectorAll('h1');
+    expect(h1s.length).toBe(1);
+    expect(textOf(h1s[0])).toBe(RECORD.title);
+    expect(textOf(el.querySelector('.detail__lede'))).toBe(RECORD.pitch);
   });
 
-  it('reports the record position and stack in the chapter meta', () => {
-    expect(textOf(el.querySelector('.chapter__meta'))).toBe(
-      'RECORD 01 OF 08 · .NET 10 · AVALONIA',
-    );
+  it('labels what it is and its version from the release data', () => {
+    expect(textOf(el.querySelector('.detail__chips .badge'))).toBe(`Shipped app · ${RELEASE.tag}`);
   });
 
-  it('prints the record description directly under the header', () => {
-    expect(textOf(el.querySelector('.detail__lede'))).toBe(RECORD.description);
+  it('leads with a download of the latest release, opening in a new tab', () => {
+    const [download, source] = actions(el);
+    expect(textOf(download)).toBe('Download for Windows ↗ (opens in a new tab)');
+    expect(download.getAttribute('href')).toBe(RELEASE.url);
+    expect(download.getAttribute('target')).toBe('_blank');
+    expect(download.getAttribute('data-variant')).toBe('primary');
+
+    expect(textOf(source)).toContain('View source');
+    expect(source.getAttribute('href')).toBe(RECORD.links.github!);
+    expect(source.getAttribute('data-variant')).toBe('secondary');
+  });
+
+  it('prints the fine print from the release, never the write-up', () => {
+    expect(textOf(el.querySelector('.detail__fine'))).toBe(`Free · Windows · ${RECORD.note}`);
+  });
+
+  it('opens with the description, then every long description paragraph', () => {
+    expect(textOf(el.querySelector('.detail__summary'))).toBe(RECORD.description);
+    expect(el.querySelectorAll('.detail__para').length).toBe(RECORD.longDescription!.length);
   });
 
   it('renders a thumbnail button per screenshot, named by its caption', () => {
@@ -89,27 +110,20 @@ describe('ProjectDetailPage', () => {
     expect(thumbs[0].getAttribute('aria-label')).toBe(RECORD.images![0].caption);
   });
 
-  it('keeps the caption in the window footer rather than under each thumbnail', () => {
-    expect(textOf(panel(el, 'Viewport').querySelector('.window__foot'))).toBe(
-      `${RECORD.images![0].caption.toUpperCase()} · CLICK OR → FOR NEXT`,
+  it('captions the stage as a sentence and counts the shots', () => {
+    const caption = RECORD.images![0].caption;
+    expect(textOf(el.querySelector('.detail__caption span'))).toBe(
+      `${caption.charAt(0).toUpperCase()}${caption.slice(1)}`,
     );
-    // The thumbnail carries only its zero-padded index.
-    expect(textOf(el.querySelector('.detail__thumb'))).toBe('01');
+    expect(textOf(el.querySelector('.detail__count'))).toBe('1 of 5');
   });
 
-  it('counts the frames in the viewport window context', () => {
-    expect(textOf(panel(el, 'Viewport').querySelector('.window__context'))).toBe('01 OF 05');
-  });
-
-  it('selects a frame when its thumbnail is clicked', () => {
-    const thumbs = el.querySelectorAll<HTMLButtonElement>('.detail__thumb');
-    thumbs[2].click();
+  it('selects a shot when its thumbnail is clicked', () => {
+    el.querySelectorAll<HTMLButtonElement>('.detail__thumb')[2].click();
     fixture.detectChanges();
 
-    expect(textOf(panel(el, 'Viewport').querySelector('.window__context'))).toBe('03 OF 05');
-    expect(el.querySelector('.detail__hero img')?.getAttribute('src')).toBe(
-      RECORD.images![2].src,
-    );
+    expect(textOf(el.querySelector('.detail__count'))).toBe('3 of 5');
+    expect(el.querySelector('.detail__shot img')?.getAttribute('src')).toBe(RECORD.images![2].src);
   });
 
   it('marks the selected thumbnail by more than colour', () => {
@@ -119,11 +133,11 @@ describe('ProjectDetailPage', () => {
     expect([...others].every((t) => t.getAttribute('aria-current') === null)).toBe(true);
   });
 
-  it('advances the frame on ArrowRight', () => {
+  it('advances the shot on ArrowRight', () => {
     document.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight' }));
     fixture.detectChanges();
 
-    expect(textOf(panel(el, 'Viewport').querySelector('.window__context'))).toBe('02 OF 05');
+    expect(textOf(el.querySelector('.detail__count'))).toBe('2 of 5');
   });
 
   it('leaves ArrowRight alone while a text field has focus', () => {
@@ -133,90 +147,79 @@ describe('ProjectDetailPage', () => {
     fixture.detectChanges();
     input.remove();
 
-    expect(textOf(panel(el, 'Viewport').querySelector('.window__context'))).toBe('01 OF 05');
+    expect(textOf(el.querySelector('.detail__count'))).toBe('1 of 5');
   });
 
-  it('renders every long description paragraph, and counts them', () => {
-    expect(el.querySelectorAll('.detail__para').length).toBe(RECORD.longDescription!.length);
-    expect(textOf(panel(el, 'Readme').querySelector('.window__context'))).toBe(
-      '3 PARAGRAPHS',
-    );
-  });
-
-  it('reads out the record', () => {
-    const readout = panel(el, 'Record');
-    const keys = [...readout.querySelectorAll('.key-value__key')].map(textOf);
-    const values = [...readout.querySelectorAll('.key-value__value')].map(textOf);
-
-    expect(keys).toEqual(['STATUS', 'YEAR', 'STACK', 'SCREENSHOTS', 'SOURCE']);
-    expect(values).toEqual([
-      'ACTIVE',
-      RECORD.year!,
-      RECORD.stack!,
-      '05',
-      'github.com/hazeliscoding/xiv-vault',
+  it('lists the facts it has, in sentence case', () => {
+    expect(facts(el)).toEqual([
+      ['Kind', 'Shipped app'],
+      ['Status', 'Active'],
+      ['Version', RELEASE.tag],
+      ['Platforms', 'Windows'],
+      ['Stack', RECORD.stack!],
+      ['Year', RECORD.year!],
+      ['Source', 'github.com/hazeliscoding/xiv-vault'],
     ]);
   });
 
-  it('offers the source and the way back, and no writeup the data does not have', () => {
-    const labels = [...panel(el, 'Record').querySelectorAll('.detail__actions .button')].map(
-      textOf,
-    );
-    expect(labels).toEqual(['View source >', '< All projects']);
+  it('renders every tag as a soft pill', () => {
+    expect(el.querySelectorAll('.detail__tags .badge').length).toBe(RECORD.tags!.length);
   });
 
-  it('opens the real repository from the source button', () => {
-    const open = spyOn(window, 'open');
-    const source = [...el.querySelectorAll<HTMLButtonElement>('.detail__actions .button')].find(
-      (b) => textOf(b) === 'View source >',
-    );
-    source!.click();
-
-    expect(open).toHaveBeenCalledWith(RECORD.links.github!, '_blank', 'noopener');
-  });
-
-  it('renders every tag as a badge', () => {
-    expect(panel(el, 'Tags').querySelectorAll('.badge').length).toBe(RECORD.tags!.length);
-  });
-
-  it('links both neighbours, wrapping around the archive', () => {
-    expect(el.querySelector('.detail__adjacent-empty')).toBeNull();
-    const links = [...el.querySelectorAll('.detail__adjacent-link')];
+  it('links both neighbours, wrapping around the list', () => {
+    const links = [...el.querySelectorAll('.detail__neighbour')];
     expect(links.map((a) => a.getAttribute('href'))).toEqual([
-      '/portfolio/axiomarium',
+      '/portfolio/darnling',
       '/portfolio/gil-sweep',
     ]);
-    expect(links.map(textOf)).toEqual(['< AXIOMARIUM', 'GIL SWEEP >']);
+    expect(links.map((a) => textOf(a.querySelector('.detail__neighbour-title')))).toEqual([
+      'Darnling',
+      'Gil Sweep',
+    ]);
   });
 
-  it('offers a way back to the archive, labelled with the archive code', () => {
-    const back = el.querySelector('.chapter__back');
+  it('offers a way back to all projects', () => {
+    const back = el.querySelector('.detail__back');
     expect(back?.getAttribute('href')).toBe('/portfolio');
-    expect(textOf(back)).toBe('< ARCHIVE_03');
-    expect(el.querySelector('app-button[routerLink="/portfolio"]')).toBeTruthy();
+    expect(textOf(back)).toBe('← All projects');
   });
 
-  it('contains no emoji', () => {
-    const text = el.textContent ?? '';
-    expect(/\p{Extended_Pictographic}/u.test(text)).toBe(false);
+  it('keeps terminal vocabulary out of the copy', () => {
+    expect(el.textContent ?? '').not.toMatch(/ARCHIVE_|RECORD|CAM \d|\[ /);
   });
 });
 
-/** The projects page's segment fields; nothing on the detail page reads them. */
+describe('ProjectDetailPage (a project installed by command)', () => {
+  let el: HTMLElement;
+
+  beforeEach(async () => {
+    el = (await renderRecord('sdl3-porter')).nativeElement as HTMLElement;
+  });
+
+  it('shows the install commands and makes the source the next step', () => {
+    const porter = projectsData.find((p) => p.id === 'sdl3-porter')!;
+    expect([...el.querySelectorAll('.detail__cmd')].map(textOf)).toEqual(porter.install!);
+    const buttons = actions(el);
+    expect(buttons.length).toBe(1);
+    expect(buttons[0].getAttribute('data-variant')).toBe('secondary');
+  });
+});
+
+/** The projects page's segment fields the detail page reads. */
 const SEGMENT = {
   kind: 'app',
-  pitch: '',
+  pitch: 'A pitch.',
   medium: 'Desktop',
-  brand: { ink: '#ffffff', tint: '#ffffff', icon: '', mark: '' },
+  brand: { ink: '#ffffff', tint: '#ffffff', icon: 'icon.svg', mark: 'mark.svg' },
 } satisfies Partial<Project>;
 
-/** A deployed project, with a demo link on the record. */
+/** A deployed project, with a demo link. */
 const LIVE: Project = {
   ...SEGMENT,
   kind: 'site',
   id: 'live-record',
   title: 'Live Record',
-  description: 'A record with a live site.',
+  description: 'A project with a live site.',
   image: 'images/projects/live-record/home.png',
   links: {
     github: 'https://github.com/hazeliscoding/live-record',
@@ -227,12 +230,12 @@ const LIVE: Project = {
   stack: 'Angular',
 };
 
-/** A published library. No real record has a package today. */
+/** A published library. No real project has a package today. */
 const PACKAGED: Project = {
   ...SEGMENT,
   id: 'packaged-record',
   title: 'Packaged Record',
-  description: 'A record with a NuGet package.',
+  description: 'A project with a NuGet package.',
   image: 'images/projects/packaged-record/usage.png',
   links: {
     github: 'https://github.com/hazeliscoding/packaged-record',
@@ -243,106 +246,80 @@ const PACKAGED: Project = {
   stack: 'C# · .NET',
 };
 
-describe('ProjectDetailPage (a record with a live site)', () => {
+describe('ProjectDetailPage (a project with a live site)', () => {
   let el: HTMLElement;
 
   beforeEach(async () => {
     el = (await renderRecord(LIVE.id, [LIVE])).nativeElement as HTMLElement;
   });
 
-  it('reads out the live site before the source', () => {
-    const readout = panel(el, 'Record');
-    const keys = [...readout.querySelectorAll('.key-value__key')].map(textOf);
-    const values = [...readout.querySelectorAll('.key-value__value')].map(textOf);
-
-    expect(keys).toEqual(['STATUS', 'YEAR', 'STACK', 'SCREENSHOTS', 'LIVE', 'SOURCE']);
-    expect(values[4]).toBe('live-record.example.com');
+  it('lists the live site before the source', () => {
+    const keys = facts(el).map(([k]) => k);
+    expect(keys).toEqual(['Kind', 'Status', 'Stack', 'Year', 'Live', 'Source']);
+    expect(facts(el)[4][1]).toBe('live-record.example.com');
   });
 
   it('leads with the live site and steps the source down to secondary', () => {
-    const buttons = [...panel(el, 'Record').querySelectorAll('.detail__actions .button')];
-    expect(buttons.map(textOf)).toEqual(['Open live site >', 'View source >', '< All projects']);
+    const buttons = actions(el);
+    expect(buttons.map((b) => textOf(b).replace(' ↗ (opens in a new tab)', ''))).toEqual([
+      'Visit Live Record',
+      'View source',
+    ]);
+    expect(buttons[0].getAttribute('href')).toBe(LIVE.links.demo!);
     expect(buttons[0].getAttribute('data-variant')).toBe('primary');
     expect(buttons[1].getAttribute('data-variant')).toBe('secondary');
   });
 
-  it('opens the live site from its button', () => {
-    const open = spyOn(window, 'open');
-    const live = [...el.querySelectorAll<HTMLButtonElement>('.detail__actions .button')].find(
-      (b) => textOf(b) === 'Open live site >',
-    );
-    live!.click();
-
-    expect(open).toHaveBeenCalledWith(LIVE.links.demo!, '_blank', 'noopener');
+  it('has no neighbours to link when it is the only project', () => {
+    expect(el.querySelector('.detail__adjacent')).toBeNull();
   });
 });
 
-describe('ProjectDetailPage (a record with a package)', () => {
+describe('ProjectDetailPage (a project with a package)', () => {
   let el: HTMLElement;
 
   beforeEach(async () => {
     el = (await renderRecord(PACKAGED.id, [PACKAGED])).nativeElement as HTMLElement;
   });
 
-  it('reads out the package before the source', () => {
-    const readout = panel(el, 'Record');
-    const keys = [...readout.querySelectorAll('.key-value__key')].map(textOf);
-    const values = [...readout.querySelectorAll('.key-value__value')].map(textOf);
-
-    expect(keys).toEqual(['STATUS', 'YEAR', 'STACK', 'SCREENSHOTS', 'PACKAGE', 'SOURCE']);
-    expect(values[4]).toBe('nuget.org/packages/PackagedRecord');
+  it('lists the package before the source', () => {
+    const keys = facts(el).map(([k]) => k);
+    expect(keys).toEqual(['Kind', 'Status', 'Stack', 'Year', 'Package', 'Source']);
+    expect(facts(el)[4][1]).toBe('nuget.org/packages/PackagedRecord');
   });
 
   it('leads with the package and steps the source down to secondary', () => {
-    const buttons = [...panel(el, 'Record').querySelectorAll('.detail__actions .button')];
-    expect(buttons.map(textOf)).toEqual(['View on NuGet >', 'View source >', '< All projects']);
+    const buttons = actions(el);
+    expect(buttons[0].getAttribute('href')).toBe(PACKAGED.links.nuget!);
+    expect(textOf(buttons[0])).toContain('View on NuGet');
     expect(buttons[0].getAttribute('data-variant')).toBe('primary');
     expect(buttons[1].getAttribute('data-variant')).toBe('secondary');
   });
-
-  it('opens the package page from its button', () => {
-    const open = spyOn(window, 'open');
-    const nuget = [...el.querySelectorAll<HTMLButtonElement>('.detail__actions .button')].find(
-      (b) => textOf(b) === 'View on NuGet >',
-    );
-    nuget!.click();
-
-    expect(open).toHaveBeenCalledWith(PACKAGED.links.nuget!, '_blank', 'noopener');
-  });
 });
 
-describe('ProjectDetailPage (no such record)', () => {
+describe('ProjectDetailPage (no such project)', () => {
   let el: HTMLElement;
 
   beforeEach(async () => {
     el = (await renderRecord('no-such-record')).nativeElement as HTMLElement;
   });
 
-  it('reports the fault in the shared 404 panel, not a local imitation', () => {
-    // app-record-fault draws this. The selectors below are its markup on
-    // purpose: if this page ever grows its own copy again, they stop matching.
-    const fault = el.querySelector('.window[data-variant="alert"]');
-    expect(fault).toBeTruthy();
-    expect(textOf(fault?.querySelector('.window__title'))).toBe('Record not found');
-    expect(textOf(el.querySelector('.fault__report'))).toBe('NO RECORD AT THIS ADDRESS');
-    expect(el.querySelector('.fault__panel')).toBeTruthy();
-  });
-
-  it('names the address that missed', () => {
-    const values = Array.from(el.querySelectorAll('.key-value__value')).map((d) =>
-      textOf(d),
-    );
-    expect(values).toContain('/portfolio/no-such-record');
-    expect(values).toContain('404 NOT_FOUND');
-  });
-
-  it('takes the error chapter rather than pretending to be a record', () => {
-    expect(textOf(el.querySelector('.chapter__code'))).toBe('ERROR');
-    expect(textOf(el.querySelector('.chapter__index'))).toBe('_404');
+  it('reports the miss in the shared 404 card, not a local imitation', () => {
+    // app-record-fault draws this. The selectors are its markup on purpose: if
+    // this page ever grows its own copy again, they stop matching.
+    expect(el.querySelector('app-record-fault .fault__panel')).toBeTruthy();
     expect(el.querySelector('.detail')).toBeNull();
   });
 
-  it('offers a way back to the archive', () => {
-    expect(el.querySelector('.chapter__back')?.getAttribute('href')).toBe('/portfolio');
+  it('names the address that missed', () => {
+    const values = Array.from(el.querySelectorAll('.key-value__value')).map((d) => textOf(d));
+    expect(values).toContain('/portfolio/no-such-record');
+    expect(values).toContain('404 Not found');
+  });
+
+  it('offers a way back to all projects', () => {
+    const back = el.querySelector('.fault__back');
+    expect(back?.getAttribute('href')).toBe('/portfolio');
+    expect(textOf(back)).toBe('← All projects');
   });
 });

@@ -2,16 +2,16 @@ import { Component, inject, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 import { MotionService } from '../../../ui/motion/motion.service';
-import { Project, ProjectKind, projectsData } from '../../../data/projects.data';
+import { Project, ProjectKind } from '../../../data/projects.data';
 import { Platform, Release, releases } from '../../../data/releases.generated';
 import { BroadcastScreen } from '../broadcast-screen/broadcast-screen';
 import { InstallBox } from '../install-box/install-box';
 
-/** The status badge's first word: what the project is, before which release. */
+/** The sticker's first words: what the project is, before which release. */
 const STATUS: Record<ProjectKind, string> = {
-  app: 'SHIPPED',
-  site: 'LIVE',
-  pilot: 'PILOT',
+  app: 'Shipped',
+  site: 'Live now',
+  pilot: 'Building now',
 };
 
 /** A project's colours, as the custom properties its segment or tape reads. */
@@ -23,13 +23,12 @@ export type Cta =
   | { kind: 'visit'; label: string; href: string; fine: string }
   | { kind: 'install'; commands: string[] };
 
-/** Everything one ON AIR or LIVE segment renders, resolved once by the page. */
+/** Everything one project's band renders, resolved once by the page. */
 export interface Segment {
   id: string;
-  kind: 'app' | 'site';
-  channel: string;
+  kind: ProjectKind;
   title: string;
-  /** `DESKTOP · 2026` — what it is and when, for the channel bug. */
+  /** `Desktop · 2026` — what it is and when, under the name. */
   slug: string;
   pitch: string;
   status: string;
@@ -37,11 +36,15 @@ export interface Segment {
   mark: string;
   style: BrandStyle;
   shot: string;
+  /** A CLI's commands, drawn on the screen in place of a capture. */
+  console: { command: string; note: string }[];
   alt: string;
   /** A live site's address bar, its host without the protocol. */
   host: string;
   phone: string;
   mascot: Project['mascot'];
+  /** Shown bare in place of the screen, when there is nothing to screenshot yet. */
+  art: Project['art'];
   cta: Cta;
   ticker: string[];
   /** Every other segment puts its screenshot on the left, as thatlev's bands do. */
@@ -49,7 +52,7 @@ export interface Segment {
   delay: string;
 }
 
-/** One project as a broadcast segment: channel bug, name, release, call to action, screen, ticker. */
+/** One project as a product band: sticker, name, pitch, call to action, screen and facts. */
 @Component({
   selector: 'app-broadcast-segment',
   standalone: true,
@@ -64,27 +67,28 @@ export class BroadcastSegment {
 
 /**
  * A project as its segment. Shared by the projects page and the home page's
- * NOW PLAYING, so a project airs the same way on both. `i` is its place in the
- * page's run, which sets the flip and the entrance stagger.
+ * featured band, so a project reads the same way on both. `i` is its place in
+ * the page's run, which sets the flip and the entrance stagger.
  */
 export function toSegment(p: Project, i: number): Segment {
   const release = releaseOf(p);
   return {
     id: p.id,
-    kind: p.kind as 'app' | 'site',
-    channel: channelOf(p),
+    kind: p.kind,
     title: p.title,
-    slug: [p.medium.toUpperCase(), p.year].filter(Boolean).join(' · '),
+    slug: [p.medium, p.year].filter(Boolean).join(' · '),
     pitch: p.pitch,
     status: [STATUS[p.kind], release?.tag].filter(Boolean).join(' · '),
     icon: p.brand.icon,
     mark: p.brand.mark,
     style: styleOf(p),
     shot: p.image,
-    alt: `${p.title} screenshot`,
+    console: p.console ?? [],
+    alt: p.console?.length ? `${p.title} commands` : `${p.title} screenshot`,
     host: p.links.demo ? bareHost(p.links.demo) : '',
     phone: p.phone ?? '',
     mascot: p.mascot,
+    art: p.art,
     cta: ctaOf(p, release),
     ticker: p.ticker ?? [],
     flip: i % 2 === 1,
@@ -93,12 +97,7 @@ export function toSegment(p: Project, i: number): Segment {
   };
 }
 
-/** Zero-padded position in the whole archive, so a channel keeps its number on every page. */
-export function channelOf(p: Project): string {
-  return String(projectsData.indexOf(p) + 1).padStart(2, '0');
-}
-
-/** `hazeliscoding/puzzle-boy` → `puzzle-boy`: the key releases.generated.ts files a repo under. */
+/** `hazeliscoding/xiv-vault` → `xiv-vault`: the key releases.generated.ts files a repo under. */
 export function repoOf(url: string): string {
   return url.replace(/\/+$/, '').split('/').pop() ?? '';
 }
@@ -132,15 +131,33 @@ function ctaOf(p: Project, release: Release | undefined): Cta {
   if (p.kind === 'site' && p.links.demo) {
     return {
       kind: 'visit',
-      label: `VISIT ${p.title.toUpperCase()}`,
+      label: `Visit ${p.title}`,
       href: p.links.demo,
       fine: ['Free', p.note, bareHost(p.links.demo)].filter(Boolean).join(' · '),
     };
   }
   const platforms = release?.platforms ?? [];
+  if (p.kind === 'pilot') {
+    // Nothing to try before a first release, so the repo is the place to watch.
+    return release
+      ? {
+          kind: 'download',
+          label: 'Try the latest build',
+          href: release.url,
+          fine: ['Free', platformList(platforms), p.status].filter(Boolean).join(' · '),
+        }
+      : {
+          kind: 'visit',
+          label: 'Follow along on GitHub',
+          href: p.links.github ?? '',
+          fine: [p.status && p.status[0].toUpperCase() + p.status.slice(1), 'no release yet']
+            .filter(Boolean)
+            .join(' · '),
+        };
+  }
   return {
     kind: 'download',
-    label: platforms.length === 1 ? `DOWNLOAD FOR ${platforms[0].toUpperCase()}` : 'DOWNLOAD',
+    label: platforms.length === 1 ? `Download for ${platforms[0]}` : `Download ${p.title}`,
     // The release page, not a binary: it offers every platform's file, and a
     // direct link would pick one for the visitor.
     href: release?.url ?? p.links.github ?? '',

@@ -1,4 +1,11 @@
-<app-window index="03" title="Comments" delay="180ms">
-  <!-- Not class="giscus": giscus empties an element of that class, and this one holds its script. -->
-  <div #frame></div>
-</app-window>
+<section class="comments" aria-labelledby="comments-title">
+  <h2 class="comments__title" id="comments-title">Comments and reactions</h2>
+  <p class="comments__note">
+    They live in this site's GitHub Discussions. Reading needs no account; commenting and reacting need a
+    GitHub sign-in.
+  </p>
+  <app-window [padded]="true">
+    <!-- Not class="giscus": giscus empties an element of that class, and this one holds its script. -->
+    <div #frame></div>
+  </app-window>
+</section>

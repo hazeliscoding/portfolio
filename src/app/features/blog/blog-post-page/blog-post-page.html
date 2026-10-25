@@ -1,122 +1,97 @@
 @if (post(); as p) {
-  <!--
-    `[heading]="false"` — the entry's own <h1> below is the page heading; this
-    is the location label. Both at h1 would put two of them on one page.
-  -->
-  <app-chapter-header
-    code="ENTRY"
-    [index]="entry()"
-    [meta]="wordsMeta()"
-    [heading]="false"
-    backLabel="LOG_04"
-    backRoute="/blog"
-  />
+  <div class="post shell-width">
+    <a class="post__back" routerLink="/blog"><span aria-hidden="true">←</span> All posts</a>
 
-  <div class="post">
-    <!--
-      A bare <article>, not a Window. The entry is the one thing on this site
-      that is read rather than inspected, so it is set on the canvas with no
-      chrome around it; the instruments stay in the aside.
-    -->
-    <article class="post__article" [attr.data-sfx]="motion.sfx()">
-      <!-- Each tag links to its listing; written on one line so the text reads `DATE · TAG · TAG`. -->
-      <p class="post__eyebrow">{{ p.date }}@for (tag of p.tags; track tag) { · <a class="post__tag" [routerLink]="['/blog/tags', tag]">{{ tag.toUpperCase() }}</a>}</p>
-      <h1 class="post__title">{{ p.title }}</h1>
-      <p class="post__description">{{ p.description }}</p>
-      <div class="post__rule" aria-hidden="true"></div>
-      <div class="post__body prose" [appProseHtml]="p.html"></div>
+    <div class="post__layout">
+      <!--
+        A bare <article>, not a card. The post is the one thing on this site
+        that is read rather than browsed, so it sits on the page with no frame
+        around it; the facts stay in the aside.
+      -->
+      <article class="post__article" [attr.data-sfx]="motion.sfx()">
+        <header class="post__head">
+          <!-- Each tag links to its listing; written on one line so the text reads `DATE · N MIN READ · TAG`. -->
+          <p class="post__eyebrow"><time [attr.datetime]="p.date">{{ p.date }}</time> · {{ readingTime() }}@for (tag of p.tags; track tag) { · <a class="post__tag" [routerLink]="['/blog/tags', tag]">{{ tag }}</a>}</p>
+          <h1 class="post__title">{{ p.title }}</h1>
+          <p class="post__description">{{ p.description }}</p>
+        </header>
 
-      <!-- Straight after the body, so the reactions meet the reader where the post ends. -->
-      <app-comments id="comments" class="post__comments" [term]="p.slug" />
+        <div class="post__body prose" [appProseHtml]="p.html"></div>
 
-      @if (pager().older || pager().newer) {
-        <nav class="post__pager" aria-label="More entries">
-          @if (pager().older; as older) {
-            <a class="post__pager-link" [routerLink]="['/blog', older.slug]" rel="prev">
-              <span class="post__pager-dir">&lt; {{ older.label }}</span>
-              <span class="post__pager-title">{{ older.title }}</span>
-            </a>
-          }
-          @if (pager().newer; as newer) {
-            <a class="post__pager-link post__pager-link--newer" [routerLink]="['/blog', newer.slug]" rel="next">
-              <span class="post__pager-dir">{{ newer.label }} &gt;</span>
-              <span class="post__pager-title">{{ newer.title }}</span>
-            </a>
-          }
-        </nav>
-      }
-    </article>
+        <!-- Straight after the body, so the reactions meet the reader where the post ends. -->
+        <app-comments id="comments" class="post__comments" [term]="p.slug" />
 
-    <aside class="post__side">
-      <app-window
-        class="post__contents"
-        variant="inspector"
-        index="01"
-        title="Contents"
-        [padded]="false"
-        delay="180ms"
-      >
-        @for (h of headings(); track h.id) {
-          <!--
-            A real anchor, where the design draws a div with a click handler:
-            the shell's fragment handler (App.onDocumentClick) works off
-            href="#id", and a link is focusable, announced as a link and
-            openable in a new tab without any of that being rebuilt here.
-          -->
-          <a class="post__toc-row" [href]="'#' + h.id">
-            <span class="post__toc-idx">{{ h.idx }}</span>
-            <span class="post__toc-text">{{ h.text }}</span>
-          </a>
-        } @empty {
-          <p class="post__toc-empty">NO SECTIONS</p>
+        @if (pager().older || pager().newer) {
+          <nav class="post__pager" aria-label="More posts">
+            @if (pager().older; as older) {
+              <a class="post__pager-link" [routerLink]="['/blog', older.slug]" rel="prev">
+                <span class="post__pager-dir"><span aria-hidden="true">←</span> {{ older.label }}</span>
+                <span class="post__pager-title">{{ older.title }}</span>
+              </a>
+            }
+            @if (pager().newer; as newer) {
+              <a class="post__pager-link post__pager-link--newer" [routerLink]="['/blog', newer.slug]" rel="next">
+                <span class="post__pager-dir">{{ newer.label }} <span aria-hidden="true">→</span></span>
+                <span class="post__pager-title">{{ newer.title }}</span>
+              </a>
+            }
+          </nav>
         }
-      </app-window>
+      </article>
 
-      @if (series().length) {
-        <app-window
-          class="post__series"
-          variant="inspector"
-          index="02"
-          title="Series"
-          [context]="p.series"
-          [padded]="false"
-          delay="180ms"
-        >
-          <!-- The same row as CONTENTS: both are jumps, one within the entry and one across entries. -->
-          @for (part of series(); track part.slug; let i = $index) {
-            <a
-              class="post__toc-row"
-              [routerLink]="['/blog', part.slug]"
-              [attr.aria-current]="part.slug === p.slug ? 'page' : null"
-            >
-              <span class="post__toc-idx">{{ (i + 1).toString().padStart(2, '0') }}</span>
-              <span class="post__toc-text">{{ part.title }}</span>
-            </a>
-          }
+      <aside class="post__side">
+        <app-window class="post__contents" title="On this page" [padded]="false" delay="120ms">
+          <div class="post__toc">
+            @for (h of headings(); track h.id) {
+              <!--
+                A real anchor: the shell's fragment handler (App.onDocumentClick)
+                works off href="#id", and a link is focusable, announced as a
+                link and openable in a new tab.
+              -->
+              <a class="post__toc-row" [href]="'#' + h.id">
+                <span class="post__toc-idx">{{ h.idx }}</span>
+                <span class="post__toc-text">{{ h.text }}</span>
+              </a>
+            } @empty {
+              <p class="post__toc-empty">No sections in this one.</p>
+            }
+          </div>
         </app-window>
-      }
 
-      <app-window
-        class="post__record"
-        variant="data"
-        [index]="series().length ? '03' : '02'"
-        title="Record"
-        delay="180ms"
-      >
-        <app-key-value [items]="record()" />
-        <div class="post__return">
-          <app-button variant="text" size="sm" routerLink="/blog">&lt; All entries</app-button>
-          <!-- No count: a live one would mean loading the comments up front. -->
-          <app-button variant="text" size="sm" href="#comments">Comments &gt;</app-button>
-        </div>
-      </app-window>
-    </aside>
+        @if (series().length) {
+          <app-window class="post__series" title="Series" [context]="p.series" [padded]="false" delay="120ms">
+            <!-- The same row as the contents: both are jumps, one within the post and one across posts. -->
+            <div class="post__toc">
+              @for (part of series(); track part.slug; let i = $index) {
+                <a
+                  class="post__toc-row"
+                  [routerLink]="['/blog', part.slug]"
+                  [attr.aria-current]="part.slug === p.slug ? 'page' : null"
+                >
+                  <span class="post__toc-idx">Part {{ i + 1 }}</span>
+                  <span class="post__toc-text">{{ part.title }}</span>
+                </a>
+              }
+            </div>
+          </app-window>
+        }
+
+        <app-window class="post__record" title="About this post" delay="120ms">
+          <app-key-value [items]="record()" />
+          <div class="post__return">
+            <app-button variant="text" size="sm" routerLink="/blog">← All posts</app-button>
+            <!-- No count: a live one would mean loading the comments up front. -->
+            <app-button variant="text" size="sm" href="#comments">Comments →</app-button>
+          </div>
+        </app-window>
+      </aside>
+    </div>
   </div>
 } @else {
   <!--
-    Literally the same panel as the 404 screen, not a local copy of it: a slug
-    with no entry is the same fault. The return goes to the log rather than
-    home — one level up from here, and where Escape goes too.
+    The same panel as the 404 screen, not a local copy of it: a slug with no
+    post is the same fault. The return goes to the blog rather than home — one
+    level up from here, and where Escape goes too.
   -->
-  <app-record-fault [path]="requestedPath()" backLabel="LOG_04" backRoute="/blog" />
+  <app-record-fault [path]="requestedPath()" backLabel="Blog" backRoute="/blog" />
 }

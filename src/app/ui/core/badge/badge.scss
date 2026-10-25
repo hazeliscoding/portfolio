@@ -1,63 +1,57 @@
+// A soft pill: a tinted fill with deep text.
 .badge {
-  display: inline-block;
-  font: var(--type-mono-s);
-  font-weight: 500;
-  letter-spacing: var(--tracking-wide);
-  text-transform: uppercase;
-  padding: 2px 6px;
-  border: var(--bw-hairline) solid var(--border-default);
-  border-radius: var(--radius-0);
+  display: inline-flex;
+  align-items: center;
+  font: 500 12px/1.2 var(--font-ui);
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  background: var(--surface-raised);
   color: var(--text-secondary);
 
-  &[data-tone="active"] {
-    color: var(--text-active);
-    border-color: var(--signal-active);
-  }
-
+  &[data-tone="active"],
   &[data-tone="info"] {
-    color: var(--signal-info);
-    border-color: var(--signal-info-dim);
+    background: var(--signal-active-dim);
+    color: var(--h-purple-ink);
   }
 
   &[data-tone="success"] {
+    background: #e3f4e9;
     color: var(--signal-success);
-    border-color: var(--signal-success-dim);
   }
 
   &[data-tone="warning"] {
+    background: #fbefdc;
     color: var(--signal-warning);
-    border-color: var(--signal-warning-dim);
   }
 
   &[data-tone="danger"] {
-    color: var(--text-active);
-    border-color: var(--signal-active);
+    background: #fbe6e4;
+    color: var(--signal-danger);
   }
 
-  // Filled inverts: the tone becomes the fill and the text drops to the
-  // darkest graphite so it reads against every tone in the scale. The border
-  // stays in the box model at 1px transparent, so a filled badge and an
-  // outlined one are the same size in a row of both.
   &--filled {
-    color: var(--k-graphite-0);
-    background: var(--text-secondary);
-    border-color: transparent;
+    background: var(--surface-inverse);
+    color: var(--text-inverse);
   }
 
   &--filled[data-tone="active"],
-  &--filled[data-tone="danger"] {
-    background: var(--text-active);
-  }
-
   &--filled[data-tone="info"] {
-    background: var(--signal-info);
+    background: var(--signal-active);
+    color: var(--text-inverse);
   }
 
   &--filled[data-tone="success"] {
     background: var(--signal-success);
+    color: var(--text-inverse);
   }
 
   &--filled[data-tone="warning"] {
     background: var(--signal-warning);
+    color: var(--text-inverse);
+  }
+
+  &--filled[data-tone="danger"] {
+    background: var(--signal-danger);
+    color: var(--text-inverse);
   }
 }

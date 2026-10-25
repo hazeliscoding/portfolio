@@ -2,7 +2,8 @@
   position: fixed;
   inset: 0;
   z-index: var(--z-palette);
-  background: rgba(7, 9, 11, 0.75);
+  background: rgba(38, 36, 53, 0.32);
+  backdrop-filter: blur(4px);
   display: flex;
   justify-content: center;
   padding-block-start: 12vh;
@@ -14,22 +15,30 @@
   // the scrim's full height and the list's bottom rule lands at the foot of
   // the viewport instead of under the last command.
   height: fit-content;
-  background: var(--surface-elevated);
-  border: var(--bw-hairline) solid var(--border-strong);
-  border-top: var(--bw-rule) solid var(--signal-active);
+  background: var(--surface-window);
+  border: var(--bw-hairline) solid var(--border-default);
+  border-radius: var(--radius-3);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
 }
 
 .palette__prompt {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 12px 14px;
+  padding: 16px 20px;
   border-bottom: var(--bw-hairline) solid var(--border-default);
 }
 
 .palette__caret {
+  display: inline-flex;
   color: var(--signal-active);
-  font: var(--type-mono);
+
+  svg {
+    width: 20px;
+    height: 20px;
+    fill: currentColor;
+  }
 }
 
 .palette__input {
@@ -38,8 +47,8 @@
   background: transparent;
   border: 0;
   color: var(--text-primary);
-  font: var(--type-mono);
-  font-size: 14px;
+  font: var(--type-body);
+  font-size: 17px;
 
   &::placeholder {
     color: var(--text-faint);
@@ -55,15 +64,18 @@
 }
 
 .palette__esc {
-  font: var(--type-mono-s);
-  color: var(--text-faint);
+  padding: 4px 8px;
+  border-radius: var(--radius-pill);
+  background: var(--surface-elevated);
+  font: 500 11px/1 var(--font-mono);
+  color: var(--text-muted);
 }
 
 .palette__list {
   margin: 0;
-  padding: 4px 0;
+  padding: 8px;
   list-style: none;
-  max-height: 300px;
+  max-height: 360px;
   overflow-y: auto;
 }
 
@@ -74,26 +86,27 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 8px 14px 8px 11px;
-  border-inline-start: var(--bw-indicator) solid transparent;
+  padding: 10px 12px;
+  border-radius: var(--radius-2);
   cursor: pointer;
 
   &--selected {
-    border-inline-start-color: var(--signal-active);
     background: var(--surface-active-tint);
   }
 }
 
 // Fixed gutter so every label starts on the same x, however long the tag is.
 .palette__mode {
-  width: 52px;
+  width: 64px;
   flex-shrink: 0;
-  font: var(--type-mono-s);
+  font: var(--type-label);
   color: var(--text-faint);
 }
 
 .palette__label {
   font: var(--type-body-s);
+  font-size: 15px;
+  font-weight: 500;
   color: var(--text-secondary);
 }
 
@@ -115,7 +128,7 @@
 }
 
 .palette__empty {
-  padding: 10px 14px;
-  font: var(--type-mono-s);
+  padding: 14px 12px;
+  font: var(--type-body-s);
   color: var(--text-faint);
 }

@@ -1,4 +1,3 @@
-// Intentionally empty. Every rule that used to live here moved into
-// app-record-fault, which now draws the whole screen — keeping a second copy
-// scoped to this page is how the three fault screens drifted apart in the
-// first place.
+// Intentionally empty. Every rule lives in app-record-fault, which draws the
+// whole screen — a second copy scoped to this page is how the three 404
+// screens drifted apart in the first place.

@@ -11,7 +11,7 @@ export type BlogPost = BlogPostSource & {
 export interface PagerLink {
   slug: string;
   title: string;
-  /** `Part 2` for a part of the same series, `Older entry` or `Newer entry` otherwise. */
+  /** `Part 2` for a part of the same series, `Older post` or `Newer post` otherwise. */
   label: string;
 }
 
@@ -39,8 +39,8 @@ export function pagerFor(
   const link = (post: Listed | undefined, label: string) =>
     post ? { slug: post.slug, title: post.title, label } : null;
   return {
-    older: link(parts[n - 1], `Part ${n}`) ?? link(posts[i + 1], 'Older entry'),
-    newer: link(parts[n + 1], `Part ${n + 2}`) ?? link(posts[i - 1], 'Newer entry'),
+    older: link(parts[n - 1], `Part ${n}`) ?? link(posts[i + 1], 'Older post'),
+    newer: link(parts[n + 1], `Part ${n + 2}`) ?? link(posts[i - 1], 'Newer post'),
   };
 }
 

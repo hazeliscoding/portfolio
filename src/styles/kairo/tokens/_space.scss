@@ -12,8 +12,10 @@
   --sp-16: 64px;
   --sp-20: 80px;
   --radius-0: 0;
-  --radius-1: 2px;
-  --radius-2: 3px;
+  --radius-1: 8px;
+  --radius-2: 12px;
+  --radius-3: 24px;
+  --radius-pill: 999px;
   --bw-hairline: 1px;
   --bw-rule: 2px;
   --bw-indicator: 3px;
@@ -29,4 +31,7 @@
   --bp-mobile: 480px;
   --bp-tablet: 840px;
   --bp-desktop: 1200px;
+  // The page's content width and its side gutter, shared by header, sections and footer.
+  --page-width: 1312px;
+  --gutter: clamp(16px, 4vw, 56px);
 }

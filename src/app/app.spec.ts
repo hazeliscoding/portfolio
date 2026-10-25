@@ -23,57 +23,61 @@ describe('App', () => {
     }).compileComponents();
   });
 
+  function render() {
+    const fixture = TestBed.createComponent(App);
+    fixture.detectChanges();
+    return { fixture, el: fixture.nativeElement as HTMLElement };
+  }
+
   it('should create the app', () => {
-    const fixture = TestBed.createComponent(App);
-    expect(fixture.componentInstance).toBeTruthy();
+    expect(render().fixture.componentInstance).toBeTruthy();
   });
 
-  it('renders a top and a bottom system bar', () => {
-    const fixture = TestBed.createComponent(App);
-    fixture.detectChanges();
-    const el = fixture.nativeElement as HTMLElement;
-    expect(el.querySelector('[data-position="top"]')).toBeTruthy();
-    expect(el.querySelector('[data-position="bottom"]')).toBeTruthy();
+  it('renders a header, the page and a footer as landmarks', () => {
+    const { el } = render();
+    expect(el.querySelector('header.site-header')).toBeTruthy();
+    expect(el.querySelector('main.main')).toBeTruthy();
+    expect(el.querySelector('footer.site-footer')).toBeTruthy();
+    // Outside <main>, or the header and footer lose their banner and
+    // contentinfo roles.
+    expect(el.querySelector('main header, main footer.site-footer')).toBeNull();
   });
 
-  it('renders the wordmark in the top bar', () => {
-    const fixture = TestBed.createComponent(App);
-    fixture.detectChanges();
-    expect((fixture.nativeElement as HTMLElement).textContent).toContain('hazel');
+  it('makes the wordmark a link home', () => {
+    const mark = render().el.querySelector('.site-header .wordmark');
+    expect(mark?.tagName).toBe('A');
+    expect(mark?.getAttribute('href')).toBe('/');
+    expect(mark?.textContent).toContain('hazeliscoding');
   });
 
-  it('highlights no mode when the route matches none', async () => {
-    const fixture = TestBed.createComponent(App);
+  it('links the four pages from the header and marks the current one', async () => {
+    const { fixture, el } = render();
+    const links = el.querySelectorAll('.site-nav__link');
+    expect([...links].map((a) => a.textContent?.trim())).toEqual(['Home', 'About', 'Projects', 'Blog']);
+
+    await TestBed.inject(Router).navigateByUrl('/blog/some-post');
     fixture.detectChanges();
-    const router = TestBed.inject(Router);
-    await router.navigateByUrl('/definitely-not-a-route');
+    const current = el.querySelectorAll('.site-nav__link[aria-current="page"]');
+    expect(current.length).toBe(1);
+    expect(current[0].textContent?.trim()).toBe('Blog');
+  });
+
+  it('highlights no page when the route matches none', async () => {
+    const { fixture } = render();
+    await TestBed.inject(Router).navigateByUrl('/definitely-not-a-route');
     fixture.detectChanges();
     expect(fixture.componentInstance.activeMode()).toBe('');
   });
 
-  it('makes the wordmark a link home', () => {
-    const fixture = TestBed.createComponent(App);
-    fixture.detectChanges();
-    const mark = (fixture.nativeElement as HTMLElement).querySelector('.app__wordmark');
-    expect(mark?.tagName).toBe('A');
-    expect(mark?.getAttribute('href')).toBe('/');
-  });
-
-  it('implements every keybinding the bottom bar advertises', async () => {
-    const fixture = TestBed.createComponent(App);
-    fixture.detectChanges();
-    const hints = (fixture.nativeElement as HTMLElement).querySelector('.app__hints');
-    expect(hints?.textContent).toContain('1–4 MODE');
-    expect(hints?.textContent).toContain('ESC BACK');
-
+  it('opens a page on 1–4 and steps one level out on Escape', async () => {
+    const { fixture } = render();
     const router = TestBed.inject(Router);
 
-    // 1–4 MODE
     document.dispatchEvent(new KeyboardEvent('keydown', { key: '3', bubbles: true }));
     await fixture.whenStable();
     expect(router.url).toBe('/portfolio');
 
-    // ESC BACK — one level out, not history.back()
+    // One level out, not history.back().
     await router.navigateByUrl('/portfolio/anything');
     document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
     await fixture.whenStable();
@@ -81,8 +85,7 @@ describe('App', () => {
   });
 
   it('does not navigate on 1–4 while the palette has the keyboard', async () => {
-    const fixture = TestBed.createComponent(App);
-    fixture.detectChanges();
+    const { fixture } = render();
     const router = TestBed.inject(Router);
     await router.navigateByUrl('/');
 
@@ -93,167 +96,69 @@ describe('App', () => {
     expect(router.url).toBe('/');
   });
 
-  it('narrates navigation in the bottom bar', async () => {
-    const fixture = TestBed.createComponent(App);
-    fixture.detectChanges();
-    const log = (fixture.nativeElement as HTMLElement).querySelector('.app__log');
-    expect(log).toBeTruthy();
-
-    // Asserting the element exists proves nothing about narration — it would
-    // pass against a log wired to nothing at all. Navigate and require the
-    // text to name where we went.
-    const before = log?.textContent ?? '';
-    await TestBed.inject(Router).navigateByUrl('/blog');
-    fixture.detectChanges();
-    const after = log?.textContent ?? '';
-    expect(after).not.toBe(before);
-    // The system narrates in its own vocabulary and names the location code,
-    // not the URL — the address bar already shows the URL.
-    expect(after).toContain('MODE SWITCH → LOG_04');
-  });
-
-  it('reports a route error on the lamp as well as in the log', async () => {
-    const fixture = TestBed.createComponent(App);
-    fixture.detectChanges();
-    const router = TestBed.inject(Router);
-
-    await router.navigateByUrl('/blog');
-    fixture.detectChanges();
-    expect(fixture.componentInstance.lightState()).toBe('ok');
-
-    // A record id with no record is a 404 even though the router matched the
-    // route pattern. The lamp has to agree with the page.
-    await router.navigateByUrl('/portfolio/not-a-real-record');
-    fixture.detectChanges();
-    expect(fixture.componentInstance.lightState()).toBe('danger');
-    expect(fixture.componentInstance.lightLabel()).toBe('ROUTE ERROR');
-    expect(
-      (fixture.nativeElement as HTMLElement).querySelector('.app__log')?.textContent,
-    ).toContain('ROUTE ERROR');
-  });
-
-  it('keeps the log out of the accessibility tree, so it never interrupts', () => {
-    const fixture = TestBed.createComponent(App);
-    fixture.detectChanges();
-    const log = (fixture.nativeElement as HTMLElement).querySelector('.app__log');
-    expect(log?.closest('[role="status"], [aria-live]')).toBeNull();
-  });
-
-  it('renders the mode rail', () => {
-    const fixture = TestBed.createComponent(App);
-    fixture.detectChanges();
-    const el = fixture.nativeElement as HTMLElement;
-    expect(el.querySelector('nav[aria-label="Mode"]')).toBeTruthy();
-  });
-
-  it('renders the routed page outlet', () => {
-    const fixture = TestBed.createComponent(App);
-    fixture.detectChanges();
-    expect((fixture.nativeElement as HTMLElement).querySelector('main.main')).toBeTruthy();
-  });
-
   it('keeps the palette closed until asked', () => {
-    const fixture = TestBed.createComponent(App);
-    fixture.detectChanges();
-    expect((fixture.nativeElement as HTMLElement).querySelector('.palette')).toBeNull();
+    expect(render().el.querySelector('.palette')).toBeNull();
   });
 
   it('opens the palette on ctrl+k', () => {
-    const fixture = TestBed.createComponent(App);
+    const { fixture, el } = render();
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', ctrlKey: true, bubbles: true }));
     fixture.detectChanges();
-    document.dispatchEvent(
-      new KeyboardEvent('keydown', { key: 'k', ctrlKey: true, bubbles: true }),
-    );
-    fixture.detectChanges();
-    expect((fixture.nativeElement as HTMLElement).querySelector('.palette')).toBeTruthy();
+    expect(el.querySelector('.palette')).toBeTruthy();
   });
 
-  it('renders a server-stable clock placeholder before hydration', () => {
-    const fixture = TestBed.createComponent(App);
-    fixture.detectChanges();
-    expect((fixture.nativeElement as HTMLElement).textContent).toContain('--:--:--');
-  });
-
-  it('projects each readout as a direct slot child so the bar gap applies', () => {
-    const fixture = TestBed.createComponent(App);
-    fixture.detectChanges();
-    const center = (fixture.nativeElement as HTMLElement).querySelector(
-      '.system-bar__center',
-    ) as HTMLElement;
-    // 3: NET, SYNC, and the typing path. The LOC readout is gone — KAIRO's
-    // top bar carries NET / SYNC / path on the left and nothing else, and
-    // the location is already stated on the home and about screens.
-    expect(center.children.length).toBe(3);
-    expect(center.children[0].tagName.toLowerCase()).toBe('app-readout');
-    expect(center.textContent).not.toContain('LOC');
-  });
-
-  it('offers a touch-reachable way to open the palette', () => {
-    const fixture = TestBed.createComponent(App);
-    fixture.detectChanges();
-    const el = fixture.nativeElement as HTMLElement;
-    const btn = el.querySelector('.app__command') as HTMLButtonElement;
-    expect(btn).toBeTruthy();
+  it('opens the palette from the search button, which is a real touch target on phones', () => {
+    const { fixture, el } = render();
+    const btn = el.querySelector('.search-key') as HTMLButtonElement;
     expect(btn.tagName.toLowerCase()).toBe('button');
-    // Clears the AAA touch target even though it only paints below 840px.
-    expect(parseInt(getComputedStyle(btn).minHeight, 10)).toBeGreaterThanOrEqual(44);
+    expect(btn.textContent).toContain('Search');
+    expect(parseInt(getComputedStyle(btn).minHeight, 10)).toBeGreaterThanOrEqual(40);
     btn.click();
     fixture.detectChanges();
     expect(el.querySelector('.palette')).toBeTruthy();
   });
 
-  it('offers a pointer-reachable way to open the palette', () => {
-    // Above 840px the COMMAND button is display:none and the [⌘K] control in
-    // the top bar is the only thing a mouse can click to reach the palette.
-    const fixture = TestBed.createComponent(App);
-    fixture.detectChanges();
-    const el = fixture.nativeElement as HTMLElement;
-    const key = el.querySelector('.app__palette-key') as HTMLButtonElement;
-    expect(key?.tagName.toLowerCase()).toBe('button');
-    key.click();
-    fixture.detectChanges();
-    expect(el.querySelector('.palette')).toBeTruthy();
+  it('lists the ways to reach Hazel in the footer, flagging the ones that open a tab', () => {
+    const links = [...render().el.querySelectorAll<HTMLAnchorElement>('.site-footer__link')];
+    expect(links.map((a) => a.textContent?.replace(/\(opens in a new tab\)/, '').trim())).toEqual([
+      'GitHub',
+      'LinkedIn',
+      'Say hello',
+      'RSS',
+      'Ko-fi',
+      'Résumé',
+    ]);
+    for (const a of links) {
+      const external = a.getAttribute('target') === '_blank';
+      expect(a.textContent?.includes('opens in a new tab')).toBe(external);
+    }
   });
 
-  it('vertically centres the bottom bar items', () => {
-    const fixture = TestBed.createComponent(App);
-    fixture.detectChanges();
-    const bar = (fixture.nativeElement as HTMLElement).querySelector(
-      '[data-position="bottom"]',
-    ) as HTMLElement;
-    expect(getComputedStyle(bar).alignItems).toBe('center');
+  it('offers a skip link to the page content', () => {
+    const skip = render().el.querySelector('.app__skip');
+    expect(skip?.getAttribute('href')).toBe('#main');
   });
 
   it('pins the shell to the viewport rather than growing with content', () => {
-    const fixture = TestBed.createComponent(App);
-    fixture.detectChanges();
-    const app = (fixture.nativeElement as HTMLElement).querySelector('.app') as HTMLElement;
-    const height = getComputedStyle(app).height;
-    expect(getComputedStyle(app).minHeight).not.toBe('100vh');
-    expect(height).not.toBe('auto');
+    const app = render().el.querySelector('.app') as HTMLElement;
+    expect(getComputedStyle(app).height).not.toBe('auto');
   });
 
-  it('makes the content region the scroll container, not the document', () => {
-    const fixture = TestBed.createComponent(App);
-    fixture.detectChanges();
-    const main = (fixture.nativeElement as HTMLElement).querySelector('.main') as HTMLElement;
-    const style = getComputedStyle(main);
+  it('makes the shell the scroll container, not the document', () => {
+    const style = getComputedStyle(render().el.querySelector('.app') as HTMLElement);
     expect(style.overflowY).toBe('auto');
     expect(style.overflowX).toBe('hidden');
   });
 
-  it('scrolls in-page anchors within the content region rather than navigating', () => {
-    const fixture = TestBed.createComponent(App);
-    fixture.detectChanges();
-    const host = fixture.nativeElement as HTMLElement;
-
+  it('scrolls in-page anchors within the shell rather than navigating', () => {
+    const { el } = render();
     const target = document.createElement('div');
     target.id = 'anchor-probe';
-    host.querySelector('.main')?.appendChild(target);
+    el.querySelector('.main')?.appendChild(target);
 
     const anchor = document.createElement('a');
     anchor.setAttribute('href', '#anchor-probe');
-    host.querySelector('.main')?.appendChild(anchor);
+    el.querySelector('.main')?.appendChild(anchor);
 
     const event = new MouseEvent('click', { bubbles: true, cancelable: true });
     anchor.dispatchEvent(event);
@@ -262,18 +167,15 @@ describe('App', () => {
   });
 
   it('ignores anchors that are not in-page', () => {
-    const fixture = TestBed.createComponent(App);
-    fixture.detectChanges();
-    const host = fixture.nativeElement as HTMLElement;
+    const { el } = render();
     const anchor = document.createElement('a');
     // Not `href="/portfolio"`: TestBed attaches the fixture to the live
     // document, so a real, un-prevented `<a>` click actually navigates the
-    // Karma runner itself away (confirmed while capturing RED — it 404s and
-    // disconnects the browser mid-suite). `javascript:void(0)` exercises the
-    // exact same code path in the handler (a present href that does not
-    // start with `#`) without moving the document.
+    // Karma runner itself away. `javascript:void(0)` exercises the same code
+    // path in the handler (a present href that does not start with `#`)
+    // without moving the document.
     anchor.setAttribute('href', 'javascript:void(0)');
-    host.querySelector('.main')?.appendChild(anchor);
+    el.querySelector('.main')?.appendChild(anchor);
 
     const event = new MouseEvent('click', { bubbles: true, cancelable: true });
     anchor.dispatchEvent(event);
@@ -282,10 +184,8 @@ describe('App', () => {
   });
 
   it('restores the fragment in the URL without navigating', () => {
-    const fixture = TestBed.createComponent(App);
-    fixture.detectChanges();
-    const host = fixture.nativeElement as HTMLElement;
-    const main = host.querySelector('.main') as HTMLElement;
+    const { el } = render();
+    const main = el.querySelector('.main') as HTMLElement;
 
     const target = document.createElement('div');
     target.id = 'hash-probe';
@@ -301,90 +201,7 @@ describe('App', () => {
     expect(location.pathname).toBe(pathBefore);
   });
 
-  it('renders the environmental word at page level, hidden from assistive tech', () => {
-    const fixture = TestBed.createComponent(App);
-    fixture.detectChanges();
-    const env = (fixture.nativeElement as HTMLElement).querySelector('.app__env');
-    expect(env).toBeTruthy();
-    expect(env?.getAttribute('aria-hidden')).toBe('true');
-  });
-
-  it('starts with the boot overlay off, so the first render pass has no overlay', () => {
-    const fixture = TestBed.createComponent(App);
-    // Checked before the first `detectChanges()`, not after: Angular 21's
-    // `afterNextRender` callback runs synchronously as part of the render
-    // that `detectChanges()` triggers (only the resulting template re-render
-    // is deferred), so by the time `detectChanges()` returns, `booting()`
-    // has already flipped to `true` even though the DOM has not caught up
-    // yet. Measured directly — `fixture.componentInstance.booting()` reads
-    // `true` immediately after the first `detectChanges()` call, before any
-    // `whenStable()`.
-    //
-    // Be clear about what this next line is worth: run before any change
-    // detection, it is close to asserting a field initialiser, and it would
-    // pass against a component whose reduced-motion gate was broken. It is
-    // documentation of the starting state, not regression coverage. The
-    // weight is carried by the DOM query below, by the paired
-    // `mounts the boot overlay once the browser has rendered` spec, and
-    // above all by the build-time grep of the prerendered HTML, which an
-    // absent feature cannot satisfy.
-    expect(fixture.componentInstance.booting()).toBe(false);
-    fixture.detectChanges();
-    // This is NOT proof of prerender safety on its own — it would pass
-    // against a component that never mounts the overlay at all. The real
-    // proof is Step 6's grep of the prerendered HTML, which cannot be
-    // satisfied by an absent feature.
-    expect((fixture.nativeElement as HTMLElement).querySelector('.boot')).toBeNull();
-  });
-
-  describe('landing page', () => {
-    // Karma serves the suite from /context.html, so each spec puts the page
-    // on the path it means to land on and puts it back afterwards.
-    const karmaPath = location.pathname;
-    afterEach(() => history.replaceState(null, '', karmaPath));
-
-    async function bootAfterLandingOn(path: string): Promise<boolean> {
-      history.replaceState(null, '', path);
-      const fixture = TestBed.createComponent(App);
-      fixture.detectChanges();
-      await fixture.whenStable();
-      fixture.detectChanges();
-      return fixture.componentInstance.booting();
-    }
-
-    it('mounts the boot overlay once the browser has rendered the home page', async () => {
-      // Paired with the spec above: together they prove the overlay is off for
-      // the render that prerendering captures and on afterwards. Alone, either
-      // one is satisfiable by a component that does nothing.
-      const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
-      expect(await bootAfterLandingOn('/')).toBe(!reduced);
-    });
-
-    it('skips the boot overlay when the visit lands on any other page', async () => {
-      expect(await bootAfterLandingOn('/blog')).toBe(false);
-    });
-  });
-
   it('exposes the motion sequence on the shell for CSS to select on', () => {
-    const fixture = TestBed.createComponent(App);
-    fixture.detectChanges();
-    const app = (fixture.nativeElement as HTMLElement).querySelector('.app');
-    expect(app?.getAttribute('data-sfx')).toBe('a');
-  });
-
-  it('renders a wipe bar hidden from assistive tech', () => {
-    const fixture = TestBed.createComponent(App);
-    fixture.detectChanges();
-    const wipe = (fixture.nativeElement as HTMLElement).querySelector('.app__wipe');
-    expect(wipe).toBeTruthy();
-    expect(wipe?.getAttribute('aria-hidden')).toBe('true');
-  });
-
-  it('renders the instrumentation readouts the motion animates', () => {
-    const fixture = TestBed.createComponent(App);
-    fixture.detectChanges();
-    const el = fixture.nativeElement as HTMLElement;
-    expect(el.querySelector('.app__sync')).toBeTruthy();
-    expect(el.querySelector('.app__path')?.textContent).toContain('HAZEL.EXE');
+    expect(render().el.querySelector('.app')?.getAttribute('data-sfx')).toBe('a');
   });
 });

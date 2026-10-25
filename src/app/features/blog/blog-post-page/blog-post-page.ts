@@ -2,24 +2,20 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 
 import { Button } from '../../../ui/core/button/button';
-import { ChapterHeader } from '../../../ui/chapter-header/chapter-header';
 import { KeyValue, type KeyValueItem } from '../../../ui/data/key-value/key-value';
 import { MotionService } from '../../../ui/motion/motion.service';
 import { Window } from '../../../ui/windows/window/window';
 import { RecordFault } from '../../../ui/record-fault/record-fault';
-import { count } from '../../../core/count';
-import { entryNumber } from '../../../core/navigation';
 import { PageMeta, PERSON, SITE_ORIGIN, breadcrumbs } from '../../../core/page-meta';
-import { blogPosts } from '../../../data/blog-posts.generated';
 import { BlogService, type BlogPost } from '../../../services/blog.service';
 import { Comments } from './comments';
 import { ProseHtml } from './prose-html';
 
 interface Heading {
-  /** The `id` the markdown renderer emitted; the CONTENTS anchor targets it. */
+  /** The `id` the markdown renderer emitted; the contents link targets it. */
   id: string;
   text: string;
-  /** `§01` — the section marker printed in mono ahead of the heading text. */
+  /** `01` — the section number printed in mono ahead of the heading text. */
   idx: string;
 }
 
@@ -40,9 +36,9 @@ export function decodeEntities(text: string): string {
 }
 
 /**
- * The entry's length, counted from the post's own rendered markdown — the
- * design prints `2,400 WORDS` in the chapter meta and a declared number in
- * frontmatter is wrong the first time a paragraph is edited.
+ * The post's length, counted from its own rendered markdown — the page prints
+ * a word count and a reading time, and a declared number in frontmatter is
+ * wrong the first time a paragraph is edited.
  *
  * Counted over the HTML with its tags stripped rather than over the markdown
  * source, so `##`, `-`, table pipes and link syntax are not counted as words
@@ -63,10 +59,15 @@ function grouped(n: number): string {
   return n.toLocaleString('en-US');
 }
 
+/** Minutes at a steady 220 words a minute, never less than one. */
+export function readingMinutes(words: number): number {
+  return Math.max(1, Math.round(words / 220));
+}
+
 @Component({
   selector: 'blog-post-page',
   standalone: true,
-  imports: [RouterLink, Button, ChapterHeader, Comments, KeyValue, Window, RecordFault, ProseHtml],
+  imports: [RouterLink, Button, Comments, KeyValue, Window, RecordFault, ProseHtml],
   templateUrl: './blog-post-page.html',
   styleUrl: './blog-post-page.scss',
 })
@@ -91,41 +92,23 @@ export class BlogPostPage {
   readonly headings = signal<Heading[]>([]);
   readonly words = signal(0);
 
-  /**
-   * Derived from the entry's position in `blogPosts` through the same helper
-   * the shell uses, so the chapter index, the top bar's path label and the
-   * environmental word can never print three different numbers for one entry.
-   */
-  readonly entry = computed(() => {
-    const p = this.post();
-    if (!p) return '';
-    return entryNumber(blogPosts.findIndex((candidate) => candidate.slug === p.slug));
-  });
-
   /** The footer links: the parts either side in a series, else the entries either side. */
   readonly pager = computed(() => this.blog.getPager(this.post()?.slug ?? ''));
 
-  /** Every part of this entry's series, for the SERIES window; empty when it stands alone. */
+  /** Every part of this post's series, for the series card; empty when it stands alone. */
   readonly series = computed(() => this.blog.getSeries(this.post()?.slug ?? ''));
 
-  readonly wordsMeta = computed(() => {
-    const n = this.words();
-    // count() owns the plural rule for the whole site (core/count.ts). It
-    // prints the number ungrouped, and the design prints it grouped, so the
-    // digits it produced are swapped for the grouped form rather than the
-    // singular/plural test being written out a second time here.
-    return count(n, 'WORD', 'WORDS').replace(String(n), grouped(n));
-  });
+  /** `6 min read`, for the line above the title. */
+  readonly readingTime = computed(() => `${readingMinutes(this.words())} min read`);
 
   readonly record = computed<KeyValueItem[]>(() => {
     const p = this.post();
     if (!p) return [];
     return [
-      { key: 'DATE', value: p.date },
-      { key: 'ENTRY', value: this.entry() },
-      { key: 'WORDS', value: grouped(this.words()) },
-      // Two digits, like every other count in the instrument chrome.
-      { key: 'TAGS', value: String(p.tags.length).padStart(2, '0') },
+      { key: 'Published', value: p.date },
+      { key: 'Reading time', value: this.readingTime() },
+      { key: 'Words', value: grouped(this.words()) },
+      { key: 'Tags', value: String(p.tags.length) },
     ];
   });
 
@@ -141,7 +124,7 @@ export class BlogPostPage {
       // SAFETY: the body is written unsanitised by ProseHtml. This HTML comes
       // from markdown committed to this repository and rendered at build time —
       // it is exactly as trusted as the application source. Angular's sanitizer
-      // strips `id`, which would break every CONTENTS anchor, so bypassing it is
+      // strips `id`, which would break every contents link, so bypassing it is
       // necessary here.
       // SANITISE IT if blog content ever becomes externally sourced: CMS-fed,
       // accepting outside contributions, or fetched at runtime.
@@ -153,7 +136,7 @@ export class BlogPostPage {
           description: found.description,
           path,
           image: found.image || undefined,
-          imageAlt: `${found.title} — blog entry card, Hazel Granados`,
+          imageAlt: `${found.title} — blog post card, Hazel Granados`,
           article: { publishedTime: found.date, tags: found.tags },
           jsonLd: [
             {
@@ -174,8 +157,8 @@ export class BlogPostPage {
         });
       } else {
         this.pageMeta.set({
-          title: 'Record not found - Hazel Granados',
-          description: 'No entry exists at this address.',
+          title: 'Post not found - Hazel Granados',
+          description: 'No post exists at this address.',
           path: `/blog/${slug}`,
           // Same reason as the 404 route. The host answers an unknown slug with
           // a 404 status (scripts/postbuild.mjs), but a client-side navigation
@@ -199,7 +182,7 @@ export class BlogPostPage {
     while ((m = re.exec(html)) !== null) {
       const text = decodeEntities(m[3].replace(/<[^>]+>/g, '').trim());
       if (!text) continue;
-      out.push({ id: m[2], text, idx: `§${String(out.length + 1).padStart(2, '0')}` });
+      out.push({ id: m[2], text, idx: String(out.length + 1).padStart(2, '0') });
     }
     return out;
   }
