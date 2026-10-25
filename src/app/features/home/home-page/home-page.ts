@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 import { MotionService } from '../../../ui/motion/motion.service';
@@ -39,9 +39,10 @@ function fineOf(p: Project): string {
 }
 
 /**
- * The home page as a maker's shop front: the featured app on a dark band, an
- * open-source strip, the hero, everything shipped as cards, open-source work,
- * the latest writing, a note from the maker, and the questions people ask.
+ * The home page as a maker's shop front: the featured apps taking turns on a
+ * dark band, an open-source strip, the hero, everything shipped as cards,
+ * open-source work, the latest writing, a note from the maker, and the
+ * questions people ask.
  */
 @Component({
   selector: 'home-page',
@@ -59,18 +60,27 @@ export class HomePage implements OnInit {
   readonly github = GITHUB;
   readonly githubIcon = ICONS.github;
 
-  /** The first featured project airs on the dark band, as its projects-page segment does. */
-  readonly featured = (() => {
-    const p = projectsData.find((project) => project.featured)!;
-    const segment = toSegment(p, 0);
-    return {
-      ...segment,
+  /** The featured projects, in archive order, each read as its projects-page segment. */
+  readonly featured = projectsData
+    .filter((p) => p.featured)
+    .map((p, i) => ({
+      ...toSegment(p, i),
       lede: lede(p.description),
       caption: p.ticker?.[0] ?? '',
       medium: p.medium,
       platforms: platformList(releaseOf(p)?.platforms ?? []) || p.medium,
-    };
-  })();
+    }));
+
+  /** The featured app on the band. */
+  readonly active = signal(0);
+
+  /**
+   * Whether the band moves on by itself. The clock is the active tab's progress
+   * bar: its CSS animation runs 8s and its `animationend` shows the next app, so
+   * hovering or focusing the band pauses both at once, and under reduced motion
+   * there is no animation and so no rotation at all.
+   */
+  readonly playing = signal(true);
 
   /** Every shipped app and live site, in archive order. Pilots stay on the projects page. */
   readonly picks = projectsData
@@ -116,6 +126,28 @@ export class HomePage implements OnInit {
       stars: starCount(project.stars),
     })),
   };
+
+  next(): void {
+    this.active.update((i) => (i + 1) % this.featured.length);
+  }
+
+  /** A visitor choosing an app takes over from the rotation until they press play. */
+  pick(i: number): void {
+    this.active.set(i);
+    this.playing.set(false);
+  }
+
+  /** The tablist's arrow keys, Home and End, with focus following the selection. */
+  onTabKey(event: KeyboardEvent): void {
+    const n = this.featured.length;
+    const to = { ArrowRight: this.active() + 1, ArrowLeft: this.active() - 1 + n, Home: 0, End: n - 1 }[
+      event.key
+    ];
+    if (to === undefined) return;
+    event.preventDefault();
+    this.pick(to % n);
+    (event.currentTarget as HTMLElement).querySelectorAll<HTMLElement>('[role="tab"]')[to % n]?.focus();
+  }
 
   ngOnInit(): void {
     this.pageMeta.set({

@@ -1,34 +1,96 @@
-@let f = featured;
 <div class="home" [attr.data-sfx]="motion.sfx()">
-  <!-- The featured app, on the shop's dark band. -->
-  <section class="promo shell-width" aria-labelledby="promo-title" [style]="f.style">
-    <div class="promo__copy">
-      <div class="promo__chips">
-        <img class="promo__icon" [src]="f.icon" alt="" width="40" height="40" />
-        <span class="promo__pill">{{ f.platforms }} · {{ f.medium }}</span>
-      </div>
-      <h2 class="promo__title" id="promo-title">{{ f.pitch }}</h2>
-      <p class="promo__lede">{{ f.lede }}</p>
-      <div class="promo__actions">
-        @if (f.cta.kind !== 'install') {
-          <a class="promo__cta" [href]="f.cta.href" target="_blank" rel="noopener"
-            >Get {{ f.title }} free <span aria-hidden="true">↗</span
-            ><span class="sr-only"> (opens in a new tab)</span></a
-          >
-        }
-        <a class="promo__more" [routerLink]="['/portfolio', f.id]">How it works <span aria-hidden="true">→</span></a>
-      </div>
-      @if (f.cta.kind !== 'install') {
-        <p class="promo__fine">{{ f.cta.fine }}</p>
+  <!--
+    The featured apps take turns on the shop's dark band. Every slide is in the
+    page, stacked in one grid cell, so the band is as tall as the tallest and a
+    change moves nothing below it. Only the active one is visible.
+  -->
+  <section class="promo shell-width" aria-label="Featured apps" [class.promo--playing]="playing()">
+    <div class="promo__slides" [attr.aria-live]="playing() ? 'off' : 'polite'">
+      @for (f of featured; track f.id; let i = $index) {
+        <div
+          class="promo__slide"
+          role="tabpanel"
+          [id]="'promo-' + f.id"
+          [attr.aria-labelledby]="'promo-tab-' + f.id"
+          [class.promo__slide--on]="i === active()"
+          [style]="f.style"
+        >
+          <div class="promo__copy">
+            <div class="promo__chips">
+              <img class="promo__icon" [src]="f.icon" alt="" width="40" height="40" />
+              <span class="promo__pill">{{ f.platforms }} · {{ f.medium }}</span>
+            </div>
+            <h2 class="promo__title">{{ f.pitch }}</h2>
+            <p class="promo__lede">{{ f.lede }}</p>
+            <div class="promo__actions">
+              @if (f.cta.kind !== 'install') {
+                <a class="promo__cta" [href]="f.cta.href" target="_blank" rel="noopener"
+                  >Get {{ f.title }} free <span aria-hidden="true">↗</span
+                  ><span class="sr-only"> (opens in a new tab)</span></a
+                >
+              }
+              <a class="promo__more" [routerLink]="['/portfolio', f.id]"
+                >How it works <span aria-hidden="true">→</span></a
+              >
+            </div>
+            @if (f.cta.kind !== 'install') {
+              <p class="promo__fine">{{ f.cta.fine }}</p>
+            }
+          </div>
+
+          <figure class="promo__screen">
+            <img
+              [src]="f.shot"
+              [alt]="f.alt"
+              width="1280"
+              height="800"
+              [attr.loading]="i === 0 ? null : 'lazy'"
+            />
+            @if (f.caption) {
+              <figcaption class="promo__caption">{{ f.caption }}.</figcaption>
+            }
+          </figure>
+        </div>
       }
     </div>
 
-    <figure class="promo__screen">
-      <img [src]="f.shot" [alt]="f.alt" width="1280" height="800" />
-      @if (f.caption) {
-        <figcaption class="promo__caption">{{ f.caption }}.</figcaption>
-      }
-    </figure>
+    <div class="promo__bar">
+      <div class="promo__tabs" role="tablist" aria-label="Featured apps" (keydown)="onTabKey($event)">
+        @for (f of featured; track f.id; let i = $index) {
+          <button
+            type="button"
+            role="tab"
+            class="promo__tab"
+            [id]="'promo-tab-' + f.id"
+            [attr.aria-selected]="i === active()"
+            [attr.aria-controls]="'promo-' + f.id"
+            [tabIndex]="i === active() ? 0 : -1"
+            [style]="f.style"
+            (click)="pick(i)"
+          >
+            <img class="promo__mark" [src]="f.mark" alt="" width="18" height="18" />
+            <span class="promo__tab-title">{{ f.title }}</span>
+            @if (i === active() && playing()) {
+              <span class="promo__progress" aria-hidden="true" (animationend)="next()"></span>
+            }
+          </button>
+        }
+      </div>
+      <button
+        type="button"
+        class="promo__pause"
+        [attr.aria-label]="playing() ? 'Pause the featured apps' : 'Play the featured apps'"
+        (click)="playing.set(!playing())"
+      >
+        <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+          @if (playing()) {
+            <path d="M4 2.5h2.5v11H4zM9.5 2.5H12v11H9.5z" />
+          } @else {
+            <path d="M4.5 2.2 13.5 8l-9 5.8z" />
+          }
+        </svg>
+      </button>
+    </div>
   </section>
 
   <!-- The open-source strip, where the reference has its Discord. -->

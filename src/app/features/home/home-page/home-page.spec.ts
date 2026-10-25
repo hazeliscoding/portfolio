@@ -34,23 +34,109 @@ describe('HomePage', () => {
   });
 
   describe('featured band', () => {
-    const first = projectsData.find((p) => p.featured)!;
+    const featured = projectsData.filter((p) => p.featured);
+    const tabs = () => [...el.querySelectorAll<HTMLButtonElement>('.promo__tab')];
+    const selected = () => tabs().findIndex((t) => t.getAttribute('aria-selected') === 'true');
+    const shown = () => [...el.querySelectorAll('.promo__slide--on')].map((s) => s.id);
+    const progress = () => el.querySelector('.promo__progress');
+    const slide = (i: number) => el.querySelectorAll('.promo__slide')[i];
 
-    it('airs the first featured project, its pitch as the headline', () => {
-      expect(text(el.querySelector('.promo__title'))).toBe(first.pitch);
-      expect(el.querySelector<HTMLImageElement>('.promo__screen img')?.getAttribute('src')).toBe(first.image);
+    it('takes turns between the featured projects, in archive order', () => {
+      expect(tabs().map(text)).toEqual(featured.map((p) => p.title));
+      expect(featured.length).toBeGreaterThan(1);
+    });
+
+    it('starts on the first, with only its slide shown and its pitch as the headline', () => {
+      expect(selected()).toBe(0);
+      expect(shown()).toEqual([`promo-${featured[0].id}`]);
+      expect(text(slide(0).querySelector('.promo__title'))).toBe(featured[0].pitch);
+      expect(slide(0).querySelector('.promo__screen img')?.getAttribute('src')).toBe(featured[0].image);
+    });
+
+    it('loads only the first screenshot eagerly', () => {
+      const shots = [...el.querySelectorAll('.promo__screen img')];
+      expect(shots.map((img) => img.getAttribute('loading'))).toEqual(
+        featured.map((_, i) => (i === 0 ? null : 'lazy')),
+      );
+    });
+
+    it('wires each tab to its slide', () => {
+      for (const tab of tabs()) {
+        const panel = el.querySelector(`#${tab.getAttribute('aria-controls')}`);
+        expect(panel?.getAttribute('role')).toBe('tabpanel');
+        expect(panel?.getAttribute('aria-labelledby')).toBe(tab.id);
+      }
+    });
+
+    it('moves on each time the progress bar runs out, wrapping round', () => {
+      for (const expected of [1, 2, 0]) {
+        progress()!.dispatchEvent(new Event('animationend'));
+        fixture.detectChanges();
+        expect(selected()).toBe(expected);
+        expect(shown().length).toBe(1);
+      }
+    });
+
+    it('hands over to a visitor who picks an app', () => {
+      tabs()[2].click();
+      fixture.detectChanges();
+      expect(selected()).toBe(2);
+      expect(shown()).toEqual([`promo-${featured[2].id}`]);
+      expect(progress()).toBeNull();
+      expect(el.querySelector('.promo__pause')?.getAttribute('aria-label')).toBe('Play the featured apps');
+    });
+
+    it('pauses and plays from its own control', () => {
+      const pause = el.querySelector<HTMLButtonElement>('.promo__pause')!;
+      expect(pause.getAttribute('aria-label')).toBe('Pause the featured apps');
+      pause.click();
+      fixture.detectChanges();
+      expect(progress()).toBeNull();
+      expect(pause.getAttribute('aria-label')).toBe('Play the featured apps');
+      pause.click();
+      fixture.detectChanges();
+      expect(progress()).not.toBeNull();
+    });
+
+    it('moves between apps with the arrow keys, Home and End', () => {
+      const list = el.querySelector('[role="tablist"]')!;
+      const key = (k: string) => {
+        list.dispatchEvent(new KeyboardEvent('keydown', { key: k, bubbles: true }));
+        fixture.detectChanges();
+      };
+      key('ArrowLeft');
+      expect(selected()).toBe(2);
+      key('ArrowRight');
+      expect(selected()).toBe(0);
+      key('End');
+      expect(selected()).toBe(2);
+      key('Home');
+      expect(selected()).toBe(0);
+      expect(tabs().map((t) => t.tabIndex)).toEqual([0, -1, -1]);
+    });
+
+    it('announces a change only once the rotation has stopped', () => {
+      const slides = el.querySelector('.promo__slides')!;
+      expect(slides.getAttribute('aria-live')).toBe('off');
+      tabs()[1].click();
+      fixture.detectChanges();
+      expect(slides.getAttribute('aria-live')).toBe('polite');
     });
 
     it('downloads from the release page in a new tab, and says so', () => {
-      const cta = el.querySelector<HTMLAnchorElement>('.promo__cta')!;
-      const repo = first.links.github!.split('/').pop()!;
-      expect(cta.getAttribute('href')).toBe(releases[repo]?.url ?? first.links.github!);
-      expect(cta.getAttribute('target')).toBe('_blank');
-      expect(text(cta)).toContain('(opens in a new tab)');
+      featured.forEach((p, i) => {
+        const cta = slide(i).querySelector<HTMLAnchorElement>('.promo__cta')!;
+        const repo = p.links.github!.split('/').pop()!;
+        expect(cta.getAttribute('href')).withContext(p.id).toBe(releases[repo]?.url ?? p.links.github!);
+        expect(cta.getAttribute('target')).toBe('_blank');
+        expect(text(cta)).toContain('(opens in a new tab)');
+      });
     });
 
-    it('links its write-up', () => {
-      expect(el.querySelector('.promo__more')?.getAttribute('href')).toBe(`/portfolio/${first.id}`);
+    it('links each write-up', () => {
+      featured.forEach((p, i) => {
+        expect(slide(i).querySelector('.promo__more')?.getAttribute('href')).toBe(`/portfolio/${p.id}`);
+      });
     });
   });
 

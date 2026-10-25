@@ -25,21 +25,57 @@
   .home > section {
     animation: none;
   }
+
+  // No clock, so no rotation, and nothing for the pause button to stop. Scoped
+  // under .promo to outrank the button's own display, which comes later.
+  .promo .promo__progress,
+  .promo .promo__pause {
+    display: none;
+  }
+
+  .promo__slide,
+  .promo__slide--on {
+    transition: none;
+  }
 }
 
 // --- Featured band ---------------------------------------------------------
 
 .promo {
-  display: grid;
-  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
-  gap: var(--sp-8);
-  align-items: center;
   margin-top: var(--sp-2);
   padding: 14px;
   padding-inline-start: clamp(24px, 4vw, 56px);
   background: var(--surface-night);
   border-radius: var(--radius-3);
   color: var(--text-on-night);
+}
+
+// Every slide in one cell. The incoming one fades in over the outgoing one,
+// which holds at full opacity underneath until the fade is done and only then
+// hides, so the dissolve never shows the band through both.
+.promo__slides {
+  display: grid;
+}
+
+.promo__slide {
+  display: grid;
+  grid-area: 1 / 1;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: var(--sp-8);
+  align-items: center;
+  min-width: 0;
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 0s linear var(--dur-cinematic),
+    visibility 0s linear var(--dur-cinematic);
+}
+
+.promo__slide--on {
+  z-index: 1;
+  opacity: 1;
+  visibility: visible;
+  transition: opacity var(--dur-cinematic) var(--ease-mech);
 }
 
 .promo__copy {
@@ -153,6 +189,112 @@
   letter-spacing: -0.01em;
   color: var(--h-white);
   text-shadow: 0 2px 12px rgba(0, 0, 0, 0.6);
+}
+
+// One tab per featured app, then the pause button.
+.promo__bar {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  padding-block: var(--sp-3) 10px;
+}
+
+.promo__tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+}
+
+.promo__tab {
+  position: relative;
+  isolation: isolate;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  min-height: 36px;
+  padding: 0 14px 0 10px;
+  overflow: hidden;
+  border: var(--bw-hairline) solid rgba(255, 255, 255, 0.14);
+  border-radius: var(--radius-pill);
+  background: transparent;
+  font: 600 14px/1 var(--font-ui);
+  color: var(--text-on-night-muted);
+  cursor: pointer;
+  transition:
+    background var(--dur-micro) var(--ease-mech),
+    color var(--dur-micro) var(--ease-mech);
+
+  &:hover {
+    color: var(--text-on-night);
+    background: rgba(255, 255, 255, 0.06);
+  }
+
+  &[aria-selected="true"] {
+    border-color: color-mix(in srgb, var(--tint) 60%, transparent);
+    background: color-mix(in srgb, var(--tint) 26%, transparent);
+    color: var(--text-on-night);
+  }
+}
+
+// While it plays, the active tab fills with its colour instead.
+.promo--playing .promo__tab[aria-selected="true"] {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.promo__mark {
+  display: block;
+  width: 18px;
+  height: 18px;
+}
+
+// The rotation's clock. Its `animationend` shows the next app, so pausing the
+// animation pauses the rotation: hovering or focusing the band holds the app,
+// and the fill shows how long until the next one.
+.promo__progress {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: color-mix(in srgb, var(--tint) 30%, transparent);
+  transform-origin: left;
+  animation: promo-progress 8s linear both;
+}
+
+.promo:hover .promo__progress,
+.promo:focus-within .promo__progress {
+  animation-play-state: paused;
+}
+
+@keyframes promo-progress {
+  from {
+    transform: scaleX(0);
+  }
+
+  to {
+    transform: scaleX(1);
+  }
+}
+
+.promo__pause {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 36px;
+  height: 36px;
+  border: var(--bw-hairline) solid rgba(255, 255, 255, 0.22);
+  border-radius: 50%;
+  background: transparent;
+  color: var(--text-on-night);
+  cursor: pointer;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  svg {
+    width: 14px;
+    height: 14px;
+    fill: currentColor;
+  }
 }
 
 // --- Open-source strip -----------------------------------------------------
@@ -748,7 +890,7 @@
     gap: var(--sp-12);
   }
 
-  .promo,
+  .promo__slide,
   .hero,
   .oss,
   .faq {
@@ -791,6 +933,20 @@
 }
 
 @media (max-width: 600px) {
+  // The marks name the other apps; their titles stay for screen readers.
+  .promo__tab:not([aria-selected="true"]) {
+    padding-inline: 9px;
+
+    .promo__tab-title {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+  }
+
   .picks__grid,
   .writing__grid {
     grid-template-columns: minmax(0, 1fr);
