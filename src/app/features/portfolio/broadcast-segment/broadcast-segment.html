@@ -35,24 +35,27 @@
     </div>
 
     <div class="segment__devices">
-      <app-broadcast-screen
-        [shot]="s.shot"
-        [still]="s.still"
-        [console]="s.console"
-        [alt]="s.alt"
-        [host]="s.host"
-        [phone]="s.phone"
-        [phoneAlt]="s.title + ' on a phone'"
-      />
-      @if (s.mascot; as m) {
-        <img
-          class="segment__mascot"
-          [src]="m.src"
-          [alt]="m.alt"
-          width="320"
-          height="320"
-          loading="lazy"
+      @if (s.art; as art) {
+        <img class="segment__art" [src]="art.src" [alt]="art.alt" loading="lazy" />
+      } @else {
+        <app-broadcast-screen
+          [shot]="s.shot"
+          [console]="s.console"
+          [alt]="s.alt"
+          [host]="s.host"
+          [phone]="s.phone"
+          [phoneAlt]="s.title + ' on a phone'"
         />
+        @if (s.mascot; as m) {
+          <img
+            class="segment__mascot"
+            [src]="m.src"
+            [alt]="m.alt"
+            width="320"
+            height="320"
+            loading="lazy"
+          />
+        }
       }
     </div>
   </div>
@@ -61,19 +64,6 @@
     <ul class="segment__ticker" [attr.aria-label]="s.title + ' at a glance'">
       @for (fact of s.ticker; track fact) {
         <li>{{ fact }}</li>
-      }
-    </ul>
-  }
-
-  @if (s.parts.length) {
-    <ul class="segment__ticker segment__parts" [attr.aria-label]="s.title + ' repositories'">
-      @for (part of s.parts; track part.url) {
-        <li>
-          <a [href]="part.url" target="_blank" rel="noopener"
-            >{{ part.label }}<span class="sr-only"> (opens in a new tab)</span></a
-          >
-          <span class="segment__part-detail">{{ part.detail }}</span>
-        </li>
       }
     </ul>
   }

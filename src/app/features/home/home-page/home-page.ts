@@ -99,8 +99,8 @@ export class HomePage implements OnInit {
 
   readonly projectCount = projectsData.length;
 
-  /** The hero's sticker sheet: every project's icon, decorative. */
-  readonly stickers = projectsData.map((p) => p.brand.icon);
+  /** The hero's sticker sheet: every shipped project's icon, decorative, as the cards below it. */
+  readonly stickers = projectsData.filter((p) => p.kind !== 'pilot').map((p) => p.brand.icon);
 
   readonly posts = blogPosts.slice(0, LATEST_POSTS).map((post) => ({
     slug: post.slug,

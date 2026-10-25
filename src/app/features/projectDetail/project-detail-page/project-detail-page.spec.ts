@@ -169,11 +169,11 @@ describe('ProjectDetailPage', () => {
   it('links both neighbours, wrapping around the list', () => {
     const links = [...el.querySelectorAll('.detail__neighbour')];
     expect(links.map((a) => a.getAttribute('href'))).toEqual([
-      '/portfolio/axiomarium',
+      '/portfolio/darnling',
       '/portfolio/gil-sweep',
     ]);
     expect(links.map((a) => textOf(a.querySelector('.detail__neighbour-title')))).toEqual([
-      'Axiomarium',
+      'Darnling',
       'Gil Sweep',
     ]);
   });

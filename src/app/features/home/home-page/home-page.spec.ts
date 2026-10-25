@@ -217,6 +217,9 @@ describe('HomePage', () => {
 
   it('keeps the decorative sticker sheet out of the accessibility tree', () => {
     expect(el.querySelector('.hero__stickers')?.getAttribute('aria-hidden')).toBe('true');
-    expect(el.querySelectorAll('.hero__sticker').length).toBe(projectsData.length);
+    // One per shipped project, as the cards below; the sheet has eight spots.
+    const shipped = projectsData.filter((p) => p.kind !== 'pilot').length;
+    expect(el.querySelectorAll('.hero__sticker').length).toBe(shipped);
+    expect(shipped).toBeLessThanOrEqual(8);
   });
 });

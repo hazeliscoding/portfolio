@@ -65,8 +65,9 @@ describe('PortfolioPage', () => {
         'gil-sweep',
         'prompuff',
         'sweepling',
-        'sdl3-porter',
         'conatlas-tx',
+        'staypaw',
+        'sdl3-porter',
       ]);
     });
 
@@ -163,8 +164,8 @@ describe('PortfolioPage', () => {
         [...g.querySelectorAll('section.segment')].map((s) => s.classList.contains('segment--flip')),
       );
       expect(flips).toEqual([
-        [false, true, false, true, false, true],
-        [false, true],
+        [false, true, false, true, false, true, false],
+        [false, true, false, true, false],
       ]);
     });
 
@@ -187,29 +188,33 @@ describe('PortfolioPage', () => {
     });
 
     it('loads screenshots lazily', () => {
-      // Every band but Axiomarium's, which draws its commands instead.
+      // Every band but those drawing commands or bare art instead.
       const shots = [...el.querySelectorAll('img.device__shot')];
-      expect(shots.length).toBe(projectsData.length - 1);
+      expect(shots.length).toBe(projectsData.filter((p) => !p.console?.length && !p.art).length);
       expect(shots.every((img) => img.getAttribute('loading') === 'lazy')).toBe(true);
     });
   });
 
   describe('building now', () => {
-    it('gives both experiments a band of their own, after the shipped ones', () => {
+    it('gives every project still being built a band of its own, after the shipped ones', () => {
       const groups = [...el.querySelectorAll('section.group')];
       expect(groups.map((g) => text(g.querySelector('h2')))).toEqual(['Shipped.', 'Building now.']);
       expect([...groups[1].querySelectorAll('section.segment')].map((b) => b.id)).toEqual([
-        'puzzle-boy',
         'axiomarium',
+        'shybun',
+        'tattlebun',
+        'carmine-workbench',
+        'darnling',
       ]);
-      expect(segment('puzzle-boy').getAttribute('data-kind')).toBe('pilot');
-      expect(text(segment('puzzle-boy').querySelector('.segment__slug'))).toBe('Game · 2026');
+      expect(segment('shybun').getAttribute('data-kind')).toBe('pilot');
     });
 
-    it('stickers each with where it stands and its latest build', () => {
+    it('stickers each with where it stands, and its latest build once there is one', () => {
       expect(text(segment('axiomarium').querySelector('.segment__tag'))).toBe(
         `Building now · ${releases['axiomarium'].tag}`,
       );
+      expect(releases['shybun']).toBeUndefined();
+      expect(text(segment('shybun').querySelector('.segment__tag'))).toBe('Building now');
     });
 
     it('offers the latest build, with what state it is in', () => {
@@ -221,35 +226,28 @@ describe('PortfolioPage', () => {
       );
     });
 
-    it('points Puzzle Boy’s build at Community Edition', () => {
-      expect(segment('puzzle-boy').querySelector('a.segment__cta')?.getAttribute('href')).toBe(
-        releases['puzzle-boy-community'].url,
-      );
+    it('points one with nothing to try yet at its repo', () => {
+      const cta = segment('tattlebun').querySelector<HTMLAnchorElement>('a.segment__cta')!;
+      expect(cta.getAttribute('href')).toBe('https://github.com/hazeliscoding/tattlebun');
+      expect(text(cta.querySelector('.segment__cta-label'))).toBe('Follow along on GitHub ↗');
+      expect(text(cta.querySelector('.segment__cta-fine'))).toBe('Planning · no release yet');
     });
 
-    it('lists Puzzle Boy’s three repos with their own releases', () => {
-      const rows = [...segment('puzzle-boy').querySelectorAll('.segment__parts li')];
-      expect(rows.map((r) => r.querySelector('a')?.getAttribute('href'))).toEqual([
-        'https://github.com/hazeliscoding/puzzle-boy',
-        'https://github.com/hazeliscoding/puzzle-boy-community',
-        'https://github.com/hazeliscoding/puzzle-boy-engine',
-      ]);
-      expect(text(rows[0].querySelector('.segment__part-detail'))).toBe(
-        `${releases['puzzle-boy'].tag} · bring your own copy`,
-      );
-      // The engine has never been released; it says what it is, not "undefined".
-      expect(text(rows[2].querySelector('.segment__part-detail'))).toBe('library, not playable');
+    it('shows its mascot where the screen goes when there is nothing to screenshot', () => {
+      const s = segment('shybun');
+      expect(s.querySelector('app-broadcast-screen')).toBeNull();
+      const art = s.querySelector<HTMLImageElement>('img.segment__art')!;
+      expect(art.getAttribute('src')).toBe('images/projects/shybun/shiori.png');
+      expect(art.getAttribute('alt')).toContain('Shiori');
+      expect(art.getAttribute('loading')).toBe('lazy');
     });
 
-    it('plays the reel lazily, and only the still under reduced motion', () => {
-      const reel = segment('puzzle-boy').querySelector('picture.device__reel')!;
-      expect(reel.querySelector('source')?.getAttribute('media')).toBe(
-        '(prefers-reduced-motion: reduce)',
+    it('keeps the screen for one that has a screenshot', () => {
+      const s = segment('carmine-workbench');
+      expect(s.querySelector('img.segment__art')).toBeNull();
+      expect(s.querySelector('img.device__shot')?.getAttribute('src')).toBe(
+        'images/projects/carmine-workbench/sanitize.png',
       );
-      expect(reel.querySelector('source')?.getAttribute('srcset')).toBe(
-        'images/projects/puzzle-boy/playing.png',
-      );
-      expect(reel.querySelector('img')?.getAttribute('loading')).toBe('lazy');
     });
 
     it('draws Axiomarium’s commands on its screen in place of a capture', () => {

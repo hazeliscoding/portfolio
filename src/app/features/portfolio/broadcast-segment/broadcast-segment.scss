@@ -176,6 +176,17 @@
   min-width: 0;
 }
 
+// Nothing to screenshot yet: the mascot, or a prototype's output, at its own
+// shape, where the screen would be.
+.segment__art {
+  display: block;
+  max-width: 100%;
+  max-height: 400px;
+  margin-inline: auto;
+  border-radius: var(--radius-2);
+  filter: drop-shadow(0 18px 40px rgba(0, 0, 0, 0.5));
+}
+
 // Stuck on the screen's inner corner, the one facing the copy.
 .segment__mascot {
   position: absolute;
@@ -209,28 +220,6 @@
   }
 }
 
-// A project's repos, after its facts: each its own link and release.
-.segment__parts {
-  li {
-    display: inline-flex;
-    gap: var(--sp-2);
-  }
-
-  a {
-    font-weight: 600;
-    color: var(--text-on-night);
-
-    &:hover {
-      color: var(--ink);
-      text-decoration: underline;
-      text-underline-offset: 3px;
-    }
-  }
-}
-
-.segment__ticker + .segment__parts {
-  margin-top: var(--sp-2);
-}
 
 // Phones and narrow tablets: one column, the screen under the copy.
 @media (max-width: 839.98px) {

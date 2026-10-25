@@ -26,7 +26,7 @@ interface Shot {
 const KIND: Record<ProjectKind, string> = {
   app: 'Shipped app',
   site: 'Live site',
-  pilot: 'Experiment',
+  pilot: 'Building now',
 };
 
 /** A link as the page prints it: no protocol, no `www.`, no trailing slash. */

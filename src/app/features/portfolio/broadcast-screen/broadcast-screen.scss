@@ -85,15 +85,6 @@
   }
 }
 
-// Footage, not a window: it fills the screen from the centre.
-.device__reel {
-  display: contents;
-
-  .device__shot {
-    object-position: center;
-  }
-}
-
 // A CLI's commands, set like a terminal on the same screen.
 .device__console {
   display: flex;

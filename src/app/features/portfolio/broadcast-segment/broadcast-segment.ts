@@ -23,13 +23,6 @@ export type Cta =
   | { kind: 'visit'; label: string; href: string; fine: string }
   | { kind: 'install'; commands: string[] };
 
-/** One repository of a project that spans several, with its own latest release. */
-export interface SegmentPart {
-  label: string;
-  url: string;
-  detail: string;
-}
-
 /** Everything one project's band renders, resolved once by the page. */
 export interface Segment {
   id: string;
@@ -43,8 +36,6 @@ export interface Segment {
   mark: string;
   style: BrandStyle;
   shot: string;
-  /** What replaces a looping shot under reduced motion; empty for a still one. */
-  still: string;
   /** A CLI's commands, drawn on the screen in place of a capture. */
   console: { command: string; note: string }[];
   alt: string;
@@ -52,9 +43,10 @@ export interface Segment {
   host: string;
   phone: string;
   mascot: Project['mascot'];
+  /** Shown bare in place of the screen, when there is nothing to screenshot yet. */
+  art: Project['art'];
   cta: Cta;
   ticker: string[];
-  parts: SegmentPart[];
   /** Every other segment puts its screenshot on the left, as thatlev's bands do. */
   flip: boolean;
   delay: string;
@@ -90,32 +82,22 @@ export function toSegment(p: Project, i: number): Segment {
     icon: p.brand.icon,
     mark: p.brand.mark,
     style: styleOf(p),
-    // An experiment's reel is its screenshot; a CLI shows its commands instead.
-    shot: p.reel?.src ?? p.image,
-    still: p.reel?.still ?? '',
-    console: p.reel ? [] : (p.console ?? []),
-    alt: p.reel
-      ? `${p.title} in play`
-      : p.console?.length
-        ? `${p.title} commands`
-        : `${p.title} screenshot`,
+    shot: p.image,
+    console: p.console ?? [],
+    alt: p.console?.length ? `${p.title} commands` : `${p.title} screenshot`,
     host: p.links.demo ? bareHost(p.links.demo) : '',
     phone: p.phone ?? '',
     mascot: p.mascot,
+    art: p.art,
     cta: ctaOf(p, release),
     ticker: p.ticker ?? [],
-    parts: (p.parts ?? []).map((part) => ({
-      label: part.label,
-      url: part.url,
-      detail: [releases[repoOf(part.url)]?.tag, part.note].filter(Boolean).join(' · '),
-    })),
     flip: i % 2 === 1,
     // 40ms, then 70ms per segment: the archive cards' stagger, kept.
     delay: `${40 + i * 70}ms`,
   };
 }
 
-/** `hazeliscoding/puzzle-boy` → `puzzle-boy`: the key releases.generated.ts files a repo under. */
+/** `hazeliscoding/xiv-vault` → `xiv-vault`: the key releases.generated.ts files a repo under. */
 export function repoOf(url: string): string {
   return url.replace(/\/+$/, '').split('/').pop() ?? '';
 }
@@ -156,12 +138,22 @@ function ctaOf(p: Project, release: Release | undefined): Cta {
   }
   const platforms = release?.platforms ?? [];
   if (p.kind === 'pilot') {
-    return {
-      kind: 'download',
-      label: 'Try the latest build',
-      href: release?.url ?? p.links.github ?? '',
-      fine: ['Free', platformList(platforms), p.status].filter(Boolean).join(' · '),
-    };
+    // Nothing to try before a first release, so the repo is the place to watch.
+    return release
+      ? {
+          kind: 'download',
+          label: 'Try the latest build',
+          href: release.url,
+          fine: ['Free', platformList(platforms), p.status].filter(Boolean).join(' · '),
+        }
+      : {
+          kind: 'visit',
+          label: 'Follow along on GitHub',
+          href: p.links.github ?? '',
+          fine: [p.status && p.status[0].toUpperCase() + p.status.slice(1), 'no release yet']
+            .filter(Boolean)
+            .join(' · '),
+        };
   }
   return {
     kind: 'download',

@@ -12,13 +12,6 @@
           </div>
         }
       </div>
-    } @else if (still()) {
-      <!-- Lazy, so the reel's megabytes load only near the viewport; the still
-           replaces it outright under reduced motion. -->
-      <picture class="device__reel">
-        <source media="(prefers-reduced-motion: reduce)" [attr.srcset]="still()" />
-        <img class="device__shot" [src]="shot()" [alt]="alt()" loading="lazy" />
-      </picture>
     } @else {
       <img class="device__shot" [src]="shot()" [alt]="alt()" loading="lazy" />
     }

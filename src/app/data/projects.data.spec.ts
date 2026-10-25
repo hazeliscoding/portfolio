@@ -1,37 +1,52 @@
 import { projectsData } from './projects.data';
 
 describe('projectsData', () => {
-  it('holds the five apps, then the live site, then the two pilots, in that order', () => {
+  // The GitHub profile README's order: what has shipped, then what is being built.
+  it('holds what has shipped, then what is being built, in the profile README’s order', () => {
     expect(projectsData.map((p) => p.id)).toEqual([
       'xiv-vault',
       'gil-sweep',
       'prompuff',
       'sweepling',
-      'sdl3-porter',
       'conatlas-tx',
-      'puzzle-boy',
+      'staypaw',
+      'sdl3-porter',
       'axiomarium',
+      'shybun',
+      'tattlebun',
+      'carmine-workbench',
+      'darnling',
     ]);
     expect(projectsData.map((p) => p.kind)).toEqual([
       'app',
       'app',
       'app',
       'app',
-      'app',
       'site',
+      'app',
+      'app',
+      'pilot',
+      'pilot',
+      'pilot',
       'pilot',
       'pilot',
     ]);
   });
 
-  it('links Puzzle Boy to Community Edition, the one that plays without Nocturne', () => {
-    const puzzleBoy = projectsData.find((p) => p.id === 'puzzle-boy')!;
-    expect(puzzleBoy.links.github).toBe('https://github.com/hazeliscoding/puzzle-boy-community');
-    expect(puzzleBoy.parts?.map((part) => part.url.split('/').pop())).toEqual([
-      'puzzle-boy',
-      'puzzle-boy-community',
-      'puzzle-boy-engine',
-    ]);
+  // A band draws a screenshot, a CLI's commands or bare art; with none of
+  // them its screen would render empty.
+  it('gives every project something to show where its screen goes', () => {
+    for (const p of projectsData) {
+      const shows = [p.image, p.console?.length, p.art].filter(Boolean).length;
+      expect(shows).withContext(p.id).toBeGreaterThan(0);
+      if (p.art) expect(p.image).withContext(`${p.id} has art, so no screenshot`).toBe('');
+    }
+  });
+
+  it('says where each project still being built stands', () => {
+    for (const p of projectsData.filter((project) => project.kind === 'pilot')) {
+      expect(p.status).withContext(p.id).toBeTruthy();
+    }
   });
 
   it('gives the live site its address', () => {
@@ -88,13 +103,30 @@ describe('projectsData', () => {
   });
 
   it('retains the images the detail page renders', () => {
-    expect(projectsData[0].images?.length).toBe(5);
-    expect(projectsData[1].images?.length).toBe(5);
-    expect(projectsData[2].images?.length).toBe(5);
-    expect(projectsData[3].images?.length).toBe(2);
-    expect(projectsData[4].images?.length).toBe(4);
-    expect(projectsData[5].images?.length).toBe(3);
-    expect(projectsData[6].images?.length).toBe(3);
-    expect(projectsData[7].images?.length).toBe(2);
+    const counts = Object.fromEntries(projectsData.map((p) => [p.id, p.images?.length ?? 0]));
+    expect(counts).toEqual({
+      'xiv-vault': 5,
+      'gil-sweep': 5,
+      prompuff: 5,
+      sweepling: 2,
+      'conatlas-tx': 3,
+      staypaw: 2,
+      'sdl3-porter': 4,
+      axiomarium: 2,
+      shybun: 0,
+      tattlebun: 0,
+      'carmine-workbench': 1,
+      darnling: 0,
+    });
+  });
+
+  // Art is a PNG in the repo, like the screenshots; a drifted path would
+  // leave the band with a broken image where its screen goes.
+  it('serves every project’s art', async () => {
+    for (const p of projectsData.filter((project) => project.art)) {
+      const res = await fetch(p.art!.src);
+      expect(res.ok).withContext(p.art!.src).toBeTrue();
+      expect(res.headers.get('content-type')).withContext(p.art!.src).toContain('png');
+    }
   });
 });
