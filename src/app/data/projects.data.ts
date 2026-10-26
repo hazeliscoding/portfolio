@@ -566,21 +566,21 @@ export const projectsData: Project[] = [
     },
   },
   {
-    id: 'tattlebun',
-    title: 'Tattlebun',
+    id: 'tattlehop',
+    title: 'Tattlehop',
     description:
       'A Windows tray app and Claude Code plugin that keeps a receipt of what your coding agents changed on your PC outside the repo, and undoes it once you confirm. Nothing leaves your PC.',
     longDescription: [
-      'Git shows what an agent changed in your repo. It doesn’t show the global npm package, the PATH entry, the .gitconfig line or the startup entry it added along the way, and on Windows Claude Code’s sandbox doesn’t run at all, so an agent’s commands can do anything you can. Run three agents at once and nobody can say which one did it. Tattlebun keeps a receipt for every command an agent runs, naming the command and the session behind each change, with Undo.',
+      'Git shows what an agent changed in your repo. It doesn’t show the global npm package, the PATH entry, the .gitconfig line or the startup entry it added along the way, and on Windows Claude Code’s sandbox doesn’t run at all, so an agent’s commands can do anything you can. Run three agents at once and nobody can say which one did it. Tattlehop keeps a receipt for every command an agent runs, naming the command and the session behind each change, with Undo.',
       'Before and after each Bash or PowerShell call, it will snapshot the places agents change outside the repo: environment variables, installed apps and global npm, pip and dotnet tool packages, startup entries, scheduled tasks and services, dotfiles such as .gitconfig and .ssh/config, and new items in your home folder. Blame stays fair: a change found while one command ran is tied to it, two commands running at once get “one of these”, and receipts say “while”, never “by”. Undo puts a change back only after you confirm, and one that needs admin shows the exact command to run instead.',
       'It’s at the planning stage: the .NET 10 and Avalonia 12 projects and their guardrail tests are scaffolded, and receipts come first. Its hooks arrive as a Claude Code plugin you add yourself, so you see them before they run. Taking a snapshot changes nothing, a slow or failing snapshot never blocks your agent, old values are kept encrypted with Windows DPAPI for 30 days so Undo can restore them, and the update check is its only network call.',
     ],
     image: '',
     links: {
-      github: 'https://github.com/hazeliscoding/tattlebun',
+      github: 'https://github.com/hazeliscoding/tattlehop',
     },
     tags: ['C#', '.NET', 'Avalonia', 'NativeAOT', 'Claude Code', 'Desktop'],
-    command: 'glow tattlebun.md',
+    command: 'glow tattlehop.md',
     status: 'planning',
     year: '2026',
     stack: 'Avalonia · NativeAOT',
@@ -591,8 +591,8 @@ export const projectsData: Project[] = [
     brand: {
       ink: '#c6d6fb',
       tint: '#8fb0f5',
-      icon: 'images/projects/tattlebun/icon.svg',
-      mark: 'images/projects/tattlebun/mark.svg',
+      icon: 'images/projects/tattlehop/icon.svg',
+      mark: 'images/projects/tattlehop/mark.svg',
     },
     ticker: [
       'A receipt for every agent command',
@@ -600,8 +600,8 @@ export const projectsData: Project[] = [
       'Nothing leaves your PC',
     ],
     art: {
-      src: 'images/projects/tattlebun/tilly.png',
-      alt: 'Tilly, Tattlebun’s front-desk clerk, peeks wide-eyed over a long receipt she holds up to her face, as Tattlebun keeps a receipt for every command an agent runs.',
+      src: 'images/projects/tattlehop/tilly.png',
+      alt: 'Tilly, Tattlehop’s front-desk clerk, peeks wide-eyed over a long receipt she holds up to her face, as Tattlehop keeps a receipt for every command an agent runs.',
     },
   },
   {

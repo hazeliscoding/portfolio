@@ -13,7 +13,7 @@ describe('projectsData', () => {
       'sdl3-porter',
       'axiomarium',
       'shybun',
-      'tattlebun',
+      'tattlehop',
       'carmine-workbench',
       'darnling',
     ]);
@@ -114,7 +114,7 @@ describe('projectsData', () => {
       'sdl3-porter': 4,
       axiomarium: 2,
       shybun: 0,
-      tattlebun: 0,
+      tattlehop: 0,
       'carmine-workbench': 1,
       darnling: 0,
     });

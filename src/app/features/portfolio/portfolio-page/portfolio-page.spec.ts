@@ -202,7 +202,7 @@ describe('PortfolioPage', () => {
       expect([...groups[1].querySelectorAll('section.segment')].map((b) => b.id)).toEqual([
         'axiomarium',
         'shybun',
-        'tattlebun',
+        'tattlehop',
         'carmine-workbench',
         'darnling',
       ]);
@@ -227,8 +227,8 @@ describe('PortfolioPage', () => {
     });
 
     it('points one with nothing to try yet at its repo', () => {
-      const cta = segment('tattlebun').querySelector<HTMLAnchorElement>('a.segment__cta')!;
-      expect(cta.getAttribute('href')).toBe('https://github.com/hazeliscoding/tattlebun');
+      const cta = segment('tattlehop').querySelector<HTMLAnchorElement>('a.segment__cta')!;
+      expect(cta.getAttribute('href')).toBe('https://github.com/hazeliscoding/tattlehop');
       expect(text(cta.querySelector('.segment__cta-label'))).toBe('Follow along on GitHub ↗');
       expect(text(cta.querySelector('.segment__cta-fine'))).toBe('Planning · no release yet');
     });
