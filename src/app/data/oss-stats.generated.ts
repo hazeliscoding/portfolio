@@ -7,10 +7,14 @@ export type OssProject = {
   url: string;
   stars: number;
   mergedPrs: number;
+  /** Open, so still in review. */
+  openPrs: number;
 };
 
 export type OssStats = {
   totalMergedPrs: number;
+  totalOpenPrs: number;
+  /** Projects with at least one merged PR. */
   projectCount: number;
   totalStars: number;
   updated: string; // YYYY-MM-DD
@@ -18,28 +22,39 @@ export type OssStats = {
 };
 
 export const ossStats: OssStats = {
-  "totalMergedPrs": 7,
-  "projectCount": 3,
-  "totalStars": 33151,
-  "updated": "2026-10-19",
+  "totalMergedPrs": 6,
+  "totalOpenPrs": 5,
+  "projectCount": 2,
+  "totalStars": 43316,
+  "updated": "2026-10-25",
   "projects": [
     {
       "repo": "BCUninstaller/Bulk-Crap-Uninstaller",
-      "url": "https://github.com/BCUninstaller/Bulk-Crap-Uninstaller/pulls?q=is%3Apr%20author%3Ahazeliscoding%20is%3Amerged",
-      "stars": 21949,
-      "mergedPrs": 4
+      "url": "https://github.com/BCUninstaller/Bulk-Crap-Uninstaller/pulls?q=is%3Apr%20author%3Ahazeliscoding",
+      "stars": 22052,
+      "mergedPrs": 4,
+      "openPrs": 0
     },
     {
-      "repo": "microsoft/winget-pkgs",
-      "url": "https://github.com/microsoft/winget-pkgs/pulls?q=is%3Apr%20author%3Ahazeliscoding%20is%3Amerged",
-      "stars": 11192,
-      "mergedPrs": 2
+      "repo": "storytold/pdfcraft",
+      "url": "https://github.com/storytold/pdfcraft/pulls?q=is%3Apr%20author%3Ahazeliscoding",
+      "stars": 17836,
+      "mergedPrs": 2,
+      "openPrs": 3
     },
     {
-      "repo": "sjmh/pyqb",
-      "url": "https://github.com/sjmh/pyqb/pulls?q=is%3Apr%20author%3Ahazeliscoding%20is%3Amerged",
-      "stars": 10,
-      "mergedPrs": 1
+      "repo": "goatcorp/FFXIVQuickLauncher",
+      "url": "https://github.com/goatcorp/FFXIVQuickLauncher/pulls?q=is%3Apr%20author%3Ahazeliscoding",
+      "stars": 3194,
+      "mergedPrs": 0,
+      "openPrs": 1
+    },
+    {
+      "repo": "goatcorp/XIVLauncher.Core",
+      "url": "https://github.com/goatcorp/XIVLauncher.Core/pulls?q=is%3Apr%20author%3Ahazeliscoding",
+      "stars": 234,
+      "mergedPrs": 0,
+      "openPrs": 1
     }
   ]
 };

@@ -111,18 +111,26 @@ export class HomePage implements OnInit {
   }));
 
   readonly oss = {
-    summary: `${count(ossStats.totalMergedPrs, 'merged PR', 'merged PRs')} across ${count(
-      ossStats.projectCount,
-      'project',
-      'projects',
-    )}`,
+    // Worded as the GitHub profile's open-source section is, from the same list.
+    summary:
+      `${count(ossStats.totalMergedPrs, 'merged PR', 'merged PRs')} across ${count(
+        ossStats.projectCount,
+        'project',
+        'projects',
+      )}` + (ossStats.totalOpenPrs ? `, and ${ossStats.totalOpenPrs} more in review` : ''),
     rows: ossStats.projects.map((project) => ({
       // The generated repo is `owner/name`; the row prints the bare name and
       // keeps the owner beside it.
       name: project.repo.split('/').pop() ?? project.repo,
       owner: project.repo.split('/')[0],
       url: project.url,
-      merged: count(project.mergedPrs, 'merged PR', 'merged PRs'),
+      // `2 merged · 3 in review`, or just one of them.
+      prs: [
+        project.mergedPrs && `${project.mergedPrs} merged`,
+        project.openPrs && `${project.openPrs} in review`,
+      ]
+        .filter(Boolean)
+        .join(' · '),
       stars: starCount(project.stars),
     })),
   };

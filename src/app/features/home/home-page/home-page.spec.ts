@@ -178,14 +178,41 @@ describe('HomePage', () => {
   });
 
   describe('open source', () => {
-    it('links each repo to its merged-PR search in a new tab', () => {
+    it('links each repo to my PRs there, in a new tab', () => {
       const rows = [...el.querySelectorAll<HTMLAnchorElement>('.oss__row')];
       expect(rows.map((r) => r.getAttribute('href'))).toEqual(ossStats.projects.map((p) => p.url));
       for (const r of rows) expect(r.getAttribute('target')).toBe('_blank');
     });
 
-    it('totals the merged PRs', () => {
-      expect(text(el.querySelector('.oss__summary'))).toContain(`${ossStats.totalMergedPrs} merged PR`);
+    it('totals the merged PRs, then the ones still in review', () => {
+      const summary = text(el.querySelector('.oss__summary'));
+      expect(summary).toContain(`${ossStats.totalMergedPrs} merged PR`);
+      expect(summary).toContain(`across ${ossStats.projectCount} project`);
+      if (ossStats.totalOpenPrs) expect(summary).toContain(`and ${ossStats.totalOpenPrs} more in review`);
+    });
+
+    it('says what is merged and what is in review on each row, leaving out a zero', () => {
+      const labels = [...el.querySelectorAll('.oss__stat--merged')].map(text);
+      expect(labels).toEqual(
+        ossStats.projects.map((p) =>
+          [p.mergedPrs && `${p.mergedPrs} merged`, p.openPrs && `${p.openPrs} in review`]
+            .filter(Boolean)
+            .join(' · '),
+        ),
+      );
+      expect(labels.every((label) => label && !/\b0 /.test(label))).toBe(true);
+    });
+
+    // The same four as the GitHub profile, so the PRs that list my own apps
+    // (winget-pkgs, up-for-grabs) and work orgs never show.
+    it('lists only the upstream projects the profile does', () => {
+      const allowed = [
+        'BCUninstaller/Bulk-Crap-Uninstaller',
+        'storytold/pdfcraft',
+        'goatcorp/FFXIVQuickLauncher',
+        'goatcorp/XIVLauncher.Core',
+      ];
+      for (const p of ossStats.projects) expect(allowed).withContext(p.repo).toContain(p.repo);
     });
 
     it('abbreviates star counts without rounding them up', () => {
