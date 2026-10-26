@@ -57,7 +57,7 @@
   position: sticky;
   top: 73px;
   z-index: var(--z-window);
-  background: rgba(255, 255, 255, 0.92);
+  background: var(--surface-bar);
   backdrop-filter: saturate(1.4) blur(14px);
   border-block: var(--bw-hairline) solid var(--border-default);
 }
@@ -99,10 +99,16 @@
   }
 }
 
+// Most marks are drawn for a light page, in a near-black ink; in the dark
+// theme they sit on the paper tile their app icons use, or the ink vanishes.
 .guide__mark {
   display: block;
+  box-sizing: content-box;
   width: 20px;
   height: 20px;
+  padding: 2px;
+  border-radius: 7px;
+  background: var(--surface-mark);
 }
 
 // ── Shipped, then building now ───────────────────────────────────────────────

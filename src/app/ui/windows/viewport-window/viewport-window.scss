@@ -78,5 +78,6 @@
   border-radius: var(--radius-pill);
   background: rgba(38, 36, 53, 0.82);
   font: var(--type-label);
-  color: var(--text-inverse);
+  // Always on that dark backing, in either theme.
+  color: var(--text-on-night);
 }

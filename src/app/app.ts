@@ -4,6 +4,7 @@ import { CommandPalette } from './ui/overlays/command-palette/command-palette';
 import { MotionService } from './ui/motion/motion.service';
 import { COMMANDS, MODES } from './core/navigation';
 import { ICONS, SOCIAL } from './core/site';
+import { ThemeService } from './core/theme';
 
 @Component({
   selector: 'app-root',
@@ -20,6 +21,7 @@ export class App {
   year = new Date().getFullYear();
 
   motion = inject(MotionService);
+  theme = inject(ThemeService);
 
   paletteOpen = signal(false);
 

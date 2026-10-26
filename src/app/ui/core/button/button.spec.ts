@@ -48,10 +48,17 @@ describe('Button', () => {
     expect(buttons[1].textContent).toContain('Open archive');
   });
 
+  // Pinned to the light theme: the test browser follows the machine's, and in
+  // the dark theme this button is the light one with dark text.
   it('draws the command variant as the dark second action, with no brackets', () => {
-    const label = buttons[1].querySelector('.button__label') as HTMLElement;
-    expect(getComputedStyle(label, '::before').content).toBe('none');
-    expect(getComputedStyle(buttons[1]).color).toBe('rgb(255, 255, 255)');
+    document.documentElement.dataset['theme'] = 'light';
+    try {
+      const label = buttons[1].querySelector('.button__label') as HTMLElement;
+      expect(getComputedStyle(label, '::before').content).toBe('none');
+      expect(getComputedStyle(buttons[1]).color).toBe('rgb(255, 255, 255)');
+    } finally {
+      delete document.documentElement.dataset['theme'];
+    }
   });
 
   it('renders an anchor when given somewhere to go, styled the same', () => {

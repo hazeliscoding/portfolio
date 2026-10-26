@@ -70,4 +70,93 @@
   --shadow-card: 0 12px 32px -12px rgba(48, 34, 72, 0.18);
   /* prettier-ignore */
   --focus-ring: 0 0 0 2px var(--h-white),0 0 0 4px var(--h-purple);
+
+  // Surfaces that were one-off colours until there were two themes.
+  --surface-header: rgba(247, 244, 253, 0.86);
+  --surface-bar: rgba(255, 255, 255, 0.92);
+  --surface-warm: #fff6fb;
+  --surface-inverse-hover: #36334a;
+  --tint-success: #e3f4e9;
+  --tint-warning: #fbefdc;
+  --tint-danger: #fbe6e4;
+  --backdrop: rgba(38, 36, 53, 0.32);
+  // 1 in light, 0 in dark: which of the theme toggle's icons shows.
+  --theme-moon: 1;
+  // Behind a project's mark where a light-page logo needs a light tile.
+  --surface-mark: transparent;
+}
+
+// The same shop after dark: a deep violet-black page, cards a step lighter,
+// and the purple lifted so it reads on dark. The raw --h-* palette stays put,
+// because the bands, stickers and polaroids it paints look the same in both;
+// only --h-purple-ink moves, since it is only ever text on the lavender pills
+// that turn dark here.
+@mixin dark {
+  color-scheme: dark;
+
+  --h-purple-ink: #cfc4ff;
+
+  --surface-canvas: #131219;
+  --surface-window: #1c1a24;
+  --surface-elevated: #201e2a;
+  --surface-raised: #26242f;
+  --surface-inset: #17161e;
+  --surface-inverse: #eceaf6;
+  --surface-inverse-hover: #d6d2e6;
+  --surface-active-tint: rgba(167, 150, 250, 0.12);
+  --surface-info-tint: rgba(167, 150, 250, 0.07);
+  --surface-header: rgba(19, 18, 25, 0.82);
+  --surface-bar: rgba(28, 26, 36, 0.9);
+  --surface-warm: #261d29;
+
+  --text-primary: #eeecf7;
+  --text-secondary: #cdcadb;
+  --text-muted: #a9a6b8;
+  --text-faint: #9a97ab;
+  --text-inverse: #131219;
+  --text-active: #a796fa;
+  --text-link: #b4a6fb;
+
+  --signal-active: #a796fa;
+  --signal-active-strong: #c0b5fc;
+  --signal-active-dim: #2b2545;
+  --signal-info: #8aa3f0;
+  --signal-info-dim: #3e3a50;
+  --signal-network: #8aa3f0;
+  --signal-success: #5fcf8e;
+  --signal-success-dim: #1f3a2a;
+  --signal-warning: #e6a74c;
+  --signal-warning-dim: #3d2f1a;
+  --signal-danger: #f07a70;
+  --tint-success: rgba(95, 207, 142, 0.14);
+  --tint-warning: rgba(230, 167, 76, 0.14);
+  --tint-danger: rgba(240, 122, 112, 0.14);
+
+  --border-default: #2e2b3b;
+  --border-strong: #3e3a50;
+  --border-faint: #25232f;
+  --border-active: #a796fa;
+  --border-info: #3e3a50;
+
+  --shadow-soft: 0 2px 12px rgba(0, 0, 0, 0.3);
+  --shadow-card: 0 12px 32px -12px rgba(0, 0, 0, 0.6);
+  /* prettier-ignore */
+  --focus-ring: 0 0 0 2px #131219,0 0 0 4px #a796fa;
+  --backdrop: rgba(5, 4, 9, 0.6);
+  --theme-moon: 0;
+  --surface-mark: #f2ede2;
+}
+
+// Dark when the visitor picks it, or when their system is dark and they
+// haven't picked light. ThemeService sets data-theme only for a choice that
+// differs from the system, and the inline script in index.html sets it before
+// first paint.
+:root[data-theme="dark"] {
+  @include dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    @include dark;
+  }
 }

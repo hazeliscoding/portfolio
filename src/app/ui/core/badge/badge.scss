@@ -15,17 +15,17 @@
   }
 
   &[data-tone="success"] {
-    background: #e3f4e9;
+    background: var(--tint-success);
     color: var(--signal-success);
   }
 
   &[data-tone="warning"] {
-    background: #fbefdc;
+    background: var(--tint-warning);
     color: var(--signal-warning);
   }
 
   &[data-tone="danger"] {
-    background: #fbe6e4;
+    background: var(--tint-danger);
     color: var(--signal-danger);
   }
 

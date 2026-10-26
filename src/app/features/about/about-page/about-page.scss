@@ -178,7 +178,7 @@
 }
 
 .panel--warm {
-  background: linear-gradient(160deg, #fff6fb 0%, var(--surface-elevated) 100%);
+  background: linear-gradient(160deg, var(--surface-warm) 0%, var(--surface-elevated) 100%);
 
   p {
     margin-top: var(--sp-3);
@@ -204,18 +204,27 @@
     font-size: 15px;
     color: var(--text-secondary);
 
-    &::before {
+    // The dot, then the tick cut from the accent by a mask, so it takes each
+    // theme's purple instead of one baked into the SVG.
+    &::before,
+    &::after {
       content: "";
       position: absolute;
       left: 0;
       top: 3px;
       width: 18px;
       height: 18px;
+    }
+
+    &::before {
       border-radius: 50%;
-      background:
-        center / 10px no-repeat
-          url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 10'%3E%3Cpath d='M1 5l3.5 3.5L11 1' fill='none' stroke='%236651cf' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"),
-        var(--signal-active-dim);
+      background: var(--signal-active-dim);
+    }
+
+    &::after {
+      background: var(--signal-active);
+      mask: center / 10px no-repeat
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 10'%3E%3Cpath d='M1 5l3.5 3.5L11 1' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
     }
   }
 }
