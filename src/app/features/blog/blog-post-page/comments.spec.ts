@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { Comments } from './comments';
+import { Comments, giscusTheme } from './comments';
+import { ThemeService } from '../../../core/theme';
 
 describe('Comments', () => {
   let fixture: ComponentFixture<Comments>;
@@ -22,6 +23,12 @@ describe('Comments', () => {
     expect(script().getAttribute('data-mapping')).toBe('specific');
     expect(script().getAttribute('data-term')).toBe('hello-world');
     expect(script().getAttribute('data-strict')).toBe('1');
+  });
+
+  it('asks for the site’s giscus theme that matches the page', () => {
+    expect(script().getAttribute('data-theme')).toBe(giscusTheme(TestBed.inject(ThemeService).theme()));
+    expect(giscusTheme('light').endsWith('/giscus-kairo.css')).toBe(true);
+    expect(giscusTheme('dark').endsWith('/giscus-kairo-dark.css')).toBe(true);
   });
 
   // giscus shows an error instead of comments when either id is missing.

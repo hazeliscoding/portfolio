@@ -31,7 +31,7 @@
   position: sticky;
   top: 0;
   z-index: var(--z-statusbar);
-  background: rgba(247, 244, 253, 0.86);
+  background: var(--surface-header);
   backdrop-filter: saturate(1.4) blur(14px);
   border-bottom: var(--bw-hairline) solid var(--border-default);
 }
@@ -88,8 +88,14 @@
   }
 }
 
-.search-key {
+.site-tools {
   justify-self: end;
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+}
+
+.search-key {
   display: inline-flex;
   align-items: center;
   gap: var(--sp-2);
@@ -120,6 +126,61 @@
   background: var(--surface-elevated);
   font: 500 11px/1 var(--font-mono);
   color: var(--text-muted);
+}
+
+// A round key beside search. Both icons are always in the page; the theme's
+// tokens say which one shows (--theme-moon is 1 in light, 0 in dark), so the
+// icon is right before the app starts and turns as the theme changes.
+.theme-toggle {
+  position: relative;
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  background: var(--surface-window);
+  border: var(--bw-hairline) solid var(--border-default);
+  border-radius: 50%;
+  color: var(--text-link);
+  cursor: pointer;
+  transition: border-color var(--dur-micro) var(--ease-mech);
+
+  &:hover {
+    border-color: var(--border-strong);
+  }
+}
+
+.theme-toggle__icon {
+  grid-area: 1 / 1;
+  width: 19px;
+  height: 19px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition:
+    opacity var(--dur-control) var(--ease-mech),
+    transform var(--dur-control) var(--ease-mech);
+}
+
+.theme-toggle__moon {
+  fill: currentColor;
+  stroke: none;
+  opacity: var(--theme-moon);
+  transform: rotate(calc((1 - var(--theme-moon)) * -90deg)) scale(calc(0.5 + var(--theme-moon) * 0.5));
+}
+
+.theme-toggle__sun {
+  opacity: calc(1 - var(--theme-moon));
+  transform: rotate(calc(var(--theme-moon) * 90deg)) scale(calc(1 - var(--theme-moon) * 0.5));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .theme-toggle__icon {
+    transition: none;
+  }
 }
 
 .main {
@@ -204,7 +265,8 @@
     display: none;
   }
 
-  .search-key {
+  .search-key,
+  .theme-toggle {
     width: var(--target-min);
     height: var(--target-min);
     padding: 0;

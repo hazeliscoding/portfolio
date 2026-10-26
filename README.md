@@ -1,6 +1,7 @@
 # hazeliscoding 🌸
 
-My personal portfolio and blog, laid out like a small maker's shop: light, friendly and product-first.
+My personal portfolio and blog, laid out like a small maker's shop: friendly and product-first, light
+by day and dark when your system is, with a moon and sun toggle to choose for yourself.
 
 **Live:** [www.hazeliscoding.dev](https://www.hazeliscoding.dev)
 

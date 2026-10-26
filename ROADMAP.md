@@ -4,6 +4,15 @@ What's next for the site. Shipped work lives in the git history.
 
 ## Decisions
 
+- 2026-10-26: The site has a dark theme. It follows the system until a visitor uses the moon and
+  sun toggle beside search, and toggling back to what the system wants forgets the choice, so the
+  site follows the system again. The palette is CSS alone: `data-theme` on <html>, set before
+  first paint by an inline script for a saved choice, overrides the semantic tokens, and the
+  toggle's icon is chosen by a token too, so the prerendered page is right before the app starts.
+  The raw palette stays fixed, because the dark bands, stickers and Polaroids look the same in both
+  themes, and the blog's giscus comments get a dark stylesheet of their own, switched live. It
+  gives up the single light look the 2026-10-25 redesign chose, and a few one-off colours became
+  tokens to make it work.
 - 2026-10-25: The home page's open-source section counts the same four upstream projects as my
   GitHub profile (Bulk Crap Uninstaller, PdfCraft, XIVLauncher and XIVLauncher.Core), with PRs in
   review beside the merged ones, instead of every public repo with a merged PR of mine. The two

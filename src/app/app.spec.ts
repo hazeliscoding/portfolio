@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
 import { App } from './app';
+import { ThemeService } from './core/theme';
 
 // Stub target for the shared wildcard route, standing in for the real
 // app.routes.ts catch-all `**` -> ErrorPage. `activeMode()` is a pure function
@@ -116,6 +117,21 @@ describe('App', () => {
     btn.click();
     fixture.detectChanges();
     expect(el.querySelector('.palette')).toBeTruthy();
+  });
+
+  it('offers a theme toggle beside search that says which theme is on', () => {
+    const { fixture, el } = render();
+    const theme = TestBed.inject(ThemeService);
+    const btn = el.querySelector('.site-tools .theme-toggle') as HTMLButtonElement;
+    expect(btn.getAttribute('aria-label')).toBe('Dark theme');
+    expect(btn.getAttribute('aria-pressed')).toBe(String(theme.theme() === 'dark'));
+    // Both icons are in the page; CSS shows one, so they stay out of the name.
+    expect([...btn.querySelectorAll('svg')].every((svg) => svg.getAttribute('aria-hidden') === 'true')).toBe(true);
+
+    const toggle = spyOn(theme, 'toggle');
+    btn.click();
+    fixture.detectChanges();
+    expect(toggle).toHaveBeenCalled();
   });
 
   it('lists the ways to reach Hazel in the footer, flagging the ones that open a tab', () => {
