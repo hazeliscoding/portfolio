@@ -4,7 +4,7 @@ What's next for the site. Shipped work lives in the git history.
 
 ## Decisions
 
-- 2026-10-26: The site has a dark theme. It follows the system until a visitor uses the moon and
+- 2026-10-25: The site has a dark theme. It follows the system until a visitor uses the moon and
   sun toggle beside search, and toggling back to what the system wants forgets the choice, so the
   site follows the system again. The palette is CSS alone: `data-theme` on <html>, set before
   first paint by an inline script for a saved choice, overrides the semantic tokens, and the
