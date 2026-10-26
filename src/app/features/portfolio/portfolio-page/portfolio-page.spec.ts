@@ -204,7 +204,7 @@ describe('PortfolioPage', () => {
         'shybun',
         'tattlehop',
         'carmine-workbench',
-        'darnling',
+        'mendmoth',
       ]);
       expect(segment('shybun').getAttribute('data-kind')).toBe('pilot');
     });

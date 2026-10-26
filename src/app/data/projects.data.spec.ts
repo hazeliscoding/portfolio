@@ -15,7 +15,7 @@ describe('projectsData', () => {
       'shybun',
       'tattlehop',
       'carmine-workbench',
-      'darnling',
+      'mendmoth',
     ]);
     expect(projectsData.map((p) => p.kind)).toEqual([
       'app',
@@ -116,7 +116,7 @@ describe('projectsData', () => {
       shybun: 0,
       tattlehop: 0,
       'carmine-workbench': 1,
-      darnling: 0,
+      mendmoth: 0,
     });
   });
 

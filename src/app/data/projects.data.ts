@@ -646,21 +646,21 @@ export const projectsData: Project[] = [
     ],
   },
   {
-    id: 'darnling',
-    title: 'Darnling',
+    id: 'mendmoth',
+    title: 'Mendmoth',
     description:
       'A web app that shows your sticker on every background, fills the see-through gaps dark mode gives away, and exports it for every place you post. Nothing leaves your browser.',
     longDescription: [
-      'A sticker can look finished on a white page and still have see-through gaps inside its outline: a sliver between an arm and the body, a gap under the hair. On GitHub’s dark mode or in Discord those gaps show as dark slivers, and you only find out after you’ve posted. Darnling shows your sticker on white, black, GitHub’s light and dark, Discord’s dark, a checkerboard and your own brand colours, side by side at 50%, 100% and 200%.',
+      'A sticker can look finished on a white page and still have see-through gaps inside its outline: a sliver between an arm and the body, a gap under the hair. On GitHub’s dark mode or in Discord those gaps show as dark slivers, and you only find out after you’ve posted. Mendmoth shows your sticker on white, black, GitHub’s light and dark, Discord’s dark, a checkerboard and your own brand colours, side by side at 50%, 100% and 200%.',
       'It finds holes, the see-through areas inside the art that the outside can’t reach, and warns about a narrow gap that does reach the outside, since it may be meant. It mends them in a copy with the sticker’s border colour, like the vinyl of a real die-cut sticker, once you approve each fill, and every pixel outside those holes stays exactly as it was. Then it exports sets for READMEs, Discord, Telegram, LINE, socials and blogs, sized from each platform’s own docs.',
       'It’s at the planning stage. The hole finder was prototyped on 2026-10-24 on Calla from Staypaw and Primrose from Sweepling, whose stickers stay out of their READMEs until their gaps are filled. It will be Vite and plain TypeScript with no UI framework: Canvas 2D draws the previews, and the hole finder is a pure function over RGBA pixels, tested with Vitest and run in a Web Worker so a large PNG never freezes the page. It’s a static page, with no uploads, accounts or analytics.',
     ],
     image: '',
     links: {
-      github: 'https://github.com/hazeliscoding/darnling',
+      github: 'https://github.com/hazeliscoding/mendmoth',
     },
     tags: ['TypeScript', 'Vite', 'Canvas', 'Web Worker', 'Image processing'],
-    command: 'glow darnling.md',
+    command: 'glow mendmoth.md',
     status: 'planning',
     year: '2026',
     stack: 'TypeScript · Canvas',
@@ -671,8 +671,8 @@ export const projectsData: Project[] = [
     brand: {
       ink: '#f8c6d4',
       tint: '#f08aa8',
-      icon: 'images/projects/darnling/icon.svg',
-      mark: 'images/projects/darnling/mark.svg',
+      icon: 'images/projects/mendmoth/icon.svg',
+      mark: 'images/projects/mendmoth/mark.svg',
     },
     ticker: [
       'Hole finder prototyped on real stickers',
@@ -681,8 +681,8 @@ export const projectsData: Project[] = [
     ],
     // The prototype's output, the nearest thing to a screenshot so far.
     art: {
-      src: 'images/projects/darnling/calla-mended.png',
-      alt: 'Calla, Staypaw’s cat-eared homebody, on GitHub’s dark background. On the left, two dark slivers show between her arms and her body. On the right, Darnling’s prototype has filled them magenta and ringed them.',
+      src: 'images/projects/mendmoth/calla-mended.png',
+      alt: 'Calla, Staypaw’s cat-eared homebody, on GitHub’s dark background. On the left, two dark slivers show between her arms and her body. On the right, Mendmoth’s prototype has filled them magenta and ringed them.',
     },
   },
 ];
