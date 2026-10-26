@@ -25,20 +25,20 @@ export const ossStats: OssStats = {
   "totalMergedPrs": 6,
   "totalOpenPrs": 5,
   "projectCount": 2,
-  "totalStars": 43316,
-  "updated": "2026-10-25",
+  "totalStars": 43439,
+  "updated": "2026-10-26",
   "projects": [
     {
       "repo": "BCUninstaller/Bulk-Crap-Uninstaller",
       "url": "https://github.com/BCUninstaller/Bulk-Crap-Uninstaller/pulls?q=is%3Apr%20author%3Ahazeliscoding",
-      "stars": 22052,
+      "stars": 22066,
       "mergedPrs": 4,
       "openPrs": 0
     },
     {
       "repo": "storytold/pdfcraft",
       "url": "https://github.com/storytold/pdfcraft/pulls?q=is%3Apr%20author%3Ahazeliscoding",
-      "stars": 17836,
+      "stars": 17945,
       "mergedPrs": 2,
       "openPrs": 3
     },
