@@ -1,6 +1,7 @@
-import { Component, ElementRef, afterRenderEffect, input, viewChild } from '@angular/core';
+import { Component, ElementRef, afterRenderEffect, inject, input, untracked, viewChild } from '@angular/core';
 
 import { SITE_ORIGIN } from '../../../core/page-meta';
+import { Theme, ThemeService } from '../../../core/theme';
 import { Window } from '../../../ui/windows/window/window';
 
 /**
@@ -20,12 +21,18 @@ const GISCUS: Record<string, string> = {
   'data-reactions-enabled': '1',
   'data-emit-metadata': '0',
   'data-input-position': 'bottom',
-  // Always production's copy: giscus fetches it from its own iframe, and a
-  // preview behind Vercel's login cannot answer that request.
-  'data-theme': `${SITE_ORIGIN}/giscus-kairo.css`,
   'data-lang': 'en',
   'data-loading': 'lazy',
 };
+
+/**
+ * The site's own giscus theme for each of its themes. Always production's
+ * copy: giscus fetches it from its own iframe, and a preview behind Vercel's
+ * login cannot answer that request.
+ */
+export function giscusTheme(theme: Theme): string {
+  return `${SITE_ORIGIN}/${theme === 'dark' ? 'giscus-kairo-dark.css' : 'giscus-kairo.css'}`;
+}
 
 @Component({
   selector: 'app-comments',
@@ -50,6 +57,7 @@ export class Comments {
   readonly term = input.required<string>();
 
   private readonly frame = viewChild.required<ElementRef<HTMLElement>>('frame');
+  private readonly theme = inject(ThemeService);
 
   constructor() {
     // Browser only, so no prerendered page carries the third-party script. Runs
@@ -60,10 +68,23 @@ export class Comments {
       script.src = 'https://giscus.app/client.js';
       script.async = true;
       script.crossOrigin = 'anonymous';
-      for (const [name, value] of Object.entries({ ...GISCUS, 'data-term': this.term() })) {
+      // Read untracked: a theme change restyles the open thread below, rather
+      // than reloading it and losing a half-written comment.
+      const theme = giscusTheme(untracked(this.theme.theme));
+      for (const [name, value] of Object.entries({ ...GISCUS, 'data-term': this.term(), 'data-theme': theme })) {
         script.setAttribute(name, value);
       }
       this.frame().nativeElement.replaceChildren(script);
+    });
+
+    // giscus's own message for a live theme change. Before its iframe exists
+    // there is nothing to tell, and the script above already asked for the
+    // right theme.
+    afterRenderEffect(() => {
+      const theme = giscusTheme(this.theme.theme());
+      this.frame()
+        .nativeElement.querySelector<HTMLIFrameElement>('iframe.giscus-frame')
+        ?.contentWindow?.postMessage({ giscus: { setConfig: { theme } } }, 'https://giscus.app');
     });
   }
 }

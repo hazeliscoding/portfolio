@@ -1,0 +1,116 @@
+/*! The site's dark theme for the giscus comments on blog posts, the pair of
+ * giscus-kairo.css. Primer variable list from giscus's light theme (MIT,
+ * GitHub Inc.); values are the site's dark tokens
+ * (src/styles/kairo/tokens/_colors.scss), which this file cannot import
+ * because giscus loads it inside its own iframe. vercel.json lets giscus.app
+ * fetch it cross-origin, and ThemeService's toggle swaps between the two.
+ */
+
+@import url("https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600&family=JetBrains+Mono:wght@400&display=swap");
+
+main {
+  color-scheme: dark;
+
+  --color-prettylights-syntax-comment: #9a97ab;
+  --color-prettylights-syntax-constant: #8aa3f0;
+  --color-prettylights-syntax-entity: #cfc4ff;
+  --color-prettylights-syntax-storage-modifier-import: #eeecf7;
+  --color-prettylights-syntax-entity-tag: #5fcf8e;
+  --color-prettylights-syntax-keyword: #f07a70;
+  --color-prettylights-syntax-string: #e6a74c;
+  --color-prettylights-syntax-variable: #e6a74c;
+  --color-prettylights-syntax-brackethighlighter-unmatched: #f07a70;
+  --color-prettylights-syntax-invalid-illegal-text: #131219;
+  --color-prettylights-syntax-invalid-illegal-bg: #f07a70;
+  --color-prettylights-syntax-carriage-return-text: #131219;
+  --color-prettylights-syntax-carriage-return-bg: #f07a70;
+  --color-prettylights-syntax-string-regexp: #5fcf8e;
+  --color-prettylights-syntax-markup-list: #e6a74c;
+  --color-prettylights-syntax-markup-heading: #8aa3f0;
+  --color-prettylights-syntax-markup-italic: #eeecf7;
+  --color-prettylights-syntax-markup-bold: #eeecf7;
+  --color-prettylights-syntax-markup-deleted-text: #f07a70;
+  --color-prettylights-syntax-markup-deleted-bg: rgb(240 122 112 / 14%);
+  --color-prettylights-syntax-markup-inserted-text: #5fcf8e;
+  --color-prettylights-syntax-markup-inserted-bg: rgb(95 207 142 / 14%);
+  --color-prettylights-syntax-markup-changed-text: #e6a74c;
+  --color-prettylights-syntax-markup-changed-bg: rgb(230 167 76 / 14%);
+  --color-prettylights-syntax-markup-ignored-text: #131219;
+  --color-prettylights-syntax-markup-ignored-bg: #8aa3f0;
+  --color-prettylights-syntax-meta-diff-range: #cfc4ff;
+  --color-prettylights-syntax-brackethighlighter-angle: #9a97ab;
+  --color-prettylights-syntax-sublimelinter-gutter-mark: #3e3a50;
+  --color-prettylights-syntax-constant-other-reference-link: #8aa3f0;
+  --color-btn-text: #eeecf7;
+  --color-btn-bg: #26242f;
+  --color-btn-border: #2e2b3b;
+  --color-btn-shadow: 0 0 transparent;
+  --color-btn-inset-shadow: 0 0 transparent;
+  --color-btn-hover-bg: #2d2b38;
+  --color-btn-hover-border: #3e3a50;
+  --color-btn-active-bg: #201e2a;
+  --color-btn-active-border: #3e3a50;
+  --color-btn-selected-bg: #201e2a;
+  /* The primary button is the site's dark one: lifted purple with dark text. */
+  --color-btn-primary-text: #131219;
+  --color-btn-primary-bg: #a796fa;
+  --color-btn-primary-border: transparent;
+  --color-btn-primary-shadow: 0 0 transparent;
+  --color-btn-primary-inset-shadow: 0 0 transparent;
+  --color-btn-primary-hover-bg: #c0b5fc;
+  --color-btn-primary-hover-border: transparent;
+  --color-btn-primary-selected-bg: #c0b5fc;
+  --color-btn-primary-selected-shadow: 0 0 transparent;
+  --color-btn-primary-disabled-text: rgb(19 18 25 / 70%);
+  --color-btn-primary-disabled-bg: #4d4580;
+  --color-btn-primary-disabled-border: transparent;
+  --color-action-list-item-default-hover-bg: #26242f;
+  --color-segmented-control-bg: #201e2a;
+  --color-segmented-control-button-bg: #26242f;
+  --color-segmented-control-button-selected-border: #3e3a50;
+  --color-fg-default: #eeecf7;
+  --color-fg-muted: #a9a6b8;
+  --color-fg-subtle: #9a97ab;
+  /* The card surface the comments sit on, so the frame has no visible edge. */
+  --color-canvas-default: #1c1a24;
+  --color-canvas-overlay: #1c1a24;
+  --color-canvas-inset: #17161e;
+  --color-canvas-subtle: #201e2a;
+  --color-border-default: #2e2b3b;
+  --color-border-muted: #25232f;
+  --color-neutral-muted: rgb(62 58 80 / 50%);
+  /* Purple, as --text-link: links, focus and the reader's own reactions. */
+  --color-accent-fg: #b4a6fb;
+  --color-accent-emphasis: #a796fa;
+  --color-accent-muted: rgb(167 150 250 / 40%);
+  --color-accent-subtle: rgb(167 150 250 / 12%);
+  --color-success-fg: #5fcf8e;
+  --color-attention-fg: #e6a74c;
+  --color-attention-muted: rgb(230 167 76 / 40%);
+  --color-attention-subtle: rgb(230 167 76 / 12%);
+  --color-danger-fg: #f07a70;
+  --color-danger-muted: rgb(240 122 112 / 40%);
+  --color-danger-subtle: rgb(240 122 112 / 12%);
+  --color-primer-shadow-inset: 0 0 transparent;
+  --color-scale-gray-7: #26242f;
+  --color-scale-blue-8: rgb(167 150 250 / 18%);
+
+  /*! Extensions from @primer/css/alerts/flash.scss */
+  --color-social-reaction-bg-hover: var(--color-scale-gray-7);
+  --color-social-reaction-bg-reacted-hover: var(--color-scale-blue-8);
+
+  font-family: "Bricolage Grotesque", system-ui, sans-serif;
+}
+
+main code,
+main pre {
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+}
+
+main .pagination-loader-container {
+  background-image: url("https://github.com/images/modules/pulls/progressive-disclosure-line-dark.svg");
+}
+
+main .gsc-loading-image {
+  background-image: url("https://github.githubassets.com/images/mona-loading-dark.gif");
+}

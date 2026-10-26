@@ -22,7 +22,7 @@
     },
     { "src": "^/blog/.+\\.md$", "headers": { "X-Robots-Tag": "noindex" }, "continue": true },
     {
-      "src": "^/giscus-kairo\\.css$",
+      "src": "^/giscus-kairo(-dark)?\\.css$",
       "headers": { "Access-Control-Allow-Origin": "https://giscus.app" },
       "continue": true
     },
