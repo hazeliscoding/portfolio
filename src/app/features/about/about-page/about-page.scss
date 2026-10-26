@@ -49,18 +49,20 @@
   background: linear-gradient(150deg, #efe7ff 0%, #d9ccff 55%, #f6d6e8 100%);
 }
 
-.polaroid__monogram {
-  font: 800 112px/1 var(--font-display);
-  letter-spacing: -0.06em;
-  color: var(--signal-active);
+// Roze, the character Hazel made of herself, where a photo would go.
+.polaroid__art {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 
-.polaroid__heart {
-  position: absolute;
-  right: 18px;
-  bottom: 12px;
-  font-size: 28px;
-  color: #d66ba0;
+.portrait__credit {
+  max-width: 220px;
+  margin-top: var(--sp-5);
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--text-faint);
 }
 
 .polaroid__caption {
@@ -233,13 +235,22 @@
 
 .hello {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-columns: auto minmax(0, 1fr) auto;
   gap: var(--sp-8);
   align-items: center;
   padding: clamp(28px, 5vw, 56px);
   background: var(--surface-night);
   border-radius: var(--radius-3);
   color: var(--text-on-night);
+}
+
+// A message from someone, beside the way to send one.
+.hello__art {
+  width: clamp(140px, 13vw, 184px);
+  height: auto;
+  margin-block: calc(-1 * var(--sp-8));
+  rotate: -5deg;
+  filter: drop-shadow(0 14px 28px rgba(0, 0, 0, 0.45));
 }
 
 .hello__title {
@@ -335,8 +346,8 @@
     width: 170px;
   }
 
-  .polaroid__monogram {
-    font-size: 84px;
+  .portrait__credit {
+    max-width: 170px;
   }
 
   .split,
@@ -346,6 +357,11 @@
 
   .hello__actions {
     align-items: flex-start;
+  }
+
+  .hello__art {
+    width: 110px;
+    margin-block: calc(-1 * var(--sp-4)) calc(-1 * var(--sp-2));
   }
 }
 

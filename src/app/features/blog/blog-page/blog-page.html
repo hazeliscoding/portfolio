@@ -1,20 +1,23 @@
 <div class="blog shell-width" [attr.data-sfx]="motion.sfx()">
   <header class="page-hero blog__hero">
-    @if (tag(); as t) {
-      <p class="eyebrow">Tagged</p>
-      <h1 class="page-hero__title">{{ t }}</h1>
-      <p class="page-hero__lede blog__intro">Posts tagged {{ t }}.</p>
-    } @else {
-      <p class="eyebrow">The blog</p>
-      <h1 class="page-hero__title">Writing.</h1>
-      <p class="page-hero__lede blog__intro">
-        Write-ups of what I build and how I prove it works: coding agents, C# and .NET, reverse
-        engineering, and the open-source projects behind them.
+    <div class="blog__hero-copy">
+      @if (tag(); as t) {
+        <p class="eyebrow">Tagged</p>
+        <h1 class="page-hero__title">{{ t }}</h1>
+        <p class="page-hero__lede blog__intro">Posts tagged {{ t }}.</p>
+      } @else {
+        <p class="eyebrow">The blog</p>
+        <h1 class="page-hero__title">Writing.</h1>
+        <p class="page-hero__lede blog__intro">
+          Write-ups of what I build and how I prove it works: coding agents, C# and .NET, reverse
+          engineering, and the open-source projects behind them.
+        </p>
+      }
+      <p class="blog__meta">
+        {{ meta() }} · <a class="blog__feed" href="/feed.xml" type="application/rss+xml">RSS feed</a>
       </p>
-    }
-    <p class="blog__meta">
-      {{ meta() }} · <a class="blog__feed" href="/feed.xml" type="application/rss+xml">RSS feed</a>
-    </p>
+    </div>
+    <img class="blog__art" src="images/roze/keeping-it-safe.webp" alt="" width="520" height="520" />
   </header>
 
   <nav class="blog__filter" aria-label="Filter posts by tag">
