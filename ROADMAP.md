@@ -4,6 +4,13 @@ What's next for the site. Shipped work lives in the git history.
 
 ## Decisions
 
+- 2026-10-25: Roze, the anime character I made of myself, takes the "H" monogram's place where a
+  photo would go: waving in the about page's Polaroid, coding late at night in the home page's,
+  and among too many open windows in the projects hero. She also sits beside the blog's title and
+  the about page's "Say hello." band, the way thatlev.com uses its character. An AI image model
+  drew her, and the about page says so under her Polaroid. Each sticker is a 520px WebP of 30 to
+  45 KB, and the ones below the fold load lazily. It gives up the monogram Polaroids, which needed
+  no image at all, and the site now has two marks, since the favicon and social cards keep the "H".
 - 2026-10-25: The site has a dark theme. It follows the system until a visitor uses the moon and
   sun toggle beside search, and toggling back to what the system wants forgets the choice, so the
   site follows the system again. The palette is CSS alone: `data-theme` on <html>, set before
