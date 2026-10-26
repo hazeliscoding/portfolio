@@ -3,7 +3,19 @@
 }
 
 .blog__hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--sp-10);
+  align-items: center;
   padding-bottom: var(--sp-8);
+}
+
+// Roze, the character Hazel made of herself, keeping an old floppy safe.
+.blog__art {
+  width: clamp(170px, 17vw, 230px);
+  height: auto;
+  rotate: -4deg;
+  filter: drop-shadow(0 18px 30px rgba(48, 34, 72, 0.3));
 }
 
 .blog__meta {
@@ -212,6 +224,16 @@
 }
 
 @media (max-width: 720px) {
+  .blog__hero {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--sp-6);
+  }
+
+  .blog__art {
+    order: -1;
+    width: 130px;
+  }
+
   .blog__list {
     grid-template-columns: minmax(0, 1fr);
   }

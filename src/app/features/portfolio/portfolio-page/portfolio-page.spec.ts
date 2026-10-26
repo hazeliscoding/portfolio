@@ -29,7 +29,7 @@ describe('PortfolioPage', () => {
     expect(text(el.querySelector('.eyebrow'))).toBe(
       `${projectsData.length - pilots} shipped · ${pilots} building now · free and open source`,
     );
-    // The monogram stands in for a photo, so it is decoration only.
+    // Roze stands in for a photo here, so she is decoration only.
     expect(el.querySelector('.hero__avatar')?.getAttribute('aria-hidden')).toBe('true');
   });
 

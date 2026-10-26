@@ -777,18 +777,12 @@
   background: linear-gradient(150deg, #efe7ff 0%, #d9ccff 55%, #f6d6e8 100%);
 }
 
-.maker__monogram {
-  font: 800 96px/1 var(--font-display);
-  letter-spacing: -0.06em;
-  color: var(--signal-active);
-}
-
-.maker__heart {
-  position: absolute;
-  right: 16px;
-  bottom: 10px;
-  font-size: 26px;
-  color: #d66ba0;
+// Roze, the character Hazel made of herself, where a photo would go.
+.maker__art {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 
 .maker__caption {
