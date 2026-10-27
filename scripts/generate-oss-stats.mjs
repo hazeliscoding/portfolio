@@ -19,6 +19,7 @@ const USER = 'hazeliscoding';
 // GitHub profile's open-source section: change both together, or the site and
 // the profile disagree.
 const PROJECTS = [
+  'AvaloniaUI/Avalonia',
   'BCUninstaller/Bulk-Crap-Uninstaller',
   'storytold/pdfcraft',
   'goatcorp/FFXIVQuickLauncher',

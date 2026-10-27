@@ -22,23 +22,30 @@ export type OssStats = {
 };
 
 export const ossStats: OssStats = {
-  "totalMergedPrs": 6,
-  "totalOpenPrs": 5,
-  "projectCount": 2,
-  "totalStars": 43439,
-  "updated": "2026-10-26",
+  "totalMergedPrs": 8,
+  "totalOpenPrs": 6,
+  "projectCount": 3,
+  "totalStars": 75403,
+  "updated": "2026-10-27",
   "projects": [
+    {
+      "repo": "AvaloniaUI/Avalonia",
+      "url": "https://github.com/AvaloniaUI/Avalonia/pulls?q=is%3Apr%20author%3Ahazeliscoding",
+      "stars": 31721,
+      "mergedPrs": 2,
+      "openPrs": 1
+    },
     {
       "repo": "BCUninstaller/Bulk-Crap-Uninstaller",
       "url": "https://github.com/BCUninstaller/Bulk-Crap-Uninstaller/pulls?q=is%3Apr%20author%3Ahazeliscoding",
-      "stars": 22066,
+      "stars": 22089,
       "mergedPrs": 4,
       "openPrs": 0
     },
     {
       "repo": "storytold/pdfcraft",
       "url": "https://github.com/storytold/pdfcraft/pulls?q=is%3Apr%20author%3Ahazeliscoding",
-      "stars": 17945,
+      "stars": 18165,
       "mergedPrs": 2,
       "openPrs": 3
     },

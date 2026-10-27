@@ -203,10 +203,11 @@ describe('HomePage', () => {
       expect(labels.every((label) => label && !/\b0 /.test(label))).toBe(true);
     });
 
-    // The same four as the GitHub profile, so the PRs that list my own apps
+    // The same list as the GitHub profile, so the PRs that list my own apps
     // (winget-pkgs, up-for-grabs) and work orgs never show.
     it('lists only the upstream projects the profile does', () => {
       const allowed = [
+        'AvaloniaUI/Avalonia',
         'BCUninstaller/Bulk-Crap-Uninstaller',
         'storytold/pdfcraft',
         'goatcorp/FFXIVQuickLauncher',
