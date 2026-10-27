@@ -27,7 +27,7 @@ export const ossStats: OssStats = {
   "totalMergedPrs": 8,
   "totalOpenPrs": 6,
   "projectCount": 3,
-  "totalStars": 75411,
+  "totalStars": 75414,
   "updated": "2026-10-27",
   "listedRepos": [
     "AvaloniaUI/Avalonia",
@@ -47,14 +47,14 @@ export const ossStats: OssStats = {
     {
       "repo": "BCUninstaller/Bulk-Crap-Uninstaller",
       "url": "https://github.com/BCUninstaller/Bulk-Crap-Uninstaller/pulls?q=is%3Apr%20author%3Ahazeliscoding",
-      "stars": 22089,
+      "stars": 22090,
       "mergedPrs": 4,
       "openPrs": 0
     },
     {
       "repo": "storytold/pdfcraft",
       "url": "https://github.com/storytold/pdfcraft/pulls?q=is%3Apr%20author%3Ahazeliscoding",
-      "stars": 18172,
+      "stars": 18174,
       "mergedPrs": 2,
       "openPrs": 3
     },
