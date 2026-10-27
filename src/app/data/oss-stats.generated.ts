@@ -18,6 +18,8 @@ export type OssStats = {
   projectCount: number;
   totalStars: number;
   updated: string; // YYYY-MM-DD
+  /** The repos in my GitHub profile's oss.json; only these may appear. */
+  listedRepos: string[];
   projects: OssProject[];
 };
 
@@ -25,13 +27,20 @@ export const ossStats: OssStats = {
   "totalMergedPrs": 8,
   "totalOpenPrs": 6,
   "projectCount": 3,
-  "totalStars": 75403,
+  "totalStars": 75411,
   "updated": "2026-10-27",
+  "listedRepos": [
+    "AvaloniaUI/Avalonia",
+    "BCUninstaller/Bulk-Crap-Uninstaller",
+    "storytold/pdfcraft",
+    "goatcorp/FFXIVQuickLauncher",
+    "goatcorp/XIVLauncher.Core"
+  ],
   "projects": [
     {
       "repo": "AvaloniaUI/Avalonia",
       "url": "https://github.com/AvaloniaUI/Avalonia/pulls?q=is%3Apr%20author%3Ahazeliscoding",
-      "stars": 31721,
+      "stars": 31722,
       "mergedPrs": 2,
       "openPrs": 1
     },
@@ -45,7 +54,7 @@ export const ossStats: OssStats = {
     {
       "repo": "storytold/pdfcraft",
       "url": "https://github.com/storytold/pdfcraft/pulls?q=is%3Apr%20author%3Ahazeliscoding",
-      "stars": 18165,
+      "stars": 18172,
       "mergedPrs": 2,
       "openPrs": 3
     },

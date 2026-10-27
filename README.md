@@ -51,9 +51,9 @@ gh api graphql -f query='{repository(owner:"hazeliscoding",name:"portfolio"){id 
 
 Open-source stats are generated the same way into `oss-stats.generated.ts`, but refresh weekly via
 GitHub Actions rather than at build time, so a rate-limited GitHub can't fail a deploy. They count
-merged and in-review PRs in the four upstream projects my GitHub profile lists; the list in
-`scripts/generate-oss-stats.mjs` and the one in the profile's `scripts/update_activity.py` change
-together.
+merged and in-review PRs in the upstream projects my GitHub profile lists. That list is `oss.json`
+in [hazeliscoding/hazeliscoding](https://github.com/hazeliscoding/hazeliscoding), and
+`scripts/generate-oss-stats.mjs` reads it on every run, so a project added there shows up here too.
 
 Release data works the same way, refreshed twice a day. `scripts/generate-releases.mjs` records the
 latest release of every repo linked from `projects.data.ts` into `releases.generated.ts`: its tag,

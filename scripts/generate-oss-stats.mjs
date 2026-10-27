@@ -13,18 +13,12 @@ import path from 'node:path';
 // and burn the 60/hour limit long before this script is the one that asked.
 
 const USER = 'hazeliscoding';
-// Only these upstream projects appear, so work orgs and the PRs that list my
-// own apps (winget-pkgs, up-for-grabs) never do. The same list as OSS in
-// scripts/update_activity.py in hazeliscoding/hazeliscoding, which draws my
-// GitHub profile's open-source section: change both together, or the site and
-// the profile disagree.
-const PROJECTS = [
-  'AvaloniaUI/Avalonia',
-  'BCUninstaller/Bulk-Crap-Uninstaller',
-  'storytold/pdfcraft',
-  'goatcorp/FFXIVQuickLauncher',
-  'goatcorp/XIVLauncher.Core',
-];
+// Only the upstream projects my GitHub profile lists appear, so work orgs and
+// the PRs that list my own apps (winget-pkgs, up-for-grabs) never do. The list
+// is oss.json in hazeliscoding/hazeliscoding, which also draws the profile's
+// open-source section, so the two can't disagree: a project added there shows
+// up here on the next run.
+const OSS_LIST = `https://api.github.com/repos/${USER}/${USER}/contents/oss.json`;
 
 const outputFile = path.join(
   process.cwd(),
@@ -74,6 +68,20 @@ async function readExisting() {
   }
 }
 
+// Through the contents API rather than raw.githubusercontent.com, so the
+// request carries the token like every other one here.
+const listFile = await gh(OSS_LIST);
+const listed = JSON.parse(Buffer.from(listFile.content, 'base64').toString('utf8'));
+// An empty list would search every PR of mine, the drift the list exists to stop.
+if (
+  !Array.isArray(listed) ||
+  listed.length === 0 ||
+  !listed.every((p) => typeof p?.repo === 'string' && /^[\w.-]+\/[\w.-]+$/.test(p.repo))
+) {
+  throw new Error('oss.json needs at least one project, each with an owner/name repo.');
+}
+const PROJECTS = listed.map((p) => p.repo);
+
 const query = encodeURIComponent(
   ['is:pr', `author:${USER}`, ...PROJECTS.map((repo) => `repo:${repo}`)].join(' '),
 );
@@ -112,6 +120,7 @@ const figures = {
   // As on the profile: a project counts once something of mine has merged there.
   projectCount: projects.filter((p) => p.mergedPrs > 0).length,
   totalStars: projects.reduce((s, p) => s + p.stars, 0),
+  listedRepos: PROJECTS,
   projects,
 };
 
@@ -150,6 +159,7 @@ const stats = {
   projectCount: figures.projectCount,
   totalStars: figures.totalStars,
   updated: unchanged ? previousDate : new Date().toISOString().slice(0, 10),
+  listedRepos: figures.listedRepos,
   projects: figures.projects,
 };
 
@@ -173,6 +183,8 @@ export type OssStats = {
   projectCount: number;
   totalStars: number;
   updated: string; // YYYY-MM-DD
+  /** The repos in my GitHub profile's oss.json; only these may appear. */
+  listedRepos: string[];
   projects: OssProject[];
 };
 

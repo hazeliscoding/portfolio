@@ -203,17 +203,12 @@ describe('HomePage', () => {
       expect(labels.every((label) => label && !/\b0 /.test(label))).toBe(true);
     });
 
-    // The same list as the GitHub profile, so the PRs that list my own apps
-    // (winget-pkgs, up-for-grabs) and work orgs never show.
+    // Only what the GitHub profile's oss.json lists, as the generator recorded
+    // it, so the PRs that list my own apps (winget-pkgs, up-for-grabs) and work
+    // orgs never show.
     it('lists only the upstream projects the profile does', () => {
-      const allowed = [
-        'AvaloniaUI/Avalonia',
-        'BCUninstaller/Bulk-Crap-Uninstaller',
-        'storytold/pdfcraft',
-        'goatcorp/FFXIVQuickLauncher',
-        'goatcorp/XIVLauncher.Core',
-      ];
-      for (const p of ossStats.projects) expect(allowed).withContext(p.repo).toContain(p.repo);
+      expect(ossStats.listedRepos.length).toBeGreaterThan(0);
+      for (const p of ossStats.projects) expect(ossStats.listedRepos).withContext(p.repo).toContain(p.repo);
     });
 
     it('abbreviates star counts without rounding them up', () => {
