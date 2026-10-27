@@ -215,6 +215,14 @@ describe('HomePage', () => {
       expect(starCount(20989)).toBe('20.9k');
       expect(starCount(999)).toBe('999');
     });
+
+    // Exact counts move almost daily, and the daily refresh would commit and
+    // redeploy for a change no visitor can see.
+    it('stores stars only as precisely as it shows them', () => {
+      for (const p of ossStats.projects) {
+        expect(p.stars < 1000 || p.stars % 100 === 0).withContext(`${p.repo}: ${p.stars}`).toBe(true);
+      }
+    });
   });
 
   it('links the three latest posts, dated', () => {

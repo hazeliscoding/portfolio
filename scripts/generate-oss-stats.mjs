@@ -106,7 +106,14 @@ for (const repo of PROJECTS) {
   projects.push({
     repo,
     url: `https://github.com/${repo}/pulls?q=${encodeURIComponent(`is:pr author:${USER}`)}`,
-    stars: info.stargazers_count,
+    // Cut to the hundred from 1,000 up, all that starCount() in home-page.ts
+    // shows (31,722 reads as 31.7k). Stored exactly, a repo's stars move almost
+    // every day, and the daily run would commit and redeploy for a figure no
+    // visitor can see change.
+    stars:
+      info.stargazers_count >= 1000
+        ? Math.floor(info.stargazers_count / 100) * 100
+        : info.stargazers_count,
     mergedPrs,
     openPrs,
   });
@@ -127,9 +134,8 @@ const figures = {
 // `updated` is the date the figures last MOVED, not the date they were last
 // checked — so a run that finds nothing new leaves the file byte-identical and
 // the scheduled workflow has nothing to commit. Stamping every run instead
-// would guarantee a commit and a redeploy every week to change one date, and
-// the panel's own footer would claim freshness it had not earned: the site
-// truncates stars to `20.9k`, so most real movement is invisible there anyway.
+// would guarantee a commit and a redeploy every day to change one date, and
+// the panel's own footer would claim freshness it had not earned.
 const previous = await readExisting();
 const { updated: previousDate, ...previousFigures } = previous ?? {};
 
@@ -170,6 +176,7 @@ const ts = `/* eslint-disable */
 export type OssProject = {
   repo: string;
   url: string;
+  /** Cut to the hundred from 1,000 up, the precision the home page shows. */
   stars: number;
   mergedPrs: number;
   /** Open, so still in review. */

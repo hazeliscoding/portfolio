@@ -49,10 +49,12 @@ always loads production's `public/giscus-kairo.css`, so a theme change shows onc
 gh api graphql -f query='{repository(owner:"hazeliscoding",name:"portfolio"){id discussionCategories(first:10){nodes{id name}}}}'
 ```
 
-Open-source stats are generated the same way into `oss-stats.generated.ts`, but refresh weekly via
-GitHub Actions rather than at build time, so a rate-limited GitHub can't fail a deploy. They count
-merged and in-review PRs in the upstream projects my GitHub profile lists. That list is `oss.json`
-in [hazeliscoding/hazeliscoding](https://github.com/hazeliscoding/hazeliscoding), and
+Open-source stats are generated the same way into `oss-stats.generated.ts`, but refresh daily via
+GitHub Actions rather than at build time, so a rate-limited GitHub can't fail a deploy. Star counts
+are stored only to the hundred the home page shows, so a day with no visible change commits nothing.
+The stats
+count merged and in-review PRs in the upstream projects my GitHub profile lists. That list is
+`oss.json` in [hazeliscoding/hazeliscoding](https://github.com/hazeliscoding/hazeliscoding), and
 `scripts/generate-oss-stats.mjs` reads it on every run, so a project added there shows up here too.
 
 Release data works the same way, refreshed twice a day. `scripts/generate-releases.mjs` records the

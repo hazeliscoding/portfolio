@@ -5,6 +5,7 @@
 export type OssProject = {
   repo: string;
   url: string;
+  /** Cut to the hundred from 1,000 up, the precision the home page shows. */
   stars: number;
   mergedPrs: number;
   /** Open, so still in review. */
@@ -27,7 +28,7 @@ export const ossStats: OssStats = {
   "totalMergedPrs": 8,
   "totalOpenPrs": 6,
   "projectCount": 3,
-  "totalStars": 75414,
+  "totalStars": 75234,
   "updated": "2026-10-27",
   "listedRepos": [
     "AvaloniaUI/Avalonia",
@@ -40,28 +41,28 @@ export const ossStats: OssStats = {
     {
       "repo": "AvaloniaUI/Avalonia",
       "url": "https://github.com/AvaloniaUI/Avalonia/pulls?q=is%3Apr%20author%3Ahazeliscoding",
-      "stars": 31722,
+      "stars": 31700,
       "mergedPrs": 2,
       "openPrs": 1
     },
     {
       "repo": "BCUninstaller/Bulk-Crap-Uninstaller",
       "url": "https://github.com/BCUninstaller/Bulk-Crap-Uninstaller/pulls?q=is%3Apr%20author%3Ahazeliscoding",
-      "stars": 22090,
+      "stars": 22000,
       "mergedPrs": 4,
       "openPrs": 0
     },
     {
       "repo": "storytold/pdfcraft",
       "url": "https://github.com/storytold/pdfcraft/pulls?q=is%3Apr%20author%3Ahazeliscoding",
-      "stars": 18174,
+      "stars": 18200,
       "mergedPrs": 2,
       "openPrs": 3
     },
     {
       "repo": "goatcorp/FFXIVQuickLauncher",
       "url": "https://github.com/goatcorp/FFXIVQuickLauncher/pulls?q=is%3Apr%20author%3Ahazeliscoding",
-      "stars": 3194,
+      "stars": 3100,
       "mergedPrs": 0,
       "openPrs": 1
     },
