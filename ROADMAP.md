@@ -4,6 +4,12 @@ What's next for the site. Shipped work lives in the git history.
 
 ## Decisions
 
+- 2026-10-27: The open-source list lives in one place, `oss.json` in my GitHub profile repo, which
+  draws the profile's section, and `scripts/generate-oss-stats.mjs` reads it on every run. Adding
+  Avalonia meant the same edit in three files across two repos: the profile script, the generator
+  and the spec. The generated stats now record the repos they were read from, and the spec checks
+  against those instead of its own copy. It gives up building the stats from this repo alone: the
+  generator needs that file to exist and keep its shape, and stops with an error when it doesn't.
 - 2026-10-25: Roze, the anime character I made of myself, takes the "H" monogram's place where a
   photo would go: waving in the about page's Polaroid, coding late at night in the home page's,
   and among too many open windows in the projects hero. She also sits beside the blog's title and
@@ -25,7 +31,8 @@ What's next for the site. Shipped work lives in the git history.
   review beside the merged ones, instead of every public repo with a merged PR of mine. The two
   had drifted: the site showed pyqb and the winget-pkgs PRs that submit my own apps, and was about
   to add up-for-grabs, where every PR lists one of my projects, while it missed PdfCraft for a week.
-  The list lives in both repos and changes in both together. It gives up counting new upstream work
+  The list lives in both repos and changes in both together (superseded 2026-10-27: it lives only
+  in the profile's `oss.json`). It gives up counting new upstream work
   on its own: a project joins only once I add it to both lists, and pyqb's 2020 README fix drops
   off.
 - 2026-10-25: The social cards and the favicon join the light shop. The site card sets "Small apps
