@@ -4,6 +4,12 @@ What's next for the site. Shipped work lives in the git history.
 
 ## Decisions
 
+- 2026-10-27: OSS stats refresh daily, as the GitHub profile already does, so a merged PR shows on
+  the home page within a day without me running anything. The generator stores each star count cut
+  to the hundred from 1,000 up, which is all the home page shows, so a run commits and redeploys
+  only when a figure a visitor can see has moved. That answers the 2026-10-20 reason for weekly. It
+  gives up exact star counts in the generated file, and while a project is trending the site can
+  still redeploy most days.
 - 2026-10-27: The open-source list lives in one place, `oss.json` in my GitHub profile repo, which
   draws the profile's section, and `scripts/generate-oss-stats.mjs` reads it on every run. Adding
   Avalonia meant the same edit in three files across two repos: the profile script, the generator
@@ -90,7 +96,7 @@ What's next for the site. Shipped work lives in the git history.
   a week was too long for the projects page to trail one. A run with no new release commits
   nothing, so it costs no commits or deploys. OSS stats stay weekly: star counts move every day, so
   a daily run would commit and deploy daily for changes the home page, which cuts stars to 0.1k,
-  mostly doesn't show. It gives up
+  mostly doesn't show (superseded 2026-10-27: daily, with stars stored at that 0.1k). It gives up
   nothing but a few seconds of free runner time.
 - 2026-10-19 (superseded 2026-10-25: one featured band and cards, no rotation): The home page becomes a broadcast too, so it reads as the same station as the
   projects page. A lower third introduces me, then NOW PLAYING cycles the featured projects' real
