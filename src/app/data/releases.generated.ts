@@ -49,9 +49,16 @@ export const releases: Record<string, Release> = {
     "url": "https://github.com/hazeliscoding/sdl3-porter/releases/tag/v1.0.2",
     "platforms": []
   },
+  "shybun": {
+    "tag": "v0.9.0",
+    "url": "https://github.com/hazeliscoding/shybun/releases/tag/v0.9.0",
+    "platforms": [
+      "Windows"
+    ]
+  },
   "staypaw": {
-    "tag": "v1.1.1",
-    "url": "https://github.com/hazeliscoding/staypaw/releases/tag/v1.1.1",
+    "tag": "v1.2.1",
+    "url": "https://github.com/hazeliscoding/staypaw/releases/tag/v1.2.1",
     "platforms": [
       "Windows"
     ]
