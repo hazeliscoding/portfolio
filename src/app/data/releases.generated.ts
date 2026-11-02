@@ -57,8 +57,8 @@ export const releases: Record<string, Release> = {
     ]
   },
   "staypaw": {
-    "tag": "v1.2.1",
-    "url": "https://github.com/hazeliscoding/staypaw/releases/tag/v1.2.1",
+    "tag": "v1.3.0",
+    "url": "https://github.com/hazeliscoding/staypaw/releases/tag/v1.3.0",
     "platforms": [
       "Windows"
     ]
