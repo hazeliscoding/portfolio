@@ -28,9 +28,9 @@ export interface OverglanceSection {
 /** The open panel on its Home tab: the hero's mockup, and the still the launch video replaces. */
 export const OVERGLANCE_MOCKUP: OverglanceShot = {
   src: 'overglance/midnight-home.webp',
-  alt: 'The Overglance panel open on its Home tab: three agent rows, two working and one done, beside the limits, calendar and music columns',
+  alt: 'The Overglance panel open on its Home tab: a Claude Code session waiting on an npm publish command with Allow and Deny buttons and "7 more" below it, Claude Code and Codex limits with a pace forecast, a Design review meeting with a Join button, and a song playing',
   width: 722,
-  height: 262,
+  height: 418,
 };
 
 export const OVERGLANCE_SECTIONS: OverglanceSection[] = [
@@ -51,7 +51,7 @@ export const OVERGLANCE_SECTIONS: OverglanceSection[] = [
     body: "Claude's 5-hour and weekly limits and Codex's, each with its reset countdown, a pace forecast and how old the number is. The closed pill carries the fullest limit as a gauge and a dot per session, so you see a limit coming without opening anything.",
     image: {
       src: 'overglance/midnight-closed.webp',
-      alt: 'The closed pill: a gauge for the fullest limit and three session dots',
+      alt: 'The closed pill: an amber gauge for the fullest limit and six agents’ dots, two of them amber for waiting',
       width: 240,
       height: 56,
     },
@@ -62,9 +62,9 @@ export const OVERGLANCE_SECTIONS: OverglanceSection[] = [
     body: "The next meeting with a countdown and a Join button, today's list and the month, from calendar links you paste: Microsoft 365, Outlook.com or Google. Five minutes before a meeting, the pill grows.",
     image: {
       src: 'overglance/porcelain-home.webp',
-      alt: 'The Porcelain theme: the Home tab with its calendar column waiting for a link',
+      alt: 'The Porcelain theme: the Home tab with a Design review meeting happening now, 11:24 to 12:24, and its Join button',
       width: 722,
-      height: 262,
+      height: 418,
     },
   },
   {
@@ -73,9 +73,9 @@ export const OVERGLANCE_SECTIONS: OverglanceSection[] = [
     body: "What's playing in any app that shows in Windows' media controls, with its album art. Play, pause or skip from the panel instead of switching to the music app.",
     image: {
       src: 'overglance/graphite-home.webp',
-      alt: 'The Graphite theme: the Home tab with its music column at the right',
+      alt: 'The Graphite theme: the Home tab with "The Long Way Round" by Northbound Lights playing, its album art, and previous, pause and next buttons',
       width: 722,
-      height: 262,
+      height: 418,
     },
   },
   {
