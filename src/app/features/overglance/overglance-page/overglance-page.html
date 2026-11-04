@@ -1,0 +1,122 @@
+<div class="og" [attr.data-sfx]="motion.sfx()">
+  <!--
+    The one place Overglance's own brand shows: its lockup on the shop's night
+    band, which is where the site puts featured work. Everything under it is
+    in the site's own language.
+  -->
+  <header class="hero shell-width">
+    <div class="hero__band">
+      <h1 class="hero__name">
+        <img src="overglance/lockup-dark.svg" alt="Overglance" width="304" height="40" />
+      </h1>
+      <p class="hero__pitch">{{ pitch }}</p>
+      <p class="hero__how">
+        A black pill at the top of your Windows screen. Hover over it, and it opens into a panel with your next
+        meeting, what's playing, how much of your AI limits is left and which coding agents are working or
+        waiting for you.
+      </p>
+      <div class="hero__actions">
+        <a class="hero__cta" [href]="downloadUrl" target="_blank" rel="noopener"
+          >Download for Windows <span aria-hidden="true">↗</span
+          ><span class="sr-only"> (opens in a new tab)</span></a
+        >
+        @if (checkoutUrl) {
+          <a class="hero__cta hero__cta--buy" [href]="checkoutUrl" target="_blank" rel="noopener"
+            >Buy for $9.99 <span aria-hidden="true">↗</span
+            ><span class="sr-only"> (opens in a new tab)</span></a
+          >
+        }
+      </div>
+      <p class="hero__fine">{{ price }}</p>
+    </div>
+
+    <figure class="hero__stage">
+      @if (launchVideo) {
+        <!-- The launch video, once public/overglance/launch.mp4 is committed; the still until then. -->
+        <video
+          class="hero__video"
+          src="overglance/launch.mp4"
+          [poster]="mockup.src"
+          [width]="mockup.width"
+          [height]="mockup.height"
+          controls
+          muted
+          playsinline
+          preload="metadata"
+        ></video>
+      } @else {
+        <img class="hero__shot" [src]="mockup.src" [alt]="mockup.alt" [width]="mockup.width" [height]="mockup.height" />
+      }
+      <figcaption class="hero__caption">The panel open on its Home tab, in the Midnight theme.</figcaption>
+    </figure>
+  </header>
+
+  @for (s of sections; track s.id) {
+    <section class="feature shell-width" [id]="s.id" [class.feature--text]="!s.image">
+      <div class="feature__copy">
+        <h2 class="feature__title">{{ s.heading }}</h2>
+        <p class="feature__body">{{ s.body }}</p>
+      </div>
+      @if (s.image; as img) {
+        <img
+          class="feature__shot"
+          [class.feature__shot--pill]="img.height < 100"
+          [src]="img.src"
+          [alt]="img.alt"
+          [width]="img.width"
+          [height]="img.height"
+          loading="lazy"
+        />
+      }
+    </section>
+  }
+
+  <section class="themes shell-width" aria-labelledby="themes-title">
+    <h2 id="themes-title" class="feature__title">Three themes</h2>
+    <p class="feature__body">Midnight, Graphite and Porcelain. The pill stays black in each; the panel's card changes.</p>
+    <ul class="themes__list">
+      @for (t of themes; track t.name) {
+        <li class="themes__item">
+          <img [src]="t.src" alt="" [width]="t.width" [height]="t.height" loading="lazy" />
+          <span class="themes__name">{{ t.name }}</span>
+        </li>
+      }
+    </ul>
+  </section>
+
+  <section class="trust shell-width" aria-labelledby="trust-title">
+    <h2 id="trust-title" class="feature__title">Built to be trusted</h2>
+    <ul class="trust__list">
+      @for (line of trust; track line) {
+        <li class="trust__item">{{ line }}</li>
+      }
+    </ul>
+    <p class="trust__docs">
+      It's all written down:
+      @for (d of docs; track d.slug; let last = $last) {
+        <a [routerLink]="['/overglance', d.slug]">{{ d.title.toLowerCase() }}</a>{{ last ? '.' : ', ' }}
+      }
+    </p>
+  </section>
+
+  <section class="faq shell-width" aria-labelledby="faq-title">
+    <h2 id="faq-title" class="feature__title">Questions</h2>
+    <dl class="faq__list">
+      @for (item of faq; track item.q) {
+        <div class="faq__item">
+          <dt class="faq__q">{{ item.q }}</dt>
+          <dd class="faq__a">{{ item.a }}</dd>
+        </div>
+      }
+    </dl>
+  </section>
+
+  <footer class="policies shell-width">
+    <nav class="policies__nav" aria-label="Overglance policies">
+      @for (d of docs; track d.slug) {
+        <a class="policies__link" [routerLink]="['/overglance', d.slug]">{{ d.title }}</a>
+      }
+    </nav>
+    <p class="policies__maker">Overglance is made and sold by Hazel Granados.</p>
+  </footer>
+</div>

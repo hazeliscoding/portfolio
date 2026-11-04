@@ -1,0 +1,23 @@
+@if (doc(); as d) {
+  <div class="doc shell-width">
+    <a class="doc__back" routerLink="/overglance"><span aria-hidden="true">←</span> Overglance</a>
+
+    <article class="doc__article">
+      <h1 class="doc__title">{{ d.title }}</h1>
+      <div class="doc__body prose" [appProseHtml]="html()"></div>
+    </article>
+
+    <nav class="doc__nav" aria-label="Overglance policies">
+      @for (other of docs; track other.slug) {
+        <a
+          class="doc__link"
+          [routerLink]="['/overglance', other.slug]"
+          [attr.aria-current]="other.slug === d.slug ? 'page' : null"
+          >{{ other.title }}</a
+        >
+      }
+    </nav>
+  </div>
+} @else {
+  <app-record-fault [path]="requestedPath()" backLabel="Overglance" backRoute="/overglance" />
+}

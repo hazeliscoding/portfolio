@@ -46,6 +46,20 @@ export const routes: Routes = [
       ).then((m) => m.ProjectDetailPage),
   },
   {
+    path: 'overglance',
+    loadComponent: () =>
+      import('./features/overglance/overglance-page/overglance-page').then(
+        (m) => m.OverglancePage,
+      ),
+  },
+  {
+    path: 'overglance/:doc',
+    loadComponent: () =>
+      import('./features/overglance/overglance-doc-page/overglance-doc-page').then(
+        (m) => m.OverglanceDocPage,
+      ),
+  },
+  {
     path: '**',
     loadComponent: () =>
       import('./features/error/error-page/error-page').then((m) => m.ErrorPage),

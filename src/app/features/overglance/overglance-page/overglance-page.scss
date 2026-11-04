@@ -1,0 +1,280 @@
+// A one-product page: the pitch and the download on the shop's night band,
+// the panel under it, then a section per thing it shows, the trust promise,
+// the questions and the policies.
+.og {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-16);
+  padding-block: var(--sp-4) var(--sp-8);
+
+  > * {
+    animation: win-a var(--dur-window) var(--ease-mech) both;
+  }
+
+  @for $i from 1 through 6 {
+    > :nth-child(#{$i}) {
+      animation-delay: #{($i - 1) * 50}ms;
+    }
+  }
+
+  &[data-sfx="b"] > * {
+    animation-name: win-b;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .og > * {
+    animation: none;
+  }
+}
+
+// --- Hero ------------------------------------------------------------------
+
+.hero {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-8);
+}
+
+.hero__band {
+  padding: clamp(32px, 5vw, 64px) clamp(24px, 4vw, 56px);
+  background: var(--surface-night);
+  border-radius: var(--radius-3);
+  color: var(--text-on-night);
+}
+
+.hero__name {
+  margin: 0 0 var(--sp-8);
+  line-height: 0;
+
+  img {
+    width: 304px;
+    max-width: 100%;
+    height: auto;
+  }
+}
+
+.hero__pitch {
+  font: var(--type-display-l);
+  letter-spacing: var(--tracking-display);
+  color: var(--text-on-night);
+  max-width: 18ch;
+  text-wrap: balance;
+}
+
+.hero__how {
+  margin-top: var(--sp-5);
+  max-width: 58ch;
+  font-size: 17px;
+  line-height: 1.6;
+  color: var(--text-on-night-muted);
+}
+
+.hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-3);
+  margin-top: var(--sp-8);
+}
+
+// The home band's call to action, so the two bands match.
+.hero__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  min-height: 46px;
+  padding: 0 22px;
+  border-radius: var(--radius-pill);
+  background: var(--h-white);
+  font: 600 16px/1 var(--font-ui);
+  color: var(--h-night);
+
+  &:hover {
+    color: var(--h-night);
+    background: var(--h-lavender-2);
+  }
+}
+
+.hero__cta--buy {
+  background: transparent;
+  border: var(--bw-hairline) solid rgba(255, 255, 255, 0.4);
+  color: var(--text-on-night);
+
+  &:hover {
+    color: var(--text-on-night);
+    background: rgba(255, 255, 255, 0.1);
+  }
+}
+
+.hero__fine {
+  margin-top: var(--sp-4);
+  font: var(--type-body-s);
+  color: var(--text-on-night-muted);
+}
+
+.hero__stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-3);
+  margin: 0;
+}
+
+// The captures are 1x, so they sit at their own size rather than scaled up soft.
+.hero__shot,
+.hero__video,
+.feature__shot,
+.themes__item img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  border-radius: var(--radius-2);
+}
+
+.hero__caption {
+  font: var(--type-body-s);
+  color: var(--text-muted);
+}
+
+// --- Sections --------------------------------------------------------------
+
+.feature {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+  gap: var(--sp-10);
+  align-items: center;
+
+  &--text {
+    grid-template-columns: minmax(0, 1fr);
+    max-width: 64ch;
+  }
+}
+
+.feature__title {
+  font: var(--type-display-m);
+  letter-spacing: var(--tracking-heading);
+}
+
+.feature__body {
+  margin-top: var(--sp-4);
+  max-width: 52ch;
+  font-size: 17px;
+  line-height: 1.7;
+  color: var(--text-muted);
+}
+
+.feature__shot {
+  justify-self: center;
+}
+
+// The closed pill is 240 px wide: kept at scale, not stretched to the column.
+.feature__shot--pill {
+  width: 240px;
+}
+
+@media (max-width: 840px) {
+  .feature {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--sp-6);
+  }
+}
+
+// --- Themes ----------------------------------------------------------------
+
+.themes__list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-6);
+  margin-top: var(--sp-6);
+  padding: 0;
+  list-style: none;
+}
+
+.themes__item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+
+.themes__name {
+  font: var(--type-label);
+  letter-spacing: var(--tracking-wider);
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+// --- Trust and questions ---------------------------------------------------
+
+.trust__list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: var(--sp-6);
+  margin-top: var(--sp-6);
+  padding: 0;
+  list-style: none;
+}
+
+.trust__item {
+  padding: var(--sp-5);
+  border: var(--bw-hairline) solid var(--border-default);
+  border-radius: var(--radius-2);
+  background: var(--surface-window);
+  font: var(--type-body);
+  color: var(--text-secondary);
+}
+
+.trust__docs {
+  margin-top: var(--sp-6);
+  color: var(--text-muted);
+
+  a {
+    color: var(--text-link);
+    text-decoration: underline;
+  }
+}
+
+.faq__list {
+  display: grid;
+  gap: var(--sp-5);
+  max-width: 64ch;
+  margin: var(--sp-6) 0 0;
+}
+
+.faq__q {
+  font: var(--type-title);
+  color: var(--text-primary);
+}
+
+.faq__a {
+  margin: var(--sp-2) 0 0;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+// --- Policies --------------------------------------------------------------
+
+.policies {
+  padding-top: var(--sp-8);
+  border-top: var(--bw-hairline) solid var(--border-default);
+}
+
+.policies__nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-4) var(--sp-6);
+}
+
+.policies__link {
+  font: 600 15px/1.3 var(--font-ui);
+  color: var(--text-secondary);
+
+  &:hover {
+    color: var(--text-primary);
+  }
+}
+
+.policies__maker {
+  margin-top: var(--sp-4);
+  font: var(--type-body-s);
+  color: var(--text-muted);
+}

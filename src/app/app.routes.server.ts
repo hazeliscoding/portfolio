@@ -52,6 +52,21 @@ export const serverRoutes: ServerRoute[] = [
   },
 
   {
+    path: 'overglance',
+    renderMode: RenderMode.Prerender,
+  },
+
+  {
+    path: 'overglance/:doc',
+    renderMode: RenderMode.Prerender,
+    fallback: PrerenderFallback.Client,
+    async getPrerenderParams() {
+      const { overglanceDocs } = await import('./data/overglance-docs.generated');
+      return overglanceDocs.map((d) => ({ doc: d.slug }));
+    },
+  },
+
+  {
     path: '**',
     renderMode: RenderMode.Client,
   },
