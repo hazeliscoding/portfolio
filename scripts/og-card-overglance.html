@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Overglance — social card source</title>
+
+    <!--
+      THE SOCIAL CARD FOR /overglance. `npm run og:cards` renders it to
+      public/images/og/overglance.png at 1200 x 630, as og-card.html explains.
+
+      The shop's night band edge to edge, Overglance's own lockup on it, the
+      pitch in the site's face, and the panel from public/overglance as the
+      product shot. Colours are the token values, inlined because this renders
+      outside the app.
+    -->
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600&family=JetBrains+Mono:wght@500&display=block"
+      rel="stylesheet"
+    />
+
+    <style>
+      html,
+      body {
+        margin: 0;
+        background: #1c1c1e;
+      }
+
+      .card {
+        position: relative;
+        width: 1200px;
+        height: 630px;
+        overflow: hidden;
+        background:
+          radial-gradient(70% 60% at 100% 0%, rgba(102, 81, 207, 0.35), transparent 70%),
+          #1c1c1e; /* --h-night */
+        font-family: "Bricolage Grotesque", sans-serif;
+        color: #f5f5f7; /* --h-night-ink */
+      }
+
+      .lockup {
+        position: absolute;
+        left: 80px;
+        top: 72px;
+        height: 52px;
+      }
+
+      .title {
+        position: absolute;
+        left: 78px;
+        top: 168px;
+        width: 620px;
+        font: 600 72px/1.04 "Bricolage Grotesque", sans-serif;
+        letter-spacing: -0.045em;
+      }
+
+      .fine {
+        position: absolute;
+        left: 80px;
+        top: 340px;
+        font: 600 24px/1.3 "Bricolage Grotesque", sans-serif;
+        color: #b9b9c2; /* --h-night-ink-2 */
+      }
+
+      .site {
+        position: absolute;
+        left: 80px;
+        bottom: 64px;
+        font: 500 21px/1 "JetBrains Mono", monospace;
+        color: #b9b9c2;
+      }
+
+      /* The panel, bleeding off the right and bottom edges. */
+      .shot {
+        position: absolute;
+        left: 560px;
+        top: 410px;
+        width: 722px;
+        border-radius: 12px;
+        box-shadow: 0 24px 60px -20px rgba(0, 0, 0, 0.7);
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="card">
+      <img class="lockup" src="../public/overglance/lockup-dark.svg" alt="" />
+      <div class="title">Your day and your agents, at a glance.</div>
+      <div class="fine">Windows · free for 7 days, then $9.99 once for 3 PCs</div>
+      <div class="site">hazeliscoding.dev/overglance</div>
+      <img class="shot" src="../public/overglance/midnight-home.webp" alt="" />
+    </div>
+  </body>
+</html>

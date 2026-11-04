@@ -19,6 +19,7 @@ import { ogCardPath, publicDir, readPosts } from './lib/posts.mjs';
 
 const siteCard = path.join(process.cwd(), 'scripts', 'og-card.html');
 const template = path.join(process.cwd(), 'scripts', 'og-card-post.html');
+const overglanceCard = path.join(process.cwd(), 'scripts', 'og-card-overglance.html');
 
 const CHROME_CANDIDATES = [
   process.env.CHROME_PATH,
@@ -62,6 +63,9 @@ async function render(url, out) {
 try {
   await render(pathToFileURL(siteCard), path.join(publicDir, 'og-image.png'));
   console.log('Rendered /og-image.png');
+
+  await render(pathToFileURL(overglanceCard), path.join(publicDir, 'images', 'og', 'overglance.png'));
+  console.log('Rendered /images/og/overglance.png');
 
   for (const post of posts) {
     const url = pathToFileURL(template);
