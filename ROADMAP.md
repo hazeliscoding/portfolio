@@ -4,6 +4,19 @@ What's next for the site. Shipped work lives in the git history.
 
 ## Decisions
 
+- 2026-11-04: Overglance, the paid Windows app, gets a product page of its own at `/overglance`,
+  beside the portfolio pages rather than as a `/portfolio/:id` card: a shipped product sells on one
+  page, with its five policies under it at `/overglance/privacy`, `terms`, `refunds`, `support`
+  and `data`. Its shape follows Lev's UltraNotch page, hero, mockup, a section per thing it shows,
+  trust, questions and a policies footer, and every word is the site's own, from the app's README.
+  The app's brand shows on the hero band only; the rest is the shop's language. The policies are
+  the app repo's `docs/*.md` copied as written into `public/overglance/`, compiled by
+  `generate-blog.mjs` so they prerender, with the links between them pointed at the routes here;
+  the two blanks they hold, the support email and the governing law, stay until launch. The Buy
+  button waits on the Polar checkout link in `overglance.data.ts` and renders only once it's set,
+  and the hero plays `public/overglance/launch.mp4` once that file exists. It gives up the
+  projects page's release badges and the broadcast band, which Overglance doesn't join, and the
+  policies as Markdown the blog pipeline would list: they're pages, not posts.
 - 2026-10-27: OSS stats refresh daily, as the GitHub profile already does, so a merged PR shows on
   the home page within a day without me running anything. The generator stores each star count cut
   to the hundred from 1,000 up, which is all the home page shows, so a run commits and redeploys

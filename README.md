@@ -21,6 +21,7 @@ Angular 21 (standalone + signals) · SSR and prerendering via `@angular/ssr` · 
 | What | Where |
 | --- | --- |
 | Projects | `src/app/data/projects.data.ts` |
+| Overglance's page | `src/app/data/overglance.data.ts`, its policies and shots in `public/overglance/` |
 | Blog posts | `public/blog/*.md` |
 | Images | `public/images/` |
 | Design tokens | `src/styles/kairo/tokens/` |
@@ -79,9 +80,12 @@ npm run og:cards  # render a social card per post (needs Chrome)
 
 ## Routes
 
-`/` · `/about` · `/portfolio` · `/portfolio/:id` · `/blog` · `/blog/:slug` · `/blog/tags/:tag`
+`/` · `/about` · `/portfolio` · `/portfolio/:id` · `/blog` · `/blog/:slug` · `/blog/tags/:tag` ·
+`/overglance` · `/overglance/:doc`
 
-Every route prerenders, including each known project, post and tag. A tag page stays `noindex`
+Every route prerenders, including each known project, post, tag and Overglance policy. The
+policies are the app repo's `docs/*.md`, copied as written into `public/overglance/` and compiled
+by the blog generator; their social card and the page's render with `npm run og:cards`. A tag page stays `noindex`
 until three entries carry the tag. `sitemap.xml` is read off the prerendered pages, so it lists
 exactly the pages with a canonical and without `noindex`.
 
