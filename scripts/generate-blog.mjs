@@ -118,7 +118,7 @@ function renderLlmsTxt(posts) {
     .join('\n');
   return `# Hazel Granados
 
-> Full-stack developer working in C#, .NET and Angular, moving into AI engineering: deterministic agent workflows and evals that prove they work. This site holds a project archive, open-source contributions and a blog about building software.
+> Full-stack developer working in C#, .NET and Angular, moving into AI engineering: deterministic agent workflows and evals that prove they work. This site holds a project archive, most of it free and one app for sale, contributions to other people's open source, and a blog about building software.
 
 ## Blog
 

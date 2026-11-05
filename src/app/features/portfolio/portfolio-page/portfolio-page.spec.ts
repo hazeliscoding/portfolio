@@ -27,7 +27,7 @@ describe('PortfolioPage', () => {
     expect([...el.querySelectorAll('h1')].map(text)).toEqual(["Here's what I'm building."]);
     const pilots = projectsData.filter((p) => p.kind === 'pilot').length;
     expect(text(el.querySelector('.eyebrow'))).toBe(
-      `${projectsData.length - pilots} shipped · ${pilots} building now · free and open source`,
+      `${projectsData.length - pilots} shipped · ${pilots} building now · most of them free and open source`,
     );
     // Roze stands in for a photo here, so she is decoration only.
     expect(el.querySelector('.hero__avatar')?.getAttribute('aria-hidden')).toBe('true');

@@ -972,3 +972,10 @@
     display: none;
   }
 }
+
+// The strip's one inline link, to the app that isn't open source.
+.community__text a {
+  color: var(--text-link);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}

@@ -72,7 +72,7 @@ export class BlogPage {
         this.pageMeta.set({
           title: 'Blog - Hazel Granados',
           description:
-            'Notes by Hazel Granados on building software: reverse engineering, coding agents, C# and .NET, and the open-source projects behind them.',
+            'Notes by Hazel Granados on building software: reverse engineering, coding agents, C# and .NET, and the projects behind them.',
           path: '/blog',
           jsonLd: [
             { '@type': 'Blog', name: 'Hazel Granados — Blog', url: `${SITE_ORIGIN}/blog`, author: PERSON },
