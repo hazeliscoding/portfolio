@@ -113,8 +113,10 @@
 }
 
 // The one-liner, in the terminal card the projects page uses; its Copy button takes the band's white.
+// Wide enough for the one-liner on one line; the box breaks it on phones.
 .hero__install {
   --tint: var(--h-white);
+  max-width: 600px;
   margin-top: var(--sp-6);
 }
 
