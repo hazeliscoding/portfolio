@@ -47,9 +47,12 @@ describe('OverglancePage', () => {
     expect(el.querySelector('.hero__cta--buy') !== null).toBe(OVERGLANCE_CHECKOUT_URL !== '');
   });
 
-  it('shows the still until the launch video exists', () => {
-    expect(el.querySelector('.hero__video')).toBeNull();
-    expect(el.querySelector('.hero__shot')?.getAttribute('src')).toBe('overglance/midnight-home.webp');
+  it('plays the launch video with the still as its poster, and never by itself', () => {
+    const video = el.querySelector('video.hero__video')!;
+    expect(video.getAttribute('src')).toBe('overglance/launch.mp4');
+    expect(video.getAttribute('poster')).toBe('overglance/midnight-home.webp');
+    expect(video.hasAttribute('autoplay')).toBeFalse();
+    expect(el.querySelector('.hero__shot')).toBeNull();
   });
 
   it('gives each thing it shows a section with a heading and, where there is one, a sized screenshot', () => {
