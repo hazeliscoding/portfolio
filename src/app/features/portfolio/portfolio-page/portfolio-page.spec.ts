@@ -213,8 +213,9 @@ describe('PortfolioPage', () => {
       expect(text(segment('axiomarium').querySelector('.segment__tag'))).toBe(
         `Building now · ${releases['axiomarium'].tag}`,
       );
-      expect(releases['shybun']).toBeUndefined();
-      expect(text(segment('shybun').querySelector('.segment__tag'))).toBe('Building now');
+      // A pilot without a release yet says only that it's being built; which one that is changes as builds land.
+      const unreleased = projectsData.find((p) => p.kind === 'pilot' && !releases[p.links.github!.split('/').pop()!])!;
+      expect(text(segment(unreleased.id).querySelector('.segment__tag'))).toBe('Building now');
     });
 
     it('offers the latest build, with what state it is in', () => {
