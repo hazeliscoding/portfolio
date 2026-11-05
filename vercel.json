@@ -26,6 +26,11 @@
       "headers": { "Access-Control-Allow-Origin": "https://giscus.app" },
       "continue": true
     },
+    {
+      "src": "^/overglance/install\.ps1$",
+      "headers": { "Content-Type": "text/plain; charset=utf-8" },
+      "continue": true
+    },
     { "handle": "filesystem" },
     { "src": "^/.*", "status": 404, "dest": "/404.html" }
   ]

@@ -47,6 +47,12 @@ describe('OverglancePage', () => {
     expect(el.querySelector('.hero__cta--buy') !== null).toBe(OVERGLANCE_CHECKOUT_URL !== '');
   });
 
+  it('offers the one-line PowerShell install beside the download', () => {
+    expect(el.querySelector('app-install-box')?.textContent).toContain(
+      'irm https://www.hazeliscoding.dev/overglance/install.ps1 | iex',
+    );
+  });
+
   it('plays the launch video with the still as its poster, and never by itself', () => {
     const video = el.querySelector('video.hero__video')!;
     expect(video.getAttribute('src')).toBe('overglance/launch.mp4');

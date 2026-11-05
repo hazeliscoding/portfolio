@@ -10,6 +10,9 @@ export const OVERGLANCE_CHECKOUT_URL: string = 'https://buy.polar.sh/polar_cl_Ta
 
 export const OVERGLANCE_PRICE = 'Free for 7 days, then $9.99 once for 3 PCs';
 
+/** The one-line install: the script fetches the latest Setup and runs it only if it carries the code signature. */
+export const OVERGLANCE_INSTALL = 'irm https://www.hazeliscoding.dev/overglance/install.ps1 | iex';
+
 export const OVERGLANCE_PITCH = 'Your day and your agents, at a glance.';
 
 /** Overglance's turn on the home page's band, where the other apps are project cards: its page stands in for a card. */

@@ -112,6 +112,12 @@
   color: var(--text-on-night-muted);
 }
 
+// The one-liner, in the terminal card the projects page uses; its Copy button takes the band's white.
+.hero__install {
+  --tint: var(--h-white);
+  margin-top: var(--sp-6);
+}
+
 .hero__stage {
   display: flex;
   flex-direction: column;

@@ -1,6 +1,6 @@
 <div class="install__bar">
   <span class="install__dots" aria-hidden="true"></span>
-  <span class="install__title">Install in Claude Code</span>
+  <span class="install__title">{{ title() }}</span>
   <button type="button" class="install__copy" (click)="copy()">
     {{ copied() ? 'Copied' : 'Copy' }}
   </button>

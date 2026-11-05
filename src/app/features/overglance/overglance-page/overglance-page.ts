@@ -2,11 +2,13 @@ import { Component, OnInit, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 import { MotionService } from '../../../ui/motion/motion.service';
+import { InstallBox } from '../../portfolio/install-box/install-box';
 import { PageMeta, PERSON, SITE_ORIGIN, breadcrumbs } from '../../../core/page-meta';
 import {
   OVERGLANCE_CHECKOUT_URL,
   OVERGLANCE_DOWNLOAD_URL,
   OVERGLANCE_FAQ,
+  OVERGLANCE_INSTALL,
   OVERGLANCE_MOCKUP,
   OVERGLANCE_PITCH,
   OVERGLANCE_PRICE,
@@ -24,7 +26,7 @@ const DESCRIPTION =
 @Component({
   selector: 'overglance-page',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, InstallBox],
   templateUrl: './overglance-page.html',
   styleUrl: './overglance-page.scss',
 })
@@ -36,6 +38,7 @@ export class OverglancePage implements OnInit {
   readonly downloadUrl = OVERGLANCE_DOWNLOAD_URL;
   readonly checkoutUrl = OVERGLANCE_CHECKOUT_URL;
   readonly price = OVERGLANCE_PRICE;
+  readonly install = OVERGLANCE_INSTALL;
   readonly mockup = OVERGLANCE_MOCKUP;
   readonly launchVideo = overglanceLaunchVideo;
   readonly sections = OVERGLANCE_SECTIONS;

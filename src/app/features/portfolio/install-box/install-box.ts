@@ -9,6 +9,7 @@ import { Component, input, signal } from '@angular/core';
 })
 export class InstallBox {
   readonly commands = input.required<string[]>();
+  readonly title = input('Install in Claude Code');
 
   /** True for a moment after copying, for the button to say so. */
   readonly copied = signal(false);
