@@ -4,7 +4,7 @@
 
 ## How
 
-Ask through Polar's customer portal, the link in your receipt email, or the [support contact](SUPPORT.md) with the email address you bought with. Polar, the merchant of record, makes the refund to the card you paid with; banks take a few days to show it.
+Ask through Polar's customer portal, the link in your receipt email, or the [support contact](/overglance/support) with the email address you bought with. Polar, the merchant of record, makes the refund to the card you paid with; banks take a few days to show it.
 
 ## What happens to the key
 

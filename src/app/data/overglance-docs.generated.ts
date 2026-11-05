@@ -92,7 +92,7 @@ Overglance is proprietary software. You may not copy, modify, decompile or rever
 
 ## Third-party services
 
-Overglance goes online only for the uses its [privacy page](PRIVACY.md) lists, most of them with links or keys you supply, and each service has terms of its own that bind you when you use it through Overglance:
+Overglance goes online only for the uses its [privacy page](/overglance/privacy) lists, most of them with links or keys you supply, and each service has terms of its own that bind you when you use it through Overglance:
 
 - Using the YouTube tab binds you to [YouTube's Terms of Service](https://www.youtube.com/t/terms). Overglance uses YouTube API Services with your own key.
 - The Ask tab sends what you type to Anthropic or OpenAI under their terms and your own account with them.
@@ -107,11 +107,11 @@ Overglance is provided as is. It reads what your agents and other apps report an
 
 ## Refunds
 
-See the [refund policy](REFUNDS.md): a full refund within 14 days of purchase, no questions asked.
+See the [refund policy](/overglance/refunds): a full refund within 14 days of purchase, no questions asked.
 
 ## Changes and contact
 
-These terms change only with a release, and the release notes say so. Questions go to the [support contact](SUPPORT.md). The law of the State of Texas, United States, applies, except where your own consumer law applies instead.
+These terms change only with a release, and the release notes say so. Questions go to the [support contact](/overglance/support). The law of the State of Texas, United States, applies, except where your own consumer law applies instead.
 `,
   },
   {
@@ -122,7 +122,7 @@ These terms change only with a release, and the release notes say so. Questions 
 
 ## How
 
-Ask through Polar's customer portal, the link in your receipt email, or the [support contact](SUPPORT.md) with the email address you bought with. Polar, the merchant of record, makes the refund to the card you paid with; banks take a few days to show it.
+Ask through Polar's customer portal, the link in your receipt email, or the [support contact](/overglance/support) with the email address you bought with. Polar, the merchant of record, makes the refund to the card you paid with; banks take a few days to show it.
 
 ## What happens to the key
 
@@ -160,7 +160,7 @@ The support contact is the issues above, or [email](mailto:hazel.granados@proton
     slug: "data",
     title: "Data handling",
     description: "The engineering side of the privacy page: where each thing lives, how it's protected, how long it's kept, and who else touches it.",
-    markdown: `The engineering side of the [privacy page](PRIVACY.md): where each thing lives, how it's protected, how long it's kept, and who else touches it.
+    markdown: `The engineering side of the [privacy page](/overglance/privacy): where each thing lives, how it's protected, how long it's kept, and who else touches it.
 
 ## On the PC
 

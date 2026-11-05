@@ -42,9 +42,11 @@ describe('OverglanceDocPage', () => {
     expect(terms.markdown).toContain('](/overglance/privacy)');
   });
 
-  it('keeps the two blanks the owner fills before launch', () => {
+  it('carries the support email and the governing law the owner filled', () => {
     const support = overglanceDocs.find((d) => d.slug === 'support')!;
-    expect(support.markdown).toContain('[An email address goes here before launch.]');
+    expect(support.markdown).toMatch(/\]\(mailto:[^)]+\)/);
+    const terms = overglanceDocs.find((d) => d.slug === 'terms')!;
+    expect(terms.markdown).toContain('State of Texas');
   });
 
   it('marks the page being read in the policy links', async () => {

@@ -1,6 +1,6 @@
 # Data handling
 
-The engineering side of the [privacy page](PRIVACY.md): where each thing lives, how it's protected, how long it's kept, and who else touches it.
+The engineering side of the [privacy page](/overglance/privacy): where each thing lives, how it's protected, how long it's kept, and who else touches it.
 
 ## On the PC
 
