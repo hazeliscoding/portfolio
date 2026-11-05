@@ -927,6 +927,11 @@
     padding: 14px 18px;
   }
 
+  // The copy keeps a readable column beside the tile and sends the link to a line of its own.
+  .community__copy {
+    flex-basis: 200px;
+  }
+
   .hero__stickers {
     height: 220px;
   }
