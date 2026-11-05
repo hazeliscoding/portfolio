@@ -8,6 +8,7 @@ import {
   OVERGLANCE_DOWNLOAD_URL,
   OVERGLANCE_FAQ,
   OVERGLANCE_MOCKUP,
+  OVERGLANCE_PITCH,
   OVERGLANCE_PRICE,
   OVERGLANCE_SECTIONS,
   OVERGLANCE_THEMES,
@@ -16,7 +17,7 @@ import {
 import { overglanceDocs, overglanceLaunchVideo } from '../../../data/overglance-docs.generated';
 
 const PATH = '/overglance';
-const PITCH = 'Your day and your agents, at a glance.';
+const PITCH = OVERGLANCE_PITCH;
 const DESCRIPTION =
   'A pill at the top of your Windows screen that opens into a panel: your next meeting, what’s playing, your Claude and Codex limits with a pace forecast, and which coding agents are working or waiting for you. Free for 7 days, then $9.99 once for 3 PCs.';
 

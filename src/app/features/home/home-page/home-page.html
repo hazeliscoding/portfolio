@@ -25,11 +25,11 @@
             <div class="promo__actions">
               @if (f.cta.kind !== 'install') {
                 <a class="promo__cta" [href]="f.cta.href" target="_blank" rel="noopener"
-                  >Get {{ f.title }} free <span aria-hidden="true">↗</span
+                  >{{ f.ctaLabel }} <span aria-hidden="true">↗</span
                   ><span class="sr-only"> (opens in a new tab)</span></a
                 >
               }
-              <a class="promo__more" [routerLink]="['/portfolio', f.id]"
+              <a class="promo__more" [routerLink]="f.more"
                 >How it works <span aria-hidden="true">→</span></a
               >
             </div>
@@ -38,12 +38,12 @@
             }
           </div>
 
-          <figure class="promo__screen">
+          <figure class="promo__screen" [class.promo__screen--headroom]="f.headroom">
             <img
               [src]="f.shot"
               [alt]="f.alt"
-              width="1280"
-              height="800"
+              [width]="f.width"
+              [height]="f.height"
               [attr.loading]="i === 0 ? null : 'lazy'"
             />
             @if (f.caption) {

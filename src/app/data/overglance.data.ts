@@ -10,6 +10,17 @@ export const OVERGLANCE_CHECKOUT_URL = '';
 
 export const OVERGLANCE_PRICE = 'Free for 7 days, then $9.99 once for 3 PCs';
 
+export const OVERGLANCE_PITCH = 'Your day and your agents, at a glance.';
+
+/** Overglance's turn on the home page's band, where the other apps are project cards: its page stands in for a card. */
+export const OVERGLANCE_BAND = {
+  pitch: OVERGLANCE_PITCH,
+  lede: "A black pill at the top of your Windows screen that opens into your next meeting, what's playing, your AI limits and the coding agents waiting for you.",
+  caption: 'An agent waiting for you, your limits, your next meeting',
+  // The pill's pearl for the name and the button, and its muted pearl as the wash: amber is for alerts alone.
+  brand: { ink: '#F5F5F7', tint: '#9C9CA6', icon: 'overglance/mark-dark.svg' },
+};
+
 export interface OverglanceShot {
   src: string;
   alt: string;

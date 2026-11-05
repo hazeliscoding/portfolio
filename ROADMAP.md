@@ -4,6 +4,13 @@ What's next for the site. Shipped work lives in the git history.
 
 ## Decisions
 
+- 2026-11-05: Overglance leads the home page's band, first of the featured apps, with "Try
+  Overglance free" to its download and "How it works" to its page: the one app for sale shouldn't
+  be the one the home page never shows. It still has no project card and stays off the projects
+  page's broadcast, so the band takes a slide of its own beside the project segments, with the
+  pill's pearl as its ink and its muted pearl as the wash, since the app keeps amber for alerts.
+  It gives up the band's one wording and one shot size for every slide: each names its own button
+  and its shot's own size.
 - 2026-11-04: Overglance, the paid Windows app, gets a product page of its own at `/overglance`,
   beside the portfolio pages rather than as a `/portfolio/:id` card: a shipped product sells on one
   page, with its five policies under it at `/overglance/privacy`, `terms`, `refunds`, `support`

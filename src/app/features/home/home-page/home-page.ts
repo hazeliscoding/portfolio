@@ -2,8 +2,9 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 import { MotionService } from '../../../ui/motion/motion.service';
-import { platformList, releaseOf, styleOf, toSegment } from '../../portfolio/broadcast-segment/broadcast-segment';
+import { BrandStyle, Cta, platformList, releaseOf, styleOf, toSegment } from '../../portfolio/broadcast-segment/broadcast-segment';
 import { Project, projectsData } from '../../../data/projects.data';
+import { OVERGLANCE_BAND, OVERGLANCE_DOWNLOAD_URL, OVERGLANCE_MOCKUP, OVERGLANCE_PRICE } from '../../../data/overglance.data';
 import { blogPosts } from '../../../data/blog-posts.generated';
 import { ossStats } from '../../../data/oss-stats.generated';
 import { count } from '../../../core/count';
@@ -30,6 +31,52 @@ export function lede(description: string): string {
   const clause = description.split(' — ')[0].split(/(?<=[.?!])\s/)[0].trim();
   return /[.?!]$/.test(clause) ? clause : `${clause}.`;
 }
+
+/** One turn on the band: a featured project read as its segment, or Overglance, whose page stands in for a card. */
+interface Slide {
+  id: string;
+  title: string;
+  pitch: string;
+  lede: string;
+  caption: string;
+  medium: string;
+  platforms: string;
+  icon: string;
+  mark: string;
+  style: BrandStyle;
+  shot: string;
+  alt: string;
+  width: number;
+  height: number;
+  cta: Cta;
+  ctaLabel: string;
+  /** Where "How it works" goes. */
+  more: string[];
+  /** Whether the caption needs a strip of its own above the shot: the pill sits at the shot's top edge. */
+  headroom: boolean;
+}
+
+/** Overglance leads the band: the one app for sale shouldn't be the one the home page never shows. */
+const overglance: Slide = {
+  id: 'overglance',
+  title: 'Overglance',
+  pitch: OVERGLANCE_BAND.pitch,
+  lede: OVERGLANCE_BAND.lede,
+  caption: OVERGLANCE_BAND.caption,
+  medium: 'Desktop',
+  platforms: 'Windows',
+  icon: OVERGLANCE_BAND.brand.icon,
+  mark: OVERGLANCE_BAND.brand.icon,
+  style: { '--ink': OVERGLANCE_BAND.brand.ink, '--tint': OVERGLANCE_BAND.brand.tint, '--glow': null },
+  shot: OVERGLANCE_MOCKUP.src,
+  alt: OVERGLANCE_MOCKUP.alt,
+  width: OVERGLANCE_MOCKUP.width,
+  height: OVERGLANCE_MOCKUP.height,
+  cta: { kind: 'download', label: 'Try Overglance free', href: OVERGLANCE_DOWNLOAD_URL, fine: `${OVERGLANCE_PRICE} · Windows` },
+  ctaLabel: 'Try Overglance free',
+  more: ['/overglance'],
+  headroom: true,
+};
 
 /** What a card's fine print says it costs and runs on. */
 function fineOf(p: Project): string {
@@ -60,16 +107,35 @@ export class HomePage implements OnInit {
   readonly github = GITHUB;
   readonly githubIcon = ICONS.github;
 
-  /** The featured projects, in archive order, each read as its projects-page segment. */
-  readonly featured = projectsData
-    .filter((p) => p.featured)
-    .map((p, i) => ({
-      ...toSegment(p, i),
-      lede: lede(p.description),
-      caption: p.ticker?.[0] ?? '',
-      medium: p.medium,
-      platforms: platformList(releaseOf(p)?.platforms ?? []) || p.medium,
-    }));
+  /** Overglance, then the featured projects in archive order, each read as its projects-page segment. */
+  readonly featured: Slide[] = [
+    overglance,
+    ...projectsData
+      .filter((p) => p.featured)
+      .map((p, i) => {
+        const s = toSegment(p, i);
+        return {
+          id: s.id,
+          title: s.title,
+          pitch: s.pitch,
+          lede: lede(p.description),
+          caption: p.ticker?.[0] ?? '',
+          medium: p.medium,
+          platforms: platformList(releaseOf(p)?.platforms ?? []) || p.medium,
+          icon: s.icon,
+          mark: s.mark,
+          style: s.style,
+          shot: s.shot,
+          alt: s.alt,
+          width: 1280,
+          height: 800,
+          cta: s.cta,
+          ctaLabel: `Get ${s.title} free`,
+          more: ['/portfolio', s.id],
+          headroom: false,
+        };
+      }),
+  ];
 
   /** The featured app on the band. */
   readonly active = signal(0);

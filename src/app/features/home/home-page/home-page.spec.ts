@@ -6,6 +6,7 @@ import { projectsData } from '../../../data/projects.data';
 import { ossStats } from '../../../data/oss-stats.generated';
 import { blogPosts } from '../../../data/blog-posts.generated';
 import { releases } from '../../../data/releases.generated';
+import { OVERGLANCE_DOWNLOAD_URL, OVERGLANCE_MOCKUP, OVERGLANCE_PITCH } from '../../../data/overglance.data';
 
 describe('HomePage', () => {
   let fixture: ComponentFixture<HomePage>;
@@ -41,22 +42,23 @@ describe('HomePage', () => {
     const progress = () => el.querySelector('.promo__progress');
     const slide = (i: number) => el.querySelectorAll('.promo__slide')[i];
 
-    it('takes turns between the featured projects, in archive order', () => {
-      expect(tabs().map(text)).toEqual(featured.map((p) => p.title));
+    it('takes turns between Overglance and the featured projects, in archive order', () => {
+      expect(tabs().map(text)).toEqual(['Overglance', ...featured.map((p) => p.title)]);
       expect(featured.length).toBeGreaterThan(1);
     });
 
-    it('starts on the first, with only its slide shown and its pitch as the headline', () => {
+    it('starts on Overglance, with only its slide shown and its pitch as the headline', () => {
       expect(selected()).toBe(0);
-      expect(shown()).toEqual([`promo-${featured[0].id}`]);
-      expect(text(slide(0).querySelector('.promo__title'))).toBe(featured[0].pitch);
-      expect(slide(0).querySelector('.promo__screen img')?.getAttribute('src')).toBe(featured[0].image);
+      expect(shown()).toEqual(['promo-overglance']);
+      expect(text(slide(0).querySelector('.promo__title'))).toBe(OVERGLANCE_PITCH);
+      expect(slide(0).querySelector('.promo__screen img')?.getAttribute('src')).toBe(OVERGLANCE_MOCKUP.src);
+      expect(text(slide(1).querySelector('.promo__title'))).toBe(featured[0].pitch);
     });
 
     it('loads only the first screenshot eagerly', () => {
       const shots = [...el.querySelectorAll('.promo__screen img')];
       expect(shots.map((img) => img.getAttribute('loading'))).toEqual(
-        featured.map((_, i) => (i === 0 ? null : 'lazy')),
+        [null, ...featured.map(() => 'lazy')],
       );
     });
 
@@ -69,7 +71,7 @@ describe('HomePage', () => {
     });
 
     it('moves on each time the progress bar runs out, wrapping round', () => {
-      for (const expected of [1, 2, 0]) {
+      for (const expected of [1, 2, 3, 0]) {
         progress()!.dispatchEvent(new Event('animationend'));
         fixture.detectChanges();
         expect(selected()).toBe(expected);
@@ -81,7 +83,7 @@ describe('HomePage', () => {
       tabs()[2].click();
       fixture.detectChanges();
       expect(selected()).toBe(2);
-      expect(shown()).toEqual([`promo-${featured[2].id}`]);
+      expect(shown()).toEqual([`promo-${featured[1].id}`]);
       expect(progress()).toBeNull();
       expect(el.querySelector('.promo__pause')?.getAttribute('aria-label')).toBe('Play the featured apps');
     });
@@ -105,14 +107,14 @@ describe('HomePage', () => {
         fixture.detectChanges();
       };
       key('ArrowLeft');
-      expect(selected()).toBe(2);
+      expect(selected()).toBe(3);
       key('ArrowRight');
       expect(selected()).toBe(0);
       key('End');
-      expect(selected()).toBe(2);
+      expect(selected()).toBe(3);
       key('Home');
       expect(selected()).toBe(0);
-      expect(tabs().map((t) => t.tabIndex)).toEqual([0, -1, -1]);
+      expect(tabs().map((t) => t.tabIndex)).toEqual([0, -1, -1, -1]);
     });
 
     it('announces a change only once the rotation has stopped', () => {
@@ -124,8 +126,12 @@ describe('HomePage', () => {
     });
 
     it('downloads from the release page in a new tab, and says so', () => {
+      const trial = slide(0).querySelector<HTMLAnchorElement>('.promo__cta')!;
+      expect(trial.getAttribute('href')).toBe(OVERGLANCE_DOWNLOAD_URL);
+      expect(text(trial)).toContain('Try Overglance free');
+      expect(text(slide(0).querySelector('.promo__fine'))).toContain('$9.99');
       featured.forEach((p, i) => {
-        const cta = slide(i).querySelector<HTMLAnchorElement>('.promo__cta')!;
+        const cta = slide(i + 1).querySelector<HTMLAnchorElement>('.promo__cta')!;
         const repo = p.links.github!.split('/').pop()!;
         expect(cta.getAttribute('href')).withContext(p.id).toBe(releases[repo]?.url ?? p.links.github!);
         expect(cta.getAttribute('target')).toBe('_blank');
@@ -133,9 +139,10 @@ describe('HomePage', () => {
       });
     });
 
-    it('links each write-up', () => {
+    it('links each write-up, and Overglance its own page', () => {
+      expect(slide(0).querySelector('.promo__more')?.getAttribute('href')).toBe('/overglance');
       featured.forEach((p, i) => {
-        expect(slide(i).querySelector('.promo__more')?.getAttribute('href')).toBe(`/portfolio/${p.id}`);
+        expect(slide(i + 1).querySelector('.promo__more')?.getAttribute('href')).toBe(`/portfolio/${p.id}`);
       });
     });
   });
