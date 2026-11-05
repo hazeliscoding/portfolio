@@ -5,11 +5,8 @@
 export const OVERGLANCE_DOWNLOAD_URL =
   'https://github.com/hazeliscoding/overglance-releases/releases/latest';
 
-/**
- * Polar's checkout link for the live product; the Buy button renders only while it's set. Blank while Polar reviews
- * the store, since its checkout takes no payment until then: https://buy.polar.sh/polar_cl_TaPpc6cABe5XZcmHpTXPO7oaYlbL7xpY7djLZ0hQOMR
- */
-export const OVERGLANCE_CHECKOUT_URL: string = '';
+/** Polar's checkout link for the live product; the Buy button renders only while it's set. */
+export const OVERGLANCE_CHECKOUT_URL: string = 'https://buy.polar.sh/polar_cl_TaPpc6cABe5XZcmHpTXPO7oaYlbL7xpY7djLZ0hQOMR';
 
 export const OVERGLANCE_PRICE = 'Free for 7 days, then $9.99 once for 3 PCs';
 
