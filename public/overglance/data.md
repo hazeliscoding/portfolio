@@ -1,6 +1,6 @@
 # Data handling
 
-The engineering side of the [privacy page](/overglance/privacy): where each thing lives, how it's protected, how long it's kept, and who else touches it.
+The engineering side of the [privacy page](PRIVACY.md): where each thing lives, how it's protected, how long it's kept, and who else touches it.
 
 ## On the PC
 
@@ -29,7 +29,7 @@ DPAPI ties each file to your Windows account: another account on the PC, or the 
 | --- | --- | --- | --- |
 | GitHub | The daily request for releases | Its own request logs | GitHub |
 | The calendar hosts you pasted | Requests for your feeds | Their own logs | Each host |
-| Polar | Your purchase, email and country; your key, Overglance's organization ID and your PC's name at activation and each weekly check | The purchase record and the activations | Polar |
+| Polar | Your purchase, email and country; your key and Overglance's organization ID, with your PC's name at activation and with the activation's ID at each weekly check | The purchase record and the activations | Polar |
 | Overglance's relay (Cloudflare Workers, run by Hazel Granados) | Store webhooks, passed through; the opt-in daily count | Nothing of a webhook; the counts' daily totals only. Cloudflare's request logs are off | Cloudflare, for the platform |
 | MET Norway | Your location, rounded to about 1 km | Their own logs | MET Norway |
 | Polar and Stripe | Your read-only store key | Their own logs | Each store |

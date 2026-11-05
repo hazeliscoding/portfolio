@@ -30,7 +30,7 @@ Overglance goes online for eleven uses and no others; a test fails on network co
 | --- | --- | --- |
 | Updates | A request for the list of releases, once a day | GitHub (`overglance-releases`) |
 | Your calendar | Requests for the calendar links you pasted | Whoever hosts each calendar: Google, Microsoft, or your own server |
-| Your license | Your license key, Overglance's organization ID and your PC's name, once to activate and then once a week to check | Polar, which sold you the license |
+| Your license | Your license key and Overglance's organization ID, with your PC's name once to activate, then with the activation's ID once a week to check | Polar, which sold you the license |
 | Usage counts, opt-in | `{"state":"trial"}` or `{"state":"paid"}`, once a day | Overglance's relay on Cloudflare |
 | Weather | Your location, rounded to about 1 km | MET Norway |
 | Sales | Your read-only store key, every 5 minutes; each sale's webhook passes through the relay | Polar and Stripe; the relay on Cloudflare |
@@ -44,7 +44,7 @@ Each service sees your IP address, as any website does, and has its own privacy 
 
 ### YouTube
 
-Overglance's YouTube tab uses YouTube API Services with the key you paste. It reads your channel's public details and statistics and its latest videos, keeps them in memory for up to 10 minutes, and stores nothing from YouTube on disk. Google's privacy policy is at <https://www.google.com/policies/privacy>. Removing your key in Settings ends every request, and your key is deleted from the PC. You can also revoke the key itself in Google Cloud Console.
+Overglance's YouTube tab uses YouTube API Services with the key you paste. It reads your channel's public details and statistics and its latest videos, keeps them in memory for up to 10 minutes, and stores nothing from YouTube on disk. Google's privacy policy is at <https://www.google.com/policies/privacy>. Removing your key in Settings ends every request, and your key is deleted from the PC. You can also revoke the key itself in Google Cloud Console. The YouTube section of Settings asks you to agree to this policy and to YouTube's Terms of Service before it takes a key.
 
 ## Payments
 

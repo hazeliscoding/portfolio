@@ -16,4 +16,4 @@ Report a vulnerability privately with **Report a vulnerability** on the [Securit
 
 ## Contact
 
-The support contact is the issues above. [An email address goes here before launch.]
+The support contact is the issues above, or [email](mailto:hazel.granados@protonmail.com) for a purchase or anything else that shouldn't be public.

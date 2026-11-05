@@ -44,7 +44,7 @@ Overglance goes online for eleven uses and no others; a test fails on network co
 | --- | --- | --- |
 | Updates | A request for the list of releases, once a day | GitHub (\`overglance-releases\`) |
 | Your calendar | Requests for the calendar links you pasted | Whoever hosts each calendar: Google, Microsoft, or your own server |
-| Your license | Your license key, Overglance's organization ID and your PC's name, once to activate and then once a week to check | Polar, which sold you the license |
+| Your license | Your license key and Overglance's organization ID, with your PC's name once to activate, then with the activation's ID once a week to check | Polar, which sold you the license |
 | Usage counts, opt-in | \`{"state":"trial"}\` or \`{"state":"paid"}\`, once a day | Overglance's relay on Cloudflare |
 | Weather | Your location, rounded to about 1 km | MET Norway |
 | Sales | Your read-only store key, every 5 minutes; each sale's webhook passes through the relay | Polar and Stripe; the relay on Cloudflare |
@@ -58,7 +58,7 @@ Each service sees your IP address, as any website does, and has its own privacy 
 
 ### YouTube
 
-Overglance's YouTube tab uses YouTube API Services with the key you paste. It reads your channel's public details and statistics and its latest videos, keeps them in memory for up to 10 minutes, and stores nothing from YouTube on disk. Google's privacy policy is at <https://www.google.com/policies/privacy>. Removing your key in Settings ends every request, and your key is deleted from the PC. You can also revoke the key itself in Google Cloud Console.
+Overglance's YouTube tab uses YouTube API Services with the key you paste. It reads your channel's public details and statistics and its latest videos, keeps them in memory for up to 10 minutes, and stores nothing from YouTube on disk. Google's privacy policy is at <https://www.google.com/policies/privacy>. Removing your key in Settings ends every request, and your key is deleted from the PC. You can also revoke the key itself in Google Cloud Console. The YouTube section of Settings asks you to agree to this policy and to YouTube's Terms of Service before it takes a key.
 
 ## Payments
 
@@ -92,7 +92,7 @@ Overglance is proprietary software. You may not copy, modify, decompile or rever
 
 ## Third-party services
 
-Overglance goes online only for the uses its [privacy page](/overglance/privacy) lists, most of them with links or keys you supply, and each service has terms of its own that bind you when you use it through Overglance:
+Overglance goes online only for the uses its [privacy page](PRIVACY.md) lists, most of them with links or keys you supply, and each service has terms of its own that bind you when you use it through Overglance:
 
 - Using the YouTube tab binds you to [YouTube's Terms of Service](https://www.youtube.com/t/terms). Overglance uses YouTube API Services with your own key.
 - The Ask tab sends what you type to Anthropic or OpenAI under their terms and your own account with them.
@@ -107,11 +107,11 @@ Overglance is provided as is. It reads what your agents and other apps report an
 
 ## Refunds
 
-See the [refund policy](/overglance/refunds): a full refund within 14 days of purchase, no questions asked.
+See the [refund policy](REFUNDS.md): a full refund within 14 days of purchase, no questions asked.
 
 ## Changes and contact
 
-These terms change only with a release, and the release notes say so. Questions go to the [support contact](/overglance/support). The law of the place Hazel Granados does business applies, except where your own consumer law applies instead.
+These terms change only with a release, and the release notes say so. Questions go to the [support contact](SUPPORT.md). The law of the State of Texas, United States, applies, except where your own consumer law applies instead.
 `,
   },
   {
@@ -122,7 +122,7 @@ These terms change only with a release, and the release notes say so. Questions 
 
 ## How
 
-Ask through Polar's customer portal, the link in your receipt email, or the [support contact](/overglance/support) with the email address you bought with. Polar, the merchant of record, makes the refund to the card you paid with; banks take a few days to show it.
+Ask through Polar's customer portal, the link in your receipt email, or the [support contact](SUPPORT.md) with the email address you bought with. Polar, the merchant of record, makes the refund to the card you paid with; banks take a few days to show it.
 
 ## What happens to the key
 
@@ -153,14 +153,14 @@ Report a vulnerability privately with **Report a vulnerability** on the [Securit
 
 ## Contact
 
-The support contact is the issues above. [An email address goes here before launch.]
+The support contact is the issues above, or [email](mailto:hazel.granados@protonmail.com) for a purchase or anything else that shouldn't be public.
 `,
   },
   {
     slug: "data",
     title: "Data handling",
     description: "The engineering side of the privacy page: where each thing lives, how it's protected, how long it's kept, and who else touches it.",
-    markdown: `The engineering side of the [privacy page](/overglance/privacy): where each thing lives, how it's protected, how long it's kept, and who else touches it.
+    markdown: `The engineering side of the [privacy page](PRIVACY.md): where each thing lives, how it's protected, how long it's kept, and who else touches it.
 
 ## On the PC
 
@@ -189,7 +189,7 @@ DPAPI ties each file to your Windows account: another account on the PC, or the 
 | --- | --- | --- | --- |
 | GitHub | The daily request for releases | Its own request logs | GitHub |
 | The calendar hosts you pasted | Requests for your feeds | Their own logs | Each host |
-| Polar | Your purchase, email and country; your key, Overglance's organization ID and your PC's name at activation and each weekly check | The purchase record and the activations | Polar |
+| Polar | Your purchase, email and country; your key and Overglance's organization ID, with your PC's name at activation and with the activation's ID at each weekly check | The purchase record and the activations | Polar |
 | Overglance's relay (Cloudflare Workers, run by Hazel Granados) | Store webhooks, passed through; the opt-in daily count | Nothing of a webhook; the counts' daily totals only. Cloudflare's request logs are off | Cloudflare, for the platform |
 | MET Norway | Your location, rounded to about 1 km | Their own logs | MET Norway |
 | Polar and Stripe | Your read-only store key | Their own logs | Each store |
@@ -213,4 +213,4 @@ Tests in the repository fail on: network code outside the eleven listed files, a
 ];
 
 /** True once public/overglance/launch.mp4 exists; the hero then plays it instead of the still. */
-export const overglanceLaunchVideo = false;
+export const overglanceLaunchVideo = true;
