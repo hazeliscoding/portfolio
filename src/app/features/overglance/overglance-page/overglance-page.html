@@ -54,25 +54,35 @@
     </figure>
   </header>
 
-  @for (s of sections; track s.id) {
-    <section class="feature shell-width" [id]="s.id" [class.feature--text]="!s.image">
+  @for (s of illustrated; track s.id) {
+    <section class="feature shell-width" [id]="s.id">
       <div class="feature__copy">
         <h2 class="feature__title">{{ s.heading }}</h2>
         <p class="feature__body">{{ s.body }}</p>
       </div>
-      @if (s.image; as img) {
-        <img
-          class="feature__shot"
-          [class.feature__shot--pill]="img.height < 100"
-          [src]="img.src"
-          [alt]="img.alt"
-          [width]="img.width"
-          [height]="img.height"
-          loading="lazy"
-        />
-      }
+      <img
+        class="feature__shot"
+        [class.feature__shot--pill]="s.image!.height < 100"
+        [src]="s.image!.src"
+        [alt]="s.image!.alt"
+        [width]="s.image!.width"
+        [height]="s.image!.height"
+        loading="lazy"
+      />
     </section>
   }
+
+  <!-- The things without a screenshot yet, side by side so they read as the rest of the list, not as three more chapters. -->
+  <div class="more shell-width">
+    @for (s of plain; track s.id) {
+      <section class="feature feature--text" [id]="s.id">
+        <div class="feature__copy">
+          <h2 class="feature__title">{{ s.heading }}</h2>
+          <p class="feature__body">{{ s.body }}</p>
+        </div>
+      </section>
+    }
+  </div>
 
   <section class="themes shell-width" aria-labelledby="themes-title">
     <h2 id="themes-title" class="feature__title">Three themes</h2>

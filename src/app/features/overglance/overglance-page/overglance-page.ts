@@ -38,6 +38,8 @@ export class OverglancePage implements OnInit {
   readonly mockup = OVERGLANCE_MOCKUP;
   readonly launchVideo = overglanceLaunchVideo;
   readonly sections = OVERGLANCE_SECTIONS;
+  readonly illustrated = OVERGLANCE_SECTIONS.filter((s) => s.image);
+  readonly plain = OVERGLANCE_SECTIONS.filter((s) => !s.image);
   readonly themes = OVERGLANCE_THEMES;
   readonly trust = OVERGLANCE_TRUST;
   readonly faq = OVERGLANCE_FAQ;

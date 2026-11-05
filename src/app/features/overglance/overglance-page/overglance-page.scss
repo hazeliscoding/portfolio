@@ -146,8 +146,15 @@
 
   &--text {
     grid-template-columns: minmax(0, 1fr);
-    max-width: 64ch;
+    align-content: start;
   }
+}
+
+// The sections without a screenshot, three across; the page's own rhythm stacks them below the tablet width.
+.more {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--sp-10);
 }
 
 .feature__title {
@@ -167,15 +174,24 @@
   justify-self: center;
 }
 
-// The closed pill is 240 px wide: kept at scale, not stretched to the column.
+// The closed pill is 240 px wide: kept at scale, not stretched to the column, and set at the top edge of a strip
+// of screen, where it lives, rather than alone in the column.
 .feature__shot--pill {
   width: 240px;
+  box-sizing: content-box;
+  padding: 0 clamp(24px, 10vw, 160px) var(--sp-12);
+  background: var(--surface-night);
 }
 
 @media (max-width: 840px) {
   .feature {
     grid-template-columns: minmax(0, 1fr);
     gap: var(--sp-6);
+  }
+
+  .more {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--sp-12);
   }
 }
 

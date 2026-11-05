@@ -103,7 +103,7 @@ export const OVERGLANCE_THEMES: (OverglanceShot & { name: string })[] = [
 
 export const OVERGLANCE_TRUST = [
   "It never reads your AI sign-ins. Claude's limits come from Claude Code's status line, Codex's from its session logs, and agent status from each tool's documented hooks. A test fails on code that tries.",
-  'It goes online for eleven listed uses and no more, each after the update check off until you turn it on or paste its link or key. The Trust tab shows them all.',
+  'It goes online for eleven listed uses and no more. Each one but the update check stays off until you turn it on or paste its link or key, and the Trust tab shows them all.',
   'It takes focus only when you click into something to type, hides over fullscreen games and presentations, and reserves no screen space.',
   "Your agents' settings come back exactly as they were: uninstalling its hooks restores each config file byte for byte.",
 ];
