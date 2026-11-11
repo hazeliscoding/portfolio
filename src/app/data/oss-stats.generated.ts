@@ -28,8 +28,8 @@ export const ossStats: OssStats = {
   "totalMergedPrs": 11,
   "totalOpenPrs": 7,
   "projectCount": 4,
-  "totalStars": 77635,
-  "updated": "2026-11-10",
+  "totalStars": 77937,
+  "updated": "2026-11-11",
   "listedRepos": [
     "AvaloniaUI/Avalonia",
     "BCUninstaller/Bulk-Crap-Uninstaller",
@@ -41,21 +41,21 @@ export const ossStats: OssStats = {
     {
       "repo": "AvaloniaUI/Avalonia",
       "url": "https://github.com/AvaloniaUI/Avalonia/pulls?q=is%3Apr%20author%3Ahazeliscoding",
-      "stars": 31700,
+      "stars": 31800,
       "mergedPrs": 3,
       "openPrs": 2
     },
     {
       "repo": "BCUninstaller/Bulk-Crap-Uninstaller",
       "url": "https://github.com/BCUninstaller/Bulk-Crap-Uninstaller/pulls?q=is%3Apr%20author%3Ahazeliscoding",
-      "stars": 22300,
+      "stars": 22400,
       "mergedPrs": 4,
       "openPrs": 0
     },
     {
       "repo": "storytold/pdfcraft",
       "url": "https://github.com/storytold/pdfcraft/pulls?q=is%3Apr%20author%3Ahazeliscoding",
-      "stars": 20200,
+      "stars": 20300,
       "mergedPrs": 3,
       "openPrs": 4
     },
@@ -69,7 +69,7 @@ export const ossStats: OssStats = {
     {
       "repo": "goatcorp/XIVLauncher.Core",
       "url": "https://github.com/goatcorp/XIVLauncher.Core/pulls?q=is%3Apr%20author%3Ahazeliscoding",
-      "stars": 235,
+      "stars": 237,
       "mergedPrs": 0,
       "openPrs": 1
     }
