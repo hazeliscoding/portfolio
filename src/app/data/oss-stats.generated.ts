@@ -28,8 +28,8 @@ export const ossStats: OssStats = {
   "totalMergedPrs": 11,
   "totalOpenPrs": 7,
   "projectCount": 4,
-  "totalStars": 77937,
-  "updated": "2026-11-11",
+  "totalStars": 78037,
+  "updated": "2026-11-12",
   "listedRepos": [
     "AvaloniaUI/Avalonia",
     "BCUninstaller/Bulk-Crap-Uninstaller",
@@ -55,7 +55,7 @@ export const ossStats: OssStats = {
     {
       "repo": "storytold/pdfcraft",
       "url": "https://github.com/storytold/pdfcraft/pulls?q=is%3Apr%20author%3Ahazeliscoding",
-      "stars": 20300,
+      "stars": 20400,
       "mergedPrs": 3,
       "openPrs": 4
     },
