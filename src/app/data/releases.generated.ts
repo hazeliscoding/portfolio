@@ -64,8 +64,8 @@ export const releases: Record<string, Release> = {
     ]
   },
   "sweepling": {
-    "tag": "v0.1.1",
-    "url": "https://github.com/hazeliscoding/sweepling/releases/tag/v0.1.1",
+    "tag": "v0.2.0",
+    "url": "https://github.com/hazeliscoding/sweepling/releases/tag/v0.2.0",
     "platforms": [
       "Windows"
     ]
