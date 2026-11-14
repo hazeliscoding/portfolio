@@ -26,10 +26,10 @@ export type OssStats = {
 
 export const ossStats: OssStats = {
   "totalMergedPrs": 11,
-  "totalOpenPrs": 7,
+  "totalOpenPrs": 8,
   "projectCount": 4,
-  "totalStars": 78137,
-  "updated": "2026-11-13",
+  "totalStars": 78237,
+  "updated": "2026-11-14",
   "listedRepos": [
     "AvaloniaUI/Avalonia",
     "BCUninstaller/Bulk-Crap-Uninstaller",
@@ -55,7 +55,7 @@ export const ossStats: OssStats = {
     {
       "repo": "storytold/pdfcraft",
       "url": "https://github.com/storytold/pdfcraft/pulls?q=is%3Apr%20author%3Ahazeliscoding",
-      "stars": 20500,
+      "stars": 20600,
       "mergedPrs": 3,
       "openPrs": 4
     },
@@ -64,7 +64,7 @@ export const ossStats: OssStats = {
       "url": "https://github.com/goatcorp/FFXIVQuickLauncher/pulls?q=is%3Apr%20author%3Ahazeliscoding",
       "stars": 3200,
       "mergedPrs": 1,
-      "openPrs": 0
+      "openPrs": 1
     },
     {
       "repo": "goatcorp/XIVLauncher.Core",
